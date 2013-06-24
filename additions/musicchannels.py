@@ -4,7 +4,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.yt_url import *
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
-MUSIC_Version = "MUSIC-Channels v0.93"
+MUSIC_Version = "MUSIC-Channels v0.94"
 
 MUSIC_siteEncoding = 'utf-8'
 
@@ -81,7 +81,29 @@ class show_MUSIC_Genre(Screen):
 		self.genreliste.append((24,'Bazooka Records', '/bazookalabel'))
 		self.genreliste.append((25,'Crystal Lake Music', '/CrystaLakeTV'))
 		self.genreliste.append((26,'SKRILLEX', '/TheOfficialSkrillex'))
-		#self.genreliste.append((5,'', '/'))
+		self.genreliste.append((27,'AggroTV', '/aggroTV'))
+		self.genreliste.append((28,'Bands & ART-Ellie Goulding', '/EllieGouldingEmpire'))
+		self.genreliste.append((29,'Bands & ART-Psyche', '/thandewye'))
+		self.genreliste.append((30,'Bands & ART-Joint Venture', '/srudlak'))
+		self.genreliste.append((31,'Bands & ART-Madonna', '/madonna'))
+		self.genreliste.append((32,'BB Sound Production', '/b0ssy007'))
+		self.genreliste.append((33,'Chill-out,Lounge,Jazz,Electronic,Psy,Piano,Trance', '/aliasmike2002'))
+		self.genreliste.append((34,'Gothic', '/AiratzuMusic'))
+		self.genreliste.append((35,'Gothic', '/INM0R4L'))
+		self.genreliste.append((36,'Gothic-Industrial Mix', '/noetek'))
+		self.genreliste.append((37,'Wave & Gothic', '/MrBelorix'))
+		self.genreliste.append((38,'Indie', '/curie78'))
+		self.genreliste.append((39,'Indie', '/SoundIndieMusic'))
+		self.genreliste.append((40,'Planetpunkmusic TV', '/Planetpunkmusic'))
+		self.genreliste.append((41,'Selfmade Records', '/SelfmadeRecords'))
+		self.genreliste.append((42,'UKF-DrumandBass', '/UKFDrumandBass'))
+		self.genreliste.append((43,'UKF-Dubstep', '/UKFDubstep'))
+		self.genreliste.append((44,'UKF-Music', '/UKFMusic'))
+		self.genreliste.append((45,'UKF-Mixes', '/UKFMixes'))
+		self.genreliste.append((46,'UKF-Live', '/UKFLive'))
+		self.genreliste.append((47,'Smarty Music', '/smartymcfly'))
+		self.genreliste.append((48,'MoMMusic Network', '/MrMoMMusic'))
+		#self.genreliste.append((9,'', '/'))
 		
 		self.genreliste.sort(key=lambda t : t[1].lower())
 		self.chooseMenuList.setList(map(show_MUSIC_GenreListEntry, self.genreliste))
