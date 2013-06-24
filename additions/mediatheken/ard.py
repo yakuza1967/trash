@@ -312,6 +312,8 @@ class ARDFilmeListeScreen(Screen):
 		if self.keyLocked:
 			return
 		self.streamName = self['List'].getCurrent()[0][0]
+		self['name'].setText("Bitte warten...")
+		self.keyLocked = True
 		id = self['List'].getCurrent()[0][1]
 		if id == None:
 			return
@@ -325,94 +327,41 @@ class ARDFilmeListeScreen(Screen):
 	def get_Link(self, data):
 		qualitycheck = re.findall('mediaCollection.addMediaStream\((.*?),\s+(.*?),\s+"(.*?)",\s+"(.*?)",.*?\)', data, re.S)
 		if qualitycheck:
-			qualinull = "n"
-			qualieins = "e"
-			qualizwei = "z"
-			qualidrei = "d"
+			Q0P = ""
+			Q1P = ""
+			Q2P = ""
+			Q3P = ""
 			for (a,b,c,d) in qualitycheck:
-				if "30" in (a+b):
-					# Nur '.mp4" ... vermeide '.m3u8' oder '.asx'
+				if int(a+b) >= 30:
 					if d[-4:] == ".mp4":
-						if c:
-							# Bei manchen rtmp-URLs fehlt ein '/' am Ende von c
-							if c[-1:] != "/":
-								c = c + "/"
-						qualidrei = (c + d)
-				elif "31" in (a+b):
+						Q3H = c
+						Q3P = d
+				elif int(a+b) >= 20:
 					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualidrei = (c + d)
-				elif "32" in (a+b):
+						Q2H = c
+						Q2P = d
+				elif int(a+b) >= 10:
 					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualidrei = (c + d)
-				elif "20" in (a+b):
+						Q1H = c
+						Q1P = d
+				elif int(a+b) >= 0:
 					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualizwei = (c + d)
-				elif "21" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualizwei = (c + d)
-				elif "22" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualizwei = (c + d)
-				elif "10" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualieins = (c + d)
-				elif "11" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualieins = (c + d)
-				elif "12" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualieins = (c + d)
-				elif "00" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualinull = (c + d)
-				elif "01" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualinull = (c + d)
-				elif "02" in (a+b):
-					if d[-4:] == ".mp4":
-						if c:
-							if c[-1:] != "/":
-								c = c + "/"
-						qualinull = (c + d)
-			# Lade das schlechteste und steigere aufs beste, das gefunden wurde
-			if len(qualinull) != 1:
-				stream = qualinull
-			if len(qualieins) != 1:
-				stream = qualieins
-			if len(qualizwei) != 1:
-				stream = qualizwei
-			if len(qualidrei) != 1:
-				stream = qualidrei
+						Q0H = c
+						Q0P = d
+
+			if len(Q3P) > 0:
+				host = Q3H
+				playpath = Q3P
+			elif len(Q2P) > 0:
+				host = Q2H
+				playpath = Q2P
+			elif len(Q1P) > 0:
+				host = Q1H
+				playpath = Q1P
+			elif len(Q0P) > 0:
+				host = Q0H
+				playpath = Q0P
+
 			#
 			# Broadcaster erkennen. Derzeit nur fuer SWR und SR.
 			#
@@ -428,36 +377,31 @@ class ARDFilmeListeScreen(Screen):
 			ts = "media.tagesschau.de"
 			wdr = "http-ras.wdr.de"
 			#
-			if swr in stream:
-				stream = stream.replace("ios-ondemand","pd-ondemand")
-				stream = stream.replace("swr.de/i","swr.de")
-				stream = stream.replace("mp4/master.m3u8","mp4")
-			if sr in stream:
-				stream = stream.replace("MP4:","mp4:")
-			print stream
-			noplaypath = "mp4:"
-			if noplaypath in stream:
-				host = stream.split('mp4:')[0]
-				playpath = stream.split('mp4:')[1]
-			if (stream[0:4] == 'rtmp' and config.mediaportal.useRtmpDump.value):
-				stream = "%s' --playpath=mp4:%s'" % (host, playpath)
-				print stream
-				movieinfo = [stream,self.streamName]
+
+			if swr in playpath:
+				playpath = playpath.replace("ios-ondemand.swr.de/i","pd-ondemand.swr.de")
+				playpath = playpath.strip('/master.m3u8')
+			if sr in host:
+				playpath = playpath.replace("MP4:","mp4:")
+				
+			self.keyLocked = False
+			self['name'].setText("Folgen Auswahl")
+
+			print "HOST: " + host
+			print "PLAYPATH: " + playpath
+			if (host[0:4] == 'rtmp' and config.mediaportal.useRtmpDump.value):
+				final = "%s' --playpath=%s'" % (host, playpath)
+				movieinfo = [final,self.streamName]
 				self.session.open(PlayRtmpMovie, movieinfo, self.streamName)
-			elif stream[0:4] == 'rtmp':
-				stream = "%s playpath=mp4:%s" % (host, playpath)
-				print stream
-				sref = eServiceReference(0x1001, 0, stream)
+			elif host[0:4] == 'rtmp':
+				final = "%s playpath=%s" % (host, playpath)
+				sref = eServiceReference(0x1001, 0, final)
 				sref.setName(self.streamName)
 				self.session.open(MoviePlayer, sref)
 			else:
-				print stream
-				sref = eServiceReference(0x1001, 0, stream)
+				sref = eServiceReference(0x1001, 0, playpath)
 				sref.setName(self.streamName)
 				self.session.open(MoviePlayer, sref)
-			#fobj_out = open("/tmp/ard-stream.txt","w")
-			#fobj_out.write(stream)
-			#fobj_out.close()
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -499,6 +443,4 @@ class ARDFilmeListeScreen(Screen):
 		self.loadPage()
 
 	def keyCancel(self):
-		#if os.path.isfile("/tmp/ard-stream.txt"):
-		#	os.remove("/tmp/ard-stream.txt")
 		self.close()
