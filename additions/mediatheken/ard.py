@@ -350,8 +350,13 @@ class ARDFilmeListeScreen(Screen):
 						Q0P = d
 
 			if len(Q0P) > 0:
-				host = Q0H
-				playpath = Q0P
+				# fix for not supported rtmpt protocol
+				if "flashmedia.radiobremen.de" in Q0H:
+					host = Q1H
+					playpath = Q1P
+				else:
+					host = Q0H
+					playpath = Q0P
 			elif len(Q3P) > 0:
 				host = Q3H
 				playpath = Q3P
