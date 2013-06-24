@@ -345,11 +345,14 @@ class ARDFilmeListeScreen(Screen):
 						Q1H = c
 						Q1P = d
 				elif int(a+b) >= 0:
-					if d[-4:] == ".mp4":
+					if re.search(".mp4", d, re.S):
 						Q0H = c
 						Q0P = d
 
-			if len(Q3P) > 0:
+			if len(Q0P) > 0:
+				host = Q0H
+				playpath = Q0P
+			elif len(Q3P) > 0:
 				host = Q3H
 				playpath = Q3P
 			elif len(Q2P) > 0:
@@ -358,9 +361,6 @@ class ARDFilmeListeScreen(Screen):
 			elif len(Q1P) > 0:
 				host = Q1H
 				playpath = Q1P
-			elif len(Q0P) > 0:
-				host = Q0H
-				playpath = Q0P
 
 			#
 			# Broadcaster erkennen. Derzeit nur fuer SWR und SR.
@@ -378,15 +378,16 @@ class ARDFilmeListeScreen(Screen):
 			wdr = "http-ras.wdr.de"
 			#
 
-			if swr in playpath:
-				playpath = playpath.replace("ios-ondemand.swr.de/i","pd-ondemand.swr.de")
-				playpath = playpath.strip('/master.m3u8')
-			if sr in host:
-				playpath = playpath.replace("MP4:","mp4:")
+			#if swr in playpath:
+			#	playpath = playpath.replace("ios-ondemand.swr.de/i","pd-ondemand.swr.de")
+			#	playpath = playpath.strip('/master.m3u8')
+			#if sr in host:
+			#	playpath = playpath.replace("MP4:","mp4:")
 				
 			self.keyLocked = False
 			self['name'].setText("Folgen Auswahl")
 
+			playpath = playpath.replace('&amp;','&')
 			print "HOST: " + host
 			print "PLAYPATH: " + playpath
 			if (host[0:4] == 'rtmp' and config.mediaportal.useRtmpDump.value):
