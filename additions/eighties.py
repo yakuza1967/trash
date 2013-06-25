@@ -163,19 +163,27 @@ class eightiesMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 		print "cb_Menu:"
 		if data != []:
 			if data[0] == 2:
-				nm = self['streamlist'].getCurrent()[0][0]
-				p = nm.find(' - ')
-				if p > 0:
-					scArtist = nm[:p].strip()
-					scTitle = nm[p+3:].strip()
-				else:
-					p = nm.find('-')
-					if p > 0:
-						scArtist = nm[:p].strip()
-						scTitle = nm[p+1:].strip()
+				playinfos = self['streamlist'].getCurrent()[0][0]
+				if re.match('.*?-', playinfos):
+					playinfos = playinfos.split(' - ')
+					if playinfos:
+						if len(playinfos) == 2:
+							scArtist = playinfos[0]
+							scTitle = playinfos[1]
+							self["artist"].setText(playinfos[0])
+							self["songtitle"].setText(playinfos[1])
 					else:
-						scArtist = ''
-						scTitle = nm
+						playinfos = playinfos.split('-')
+						if playinfos:
+							if len(playinfos) == 2:
+								scArtist = playinfos[0]
+								scTitle = playinfos[1]
+								self["artist"].setText(playinfos[0])
+								self["songtitle"].setText(playinfos[1])
+				else:
+					self["artist"].setText(playinfos)
+					scArtist = ''
+					scTitle = playinfos
 					
 				url = self['streamlist'].getCurrent()[0][1]
 				ltype = 'eighties'
@@ -196,10 +204,29 @@ class eightiesMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			return
 		eightiesName = self['streamlist'].getCurrent()[0][0]
 		eightiesUrl = self['streamlist'].getCurrent()[0][1]
-		playinfos = eightiesName.split(' - ')
-		if playinfos:
-			self["artist"].setText(playinfos[0])
-			self["songtitle"].setText(playinfos[1])		
+		
+		playinfos = self['streamlist'].getCurrent()[0][0]
+		if re.match('.*?-', playinfos):
+			playinfos = playinfos.split(' - ')
+			if playinfos:
+				if len(playinfos) == 2:
+					scArtist = playinfos[0]
+					scTitle = playinfos[1]
+					self["artist"].setText(playinfos[0])
+					self["songtitle"].setText(playinfos[1])
+			else:
+				playinfos = playinfos.split('-')
+				if playinfos:
+					if len(playinfos) == 2:
+						scArtist = playinfos[0]
+						scTitle = playinfos[1]
+						self["artist"].setText(playinfos[0])
+						self["songtitle"].setText(playinfos[1])
+		else:
+			self["artist"].setText(playinfos)
+			scArtist = ''
+			scTitle = playinfos
+
 		print eightiesName, eightiesUrl
 		getPage(eightiesUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVid).addErrback(self.dataError)
 
