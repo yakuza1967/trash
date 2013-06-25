@@ -447,14 +447,14 @@ class ARDFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class ARDMediathekPlayer(SimplePlayer):
 
 	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
 		print "ARDMediathekPlayer:"
-		
+
 		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
-		
+
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]

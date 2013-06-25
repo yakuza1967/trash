@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def ZDFGenreListEntry(entry):
 	return [entry,
@@ -290,10 +291,10 @@ class ZDFFilmeListeScreen(Screen):
 		print "xml data"
 		stream = re.findall('basetype="h264_aac_mp4_http_na_na".*?<quality>veryhigh</quality>.*?<url>(http://rodl.zdf.de.*?mp4)</url>', data, re.S)
 		if stream:
-			sref = eServiceReference(0x1001, 0, stream[0])
-			sref.setName(self.streamName)
-			self.session.open(MoviePlayer, sref)
-			
+			playlist = []
+			playlist.append((self.streamName, stream[0]))
+			self.session.open(ZDFMediathekPlayer, playlist, 0 , False, None)
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
@@ -320,3 +321,15 @@ class ZDFFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
+
+class ZDFMediathekPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+		print "ZDFMediathekPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)	
