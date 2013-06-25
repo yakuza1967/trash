@@ -5,21 +5,20 @@ def nunaGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def nunaListEntry(entry):
-	#TYPE_TEXT, x, y, width, height, fnt, flags, string [, color, backColor, backColorSelected, borderWidth, borderColor])
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
 class nunaGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -27,18 +26,18 @@ class nunaGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 			"red": self.keyCancel
 		}, -1)
-		
+
 		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
 		self.playing = False
-		
+
 		self.keyLocked = True
 		self['title'] = Label("nuna.tv")
 		self['ContentTitle'] = Label("Genre:")
@@ -61,7 +60,7 @@ class nunaGenreScreen(Screen):
 	def loadPage(self):	
 		self.genreliste = [('Musikrichtung',"Musikrichtung"),
 							('Kuenstler',"nstler")]
-							
+
 		self.chooseMenuList.setList(map(nunaGenreListEntry, self.genreliste))
 		self.keyLocked = False
 
@@ -74,19 +73,18 @@ class nunaGenreScreen(Screen):
 		print nunaName, nunaUrl
 		self.session.open(nunaArtistListeScreen, nunaName, nunaUrl)
 
-		
 	def keyCancel(self):
 		self.close()
-		
+
 class nunaArtistListeScreen(Screen):
-	
+
 	def __init__(self, session, genreName, genreLink):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -94,14 +92,14 @@ class nunaArtistListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("nuna.tv")
 		self['ContentTitle'] = Label("Genre: %s" % self.genreName)
@@ -120,13 +118,13 @@ class nunaArtistListeScreen(Screen):
 		self['genreList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-			
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.nuna.tv/"
-			
+
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
 		if re.match('.*?Musikrichtung', self.genreLink, re.S):
@@ -156,19 +154,19 @@ class nunaArtistListeScreen(Screen):
 
 		print nunaName, nunaUrl
 		self.session.open(nunaMusicListeScreen, nunaName, nunaUrl)
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 class nunaMusicListeScreen(Screen):
-	
+
 	def __init__(self, session, genreName, genreLink):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -176,14 +174,14 @@ class nunaMusicListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("nuna.tv")
 		self['ContentTitle'] = Label("Genre: %s" % self.genreName)
@@ -202,15 +200,15 @@ class nunaMusicListeScreen(Screen):
 		self['genreList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-			
+
 	def loadPage(self):
 		self.keyLocked = True
 		print self.genreLink			
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
-		
+
 		vids = re.findall('li\s{0,1}>\s{0,1}<a\shref="(.*?)".*?<img\salt="(.*?)"\ssrc="(.*?)"\s/>', data, re.S)
 		if vids:
 			self.filmliste = []
@@ -230,7 +228,7 @@ class nunaMusicListeScreen(Screen):
 		nunaUrl = self['genreList'].getCurrent()[0][1]
 		nunaImage = self['genreList'].getCurrent()[0][2]
 		idx = self['genreList'].getSelectedIndex()
-		
+
 		print idx, self.nunaName, nunaUrl, nunaImage
 		self.session.open(NunaPlayer, self.filmliste, int(idx) , True, None)
 
@@ -241,19 +239,15 @@ class NunaPlayer(SimplePlayer):
 
 	def __init__(self, session, playList, playIdx=0, playAll=True, listTitle=None):
 		print "NunaPlayer:"
-		#self.genreVideos = genreVideos
-		self.playList = playList
-		self.playIdx = playIdx
+
 		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
-		
+
 	def getVideo(self):
 		self.nunaName = self.playList[self.playIdx][0]
 		nunaUrl = self.playList[self.playIdx][1]
-		
 		print self.nunaName, nunaUrl
-		
 		getPage(nunaUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
-		
+
 	def getStream(self, data):
 		stream_url = re.findall('data-site-url=".*?" href="(.*?)"', data)
 		if stream_url:
