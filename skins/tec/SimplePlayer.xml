@@ -2,7 +2,7 @@
   <ePixmap position="40,555" size="1200,150" zPosition="-2" pixmap="~/tec/images/spbg.png" />
   <ePixmap position="40,555" size="1200,150" zPosition="3" pixmap="~/tec/images/spglas.png" alphatest="blend" />
   <ePixmap position="40,555" size="1200,150" zPosition="2" pixmap="~/tec/images/spiconframe.png" alphatest="blend" />
-  <widget source="session.CurrentService" render="Label" position="273,566" size="700,54" font="mediaportal; 24" valign="center" halign="center" backgroundColor="black" transparent="1">
+  <widget source="session.CurrentService" render="Label" position="273,566" size="700,54" font="mediaportal; 24" valign="center" halign="center" backgroundColor="#00000000" transparent="1">
       <convert type="ServiceName">Name</convert>
     </widget>
   <widget source="session.CurrentService" render="Progress" position="273,626" size="700,14" pixmap="~/tec/images/spbar.png" zPosition="3" transparent="1" backgroundColor="#00000000">
