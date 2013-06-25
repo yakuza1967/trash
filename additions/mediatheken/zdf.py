@@ -332,4 +332,4 @@ class ZDFMediathekPlayer(SimplePlayer):
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)	
+		self.playStream(title, url)

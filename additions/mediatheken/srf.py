@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def SRFGenreListEntry(entry):
 	return [entry,
@@ -21,9 +22,9 @@ class SRFGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -32,26 +33,26 @@ class SRFGenreScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("SRF Player")
 		self['name'] = Label("Auswahl der Sendung")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.keyLocked = True
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.srf.ch/player/tv/sendungen?displayedKey=Alle"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		sendungen = re.findall('<img\sclass="az_thumb"\ssrc="(.*?)"\swidth="\d+"\sheight="\d+"\salt="(.*?)"\s/></a><h3><a\sclass="sendung_name"\shref="(/player/tv/.*?)">.*?</a></h3>.*?az_description">(.*?)</p>', data, re.S)
 		if sendungen:
@@ -67,7 +68,7 @@ class SRFGenreScreen(Screen):
 
 	def dataError(self, error):
 		print error
-		
+
 	def loadPic(self):
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
@@ -75,7 +76,7 @@ class SRFGenreScreen(Screen):
 		self['handlung'].setText(decodeHtml(streamHandlung))
 		streamPic = self['List'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['Pic'].instance.setPixmap(gPixmapPtr())
@@ -95,10 +96,10 @@ class SRFGenreScreen(Screen):
 			return
 		streamGenreLink = self['List'].getCurrent()[0][1]
 		self.session.open(SRFFilmeListeScreen, streamGenreLink)
-		
+
 	def dataError(self, error):
 		print error
-		
+
 	def keyLeft(self):
 		self['List'].pageUp()
 		self.loadPic()
@@ -119,7 +120,7 @@ class SRFGenreScreen(Screen):
 		self.close()
 
 class SRFFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -130,9 +131,9 @@ class SRFFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -147,15 +148,15 @@ class SRFFilmeListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		print error
-		
+
 	def loadPageData(self, data):
 		self.filmliste = []
 		folgen = re.findall('<h2\sclass="title"><a\stitle="(.*?)"\salt=".*?"\shref=".*?id=(.*?)"', data, re.S)
@@ -190,9 +191,21 @@ class SRFFilmeListeScreen(Screen):
 		else:
 			final = "%s swfUrl=http://www.srf.ch/player/flash/srfplayer.swf playpath=mp4:%s swfVfy=1" % (host, playpath)
 			print final
-			sref = eServiceReference(0x1001, 0, final)
-			sref.setName(title)
-			self.session.open(MoviePlayer, sref)
-		
+			playlist = []
+			playlist.append((title, final))
+			self.session.open(SRFPlayer, playlist, 0 , False, None)
+
 	def keyCancel(self):
 		self.close()
+
+class SRFPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+		print "SRFPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
