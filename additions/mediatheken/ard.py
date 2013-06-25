@@ -3,6 +3,7 @@
 #
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def ARDGenreListEntry(entry):
 	return [entry,
@@ -350,10 +351,11 @@ class ARDFilmeListeScreen(Screen):
 						Q0P = d
 
 			if len(Q0P) > 0:
-				# fix for not supported rtmpt protocol
 				if "flashmedia.radiobremen.de" in Q0H:
-					host = Q1H
-					playpath = Q1P
+					host = Q0H.split('mediabase/')[0]
+					playpath1 = Q0H.split('/mediabase/')[1]
+					playpath2 = Q0P[4:]
+					playpath = "mp4:mediabase/" + playpath1 + "/" + playpath2
 				else:
 					host = Q0H
 					playpath = Q0P
@@ -383,12 +385,6 @@ class ARDFilmeListeScreen(Screen):
 			wdr = "http-ras.wdr.de"
 			#
 
-			#if swr in playpath:
-			#	playpath = playpath.replace("ios-ondemand.swr.de/i","pd-ondemand.swr.de")
-			#	playpath = playpath.strip('/master.m3u8')
-			#if sr in host:
-			#	playpath = playpath.replace("MP4:","mp4:")
-				
 			self.keyLocked = False
 			self['name'].setText("Folgen Auswahl")
 
@@ -401,13 +397,14 @@ class ARDFilmeListeScreen(Screen):
 				self.session.open(PlayRtmpMovie, movieinfo, self.streamName)
 			elif host[0:4] == 'rtmp':
 				final = "%s playpath=%s" % (host, playpath)
-				sref = eServiceReference(0x1001, 0, final)
-				sref.setName(self.streamName)
-				self.session.open(MoviePlayer, sref)
+				playlist = []
+				playlist.append((self.streamName, final))
+				self.session.open(ARDMediathekPlayer, playlist, 0 , False, None)
 			else:
-				sref = eServiceReference(0x1001, 0, playpath)
-				sref.setName(self.streamName)
-				self.session.open(MoviePlayer, sref)
+				playlist = []
+				playlist.append((self.streamName, playpath))
+				self.session.open(ARDMediathekPlayer, playlist, 0 , False, None)
+
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -450,3 +447,15 @@ class ARDFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
+		
+class ARDMediathekPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+		print "ARDMediathekPlayer:"
+		
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)	
