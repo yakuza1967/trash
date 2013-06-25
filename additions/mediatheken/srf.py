@@ -209,3 +209,12 @@ class SRFPlayer(SimplePlayer):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
 		self.playStream(title, url)
+
+	def openPlaylist(self):
+		pass
+
+	def playPrevStream(self):
+		pass
+
+	def playNextStream(self):
+		pass
