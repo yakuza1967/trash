@@ -1419,6 +1419,7 @@ class m4kStreamListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
 		
+		self.base_url = 'http://www.movie4k.to/'
 		self.rd = GetRedirectedUrl()
 		self.keyLocked = True
 		self.filmliste = []
@@ -1447,6 +1448,8 @@ class m4kStreamListeScreen(Screen):
 		self.rd.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
 			
 	def loadPage2(self, url):
+		if 'http:' not in url:
+			url = self.base_url + url
 		print "link resolved:", url
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
@@ -1519,6 +1522,8 @@ class m4kStreamListeScreen(Screen):
 		self.rd.getRedirectedUrl(self.loadPic2, self.dataError, self.streamGenreLink)
 
 	def loadPic2(self, url):
+		if 'http:' not in url:
+			url = self.base_url + url
 		print "link resolved:", url
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		
@@ -1562,6 +1567,8 @@ class m4kStreamListeScreen(Screen):
 		self.rd.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
 		
 	def keyOK2(self, url):
+		if 'http:' not in url:
+			url = self.base_url + url
 		print "link resolved:", url
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
 		

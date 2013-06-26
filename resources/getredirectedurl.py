@@ -27,6 +27,9 @@ class GetRedirectedUrl:
 	def getResponse(self, response):
 		print "getResponse:"
 		print "Status code: ", response.phrase
+		#for header, value in response.headers.getAllRawHeaders():
+		#	print header, value
+			
 		r = response.headers.getRawHeaders("location")
 		if r:
 			url = r[0]
