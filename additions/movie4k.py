@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.decrypt import *
+from Plugins.Extensions.MediaPortal.resources.getredirectedurl import GetRedirectedUrl
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
     from Plugins.Extensions.TMDb.plugin import *
@@ -1418,6 +1419,7 @@ class m4kStreamListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
 		
+		self.rd = GetRedirectedUrl()
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -1430,6 +1432,7 @@ class m4kStreamListeScreen(Screen):
 
 	def loadPage(self):
 		print "link:", self.streamGenreLink
+		"""
 		req = urllib2.Request(self.streamGenreLink)
 		try:
 			res = urllib2.urlopen(req)
@@ -1440,6 +1443,12 @@ class m4kStreamListeScreen(Screen):
 			url = res.geturl()
 			print "link resolved:", url
 			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		"""
+		self.rd.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
+			
+	def loadPage2(self, url):
+		print "link resolved:", url
+		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
 		print "error:", error
@@ -1494,6 +1503,8 @@ class m4kStreamListeScreen(Screen):
 			]
 
 	def loadPic(self):
+		print "link:", self.streamGenreLink
+		"""
 		req = urllib2.Request(self.streamGenreLink)
 		try:
 			res = urllib2.urlopen(req)
@@ -1502,7 +1513,14 @@ class m4kStreamListeScreen(Screen):
 			return
 		else:
 			url = res.geturl()
+			print "link resolved:", url
 			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		"""
+		self.rd.getRedirectedUrl(self.loadPic2, self.dataError, self.streamGenreLink)
+
+	def loadPic2(self, url):
+		print "link resolved:", url
+		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
@@ -1529,6 +1547,7 @@ class m4kStreamListeScreen(Screen):
 			return
 		streamLink = self['filmList'].getCurrent()[0][0]
 		print self.streamName, streamLink
+		"""
 		try:
 			req = urllib2.Request(streamLink)
 			res = urllib2.urlopen(req)
@@ -1539,13 +1558,22 @@ class m4kStreamListeScreen(Screen):
 			url = res.geturl()
 			print "link resolved:", url
 			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
+		"""
+		self.rd.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
+		
+	def keyOK2(self, url):
+		print "link resolved:", url
+		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
 		
 	def get_streamlink(self, data, streamLink):
+		print "get_streamlink: ", len(data)
 		if re.match('.*?(http://img.movie4k.to/img/parts/teil1_aktiv.png|http://img.movie4k.to/img/parts/teil1_inaktiv.png|http://img.movie4k.to/img/parts/part1_active.png|http://img.movie4k.to/img/parts/part1_inactive.png)', data, re.S):
+			print "Open PartListScreen"
 			self.session.open(m4kPartListeScreen, streamLink, self.streamName)
 		else:
+			print "Search streamlink..."
 			link_found = False
-		
+			
 			link = re.findall('<a target="_blank" href="(.*?)"', data, re.S)
 			if link:
 				link_found = True
@@ -1570,13 +1598,13 @@ class m4kStreamListeScreen(Screen):
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
 				
-			link = re.findall('<iframe width=".*?" height=".*?" frameborder=".*?" src="(.*?)" scrolling="no"></iframe>', data, re.S)
+			link = re.findall('<iframe width=".*?" height=".*?" frameborder=".*?" src="(.*?)" scrolling="no"></iframe>', data)
 			if link:
 				link_found = True
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
-				
-			link = re.findall('<iframe src="(.*?)" width=".*?" height=".*?" frameborder=".*?" scrolling="no"></iframe>', data, re.S)
+			
+			link = re.findall('<iframe src="(.*?)" width=".*?" height=".*?" frameborder=".*?" scrolling="no"></iframe>', data)
 			if link:
 				link_found = True
 				print link[0]
