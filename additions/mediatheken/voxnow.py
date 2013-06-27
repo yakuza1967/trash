@@ -284,7 +284,7 @@ class VOXnowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(VOXnowPlayer, playlist, 0 , False, None)
+				self.session.open(VOXnowPlayer, playlist)
 
 	def keyTMDbInfo(self):
 		if TMDbPresent:
@@ -296,21 +296,12 @@ class VOXnowFilmeListeScreen(Screen):
 
 class VOXnowPlayer(SimplePlayer):
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+	def __init__(self, session, playList):
 		print "VOXnowPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
 		self.playStream(title, url)
-
-	def openPlaylist(self):
-		pass
-
-	def playPrevStream(self):
-		pass
-
-	def playNextStream(self):
-		pass

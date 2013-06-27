@@ -282,7 +282,7 @@ class NTVnowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(NTVnowPlayer, playlist, 0 , False, None)
+				self.session.open(NTVnowPlayer, playlist)
 
 	def keyTMDbInfo(self):
 		if TMDbPresent:
@@ -294,21 +294,12 @@ class NTVnowFilmeListeScreen(Screen):
 
 class NTVnowPlayer(SimplePlayer):
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+	def __init__(self, session, playList):
 		print "NTVnowPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
 		self.playStream(title, url)
-
-	def openPlaylist(self):
-		pass
-
-	def playPrevStream(self):
-		pass
-
-	def playNextStream(self):
-		pass

@@ -254,7 +254,7 @@ class RTL2nowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(RTL2nowPlayer, playlist, 0 , False, None)
+				self.session.open(RTL2nowPlayer, playlist)
 
 	def keyTMDbInfo(self):
 		if TMDbPresent:
@@ -266,21 +266,12 @@ class RTL2nowFilmeListeScreen(Screen):
 
 class RTL2nowPlayer(SimplePlayer):
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+	def __init__(self, session, playList):
 		print "RTL2nowPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
 		self.playStream(title, url)
-
-	def openPlaylist(self):
-		pass
-
-	def playPrevStream(self):
-		pass
-
-	def playNextStream(self):
-		pass
