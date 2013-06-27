@@ -20,7 +20,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 	
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False):
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True):
 	
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
@@ -60,6 +60,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.skinName = 'MediaPortal SimplePlayer'
 		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
 		
+		self.showPlaylist = showPlaylist
 		self.scrSaver = ''
 		self.saverActive = False
 		self.autoScrSaver = autoScrSaver
@@ -143,6 +144,9 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def playPrevStream(self):
 		print "_prevStream:"
+		if not self.playAll:
+			return
+			
 		if self.playIdx > 0:
 			self.playIdx -= 1
 		else:
@@ -151,6 +155,9 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		
 	def playNextStream(self):
 		print "playNextStream:"
+		if not self.playAll:
+			return
+			
 		if self.playIdx in range(0, self.playLen-1):
 			self.playIdx += 1
 		else:
@@ -224,7 +231,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 			self.close()
 				
 	def openPlaylist(self):
-		if self.playLen > 0:
+		if self.showPlaylist and self.playLen > 0:
 			if self.playlistQ.empty():
 				self.playlistQ.put(self.pl_status)
 			self.pl_open = True
@@ -266,7 +273,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 				self.session.open(mediaInfo, True)
 
 	def openMenu(self):
-		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, self.plType)
+		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, self.plType, self.showPlaylist)
 		
 	def cb_Menu(self, data):
 		print "cb_Menu:"
@@ -580,7 +587,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 class SimplePlayerMenu(Screen):
 	skin = '\n\t\t<screen position="center,center" size="300,200" title="MP Player Menü">\n\t\t\t<widget name="menu" position="10,10" size="290,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 	
-	def __init__(self, session, pltype):
+	def __init__(self, session, pltype, showPlaylist=True):
 		Screen.__init__(self, session)
 		self.session = session
 		self.pltype = pltype
@@ -594,9 +601,9 @@ class SimplePlayerMenu(Screen):
 		self.liste.append(('Configuration', 1))
 		if pltype in ('local', 'extern') :
 			self.liste.append(('Add service to global playlist', 2))
-			if pltype == 'local':
+			if showPlaylist and pltype == 'local':
 				self.liste.append(('Open global playlist', 3))
-		else:
+		elif showPlaylist:
 			self.liste.append(('Open local playlist', 4))
 		self['menu'] = MenuList(self.liste)
 		

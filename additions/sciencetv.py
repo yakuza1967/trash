@@ -66,8 +66,6 @@ class scienceTvGenreScreen(Screen):
 			self.session.open(
 				ScienceTvPlayer2,
 				[('Aktuelles Programm', 'http://www.science-tv.com/c/mid,2668,aktuelles_Programm/?contentpart=prog_video')],
-				playIdx = 0,
-				playAll = True
 				)
 		else:
 			self.session.open(scienceTvListScreen, genreID, stvLink, genre)
@@ -252,7 +250,7 @@ class ScienceTvPlayer2(SimplePlayer):
 		print "ScienceTvPlayer2:"
 		self.stvTitle = 'Science-TV - aktuelles Programm'
 
-		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle)
+		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle, showPlaylist=False)
 		
 	def getVideo(self):
 		stvLink = self.playList[self.playIdx][1]
@@ -273,14 +271,6 @@ class ScienceTvPlayer2(SimplePlayer):
 		if playing == True:
 			reactor.callLater(7, self.getVideo)
 			self.session.open(MessageBox, _("Bitte warten..."), MessageBox.TYPE_INFO, timeout=7)				
-
-	"""
-	def playNextStream(self):
-		pass
-		
-	def playPrevStream(self):
-		pass
-	"""
 
 class ScienceTvPlaylist(SimplePlaylist):
 

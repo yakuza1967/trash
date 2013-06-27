@@ -249,18 +249,9 @@ class PlayRtmpPlayer(SimplePlayer):
 	def __init__(self, session, playList):
 		print "PlayRtmpPlayer:"
 
-		SimplePlayer.__init__(self, session, playList)
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
 		self.playStream(title, url)
-
-	def openPlaylist(self):
-		pass
-
-	def playPrevStream(self):
-		pass
-
-	def playNextStream(self):
-		pass
