@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def RTLnowGenreListEntry(entry):
 	return [entry,
@@ -12,7 +13,7 @@ def RTLnowFilmListEntry(entry):
 		] 
 
 class RTLnowGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +22,9 @@ class RTLnowGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -32,30 +33,30 @@ class RTLnowGenreScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("RTLNOW.de")
 		self['name'] = Label("Genre Auswahl")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.keyLocked = True
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://rtl-now.rtl.de/sendung_a_z.php"
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		self.genreliste = []
 		genre = []
-		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
 		if genre:
 			for (url,image,pay,title,handlung) in genre:
 					if pay == "FREE":
@@ -70,7 +71,7 @@ class RTLnowGenreScreen(Screen):
 
 	def loadPageData2(self, data):
 		genre = []
-		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
 		if genre:
 			for (url,image,pay,title,handlung) in genre:
 					if pay == "FREE":
@@ -85,7 +86,7 @@ class RTLnowGenreScreen(Screen):
 			self.chooseMenuList.setList(map(RTLnowGenreListEntry, self.genreliste))
 			self.loadPic()
 			self.keyLocked = False		
-		
+
 	def dataError(self, error):
 		print error
 
@@ -96,7 +97,7 @@ class RTLnowGenreScreen(Screen):
 		self['handlung'].setText(decodeHtml(streamHandlung))
 		streamPic = self['List'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['Pic'].instance.setPixmap(gPixmapPtr())
@@ -116,19 +117,19 @@ class RTLnowGenreScreen(Screen):
 			return
 		streamGenreLink = self['List'].getCurrent()[0][1]
 		self.session.open(RTLnowFilmeListeScreen, streamGenreLink)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['List'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['List'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -145,7 +146,7 @@ class RTLnowGenreScreen(Screen):
 		self.close()
 
 class RTLnowFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -156,9 +157,9 @@ class RTLnowFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -166,7 +167,7 @@ class RTLnowFilmeListeScreen(Screen):
 
 		self['title'] = Label("RTLNOW.de")
 		self['name'] = Label("Film Auswahl")
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -174,15 +175,15 @@ class RTLnowFilmeListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		print error
-		
+
 	def loadPageData(self, data):
 		reiter_posts = []
 		self.filmliste = []
@@ -190,7 +191,7 @@ class RTLnowFilmeListeScreen(Screen):
 		if re.match('.*?var reitercount =', data, re.S):
 			reiter_count = re.findall('var reitercount = (.*?);', data, re.S)
 			print "Reiteranzahl:", reiter_count[0]
-			
+
 			reiter = re.findall("currentreiter=.*?;show_top_and_movies_wrapper.(.*?),'(.*?)','(.*?)',(.*?),(.*?),(.*?),'','(.*?)'.*?><div class=\"l\"></div><div class=\"m\">(.*?)</div>", data, re.S)
 			if reiter:
 				for each in reiter:
@@ -205,9 +206,9 @@ class RTLnowFilmeListeScreen(Screen):
 					post += "&xajaxargs[]="+each[4]
 					post += "&xajaxargs[]="+each[5]
 					post += "&xajaxargs[]="+each[6]
-					
+
 					reiter_posts.append((post, reitername))
-					
+
 				if len(reiter_posts) != 0:
 					count_reiter = len(reiter_posts)
 					print "Reiter gefunden:", count_reiter
@@ -225,7 +226,7 @@ class RTLnowFilmeListeScreen(Screen):
 			tabs = re.compile('<option.*?value=\'(\d)\'.*?>',re.DOTALL).findall(selects.group(6))
 			for tab in tabs:
 				ajax_posts.append(("xajaxargs[]="+tab+tabSelects)) 
-				
+
 		if len(ajax_posts) != 0:
 			seitenanzahl = len(ajax_posts)
 			print "Seitenanzahl fuer Reiter %s: %s" %  (reitername, seitenanzahl)
@@ -235,7 +236,7 @@ class RTLnowFilmeListeScreen(Screen):
 		else:
 			## keine pages gefunden
 			self.get_series_more_pages(data, reitername)
-			
+
 	def download(self, post):
 		#print item
 		return getPage('http://rtl-now.rtl.de/xajaxuri.php', method='POST', postdata=post, headers={'Content-Type':'application/x-www-form-urlencoded'})
@@ -283,7 +284,7 @@ class RTLnowFilmeListeScreen(Screen):
 			getPage(self.stream[0].replace('amp;',''), agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_stream).addErrback(self.dataError)
 		else:
 			print "nix"
-			
+
 	def get_stream(self, data):
 		print "stream data"
 		rtmpe_data = re.findall('<filename.*?><!\[CDATA\[(rtmpe://.*?rtlnow/)(.*?)\]\]></filename>', data, re.S|re.I)
@@ -299,14 +300,35 @@ class RTLnowFilmeListeScreen(Screen):
 			else:
 				final = "%s swfUrl=http://rtl-now.rtl.de/includes/vodplayer.swf pageurl=%s playpath=mp4:%s swfVfy=1" % (host, self.pageurl, playpath)
 				print final
-				sref = eServiceReference(0x1001, 0, final)
-				sref.setName(self.streamName)
-				self.session.open(MoviePlayer, sref)
-			
+				playlist = []
+				playlist.append((self.streamName, final))
+				self.session.open(RTLnowPlayer, playlist, 0 , False, None)
+
 	def keyTMDbInfo(self):
 		if TMDbPresent:
 			title = self['List'].getCurrent()[0][0]
 			self.session.open(TMDbMain, title)
-			
+
 	def keyCancel(self):
 		self.close()
+
+class RTLnowPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+		print "RTLnowPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
+
+	def openPlaylist(self):
+		pass
+
+	def playPrevStream(self):
+		pass
+
+	def playNextStream(self):
+		pass

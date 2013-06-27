@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def ORFGenreListEntry(entry):
 	return [entry,
@@ -12,7 +13,7 @@ def ORFFilmListEntry(entry):
 		] 
 
 class ORFGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +22,9 @@ class ORFGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -32,26 +33,26 @@ class ORFGenreScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("ORF TVthek")
 		self['name'] = Label("Auswahl der Sendung")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.keyLocked = True
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://tvthek.orf.at/"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		parse = re.search('<form\sid="programs"\saction="/programs/az"(.*)</form>', data, re.S)
 		sendungen = re.findall('<option\svalue=".*?(/programs/.*?)">(.*?)</option>', parse.group(1), re.S)
@@ -75,7 +76,7 @@ class ORFGenreScreen(Screen):
 
 	def dataError(self, error):
 		print error
-		
+
 	def check_xml(self,data):
 		if re.match('.*?<span>Weitere Folgen</span>', data, re.S):
 			print "mehrere Folgen"
@@ -90,13 +91,13 @@ class ORFGenreScreen(Screen):
 			if xml:
 				data = urllib.unquote(xml[0])
 				self.session.open(ORFStreamListeScreen, data)
-		
+
 	def keyLeft(self):
 		self['List'].pageUp()
-		
+
 	def keyRight(self):
 		self['List'].pageDown()
-		
+
 	def keyUp(self):
 		self['List'].up()
 
@@ -107,7 +108,7 @@ class ORFGenreScreen(Screen):
 		self.close()
 
 class ORFFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -118,9 +119,9 @@ class ORFFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -128,22 +129,22 @@ class ORFFilmeListeScreen(Screen):
 
 		self['title'] = Label("ORF TVthek")
 		self['name'] = Label("Folgen Auswahl")
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		print error
-		
+
 	def loadPageData(self, data):
 		self.filmliste = []
 		folgen = re.findall('<li.*?><a href="#" class="nolink">(.*?)</a>.*?<li><a href="(.*?)">(.*?)</a></li>', data, re.S)
@@ -170,9 +171,9 @@ class ORFFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class ORFStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, data_raw):
 		self.session = session
 		self.data_raw = data_raw
@@ -183,9 +184,9 @@ class ORFStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -193,14 +194,14 @@ class ORFStreamListeScreen(Screen):
 
 		self['title'] = Label("ORF TVthek")
 		self['name'] = Label("Folgen Auswahl")
-		
+
 		self.keyLocked = True
 		self.streamliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
@@ -225,9 +226,30 @@ class ORFStreamListeScreen(Screen):
 		else:
 			final = "%s" % url
 			print final
-			sref = eServiceReference(0x1001, 0, final)
-			sref.setName(title)
-			self.session.open(MoviePlayer, sref)
-		
+			playlist = []
+			playlist.append((title, final))
+			self.session.open(ORFPlayer, playlist, 0 , False, None)
+
 	def keyCancel(self):
 		self.close()
+
+class ORFPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+		print "ORFPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
+
+	def openPlaylist(self):
+		pass
+
+	def playPrevStream(self):
+		pass
+
+	def playNextStream(self):
+		pass

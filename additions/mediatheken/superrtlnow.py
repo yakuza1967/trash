@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def SUPERRTLnowAuswahlListEntry(entry):
 	return [entry,
@@ -12,7 +13,7 @@ def SUPERRTLnowSerieListEntry(entry):
 		]
 
 class SUPERRTLnowGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +22,9 @@ class SUPERRTLnowGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -32,7 +33,7 @@ class SUPERRTLnowGenreScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("SUPERRTLNOW.de")
 		self['name'] = Label("Genre Auswahl")
 		self['handlung'] = Label("")
@@ -44,14 +45,14 @@ class SUPERRTLnowGenreScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.superrtlnow.de"
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		superrtlFreeVideos = re.findall('<div class="seriennavi_free" style=""><a href="(.*?)".*?>FREE.*?</div>.*?<div style="" class="seriennavi_link">.*?">(.*?)</a>.*?</div>', data, re.S)
 		if superrtlFreeVideos:
@@ -63,26 +64,26 @@ class SUPERRTLnowGenreScreen(Screen):
 			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
 			self.chooseMenuList.setList(map(SUPERRTLnowAuswahlListEntry, self.genreliste))
 			self.keyLocked = False
-		
+
 	def dataError(self, error):
 		print error
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamGenreLink = self['List'].getCurrent()[0][1]
 		self.session.open(SUPERRTLnowFilmeListeScreen, streamGenreLink)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['List'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['List'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -97,7 +98,7 @@ class SUPERRTLnowGenreScreen(Screen):
 		self.close()
 
 class SUPERRTLnowFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -108,9 +109,9 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -128,13 +129,13 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		print error
-		
+
 	def loadPageData(self, data):
 		reiter_posts = []
 		self.filmliste = []
@@ -142,7 +143,7 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 		if re.match('.*?var reitercount =', data, re.S):
 			reiter_count = re.findall('var reitercount = (.*?);', data, re.S)
 			print "Reiteranzahl:", reiter_count[0]
-			
+
 			reiter = re.findall("currentreiter=.*?;show_top_and_movies_wrapper.(.*?),'(.*?)','(.*?)',(.*?),(.*?),(.*?),'','(.*?)'.*?><div class=\"l\"></div><div class=\"m\">(.*?)</div>", data, re.S)
 			if reiter:
 				for each in reiter:
@@ -157,9 +158,9 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 					post += "&xajaxargs[]="+each[4]
 					post += "&xajaxargs[]="+each[5]
 					post += "&xajaxargs[]="+each[6]
-					
+
 					reiter_posts.append((post, reitername))
-					
+
 				if len(reiter_posts) != 0:
 					count_reiter = len(reiter_posts)
 					print "Reiter gefunden:", count_reiter
@@ -177,7 +178,7 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 			tabs = re.compile('<option.*?value=\'(\d)\'.*?>',re.DOTALL).findall(selects.group(6))
 			for tab in tabs:
 				ajax_posts.append(("xajaxargs[]="+tab+tabSelects)) 
-				
+
 		if len(ajax_posts) != 0:
 			seitenanzahl = len(ajax_posts)
 			print "Seitenanzahl fuer Reiter %s: %s" %  (reitername, seitenanzahl)
@@ -235,7 +236,7 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 			getPage(self.stream[0].replace('amp;',''), agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_stream).addErrback(self.dataError)
 		else:
 			print "nix"
-			
+
 	def get_stream(self, data):
 		print "stream data"
 		rtmpe_data = re.findall('<filename.*?><!\[CDATA\[(rtmpe://.*?superrtlnow/)(.*?)\]\]></filename>', data, re.S|re.I)
@@ -251,14 +252,35 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 			else:
 				final = "%s swfUrl=http://www.superrtlnow.de/includes/vodplayer.swf pageurl=%s playpath=mp4:%s swfVfy=1" % (host, self.pageurl, playpath)
 				print final
-				sref = eServiceReference(0x1001, 0, final)
-				sref.setName(self.streamName)
-				self.session.open(MoviePlayer, sref)
-	
+				playlist = []
+				playlist.append((self.streamName, final))
+				self.session.open(SUPERRTLnowPlayer, playlist, 0 , False, None)
+
 	def keyTMDbInfo(self):
 		if TMDbPresent:
 			title = self['List'].getCurrent()[0][0]
 			self.session.open(TMDbMain, title)
-			
+
 	def keyCancel(self):
 		self.close()
+
+class SUPERRTLnowPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+		print "SUPERRTLnowPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
+
+	def openPlaylist(self):
+		pass
+
+	def playPrevStream(self):
+		pass
+
+	def playNextStream(self):
+		pass
