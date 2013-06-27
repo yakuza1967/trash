@@ -59,6 +59,8 @@ class RTL2nowGenreScreen(Screen):
 			for url, title in rtl2FreeVideos:
 				url = "http://rtl2now.rtl2.de" + url
 				self.genreliste.append((title, url))
+			self.genreliste = list(set(self.genreliste))
+			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
 			self.chooseMenuList.setList(map(rtl2AuswahlListEntry, self.genreliste))
 			self.keyLocked = False
 		

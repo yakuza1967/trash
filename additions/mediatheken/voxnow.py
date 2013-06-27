@@ -53,18 +53,17 @@ class VOXnowGenreScreen(Screen):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def loadPageData(self, data):
-		raw = re.findall('(<div class="m03img">.*?<div class="m03play")', data, re.S)
-		if raw:
-			self.genreliste = []
-			genre = []
-			for each in raw:
-				if re.match('.*?FREE.*?Jetzt ansehen', each, re.S|re.I):
-					genre += re.findall('<div class="m03img">.*?<a href="(.*?)" target="_self">\n<img border="0" height="136" width="216" src="(.*?)">\n</a></div>.*?<span class="m03date">FREE.*?<br></span><h2>(.*?)</h2>\n(.*?)</div>', each, re.S|re.I)
+		self.genreliste = []
+		genre = []
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
 		if genre:
-			for (url,image,title,handlung) in genre:
-					print title
-					url = "http://www.voxnow.de/" + url
-					self.genreliste.append((title,url,image,handlung))
+			for (url,image,pay,title,handlung) in genre:
+					if pay == "FREE":
+						print title
+						url = "http://www.voxnow.de/" + url
+						self.genreliste.append((title,url,image,handlung))
+			self.genreliste = list(set(self.genreliste))
+			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
 			self.chooseMenuList.setList(map(VoxnowGenreListEntry, self.genreliste))
 			self.loadPic()
 			self.keyLocked = False

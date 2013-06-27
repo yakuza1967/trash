@@ -53,21 +53,20 @@ class RTLNITROnowGenreScreen(Screen):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def loadPageData(self, data):
-		raw = re.findall('(<div class="m03img">.*?<div class="m03play")', data, re.S)
-		if raw:
-			self.genreliste = []
-			genre = []
-			for each in raw:
-				if re.match('.*?FREE.*?Jetzt ansehen', each, re.S|re.I):
-					genre += re.findall('<div class="m03img">.*?<a href="(.*?)" target="_self">\n<img border="0" alt="" src="(.*?)">\n</a></div>.*?<span class="m03date">FREE.*?<br></span>\n<h2>(.*?)</h2>\n(.*?)</div>', each, re.S|re.I)
-			if genre:
-				for (url,image,title,handlung) in genre:
+		self.genreliste = []
+		genre = []
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		if genre:
+			for (url,image,pay,title,handlung) in genre:
+					if pay == "FREE":
 						print title
 						url = "http://www.rtlnitronow.de/" + url
 						self.genreliste.append((title,url,image,handlung))
-				self.chooseMenuList.setList(map(RTLnitroGenreListEntry, self.genreliste))
-				self.loadPic()
-				self.keyLocked = False
+			self.genreliste = list(set(self.genreliste))
+			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
+			self.chooseMenuList.setList(map(RTLnitroGenreListEntry, self.genreliste))
+			self.loadPic()
+			self.keyLocked = False
 
 	def dataError(self, error):
 		print error

@@ -59,6 +59,8 @@ class SUPERRTLnowGenreScreen(Screen):
 			for url, title in superrtlFreeVideos:
 				url = "http://www.superrtlnow.de" + url
 				self.genreliste.append((title, url))
+			self.genreliste = list(set(self.genreliste))
+			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
 			self.chooseMenuList.setList(map(SUPERRTLnowAuswahlListEntry, self.genreliste))
 			self.keyLocked = False
 		

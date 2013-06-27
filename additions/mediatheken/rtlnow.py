@@ -55,11 +55,14 @@ class RTLnowGenreScreen(Screen):
 	def loadPageData(self, data):
 		self.genreliste = []
 		genre = []
-		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?alt="".*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
 		if genre:
 			for (url,image,pay,title,handlung) in genre:
 					if pay == "FREE":
 						print title
+						url = url.replace('http://rtl-now.rtl.de/','')
+						if url[0] == '/':
+							url = url[1:]
 						url = "http://rtl-now.rtl.de/" + url
 						self.genreliste.append((title,url,image,handlung))
 		url = "http://rtl-now.rtl.de/newsuebersicht.php"
@@ -67,7 +70,7 @@ class RTLnowGenreScreen(Screen):
 
 	def loadPageData2(self, data):
 		genre = []
-		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?alt="".*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?)"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
 		if genre:
 			for (url,image,pay,title,handlung) in genre:
 					if pay == "FREE":
@@ -78,7 +81,7 @@ class RTLnowGenreScreen(Screen):
 						url = "http://rtl-now.rtl.de/" + url
 						self.genreliste.append((title,url,image,handlung))
 			self.genreliste = list(set(self.genreliste))
-			self.genreliste.sort()
+			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
 			self.chooseMenuList.setList(map(RTLnowGenreListEntry, self.genreliste))
 			self.loadPic()
 			self.keyLocked = False		
