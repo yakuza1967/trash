@@ -213,7 +213,7 @@ class PlayRtmpMovie(Screen):
 			sref.setName(self.movietitle)
 			self.session.openWithCallback(self.MoviePlayerCallback, MoviePlayer, sref)
 			"""
-			self.session.openWithCallback(self.MoviePlayerCallback, PlayRtmpPlayer, [self.movietitle, self.moviepath])
+			self.session.openWithCallback(self.MoviePlayerCallback, PlayRtmpPlayer, [(self.movietitle, self.moviepath)])
 		else:
 			self.session.openWithCallback(self.exit, MessageBox, _("Error downloading file:\n%s") % self.lastcmddata, MessageBox.TYPE_ERROR)
 
