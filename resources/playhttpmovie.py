@@ -7,6 +7,7 @@ from enigma import eTimer, eConsoleAppContainer, eBackgroundFileEraser
 from Components.Slider import Slider
 from os import path as os_path, readlink as os_readlink, system as os_system
 from Tools import ASCIItranslit
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 class PlayHttpMovie(Screen):
 	skin = """
@@ -233,9 +234,12 @@ class PlayHttpMovie(Screen):
 		if self.lastlocalsize > 0:
 			self.isplaying = True
 			self.StatusTimer.stop()
+			"""
 			sref = eServiceReference(0x1001, 0, self.moviepath)
 			sref.setName(self.movietitle)
 			self.session.openWithCallback(self.MoviePlayerCallback, MoviePlayer, sref)
+			"""
+			self.session.openWithCallback(self.MoviePlayerCallback, PlayHttpPlayer, [(self.movietitle, self.moviepath)])
 		else:
 			self.session.openWithCallback(self.exit, MessageBox, _("Error downloading file:\n%s") % self.lastcmddata, MessageBox.TYPE_ERROR)
 
@@ -265,3 +269,15 @@ class PlayHttpMovie(Screen):
 		self.StatusTimer.stop()
 		self.session.nav.playService(self.oldService)
 		self.close()
+
+class PlayHttpPlayer(SimplePlayer):
+
+	def __init__(self, session, playList):
+		print "PlayHttpPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='playhttp')
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
