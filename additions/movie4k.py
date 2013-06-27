@@ -1,6 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.decrypt import *
-from Plugins.Extensions.MediaPortal.resources.getredirectedurl import GetRedirectedUrl
+from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
     from Plugins.Extensions.TMDb.plugin import *
@@ -1420,7 +1420,7 @@ class m4kStreamListeScreen(Screen):
 		self['coverArt'] = Pixmap()
 		
 		self.base_url = 'http://www.movie4k.to/'
-		self.rd = GetRedirectedUrl()
+		self.rd = TwAgentHelper()
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
