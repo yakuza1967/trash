@@ -618,6 +618,7 @@ class get_stream_link:
 	
 	def errorload(self, error):
 		print "[streams]:", error
+		self.stream_not_found()
 
 	def flashx_tv(self, data):
 		stream_url = re.findall('<file>(http://.*?flashx.tv.*?)</file>', data)
