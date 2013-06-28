@@ -642,7 +642,7 @@ class IStreamFilmListeScreen(Screen):
 
 def IStreamStreamListEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0]+entry[2])
 		] 
 class IStreamStreams(Screen, ConfigListScreen):
 	
@@ -702,18 +702,18 @@ class IStreamStreams(Screen, ConfigListScreen):
 		
 	def parseData(self, data):
 		print "parseData:"
-		streams = re.findall('class="hoster-button.*?href="(.*?)".*?title="(.*?)\s{0,2}\[(.*?)\]"', data)
-		mdesc = re.search('="og:description" content=\'(.*?)\'',data)
+		streams = re.findall('a class="hoster-button.*?href="(.*?)".*?title=".*?\[(.*?)\](.*?)"', data)
+		mdesc = re.search('class="desc">(.*?)<br />',data, re.S)
 		if mdesc:
 			print "Descr. found"
-			desc = mdesc.group(1)
+			desc = mdesc.group(1).strip()
 		else:
 			desc = "Keine weiteren Info's !"
 				
 		self.streamListe = []
 		if streams:
 			print "Streams found"
-			for (isUrl,streamPart,isStream) in streams:
+			for (isUrl,isStream,streamPart) in streams:
 				if re.match('.*?(putlocker|sockshare|flash strea|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Zooupload|Click.*?Play|BitShare)', isStream, re.S|re.I):
 					#print isUrl
 					#print isStream,streamPart
