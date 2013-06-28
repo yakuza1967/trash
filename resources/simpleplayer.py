@@ -3,13 +3,13 @@
 import Queue
 import random
 from Screens.InfoBarGenerics import *
-from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.youtubelink import YoutubeLink
-from Plugins.Extensions.MediaPortal.resources.putpattvlink import PutpattvLink
-from Plugins.Extensions.MediaPortal.resources.myvideolink import MyvideoLink
-from Plugins.Extensions.MediaPortal.resources.songstolink import SongstoLink
-from Plugins.Extensions.MediaPortal.resources.cannalink import CannaLink
-from Plugins.Extensions.MediaPortal.resources.eightieslink import EightiesLink
+from imports import *
+from youtubelink import YoutubeLink
+from putpattvlink import PutpattvLink
+from myvideolink import MyvideoLink
+from songstolink import SongstoLink
+from cannalink import CannaLink
+from eightieslink import EightiesLink
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
 	MediainfoPresent = True

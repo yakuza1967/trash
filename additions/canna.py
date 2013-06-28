@@ -1,7 +1,6 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-import Plugins.Extensions.MediaPortal.resources.mechanize as mechanize
 import random
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayerMenu, SimplePlaylistIO
 from Plugins.Extensions.MediaPortal.resources.cannalink import CannaLink

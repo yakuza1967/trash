@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from Plugins.Extensions.MediaPortal.resources.imports import *
+from imports import *
 
 class VirtualKeyBoardList(MenuList):
 	def __init__(self, list, enableWrapAround=False):

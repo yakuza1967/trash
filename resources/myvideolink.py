@@ -5,7 +5,7 @@ from binascii import unhexlify
 import hashlib, re, os, sha
 from urllib import unquote, urlencode
 from urllib2 import urlopen, Request, HTTPError, URLError
-from Plugins.Extensions.MediaPortal.resources.imports import *
+from imports import *
 
 special_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31',

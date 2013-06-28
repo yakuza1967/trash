@@ -1,6 +1,6 @@
 #	-*-	coding:	utf-8	-*-
 
-from Plugins.Extensions.MediaPortal.resources.imports import *
+from imports import *
 
 class SongstoLink:
 	def __init__(self, session):

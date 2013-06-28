@@ -1,7 +1,7 @@
 #	-*-	coding:	utf-8	-*-
 
 from Components.config import config
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
+from yt_url import *
 
 class YoutubeLink:
 	def __init__(self, session):

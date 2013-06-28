@@ -1,7 +1,7 @@
 #	-*-	coding:	utf-8	-*-
 
-from Plugins.Extensions.MediaPortal.resources.imports import *
-import Plugins.Extensions.MediaPortal.resources.mechanize as mechanize
+from imports import *
+import mechanize as mechanize
 
 class CannaLink:
 	def __init__(self, session):

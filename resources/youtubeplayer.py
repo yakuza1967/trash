@@ -1,7 +1,7 @@
 #	-*-	coding:	utf-8	-*-
 
-from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
-from Plugins.Extensions.MediaPortal.resources.youtubelink import YoutubeLink
+from simpleplayer import SimplePlayer
+from youtubelink import YoutubeLink
 
 class YoutubePlayer(SimplePlayer):
 

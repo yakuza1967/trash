@@ -7,7 +7,7 @@ from enigma import eTimer, eConsoleAppContainer, eBackgroundFileEraser
 from Components.Slider import Slider
 from os import path as os_path, readlink as os_readlink, system as os_system
 from Tools import ASCIItranslit
-from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from simpleplayer import SimplePlayer
 
 class PlayHttpMovie(Screen):
 	skin = """

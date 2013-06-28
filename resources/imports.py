@@ -47,7 +47,7 @@ from time import *
 
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 
-from Plugins.Extensions.MediaPortal.resources import mp_globals
+import mp_globals
 from Components.ScrollLabel import ScrollLabel
 
 std_headers = {
