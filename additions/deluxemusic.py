@@ -85,7 +85,7 @@ class deluxemusicGenreScreen(Screen):
 				stream_url = "%s%s" % (rtmp, playpath)
 				playlist = []
 				playlist.append(("Deluxemusic.tv", stream_url))
-				self.session.open(DeluxemusicPlayer, playlist, 0 , False, None)
+				self.session.open(DeluxemusicPlayer, playlist)
 
 	def dataError(self, error):
 		print error#
@@ -95,10 +95,10 @@ class deluxemusicGenreScreen(Screen):
 
 class DeluxemusicPlayer(SimplePlayer):
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+	def __init__(self, session, playList):
 		print "DeluxemusicPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]

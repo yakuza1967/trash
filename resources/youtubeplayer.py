@@ -5,10 +5,10 @@ from Plugins.Extensions.MediaPortal.resources.youtubelink import YoutubeLink
 
 class YoutubePlayer(SimplePlayer):
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0):
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, showPlaylist=True):
 		print "YoutubePlayer:"
 		
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, plType=plType, title_inr=title_inr, ltype='youtube')
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, plType=plType, title_inr=title_inr, ltype='youtube', showPlaylist=showPlaylist)
 		
 	def getVideo(self):
 		print "getVideo:"

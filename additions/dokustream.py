@@ -1,9 +1,9 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
 import Queue
 import threading
+from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
 DS_Version = "Doku-Stream.org v0.99"
 
@@ -947,6 +947,7 @@ class DS_Streams(Screen, ConfigListScreen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
+		"""
 		dhTitle = self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
 		#print "Title: ",dhTitle
@@ -957,6 +958,14 @@ class DS_Streams(Screen, ConfigListScreen):
 			sref = eServiceReference(0x1001, 0, dhLink)
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
+		"""
+		self.session.open(
+			YoutubePlayer,
+			self.filmliste,
+			self['liste'].getSelectedIndex(),
+			listTitle = self.genreName,
+			showPlaylist=False
+			)
 
 	def keyPageUp(self):
 		self['handlung'].pageUp()

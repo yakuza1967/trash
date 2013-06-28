@@ -1,11 +1,11 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
 import Queue
 import threading
+from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
-HSH_Version = "HörspielHouse.de v0.91"
+HSH_Version = "HörspielHouse.de v0.92"
 
 HSH_siteEncoding = 'utf-8'
 
@@ -732,6 +732,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
+		"""
 		dhTitle = self.dokuName + ' - ' + self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
 		print "Title: ",dhTitle
@@ -744,6 +745,16 @@ class HSH_Streams(Screen, ConfigListScreen):
 			sref = eServiceReference(0x1001, 0, dhLink)
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
+		"""
+		self.session.open(
+			YoutubePlayer,
+			self.filmliste,
+			self['liste'].getSelectedIndex(),
+			playAll = False,
+			listTitle = self.genreName,
+			title_inr=1
+			showPlaylist=False
+			)
 			
 	def keyYellow(self):
 		self.setVideoPrio()

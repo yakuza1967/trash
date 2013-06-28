@@ -458,7 +458,6 @@ class show_USER_ListScreen(Screen):
 			self['liste'].getSelectedIndex(),
 			playAll = True,
 			listTitle = self.genreName,
-			plType='local',
 			title_inr=1
 			)
 		

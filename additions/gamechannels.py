@@ -1,9 +1,9 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
+from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
-GAME_Version = "GAME-Channels v0.92"
+GAME_Version = "GAME-Channels v0.93"
 
 GAME_siteEncoding = 'utf-8'
 
@@ -398,6 +398,7 @@ class show_GAME_ListScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
+		"""
 		dhTitle = self['liste'].getCurrent()[0][1]
 		dhVideoId = self['liste'].getCurrent()[0][2]
 		print "Title: ",dhTitle
@@ -410,6 +411,16 @@ class show_GAME_ListScreen(Screen):
 			sref = eServiceReference(0x1001, 0, dhLink)
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
+		"""
+		self.session.open(
+			YoutubePlayer,
+			self.filmliste,
+			self['liste'].getSelectedIndex(),
+			playAll = False,
+			listTitle = self.genreName,
+			title_inr=1
+			showPlaylist=False
+			)
 
 	def keyCancel(self):
 		self.close()
