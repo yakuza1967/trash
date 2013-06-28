@@ -5,7 +5,7 @@ from Plugins.Extensions.MediaPortal.resources.yt_url import *
 import Queue
 import threading
 
-DH_Version = "DokuHouse.de v0.96"
+DH_Version = "DokuHouse.de v0.97"
 
 DH_siteEncoding = 'utf-8'
 
@@ -490,28 +490,14 @@ class DH_FilmListeScreen(Screen):
 		
 	def loadPageData(self, data):
 		print "loadPageData:"
-		
-		if self.genreSpecials:
-			print "Specials Dokus suche..."
-			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-		else:
-			print "Normal search.."
-			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-			
-		if m:
-			#dokus = re.findall('<div class="featured-.*?<a href="(.*?)"><img.*?src="(.*?)".*?title='\
-			#					'"(.*?)" />.*?<p>(.*?)</p>', m.group(1), re.S)
-			dokus = re.findall('<div class="featured-.*?<a href="(.*?)"><img.*?src="(.*?)".*?alt='\
-								'"(.*?)" />.*?<p>(.*?)</p>', m.group(1), re.S)
-		else:
-			dokus = None
-		
+		dokus = re.findall('class="article-image darken"><a href="(.*?)".*?src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
 		if dokus:
 			print "Dokus found !"
+			print dokus
 			if not self.pages:
-				m = re.findall('class=\'pages\'>Seite.*?von (.*?)</', data)
+				m = re.findall('data-paginated="(.*?)"', data)
 				if m:
-					self.pages = int(m[0])
+					self.pages = int(m[len(m)-1])
 				else:
 					self.pages = 1
 				self.page = 1
@@ -521,7 +507,7 @@ class DH_FilmListeScreen(Screen):
 			self.dokusListe = []
 			for	(url,img,name,desc) in dokus:
 				#print	"Url: ", url, "Name: ", name
-				self.dokusListe.append((decodeHtml(name), url, img, desc.lstrip().rstrip()))
+				self.dokusListe.append((decodeHtml(name), url, img, decodeHtml(desc.strip())))
 			self.chooseMenuList.setList(map(DH_FilmListEntry, self.dokusListe))
 			
 			self.loadPicQueued()
@@ -633,10 +619,11 @@ class DH_FilmListeScreen(Screen):
 
 		streamLink = self['liste'].getCurrent()[0][1]
 		streamName = self['liste'].getCurrent()[0][0]
+		streamPic = self['liste'].getCurrent()[0][2]
 		print "Open DH_Streams:"
 		print "Name: ",streamName
 		print "Link: ",streamLink
-		self.session.open(DH_Streams, streamLink, streamName)
+		self.session.open(DH_Streams, streamLink, streamName, streamPic)
 	
 	def keyUp(self):
 		if self.keyLocked:
@@ -763,10 +750,11 @@ def DH_StreamListEntry(entry):
 		] 
 class DH_Streams(Screen, ConfigListScreen):
 	
-	def __init__(self, session, dokuUrl, dokuName):
+	def __init__(self, session, dokuUrl, dokuName, dokuImg):
 		self.session = session
 		self.dokuUrl = dokuUrl
 		self.dokuName = dokuName
+		self.dokuImg = dokuImg
 		
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
@@ -828,11 +816,11 @@ class DH_Streams(Screen, ConfigListScreen):
 		
 	def parseData(self, data):
 		print "parseData:"
+		desc = ''
 		m = re.search('<!-- aeBeginAds -->(.*?)<!-- aeEndAds -->', data, re.S)
 		if m:
 			ldesc = re.findall('<p>(.*?</p>)',m.group(1),re.S)
 			if ldesc:
-				desc = ""
 				i = 0
 				for txt in ldesc:
 					txt = re.sub('<span.*?</span>','',txt)
@@ -844,25 +832,14 @@ class DH_Streams(Screen, ConfigListScreen):
 					i += 1
 		
 		self.streamListe = []
-		m2 = re.search('"http://www.youtube.com/(embed|v)/(.*?)("|\?).*?data-text="(.*?)"', m.group(1), re.S)
-		parts = re.search('<p>Part 1 von (.*?)<br', m.group(1))
-		img = re.search('<img class=.*?src="(.*?)"', m.group(1))
-		if img:
-			imgurl = img.group(1)
-			print "Image: ",imgurl
-		else:
-			imgurl = None
+		m2 = re.search('//www.youtube.com/(embed|v)/(.*?)("|\?)', m.group(1))
+		imgurl = self.dokuImg
 			
 		if m2:
 			print "Streams found"
-			if parts:
-				self.nParts = int(parts.group(1))
-				pstr = " [1/%d]" % self.nParts
-			else:
-				self.nParts = 0
-				pstr = ""
-				
-			self.streamListe.append((decodeHtml(m2.group(4))+pstr,m2.group(2),desc,imgurl))
+			self.nParts = 0
+			pstr = self.dokuName
+			self.streamListe.append((pstr,m2.group(2),desc,imgurl))
 		else:
 			print "No dokus found !"
 			desc = None

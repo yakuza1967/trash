@@ -9,9 +9,11 @@ class YoutubeLink:
 		self.session = session
 		self._callback = None
 		self.title = ''
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		
 	def getLink(self, cb_play, cb_err, title, url, imgurl):
+		print "getLink:"
+		print "VideoPrio: ", self.videoPrio
 		self._callback = cb_play
 		self.title = title
 		y = youtubeUrl(self.session)
