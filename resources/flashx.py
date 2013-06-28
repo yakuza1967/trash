@@ -82,12 +82,12 @@ class Flashx(object):
 		return data
 		
 	def getVidUrl(self, url):
-		html = self.__getData(url, True)
+		html = self.__getData(url, False)
 		vidUrl = None
 		if html:
 			js = re.findall('class="auto-style6".*?<a href="(.*?)"', html, re.S)
 			if js:
-				html = self.__getData(js[0], True)
+				html = self.__getData(js[0], False)
 				if html:
 					js = re.findall('player.swf\?config=(.*?)"', html)
 					if js:
