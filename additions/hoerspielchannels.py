@@ -414,7 +414,7 @@ class show_HSC_ListScreen(Screen):
 			self['liste'].getSelectedIndex(),
 			playAll = False,
 			listTitle = self.genreName,
-			title_inr=1
+			title_inr=1,
 			showPlaylist=False
 			)
 
