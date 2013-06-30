@@ -94,7 +94,6 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.setPlaymode()
 		self.configSaver()
 		self.onClose.append(self.playExit)
-		#self.onFirstExecBegin.append(self.showCover)
 		self.onFirstExecBegin.append(self.showIcon)
 		self.onLayoutFinish.append(self.getVideo)
 			
@@ -253,7 +252,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 			if self.plType == 'global':
 				if data[1] == 'del':
 					self.session.nav.stopService()
-					self.playList2 = SimplePlaylistIO.delEntry(self.pl_name, self.playList2, self.playIdx)
+					SimplePlaylistIO.delEntry(self.pl_name, self.playList2, self.playIdx)
 					self.playLen = len(self.playList2)
 					if self.playIdx >= self.playLen:
 						self.playIdx -= 1
@@ -656,13 +655,11 @@ class SimplePlaylistIO:
 				j += 1
 					
 			f1.close()
-			return list
 			
 		except IOError, e:
 			print "Fehler:\n",e
 			print "eCode: ",e
 			f1.close()
-			return list
 	
 	@staticmethod
 	def addEntry(pl_name, entry):
