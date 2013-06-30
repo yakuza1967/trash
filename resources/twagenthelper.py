@@ -128,10 +128,10 @@ class TwAgentHelper:
 			self._callback = callback
 			self.url = url
 			
-			req = urllib2.Request(url)
+			req = Request(url)
 			try:
-				res = urllib2.urlopen(req)
-			except urllib2.HTTPError, e:
+				res = urlopen(req)
+			except HTTPError, e:
 				print e.code
 				cb_err(e)
 			else:
