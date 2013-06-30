@@ -7,6 +7,8 @@ if sys.version_info > (2, 6):
 	from twisted.web.http_headers import Headers
 	from twisted.internet.protocol import Protocol
 	from twisted.internet.defer import Deferred
+	from twisted.web import http
+	from urlparse import urlunparse
 	
 	agent_headers = {
 		'User-Agent': ['Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'],
@@ -63,6 +65,12 @@ class TwAgentHelper:
 			r = response.headers.getRawHeaders("location")
 			if r:
 				url = r[0]
+				p = self._parse(url)
+
+				if b'http' not in p[0]:
+					print "Rel. URL correction"
+					scheme, host, port, path = self._parse(self.url)
+					url = b'%s://%s/%s' % (scheme, host, url)
 			else:
 				url = self.url
 			print "Location: ", url
@@ -81,6 +89,32 @@ class TwAgentHelper:
 			response.deliverBody(GetResource(finished))
 			return finished
 			
+		@staticmethod
+		def _parse(url, defaultPort=None):
+			url = url.strip()
+			parsed = http.urlparse(url)
+			scheme = parsed[0]
+			path = urlunparse(('', '') + parsed[2:])
+		
+			if defaultPort is None:
+				if scheme == 'https':
+					defaultPort = 443
+				else:
+					defaultPort = 80
+		
+			host, port = parsed[1], defaultPort
+			if ':' in host:
+				host, port = host.split(':')
+				try:
+					port = int(port)
+				except ValueError:
+					port = defaultPort
+		
+			if path == '':
+				path = '/'
+		
+			return scheme, host, port, path
+
 	else:
 	
 		def __init__(self):
