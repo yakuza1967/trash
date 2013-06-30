@@ -1433,18 +1433,6 @@ class m4kStreamListeScreen(Screen):
 
 	def loadPage(self):
 		print "link:", self.streamGenreLink
-		"""
-		req = urllib2.Request(self.streamGenreLink)
-		try:
-			res = urllib2.urlopen(req)
-		except urllib2.HTTPError, e:
-			print e.code
-			return
-		else:
-			url = res.geturl()
-			print "link resolved:", url
-			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		"""
 		self.rd.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
 			
 	def loadPage2(self, url):
@@ -1507,18 +1495,6 @@ class m4kStreamListeScreen(Screen):
 
 	def loadPic(self):
 		print "link:", self.streamGenreLink
-		"""
-		req = urllib2.Request(self.streamGenreLink)
-		try:
-			res = urllib2.urlopen(req)
-		except urllib2.HTTPError, e:
-			print e.code
-			return
-		else:
-			url = res.geturl()
-			print "link resolved:", url
-			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
-		"""
 		self.rd.getRedirectedUrl(self.loadPic2, self.dataError, self.streamGenreLink)
 
 	def loadPic2(self, url):
@@ -1552,18 +1528,6 @@ class m4kStreamListeScreen(Screen):
 			return
 		streamLink = self['filmList'].getCurrent()[0][0]
 		print self.streamName, streamLink
-		"""
-		try:
-			req = urllib2.Request(streamLink)
-			res = urllib2.urlopen(req)
-		except urllib2.HTTPError, e:
-			print e.code
-			return
-		else:
-			url = res.geturl()
-			print "link resolved:", url
-			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
-		"""
 		self.rd.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
 		
 	def keyOK2(self, url):
