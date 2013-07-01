@@ -142,9 +142,7 @@ class GEOdeGenreScreen(Screen):
 		self.session.open(
 			GEOdePlayer,
 			self.filmliste,
-			playIdx = self['liste'].getSelectedIndex(),
-			playAll = True,
-			listTitle = "GEOaudio - Hören und Reisen"
+			playIdx = self['liste'].getSelectedIndex()
 			)
 			
 	def keyCancel(self):
@@ -152,10 +150,10 @@ class GEOdeGenreScreen(Screen):
 		
 class GEOdePlayer(SimplePlayer):
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
+	def __init__(self, session, playList, playIdx):
 		print "GEOdePlayer:"
 
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, autoScrSaver=True)
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=True, listTitle="GEOaudio - Hören und Reisen", autoScrSaver=True, ltype='geo.de')
 		
 	def getVideo(self):
 		stvLink = self.playList[self.playIdx][2]

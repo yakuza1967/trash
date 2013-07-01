@@ -809,11 +809,11 @@ class DS_Streams(Screen, ConfigListScreen):
 		self['F3'] = Label("VidPrio")
 		self['F4'] = Label("Text+")
 		self['coverArt'] = Pixmap()
-		self['VideoPrio'] = Label("VideoPrio")
+		self['VideoPrio'] = Label("")
 		self['Page'] = Label("")
 		self['page'] = Label("")
 		
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		self.streamListe = []
@@ -936,11 +936,12 @@ class DS_Streams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(DS_StreamListEntry, self.streamListe))
 			
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-			
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 		
 	def keyOK(self):

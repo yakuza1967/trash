@@ -789,10 +789,10 @@ class DH_Streams(Screen, ConfigListScreen):
 		self['vPrio'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['coverArt'] = Pixmap()
-		self['VideoPrio'] = Label("VideoPrio")
+		self['VideoPrio'] = Label("")
 		self['Page'] = Label("")
 		self['page'] = Label("")
 		
@@ -915,6 +915,7 @@ class DH_Streams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(DH_StreamListEntry, self.streamListe))
 			
 	def setVideoPrio(self):
+		return
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:

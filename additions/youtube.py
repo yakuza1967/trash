@@ -588,12 +588,12 @@ class YT_ListScreen(Screen):
 		if not self.favoGenre:
 			self['F1'] = Label("Text-")
 			self['F2'] = Label("Favorit")
-			self['F3'] = Label("VidPrio")
+			self['F3'] = Label("")
 			self['F4'] = Label("Text+")
 		else:
 			self['F1'] = Label("Löschen")
 			self['F2'] = Label("")
-			self['F3'] = Label("VidPrio")
+			self['F3'] = Label("")
 			self['F4'] = Label("")
 		
 		self['VideoPrio'] = Label("")
@@ -604,7 +604,7 @@ class YT_ListScreen(Screen):
 		self.keyLocked = True
 		self.baseUrl = "http://www.youtube.com"
 
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		
@@ -813,11 +813,12 @@ class YT_ListScreen(Screen):
 		self['handlung'].setText("Das Video kann leider nicht abgespielt werden !\n"+str(error))
 
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def delFavo(self):

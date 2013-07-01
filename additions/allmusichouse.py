@@ -3,9 +3,9 @@
 import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
+from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
-AMH_Version = "AllMusicHouse.de v0.97"
+AMH_Version = "AllMusicHouse.de v0.99"
 
 AMH_siteEncoding = 'utf-8'
 
@@ -609,14 +609,14 @@ class AMH_Streams(Screen, ConfigListScreen):
 		self['vPrio'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['Page'] = Label("")
 		self['page'] = Label("")
 		self['coverArt'] = Pixmap()
-		self['VideoPrio'] = Label("VideoPrio")
+		self['VideoPrio'] = Label("")
 		
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		self.streamListe = []
@@ -698,16 +698,19 @@ class AMH_Streams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
 			
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyOK(self):
 		print "keyOK:"
 		if self.keyLocked:
 			return
+		"""
 		dhTitle = self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
 		print "Title: ",dhTitle
@@ -720,6 +723,14 @@ class AMH_Streams(Screen, ConfigListScreen):
 			sref = eServiceReference(0x1001, 0, dhLink)
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
+		"""
+		self.session.open(
+			YoutubePlayer,
+			self.streamListe,
+			self['liste'].getSelectedIndex(),
+			listTitle = self.dokuName,
+			showPlaylist=False
+			)
 			
 	def keyYellow(self):
 		self.setVideoPrio()

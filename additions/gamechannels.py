@@ -153,7 +153,7 @@ class show_GAME_ListScreen(Screen):
 		self.keyLocked = True
 		self.baseUrl = "http://www.youtube.com"
 
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		
@@ -291,11 +291,12 @@ class show_GAME_ListScreen(Screen):
 		self['handlung'].setText("Das Video kann leider nicht abgespielt werden !\n"+str(error))
 
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-			
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyLeft(self):

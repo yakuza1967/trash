@@ -183,7 +183,7 @@ class show_USER_ListScreen(Screen):
 		self['page'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['VideoPrio'] = Label("")
 		self['vPrio'] = Label("")
@@ -193,7 +193,7 @@ class show_USER_ListScreen(Screen):
 		self.keyLocked = True
 		self.baseUrl = "http://www.youtube.com"
 
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		
@@ -331,11 +331,12 @@ class show_USER_ListScreen(Screen):
 		self['handlung'].setText("Das Video kann leider nicht abgespielt werden !\n"+str(error))
 		
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-			
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyLeft(self):

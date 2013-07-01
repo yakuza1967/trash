@@ -893,14 +893,14 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		self['name'] = Label(dokuName)
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['vPrio'] = Label("")
-		self['VideoPrio'] = Label("VideoPrio")
+		self['VideoPrio'] = Label("")
 		self['Page'] = Label("")
 		self['page'] = Label("")
 		
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		self.streamListe = []
@@ -1007,11 +1007,12 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
 			
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-			
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 		
 	def keyOK(self):
