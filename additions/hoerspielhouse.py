@@ -753,7 +753,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 			self.streamListe,
 			self['liste'].getSelectedIndex(),
 			playAll = False,
-			listTitle = self.genreName,
+			listTitle = self.dokuName,
 			title_inr=1,
 			showPlaylist=False
 			)

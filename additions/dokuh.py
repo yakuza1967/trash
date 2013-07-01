@@ -1035,7 +1035,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			YoutubePlayer,
 			self.streamListe,
 			self['liste'].getSelectedIndex(),
-			listTitle = self.genreName,
+			listTitle = self.dokuName,
 			showPlaylist=False
 			)
 		
