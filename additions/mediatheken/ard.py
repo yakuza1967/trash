@@ -453,7 +453,7 @@ class ARDMediathekPlayer(SimplePlayer):
 	def __init__(self, session, playList):
 		print "ARDMediathekPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='ard')
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]

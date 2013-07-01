@@ -4,6 +4,8 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
 
 # teilweise von movie2k geliehen
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
@@ -17,7 +19,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-IS_Version = "iStream.ws v1.10"
+IS_Version = "iStream.ws v1.11"
 
 IS_siteEncoding = 'utf-8'
 
@@ -685,6 +687,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		
+		self.rd = TwAgentHelper()
 		self.streamListe = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
@@ -759,28 +762,20 @@ class IStreamStreams(Screen, ConfigListScreen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			fx = re.match('.*?flashx', stream_url)
-			if config.mediaportal.useHttpDump.value or fx:
-				title = self.filmName + self['liste'].getCurrent()[0][2]
-				if fx:
-					movieinfo = [stream_url,self.filmName,"http://play.flashx.tv/"]
-				else:
-					movieinfo = [stream_url,self.filmName,""]
-			
+			title = self.filmName + self['liste'].getCurrent()[0][2]
+			if config.mediaportal.useHttpDump.value:
+				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
-				sref = eServiceReference(0x1001, 0, stream_url)
-				sref.setName("%s%s" % (self.filmName,self['liste'].getCurrent()[0][2]))
-				self.session.open(MoviePlayer, sref)
-	
+				self.session.open(iStreamPlayer, [(title, stream_url)])
+				
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamLink = self['liste'].getCurrent()[0][1]
-		fp = urllib.urlopen(streamLink.replace('http://video.istream.ws/embed.php?m=','http://istream.ws/mirror.php?m='))
-		streamLink = fp.geturl()
-		fp.close()
-		print "get_streamLink:"
+		self.rd.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
+	
+	def keyOK2(self, streamLink):
 		get_stream_link(self.session).check_link(streamLink, self.got_link)
 			
 	def keyTxtPageUp(self):
@@ -791,3 +786,15 @@ class IStreamStreams(Screen, ConfigListScreen):
 			
 	def keyCancel(self):
 		self.close()
+		
+class iStreamPlayer(SimplePlayer):
+
+	def __init__(self, session, playList):
+		print "iStreamPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='istream.ws')
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)		

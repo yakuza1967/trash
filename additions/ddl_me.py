@@ -4,6 +4,7 @@ import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
 	from Plugins.Extensions.TMDb.plugin import *
@@ -16,7 +17,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 	
-DDLME_Version = "ddl.me v0.93 (experimental)"
+DDLME_Version = "ddl.me v0.94 (experimental)"
 
 DDLME_siteEncoding = 'utf-8'
 
@@ -1035,23 +1036,16 @@ class DDLMEStreams(Screen, ConfigListScreen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			fx = re.match('.*?flashx', stream_url)
 			if not re.match('One', self['liste'].getCurrent()[0][2]):
 				title = self.filmName + ' - ' + self['liste'].getCurrent()[0][2]
 			else:
 				title = self.filmName
 				
-			if config.mediaportal.useHttpDump.value or fx:
-				if fx:
-					movieinfo = [stream_url,self.filmName,"http://play.flashx.tv/"]
-				else:
-					movieinfo = [stream_url,self.filmName,""]
-			
+			if config.mediaportal.useHttpDump.value:
+				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
-				sref = eServiceReference(0x1001, 0, stream_url)
-				sref.setName(title)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(DDLmePlayer, [(title, stream_url)])
 	
 	def keyOK(self):
 		if self.keyLocked:
@@ -1068,3 +1062,15 @@ class DDLMEStreams(Screen, ConfigListScreen):
 			
 	def keyCancel(self):
 		self.close()
+		
+class DDLmePlayer(SimplePlayer):
+
+	def __init__(self, session, playList):
+		print "DDLmePlayer:"
+
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='ddl.me')
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)		

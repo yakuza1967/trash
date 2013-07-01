@@ -2,14 +2,22 @@ import math
 import re
 import urllib2
 from urllib import unquote
-from cookielib import CookieJar
+from urllib2 import urlopen, Request, HTTPError, URLError
 
 class Flashx(object):
 
+	headers = [
+		('Accept', ('text/html,application/xhtml+xml,'
+					'application/xml;q=0.9,*/*;q=0.8')),
+		('User-Agent', ('Mozilla/5.0 (Windows NT 6.1; WOW64) '
+						'AppleWebKit/537.36 (KHTML, like Gecko) '
+						'Chrome/27.0.1453.15 Safari/537.36')),
+		('Accept-Language', 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4'),
+		('Referer', 'http://play.flashx.tv')
+	]
+	
 	def __init__(self):
-		self.cj = CookieJar()
-		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-		self.opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+		self.cookie = None
 
 	def __c(self, c):
 		d = ""
@@ -58,15 +66,25 @@ class Flashx(object):
 		html = self.__x(x, t)
 		return html
 		
-	def __getData(self, url, decode=False):
+	def __getData(self, url, decode=False, referer=None):
 		data = None
+		
+		request = Request(url)
+		for header in self.headers:
+			request.add_header(*header)
+		if referer:
+			request.add_header('Referer', referer)
+		if self.cookie:
+			request.add_header('Cookie', self.cookie)
 		try:
-			resp = self.opener.open(url)
-			data = resp.read()
-		except urllib2.HTTPError, e:
-			print "HTTP Error: ",e
-		except urllib2.URLError, e:
-			print "URL Error: ",e
+			response = urlopen(request)
+			if response.headers.get('Set-Cookie'):
+				self.cookie = response.headers.get('Set-Cookie')
+			data = response.read()
+		except HTTPError, error:
+			print 'HTTPError: %s' % error
+		except URLError, error:
+			print 'URLError: %s' % error
 		
 		if not decode:
 			return data
@@ -87,11 +105,13 @@ class Flashx(object):
 		if html:
 			js = re.findall('class="auto-style6".*?<a href="(.*?)"', html, re.S)
 			if js:
-				html = self.__getData(js[0], False)
+				html = self.__getData(js[0], False, url)
 				if html:
+					referer = js[0]
 					js = re.findall('player.swf\?config=(.*?)"', html)
 					if js:
-						html = self.__getData(js[0])
+						html = self.__getData('http://play.flashx.tv/player/soy.php', referer=referer)
+						html = self.__getData(js[0], referer=referer)
 						if html:
 							js = re.findall('<file>(.*?)</file>', html)
 							if js:
