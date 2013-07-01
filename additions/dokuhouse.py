@@ -796,7 +796,7 @@ class DH_Streams(Screen, ConfigListScreen):
 		self['Page'] = Label("")
 		self['page'] = Label("")
 		
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		self.streamListe = []
@@ -915,21 +915,21 @@ class DH_Streams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(DH_StreamListEntry, self.streamListe))
 			
 	def setVideoPrio(self):
-		return
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-			
+		"""
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 		
 	def keyOK(self):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-		"""
 		dhTitle = self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
+		"""
 		#print "Title: ",dhTitle
 		#print "VideoId: ",dhVideoId
 		dhLink = youtubeUrl(self.session).getVideoUrl(dhVideoId, self.videoPrio)
@@ -941,9 +941,9 @@ class DH_Streams(Screen, ConfigListScreen):
 		"""
 		self.session.open(
 			YoutubePlayer,
-			self.streamListe,
-			self['liste'].getSelectedIndex(),
+			[(None, dhTitle, dhVideoId, None)],
 			listTitle = self.dokuName,
+			title_inr=1,
 			showPlaylist=False
 			)
 

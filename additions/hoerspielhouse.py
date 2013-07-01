@@ -734,9 +734,9 @@ class HSH_Streams(Screen, ConfigListScreen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-		"""
 		dhTitle = self.dokuName + ' - ' + self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
+		"""
 		print "Title: ",dhTitle
 		#print "VideoId: ",dhVideoId
 		y = youtubeUrl(self.session)
@@ -750,9 +750,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 		"""
 		self.session.open(
 			YoutubePlayer,
-			self.streamListe,
-			self['liste'].getSelectedIndex(),
-			playAll = False,
+			[(None, dhTitle, dhVideoId, None)],
 			listTitle = self.dokuName,
 			title_inr=1,
 			showPlaylist=False

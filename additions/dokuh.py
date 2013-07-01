@@ -1019,9 +1019,9 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-		"""
 		dhTitle = self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
+		"""
 		#print "Title: ",dhTitle
 		#print "VideoId: ",dhVideoId
 		dhLink = youtubeUrl(self.session).getVideoUrl(dhVideoId, self.videoPrio)
@@ -1033,9 +1033,9 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		"""
 		self.session.open(
 			YoutubePlayer,
-			self.streamListe,
-			self['liste'].getSelectedIndex(),
+			[(None, dhTitle, dhVideoId, None)],
 			listTitle = self.dokuName,
+			title_inr=1,
 			showPlaylist=False
 			)
 		
