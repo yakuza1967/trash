@@ -750,7 +750,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 		"""
 		self.session.open(
 			YoutubePlayer,
-			self.filmliste,
+			self.streamListe,
 			self['liste'].getSelectedIndex(),
 			playAll = False,
 			listTitle = self.genreName,

@@ -1033,7 +1033,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		"""
 		self.session.open(
 			YoutubePlayer,
-			self.filmliste,
+			self.streamListe,
 			self['liste'].getSelectedIndex(),
 			listTitle = self.genreName,
 			showPlaylist=False
