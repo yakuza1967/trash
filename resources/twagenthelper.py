@@ -1,7 +1,7 @@
 #	-*-	coding:	utf-8	-*-
 
 import sys
-if sys.version_info > (2, 6):
+if sys.version_info >= (2, 7):
 	from twisted.web.client import Agent, RedirectAgent
 	from twisted.internet import reactor
 	from twisted.web.http_headers import Headers
@@ -37,7 +37,7 @@ else:
 
 class TwAgentHelper:
 
-	if sys.version_info > (2, 6):
+	if sys.version_info >= (2, 7):
 	
 		def __init__(self):
 			print "GetRedirectedUrl:"
