@@ -158,6 +158,20 @@ class get_stream_link:
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashx_tv3b).addErrback(self.errorload)
 				elif re.match('.*?embed.php\?hash=', link) or re.match('.*?embed_player.php\?hash=', link) or re.match('.*?embed_player.php\?vid=', link) or re.match('.*?embed.php\?vid=', link):
 					self.flashx_tv3(link)
+				elif re.match('.*?player/fxtv.php.hash=', link):
+					req = urllib2.Request(link)
+					try:
+						res = urllib2.urlopen(req)
+					except urllib2.HTTPError, e:
+						print e.code
+						self.stream_not_found()
+					else:
+						r_url = res.geturl()
+						print "Redir: ", r_url
+						if r_url != link:
+							self.check_link(r_url, self._callback, False)
+						else:
+							self.flashx_tv3(link)
 				else:
 					print "flashx_tv link not found: ",link
 					self.stream_not_found()
@@ -628,6 +642,7 @@ class get_stream_link:
 			self.stream_not_found()
 			
 	def flashx_tv2(self, data):
+		print "flashx_tv2: ",data
 		hash = re.findall('http://play.flashx.tv/player/fxtv.php.hash=(.*?)&', data, re.S)
 		if hash:
 			url = "http://play.flashx.tv/nuevo/player/cst.php?hash=%s" % hash[0]
