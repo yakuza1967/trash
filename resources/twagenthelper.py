@@ -24,7 +24,7 @@ if sys.version_info >= (2, 7):
 			self.finished = finished
 		
 		def dataReceived(self, data):
-			print "dataReceived:"
+			#print "dataReceived:"
 			self.data += data
 			#print data
 		
@@ -33,30 +33,35 @@ if sys.version_info >= (2, 7):
 			self.finished.callback(self.data)
 else:
 	from urllib2 import Request, urlopen, HTTPError
-	
+	from twisted.web.client import getPage
 
+	std_headers = {
+		'User-Agent': 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6',
+		'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+		'Accept-Language': 'en-us,en;q=0.5',
+	}
+	
 class TwAgentHelper:
 
 	if sys.version_info >= (2, 7):
 	
 		def __init__(self):
 			print "GetRedirectedUrl:"
-			self._callback = None
-			self.url = None
 			# can not follow rel. url redirects (location header)
 			#self.agent = RedirectAgent(Agent(reactor))
 			print "Twisted Agent in use"
 			self.agent = Agent(reactor)
 			self.headers = Headers(agent_headers)
 		
-		def getRedirectedUrl(self, callback, cb_err, url):
+		def getRedirectedUrl(self, callback, cb_err, url, *args, **kwargs):
 			print "getRedirectedUrl: ", url
-			self._callback = callback
+			self._rd_callback = callback
 			self.url = url
 			
-			self.agent.request('HEAD', url, headers=self.headers).addCallback(self.__getResponse).addErrback(cb_err)
+			self.agent.request('HEAD', url, headers=self.headers).addCallback(self.__getResponse, *args, **kwargs).addErrback(cb_err)
 			
-		def __getResponse(self, response):
+		def __getResponse(self, response, *args, **kwargs):
 			print "__getResponse:"
 			print "Status code: ", response.phrase
 			#for header, value in response.headers.getAllRawHeaders():
@@ -64,24 +69,32 @@ class TwAgentHelper:
 				
 			r = response.headers.getRawHeaders("location")
 			if r:
-				url = r[0]
-				p = self._parse(url)
+				r_url = r[0]
+				p = self._parse(r_url)
 
 				if b'http' not in p[0]:
 					print "Rel. URL correction"
 					scheme, host, port, path = self._parse(self.url)
-					url = b'%s://%s/%s' % (scheme, host, url)
+					r_url = b'%s://%s/%s' % (scheme, host, r_url)
 			else:
-				url = self.url
-			print "Location: ", url
+				r_url = self.url
+			print "Location: ", r_url
 			
-			self._callback(url)
+			self._rd_callback(r_url, *args, **kwargs)
 
-		def getWebPage(self, callback, cb_err, url):
+		def getWebPage(self, callback, cb_err, url, follow_redir, *args, **kwargs):
 			print "getWebPage: ", url
+			self._wp_callback = callback
+			self._errback = cb_err
+			if follow_redir:
+				self.getRedirectedUrl(self.__getWebPageDef, cb_err, url, *args, **kwargs)
+			else:
+				self.__getWebPageDef(url, *args, **kwargs)
+			
+		def __getWebPageDef(self, url, *args, **kwargs):
 			d = self.agent.request('GET', url, headers=self.headers)
 			d.addCallback(self.__getResource)
-			d.addCallbacks(callback, cb_err)
+			d.addCallbacks(self._wp_callback, self._errback, callbackArgs=args, callbackKeywords=kwargs)
 			
 		def __getResource(self, response):
 			print "__getResource:"
@@ -119,14 +132,10 @@ class TwAgentHelper:
 	
 		def __init__(self):
 			print "GetRedirectedUrl:"
-			self._callback = None
-			self.url = None
 			print "Urllib2 in use"
 			
-		def getRedirectedUrl(self, callback, cb_err, url):
+		def getRedirectedUrl(self, callback, cb_err, url, *args, **kwargs):
 			print "getRedirectedUrl: ", url
-			self._callback = callback
-			self.url = url
 			
 			req = Request(url)
 			try:
@@ -136,7 +145,16 @@ class TwAgentHelper:
 				cb_err(e)
 			else:
 				r_url = res.geturl()
-				callback(r_url)
+				callback(r_url, *args, **kwargs)
 				
-		def getWebPage(self, callback, cb_err, url):
-			cb_err('Twisted Agent not present')
+		def getWebPage(self, callback, cb_err, url, follow_redir, *args, **kwargs):
+			print "getWebPage: ", url
+			self._wp_callback = callback
+			self._errback = cb_err
+			if follow_redir:
+				self.getRedirectedUrl(self.__getWebPageDef, cb_err, url, *args, **kwargs)
+			else:
+				self.__getWebPageDef(url, *args, **kwargs)
+			
+		def __getWebPageDef(self, url, *args, **kwargs):
+			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self._wp_callback, *args, **kwargs).addErrback(self._errback)

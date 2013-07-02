@@ -687,7 +687,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		
-		self.rd = TwAgentHelper()
+		self.tw_agent_hlp = TwAgentHelper()
 		self.streamListe = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
@@ -701,7 +701,8 @@ class IStreamStreams(Screen, ConfigListScreen):
 		streamUrl = self.filmUrl
 		#print "FilmUrl: %s" % self.filmUrl
 		#print "FilmName: %s" % self.filmName
-		getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		#getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		self.tw_agent_hlp.getWebPage(self.parseData, self.dataError, streamUrl, False)
 		
 	def parseData(self, data):
 		print "parseData:"
@@ -767,13 +768,13 @@ class IStreamStreams(Screen, ConfigListScreen):
 				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
-				self.session.open(iStreamPlayer, [(title, stream_url)])
+				self.session.open(iStreamPlayer, [(title, stream_url, self.imageUrl)], showCover=True)
 				
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamLink = self['liste'].getCurrent()[0][1]
-		self.rd.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
+		self.tw_agent_hlp.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
 	
 	def keyOK2(self, streamLink):
 		get_stream_link(self.session).check_link(streamLink, self.got_link)
@@ -789,12 +790,13 @@ class IStreamStreams(Screen, ConfigListScreen):
 		
 class iStreamPlayer(SimplePlayer):
 
-	def __init__(self, session, playList):
+	def __init__(self, session, playList, showCover=False):
 		print "iStreamPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='istream.ws')
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='istream.ws', cover=showCover)
 
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)		
+		iurl = self.playList[self.playIdx][2]
+		self.playStream(title, url, imgurl=iurl)		

@@ -1420,7 +1420,7 @@ class m4kStreamListeScreen(Screen):
 		self['coverArt'] = Pixmap()
 		
 		self.base_url = 'http://www.movie4k.to/'
-		self.rd = TwAgentHelper()
+		self.tw_agent_hlp = TwAgentHelper()
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -1433,7 +1433,8 @@ class m4kStreamListeScreen(Screen):
 
 	def loadPage(self):
 		print "link:", self.streamGenreLink
-		self.rd.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
+		#self.tw_agent_hlp.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
+		self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, self.streamGenreLink, True)
 			
 	def loadPage2(self, url):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
@@ -1492,7 +1493,8 @@ class m4kStreamListeScreen(Screen):
 
 	def loadPic(self):
 		print "link:", self.streamGenreLink
-		self.rd.getRedirectedUrl(self.loadPic2, self.dataError, self.streamGenreLink)
+		#self.tw_agent_hlp.getRedirectedUrl(self.loadPic2, self.dataError, self.streamGenreLink)
+		self.tw_agent_hlp.getWebPage(self.showHandlung, self.dataError, self.streamGenreLink, True)
 
 	def loadPic2(self, url):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
@@ -1522,10 +1524,11 @@ class m4kStreamListeScreen(Screen):
 			return
 		streamLink = self['filmList'].getCurrent()[0][0]
 		print self.streamName, streamLink
-		self.rd.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
+		self.tw_agent_hlp.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
 		
 	def keyOK2(self, url):
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
+		self.tw_agent_hlp.getWebPage(self.get_streamlink, self.dataError, url, False, url)
+		#getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
 		
 	def get_streamlink(self, data, streamLink):
 		print "get_streamlink: ", len(data)

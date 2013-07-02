@@ -8,6 +8,8 @@ import re, urllib2, urllib, cookielib
 from jsunpacker import cJsUnpacker
 from flashx import Flashx
 from userporn import Userporn
+from twagenthelper import TwAgentHelper
+
 
 # cookies
 ck = {}
@@ -19,6 +21,7 @@ class get_stream_link:
 		self._callback = None
 		self.session = session
 		self.showmsgbox = True
+		self.tw_agent_hlp = TwAgentHelper()
 
 	def check_link(self, data, got_link, showmsgbox=True):
 		print "check_link"
@@ -159,6 +162,7 @@ class get_stream_link:
 				elif re.match('.*?embed.php\?hash=', link) or re.match('.*?embed_player.php\?hash=', link) or re.match('.*?embed_player.php\?vid=', link) or re.match('.*?embed.php\?vid=', link):
 					self.flashx_tv3(link)
 				elif re.match('.*?player/fxtv.php.hash=', link):
+					"""
 					req = urllib2.Request(link)
 					try:
 						res = urllib2.urlopen(req)
@@ -172,6 +176,8 @@ class get_stream_link:
 							self.check_link(r_url, self._callback, False)
 						else:
 							self.flashx_tv3(link)
+					"""
+					self.tw_agent_hlp.getRedirectedUrl(self.check_link, self.stream_not_found, link, self._callback, False)
 				else:
 					print "flashx_tv link not found: ",link
 					self.stream_not_found()
