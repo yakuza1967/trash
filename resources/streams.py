@@ -252,6 +252,19 @@ class get_stream_link:
 			elif re.match('.*?mightyupload.com/embed', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)
+
+			elif re.match('.*?mightyupload.com', data, re.S):
+				link = data
+				id = link.split('/')
+				url = "http://www.mightyupload.com/embed-%s.html" % id[3]
+				print url
+				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)				
+
+			elif re.match('.*?http://youwatch.org', data, re.S):
+				link = data
+				id = link.split('org/')
+				url = "http://youwatch.org/embed-%s.html" % id[1]
+				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.youwatch).addErrback(self.errorload)
 					
 			else:
 				message = self.session.open(MessageBox, _("No supported Stream Hoster, try another one !"), MessageBox.TYPE_INFO, timeout=5)
@@ -266,16 +279,39 @@ class get_stream_link:
 		if self.showmsgbox:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
-			
+	def youwatch(self, data):
+		stream_url = re.findall('file: "(.*?)"', data, re.S)
+		if stream_url:
+			print stream_url[0]
+			self._callback(stream_url[0])
+		else:
+			self.stream_not_found()
+	
 	def mightyupload(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
-			sUnpacked = cJsUnpacker().unpackByString(get_packedjava[1])
-		if sUnpacked:
-			stream_url = re.findall("'file','(.*?)'", sUnpacked)
-			if stream_url:
-				print stream_url[0]
-				self._callback(stream_url[0])
+			print get_packedjava
+			sJavascript = get_packedjava[1]
+			sUnpacked = cJsUnpacker().unpackByString(sJavascript)
+			if sUnpacked:
+				print "unpacked"
+				print sUnpacked
+				if re.match('.*?type="video/divx', sUnpacked):
+					print "DDIIIIIIIIIVVVXXX"
+					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
+					if stream_url:
+						print stream_url[0]
+						self._callback(stream_url[0])
+					else:
+						self.stream_not_found()
+				elif re.match(".*?file", sUnpacked):
+					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
+					stream_url = re.findall("file','(.*?)'", sUnpacked)
+					if stream_url:
+						print stream_url[0]
+						self._callback(stream_url[0])
+					else:
+						self.stream_not_found()
 			else:
 				self.stream_not_found()
 		else:
@@ -731,8 +767,8 @@ class get_stream_link:
 		if hash:
 			info = urlencode({'hash': hash[0]})	
 			print info
-			reactor.callLater(6, self.primeshare_getPage, url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
-			message = self.session.open(MessageBox, _("Stream startet in 6 sec."), MessageBox.TYPE_INFO, timeout=6)
+			reactor.callLater(16, self.primeshare_getPage, url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
+			message = self.session.open(MessageBox, _("Stream startet in 16 sec."), MessageBox.TYPE_INFO, timeout=16)
 		else:	
 			self.stream_not_found()
 

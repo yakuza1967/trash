@@ -72,6 +72,7 @@ from additions.watchseries import *
 from additions.wrestlingnetwork import *
 from additions.viewster import *
 from additions.musicstreamcc import *
+from additions.vibeo import *
 
 # kids
 from additions.kinderkino import *
@@ -219,6 +220,7 @@ config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 config.mediaportal.showViewster = ConfigYesNo(default = True)
 config.mediaportal.showMusicstreamcc = ConfigYesNo(default = True)
+config.mediaportal.showVibeo = ConfigYesNo(default = True)
 
 # mediatheken
 config.mediaportal.showVoxnow = ConfigYesNo(default = True)
@@ -326,6 +328,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige ddl.me:", config.mediaportal.showDdlme))
 		self.configlist.append(getConfigListEntry("Zeige movie25:", config.mediaportal.showMovie25))
 		self.configlist.append(getConfigListEntry("Zeige watchseries:", config.mediaportal.showWatchseries))
+		self.configlist.append(getConfigListEntry("Zeige Vibeo:", config.mediaportal.showVibeo))
 		
 		self.configlist.append(getConfigListEntry("----- Watchlist -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Zeige Kinox Watchlist:", config.mediaportal.showKinoxWatchlist))
@@ -664,6 +667,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.grauzone.append(self.hauptListEntry("Movie25", "movie25"))
 		if config.mediaportal.showWatchseries.value:
 			self.grauzone.append(self.hauptListEntry("Watchseries", "watchseries"))
+		if config.mediaportal.showVibeo.value:
+			self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
 
 		# Fun / Sport
 		if config.mediaportal.showAllMusicHouse.value:
@@ -1186,6 +1191,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(myvideoTop100GenreScreen)
 		elif auswahl == "Musicstream.cc":
 			self.session.open(show_MSCC_Genre)
+		elif auswahl == "Vibeo":
+			self.session.open(vibeoFilmListeScreen)
 			
 		# mediatheken
 		elif auswahl == "VOXNOW":
@@ -1658,6 +1665,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Movie25", "movie25", "Grauzone"))
 		if config.mediaportal.showWatchseries.value:
 			self.plugin_liste.append(("Watchseries", "watchseries", "Grauzone"))
+		if config.mediaportal.showVibeo.value:
+			self.plugin_liste.append(("Vibeo", "vibeo", "Grauzone"))
 			
 		if config.mediaportal.showDoku.value:
 			self.plugin_liste.append(("Doku.me", "doku", "Mediathek"))
@@ -2325,6 +2334,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "Musicstream.cc":
 			self.hit_plugin("Musicstream.cc")
 			self.session.open(show_MSCC_Genre)
+		elif auswahl == "Vibeo":
+			self.hit_plugin("Vibeo")
+			self.session.open(vibeoFilmListeScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":

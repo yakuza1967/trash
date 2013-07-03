@@ -257,7 +257,7 @@ class SzeneStreamsStreamListeScreen(Screen):
 					streams += re.findall('<font color="#ff0000">.*?src=".*?/player/(.*?).[gif|jpg|png]".*?</font>.*?target="_blank" href=["|\'](.*?)["|\']', each, re.S|re.I)
 		if streams:
 			for (hostername,stream) in streams:
-				if re.match('.*?(videomega|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|flash x|Divxmov|Putme|Zooupload|Wupfile)', hostername.strip(' '), re.S|re.I):
+				if re.match('.*?(videomega|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|flash x|Divxmov|Putme|Zooupload|Wupfile|mighty|youwatch)', hostername.strip(' '), re.S|re.I):
 					print hostername.strip(' '), stream.strip('\n')
 					hostername = hostername.replace('_logo','').replace('.j','').replace('.g','').replace('.p','')
 					self.filmliste.append((hostername.strip(' '), stream.strip('\n')))
