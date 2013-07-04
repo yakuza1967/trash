@@ -53,7 +53,7 @@ class pornerbrosGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
 	def genreData(self, data):
-		phCats = re.findall('class="contents_gallery_item">.*?<a href="(.*?)" title="(.*?)">.*?<img alt=.*?data-original="(.*?)" onClick', data, re.S)
+		phCats = re.findall('class="contents_gallery_item">.*?<a\shref="(.*?)"\stitle="(.*?)">.*?<img\salt=.*?src="(.*?)"\sonClick', data, re.S)
 		if phCats:
 			for (phUrl, phTitle, phImage) in phCats:
 				phUrl = "http://www.pornerbros.com" + phUrl + 'page'
@@ -220,7 +220,7 @@ class pornerbrosFilmScreen(Screen):
 		parse = re.search('<h2>Today(.*)', data, re.S)
 		if not parse:
 			parse = re.search('<h2>Videos found(.*)', data, re.S)
-		xhListe = re.findall('<div class="contents_gallery_item">.*?<a href="(.*?)" title="(.*?)".*?gid="(.*?)".*?data-original="(.*?.jpg)".*?length">(.*?)<.*?views">(.*?)</span>', parse.group(1), re.S)
+		xhListe = re.findall('<div\sclass="contents_gallery_item">.*?<a\shref="(.*?)"\stitle="(.*?)".*?gid="(.*?)".*?src="(.*?.jpg)".*?length">(.*?)<.*?views">(.*?)</span>', parse.group(1), re.S)
 		if xhListe:
 			for (xhLink, xhName, xhIdnr, xhImage, xhRuntime, xhViews) in xhListe:
 				self.streamList.append((decodeHtml(xhName), xhLink, xhIdnr, xhImage, xhRuntime, xhViews))
