@@ -46,8 +46,11 @@ class TwAgentHelper:
 
 	if sys.version_info >= (2, 7):
 	
+		instance_ctr = 0
+	
 		def __init__(self):
-			print "GetRedirectedUrl:"
+			self.instance_ctr += 1
+			print "GetRedirectedUrl:",self.instance_ctr
 			# can not follow rel. url redirects (location header)
 			#self.agent = RedirectAgent(Agent(reactor))
 			print "Twisted Agent in use"

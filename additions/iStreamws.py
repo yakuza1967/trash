@@ -242,6 +242,7 @@ class IStreamFilmListeScreen(Screen):
 		self['F3'] = Label("SortIMDb")
 		self['F4'] = Label("Text+")
 		
+		self.tw_agent_hlp = TwAgentHelper()
 		self.timerStart = False
 		self.seekTimerRun = False
 		self.eventL = threading.Event()
@@ -307,7 +308,8 @@ class IStreamFilmListeScreen(Screen):
 			url = self.filmQ.get_nowait()
 		#self.eventL.clear()
 		print url
-		getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		#getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, url, False)
 		
 	def dataError(self, error):
 		self.eventL.clear()
@@ -320,7 +322,8 @@ class IStreamFilmListeScreen(Screen):
 		print "loadPageData:"
 			
 		if not self.neueFilme:
-			filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)"><img class=.*?\?src=(.*?)&h=', data, re.S)
+			#filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)"><img class=.*?\?src=(.*?)&h=', data, re.S)
+			filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)">.*?data-original="(.*?)"', data, re.S)
 		else:
 			filme = re.findall('<div class="voting".*?<a href="(.*?)".*?title="(.*?)">.*?data-original="(.*?)" alt', data)
 
@@ -415,7 +418,8 @@ class IStreamFilmListeScreen(Screen):
 		while not self.hanQ.empty():
 			url = self.hanQ.get_nowait()
 		#print url
-		getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.setHandlung).addErrback(self.dataErrorH)
+		#getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.setHandlung).addErrback(self.dataErrorH)
+		self.tw_agent_hlp.getWebPage(self.setHandlung, self.dataErrorH, url, False)
 		
 	def dataErrorH(self, error):
 		self.eventH.clear()
