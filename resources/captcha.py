@@ -126,8 +126,8 @@ class VirtualKeyBoardmod(Screen):
 
 	def ShowCover(self):
 		if fileExists("/tmp/captcha.jpg"):
-			print "vorhanden.."
-			self['coverArt'].instance.setPixmap(None)
+			print "bild vorhanden.."
+			self['coverArt'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
 			size = self['coverArt'].instance.size()
@@ -135,9 +135,13 @@ class VirtualKeyBoardmod(Screen):
 			if self.picload.startDecode("/tmp/captcha.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr.__deref__())
+					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
+			else:
+				print "fehler"
+		else:
+			print "bild nicht vorhanden"
 					
 	def switchLang(self):
 		self.lang = self.nextLang

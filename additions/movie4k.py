@@ -118,7 +118,6 @@ class m4kGenreScreen(Screen):
 			self.genreliste.append(("Letzte Updates (XXX)", "http://www.movie4k.to/xxx-updates.html"))
 			self.genreliste.append(('Pornos', 'http://www.movie4k.to/genres-xxx.html'))
 		else:
-			self.genreliste.append(("Watchlist", "Watchlist"))
 			self.genreliste.append(("Kinofilme", "http://www.movie4k.to/index.php?lang=de"))
 			self.genreliste.append(("Videofilme", "http://www.movie4k.to/index.php?lang=de"))
 			self.genreliste.append(("Neue Updates (Filme)", "http://www.movie4k.to/movies-updates-"))
@@ -127,6 +126,7 @@ class m4kGenreScreen(Screen):
 			self.genreliste.append(("Alle Filme A-Z", "FilmeAZ"))
 			self.genreliste.append(("Alle Serien A-Z", "SerienAZ"))
 			self.genreliste.append(("Suche", "http://www.movie4k.to/movies.php?list=search"))
+			self.genreliste.append(("Watchlist", "Watchlist"))
 			self.genreliste.append(("Abenteuer", "http://movie4k.to/movies-genre-4-"))
 			self.genreliste.append(("Action", "http://movie4k.to/movies-genre-1-"))
 			self.genreliste.append(('Biografie', 'http://movie4k.to/movies-genre-6-'))

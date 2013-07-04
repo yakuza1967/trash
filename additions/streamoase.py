@@ -1,6 +1,7 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.decrypt import *
-#from Plugins.Extensions.MediaPortal.resources.captcha import *
+from Plugins.Extensions.MediaPortal.resources.captcha import *
+import time
 #import HTMLParser
 
 ck = {}
@@ -196,12 +197,13 @@ class oasetvFilmListeScreen(Screen):
 		if mighty:
 			print mighty[0]
 			stream_list.append(("MightyUpload", mighty[0]))
-		get_embed = re.findall('(http://180upload.com/embed-.*?)"', data, re.S)
-		if get_embed:
-			#url = "http://180upload.com/" + get_embed[0]
-			url = get_embed[0]
+			
+		get_vidplay = re.findall('(http://vidplay.net/embed.*?)"', data, re.S)
+		if get_vidplay:
+			url = get_vidplay[0]
 			print url
-			stream_list.append(("180upload", url))
+			stream_list.append(("vidplay", url))
+			
 		get_wupfile = re.findall('(http://wupfile.com.*?)"', data, re.S)
 		if get_wupfile:
 			print get_wupfile[0]
@@ -304,7 +306,7 @@ class oasetvCDListeScreen(Screen):
 		name = self['filmList'].getCurrent()[0][0]
 		streamLink = self['filmList'].getCurrent()[0][1]
 		self.keyLocked = True
-		if name == "180upload":
+		if name == "vidplay":
 			getPage(streamLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.readPostData, streamLink).addErrback(self.dataError)
 		elif name == "Wupfile":
 			getPage(streamLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.postData).addErrback(self.dataError)
@@ -313,61 +315,28 @@ class oasetvCDListeScreen(Screen):
 		else:
 			message = self.session.open(MessageBox, _("No Supported Streamhoster."), MessageBox.TYPE_INFO, timeout=3)
 			self.keyLocked = False
-			
-#	def dowloadCatpchaDone(self, data):
-#		if fileExists("/tmp/captcha.jpg"):
-#			print "Captcha.jpg gefunden.."
-#			self.session.openWithCallback(self.captchaCallback, VirtualKeyBoardmod, title = (_("Captcha Eingabe:")), text = "")
-#		else:
-#			self.keyLocked = False
-#			message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
-#		
-#	def captchaCallback(self, callback = None, entry = None):
-#		if callback != None or callback != "":
-#			print callback
-#			self.form_values["code"] = str(callback)
-#			self.form_values = urllib.urlencode(self.form_values)
-#			os.system('rm -rf "/tmp/captcha.jpg"')
-#			getPage(self.url, method='POST', cookies=ck, postdata=self.form_values, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.postData).addErrback(self.dataError)
-#
-#	def readPostData(self, data, url):
-#		self.url = url
-#		html_parser = HTMLParser.HTMLParser()
-#
-#		self.form_values = {}
-#		for i in re.finditer('<input.*?name="(.*?)".*?value="(.*?)">', data):
-#			self.form_values[i.group(1)] = i.group(2)
-#
-#		print self.form_values
-#
-#		if re.match('.*?<img src="http://180upload.com/captchas/', data, re.S):
-#			bild = re.findall('<img src="(http://180upload.com/captchas.*?)"', data, re.S)
-#			if bild:
-#				print bild[0]
-#				#thingTwo = downloadPage(makeURL("secret/borealean.ogg", "borealean.ogg"), cookies=cookies)
-#				downloadPage(bild[0], "/tmp/captcha.jpg", cookies=ck).addCallback(self.dowloadCatpchaDone)
-#		else:
-#			codes = re.findall("<span style='position:absolute;padding-left:(.*?)px;padding-top:.*?px;'>(.*?)</span>", data, re.S)
-#			code = []
-#			for pos,html in codes:
-#				print html_parser.unescape(html)
-#				code.append((pos, html_parser.unescape(html)))
-#				
-#			print code
-#			code.sort(key=lambda x: int(x[0]))
-#			finalcode= ""
-#			for html,fcode in code:
-#				finalcode += fcode
-#
-#			print "CODE:", finalcode
-#
-#			self.form_values["code"] = str(finalcode)
-#			print self.form_values
-#			print ck
-#			self.form_values = urllib.urlencode(self.form_values)
-#			getPage(self.url, method='POST', cookies=ck, postdata=self.form_values, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.postData).addErrback(self.dataError)
-
+		
 	def readPostData(self, data, url):
+		solvemedia = re.search('<iframe src="(http://api.solvemedia.com.+?)"', data)
+		url = solvemedia.group(1)
+		data = urllib.urlopen(url).read()
+		hugekey = re.search('id="adcopy_challenge" value="(.+?)">', data).group(1)
+		print hugekey
+		burl = "http://api.solvemedia.com%s" % re.search('<img src="(.+?)"', data).group(1)
+		#downloadPage(burl, "/tmp/captcha.jpg").addCallback(self.dowloadCatpchaDone)
+		urllib.urlretrieve(burl, "/tmp/captcha.jpg")
+		print "ok"
+		self.session.openWithCallback(self.captchaCallback, VirtualKeyBoardmod, title = (_("Captcha Eingabe:")), text = "")
+		
+		#self.form_values = urllib.urlencode(self.form_values)
+		#getPage(self.url, method='POST', cookies=ck, postdata=self.form_values, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.postData).addErrback(self.dataError)
+		
+	def captchaCallback(self, callback = None, entry = None):
+		if callback != None or callback != "":
+			print callback
+		self.keyLocked = False
+		
+	def readPostData3(self, data, url):
 		dataPost = {}
 		r = re.findall('input type="hidden".*?name="(.*?)".*?value="(.*?)"', data, re.S)
 		for name, value in r:
