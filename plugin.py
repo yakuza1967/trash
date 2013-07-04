@@ -70,7 +70,7 @@ from additions.deluxemusic import *
 from additions.nuna import *
 from additions.watchseries import *
 from additions.wrestlingnetwork import *
-from additions.viewster import *
+#from additions.viewster import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
 
@@ -218,7 +218,7 @@ config.mediaportal.showNuna = ConfigYesNo(default = True)
 config.mediaportal.showWatchseries = ConfigYesNo(default = True)
 config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
-config.mediaportal.showViewster = ConfigYesNo(default = True)
+#config.mediaportal.showViewster = ConfigYesNo(default = True)
 config.mediaportal.showMusicstreamcc = ConfigYesNo(default = True)
 config.mediaportal.showVibeo = ConfigYesNo(default = True)
 
@@ -398,7 +398,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige AutoBild:", config.mediaportal.showAutoBild))
 		self.configlist.append(getConfigListEntry("Zeige SportBild:", config.mediaportal.showSportBild))
 		self.configlist.append(getConfigListEntry("Zeige Moovizon:", config.mediaportal.showMoovizon))
-		self.configlist.append(getConfigListEntry("Zeige Viewster:", config.mediaportal.showViewster))
+		#self.configlist.append(getConfigListEntry("Zeige Viewster:", config.mediaportal.showViewster))
 		self.configlist.append(getConfigListEntry("Zeige ARD Mediathek:", config.mediaportal.showARD))
 		
 		# Kinder
@@ -627,8 +627,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("Vutechtalk", "vutechtalk"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.mediatheken.append(self.hauptListEntry("Wrestlingnetwork", "wrestlingnetwork"))
-		if config.mediaportal.showViewster.value:
-			self.mediatheken.append(self.hauptListEntry("Viewster", "viewster"))
+		#if config.mediaportal.showViewster.value:
+		#	self.mediatheken.append(self.hauptListEntry("Viewster", "viewster"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 
@@ -1219,8 +1219,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(moovizonGenreScreen)
 		elif auswahl == "Wrestlingnetwork":
 			self.session.open(wrestlingnetworkGenreScreen)
-		elif auswahl == "Viewster":
-			self.session.open(viewsterGenreScreen)
+		#elif auswahl == "Viewster":
+		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
 			
@@ -1788,8 +1788,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("SRF Player", "srf", "Mediathek"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.plugin_liste.append(("Wrestlingnetwork", "wrestlingnetwork", "Mediathek"))
-		if config.mediaportal.showViewster.value:
-			self.plugin_liste.append(("Viewster", "viewster", "Mediathek"))
+		#if config.mediaportal.showViewster.value:
+		#	self.plugin_liste.append(("Viewster", "viewster", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
 			
@@ -2372,9 +2372,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "Wrestlingnetwork":
 			self.hit_plugin("Wrestlingnetwork")
 			self.session.open(wrestlingnetworkGenreScreen)
-		elif auswahl == "Viewster":
-			self.hit_plugin("Viewster")
-			self.session.open(viewsterGenreScreen)
+		#elif auswahl == "Viewster":
+		#	self.hit_plugin("Viewster")
+		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.hit_plugin("ARD Mediathek")
 			self.session.open(ARDGenreScreen)
