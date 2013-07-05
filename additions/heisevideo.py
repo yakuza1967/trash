@@ -67,11 +67,6 @@ class HeiseTvGenreScreen(Screen):
 		self.genreliste = []
 		self.genreliste.append((1, 'Neue Videos', '/video'))
 		
-		m = re.findall('<section class="kasten video.*?<h3><span></span>(.*?)</h3>', data, re.S)
-		if m:
-			for x in m:
-				self.genreliste.append((3, x, '/video'))
-					
 		m = re.search('<section id="cttv_archiv">(.*?)</section>', data, re.S)
 		if m:
 			list = re.findall('data-jahr="(.*?)"', m.group(1), re.S)
@@ -178,34 +173,19 @@ class HeiseTvListScreen(Screen):
 			if stvDaten:
 				print "Videos found"
 				for (img,href,title,desc) in stvDaten:
-					title = decodeHtml(title)
-					title = title.strip()
+					title = title.replace('&amp;', '&').strip()
 					self.filmliste.append((title,href,img,desc))
-					
 		elif self.genreID == 2:
 			infos = literal_eval(data)
 			try:
 				for i in range(len(infos)):
-					title = infos[i]['titel'].strip()
-					title = decodeHtml(title)
+					title = infos[i]['titel'].replace('&amp;', '&').strip()
 					self.filmliste.append((title,infos[i]['url'],infos[i]['anrissbild']['src'],infos[i]['anrisstext']))
 			except KeyError, e:
 				print 'Video infos key error: ', e
 			else:
 				print "Videos found"
 			
-		elif self.genreID == 3:
-			patt = '<section class="kasten video.*?<h3><span></span>%s</h3>(.*?)</section>' % self.genreName
-			m = re.search(patt, data, re.S)
-			if m:
-				print m.group(1)
-				stvDaten = re.findall('<img.*?src="(.*?)".*?<h4><a href="(.*?)">(.*?)</a></h4>', m.group(1), re.S)
-				if stvDaten:
-					print "Videos found"
-					for (img,href,title) in stvDaten:
-						title = decodeHtml(title)
-						title = title.strip()
-						self.filmliste.append((title,href,img,''))
 		else:
 			print "Wrong genre"
 
