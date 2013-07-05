@@ -5,7 +5,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer, SimplePlaylist
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
-HTV_Version = "heiseVIDEO v0.90"
+HTV_Version = "heiseVIDEO v0.91"
 
 HTV_siteEncoding = 'utf-8'
 
@@ -40,7 +40,7 @@ class HeiseTvGenreScreen(Screen):
 		
 		
 		self['title'] = Label(HTV_Version)
-		self['ContentTitle'] = Label("M e n ü")
+		self['ContentTitle'] = Label("Auswahl")
 		self['name'] = Label("")
 		self['F1'] = Label("")
 		self['F2'] = Label("")
@@ -59,24 +59,41 @@ class HeiseTvGenreScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 		
 	def layoutFinished(self):
-		self.genreliste.append((0, 'Bitte warten...', ''))
+		self.genreliste.append((0, 'Bitte warten...', '', ''))
 		self.chooseMenuList.setList(map(heiseTvGenreListEntry, self.genreliste))
 		getPage(self.baseUrl+'/video', headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.buildMenu).addErrback(self.dataError)
 
 	def buildMenu(self, data):
 		self.genreliste = []
-		self.genreliste.append((1, 'Neue Videos', '/video'))
 		
+		m = re.search('<ul id="teaser_reiter_nav">(.*?)</ul>', data, re.S)
+		if m:
+			list = re.findall('href="#(reiter.*?)">(.*?)</a></li>', m.group(1), re.S)
+			if list:
+				for r, n in list:
+					m2 = re.search('<a href="(\?teaser=.*?);.*?into=%s' % r, data)
+					if m2:
+						self.genreliste.append((1, n, '/video/%s;offset=%%d;into=%s&hajax=1' % (m2.group(1), r), ''))
+					else:
+						self.genreliste.append((4, n, '/video', r))
+		
+		list = re.findall('<section class="kasten video.*?<h3><span></span>(.*?)</h3>', data, re.S)
+		if list:
+			for x in list:
+				if not [1 for item in self.genreliste if item[1] == x]:
+					self.genreliste.append((3, x, '/video', ''))
+					
 		m = re.search('<section id="cttv_archiv">(.*?)</section>', data, re.S)
 		if m:
 			list = re.findall('data-jahr="(.*?)"', m.group(1), re.S)
 			if list:
 				for j in list:
 					url = '/video/includes/cttv_archiv_json.pl?jahr=%s&rubrik=%s' % (j, self.data_rubrikid)
-					self.genreliste.append((2, "c't-TV Archiv %s" % j, url))
+					self.genreliste.append((2, "c't-TV Archiv %s" % j, url, ''))
 				
 		self.chooseMenuList.setList(map(heiseTvGenreListEntry, self.genreliste))
 		self.keyLocked = False
+		
 	
 	def dataError(self, failure):
 		print "dataError: ", failure
@@ -88,7 +105,8 @@ class HeiseTvGenreScreen(Screen):
 		genreID = self['genreList'].getCurrent()[0][0]
 		genre = self['genreList'].getCurrent()[0][1]
 		stvLink = self['genreList'].getCurrent()[0][2]
-		self.session.open(HeiseTvListScreen, self.baseUrl, genreID, stvLink, genre)
+		m_reiter = self['genreList'].getCurrent()[0][3]
+		self.session.open(HeiseTvListScreen, self.baseUrl, genreID, stvLink, genre, m_reiter)
 
 	def keyCancel(self):
 		self.close()
@@ -100,12 +118,13 @@ def heiseTvListEntry(entry):
 		
 class HeiseTvListScreen(Screen):
 	
-	def __init__(self, session, baseUrl, genreID, stvLink, stvGenre):
+	def __init__(self, session, baseUrl, genreID, stvLink, stvGenre, m_reiter):
 		self.session = session
 		self.genreID = genreID
 		self.stvLink = stvLink
 		self.genreName = stvGenre
 		self.baseUrl = baseUrl
+		self.m_reiter = m_reiter
 		
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
@@ -124,6 +143,8 @@ class HeiseTvListScreen(Screen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
+			"nextBouquet" : self.keyPageUp,
+			"prevBouquet" : self.keyPageDown,
 			"up" : self.keyUp,
 			"down" : self.keyDown,
 			"yellow"	: self.keyYellow,
@@ -141,11 +162,18 @@ class HeiseTvListScreen(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("VidPrio")
 		self['F4'] = Label("Text+")
-		self['Page'] = Label("")
-		self['VideoPrio'] = Label("VideoPrio")
+		self['Page'] = Label("Page")
+		self['VideoPrio'] = Label("")
 		self['vPrio'] = Label("")
 		
-		
+		if self.genreID != 1:
+			self['Page'].hide()
+			self['page'].hide()
+			
+		self.items_pp = 0
+		self.reiter_ofs = 0
+		self.page = 0
+		self.pages = 0
 		self.videoPrio = int(config.mediaportal.youtubeprio.value) - 1
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
@@ -159,33 +187,86 @@ class HeiseTvListScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 		
 	def layoutFinished(self):
-		self.filmliste.append(('Bitte warten...','','',''))
-		self.chooseMenuList.setList(map(heiseTvListEntry, self.filmliste))
-		url = self.baseUrl+self.stvLink
+		self.getHtml()
+		
+	def getHtml(self):
+		self.chooseMenuList.setList(map(heiseTvListEntry, [('Bitte warten...','','','')]))
+		
+		self.filmliste = []
+		url = self.stvLink
+		if self.genreID == 1:
+			url = self.baseUrl+(url % self.reiter_ofs)
+		else:
+			url = self.baseUrl+url
+			
 		print "getPage: ", url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 	
 	def genreData(self, data):
 		print "genreData:"
-		self.filmliste = []
 		if self.genreID == 1:
-			stvDaten = re.findall('class="rahmen">.*?<img src="(.*?)".*?<h3><a href="(.*?)">(.*?)</a>.*?<p>(.*?)<a href="', data, re.S)
+			infos = literal_eval(data)
+			stvDaten = re.findall('class=\"rahmen\">.*?<img src=\"(.*?)\".*?<h3><a href=\"(.*?)\">(.*?)</a>.*?<p>(.*?)<a href=\"', infos['actions'][1]['html'], re.S)
 			if stvDaten:
 				print "Videos found"
 				for (img,href,title,desc) in stvDaten:
-					title = title.replace('&amp;', '&').strip()
+					title = decodeHtml(title)
+					desc = decodeHtml(desc).strip()
 					self.filmliste.append((title,href,img,desc))
+				
+				m = re.search('<a href=\".*?offset=(.*?);', infos['actions'][1]['html'], re.S)
+				if m:
+					if not self.page:
+						self.items_pp = int(m.group(1))
+						self.page = 1
+						self.pages = 0
+						print "Items_pp: ", self.items_pp
+				else:
+					self.pages = self.page
+					print "Pages set to: ", self.pages
+
+			if self.pages > 0:
+				page = '%d / %d' % (self.page, self.pages)
+			else:
+				page = '%d' % self.page
+				
+			self['page'].setText(page)
+
 		elif self.genreID == 2:
 			infos = literal_eval(data)
 			try:
 				for i in range(len(infos)):
-					title = infos[i]['titel'].replace('&amp;', '&').strip()
-					self.filmliste.append((title,infos[i]['url'],infos[i]['anrissbild']['src'],infos[i]['anrisstext']))
+					title = decodeHtml(infos[i]['titel'])
+					desc = decodeHtml(infos[i]['anrisstext']).strip()
+					self.filmliste.append((title,infos[i]['url'],infos[i]['anrissbild']['src'],desc))
 			except KeyError, e:
 				print 'Video infos key error: ', e
 			else:
 				print "Videos found"
 			
+		elif self.genreID == 3:
+			patt = '<section class="kasten video.*?<h3><span></span>%s</h3>(.*?)</section>' % self.genreName
+			m = re.search(patt, data, re.S)
+			if m:
+				print m.group(1)
+				stvDaten = re.findall('<img.*?src="(.*?)".*?<h4><a href="(.*?)">(.*?)</a></h4>', m.group(1), re.S)
+				if stvDaten:
+					print "Videos found"
+					for (img,href,title) in stvDaten:
+						title = decodeHtml(title)
+						self.filmliste.append((title,href,img,''))
+						
+		elif self.genreID == 4:
+			m = re.search('<li id="%s">(.*?)</li>\s+</ul>' % self.m_reiter, data, re.S)
+			if m:
+				print "'%s' found" % self.m_reiter
+				stvDaten = re.findall('class="rahmen">.*?<img src="(.*?)".*?<h3><a href="(.*?)">(.*?)</a>.*?<p>(.*?)<a href="', m.group(1), re.S)
+				if stvDaten:
+					print "Videos found"
+					for (img,href,title,desc) in stvDaten:
+						title = decodeHtml(title)
+						desc = decodeHtml(desc).strip()
+						self.filmliste.append((title,href,img,desc))
 		else:
 			print "Wrong genre"
 
@@ -257,6 +338,24 @@ class HeiseTvListScreen(Screen):
 			#sref.setName(title)
 			#self.session.open(MoviePlayer, sref)
 			self.session.open(HeiseTvPlayer, [(title, url, '')])
+	
+	def keyPageUp(self):
+		if self.keyLocked or self.genreID != 1:
+			return
+		if self.pages == 0 or self.page < self.pages:
+			self.page += 1
+			self.reiter_ofs += self.items_pp
+			self.keyLocked = True
+			self.getHtml()
+			
+	def keyPageDown(self):
+		if self.keyLocked or self.genreID != 1:
+			return
+		if self.pages > 1:
+			self.page -= 1
+			self.reiter_ofs -= self.items_pp
+			self.keyLocked = True
+			self.getHtml()
 			
 	def keyLeft(self):
 		if self.keyLocked:
