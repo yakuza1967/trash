@@ -2,10 +2,9 @@
 
 from ast import literal_eval
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer, SimplePlaylist
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
-HTV_Version = "heiseVIDEO v0.91"
+HTV_Version = "heiseVIDEO v0.92"
 
 HTV_siteEncoding = 'utf-8'
 
@@ -185,6 +184,12 @@ class HeiseTvListScreen(Screen):
 		self['liste'] = self.chooseMenuList
 		
 		self.onLayoutFinish.append(self.layoutFinished)
+	
+	
+	def decodeStr(self, txt):
+		txt = iso8859_Decode(txt)
+		txt = decodeHtml(txt).strip()
+		return txt
 		
 	def layoutFinished(self):
 		self.getHtml()
@@ -210,8 +215,8 @@ class HeiseTvListScreen(Screen):
 			if stvDaten:
 				print "Videos found"
 				for (img,href,title,desc) in stvDaten:
-					title = decodeHtml(title)
-					desc = decodeHtml(desc).strip()
+					title = self.decodeStr(title)
+					desc = self.decodeStr(desc)
 					self.filmliste.append((title,href,img,desc))
 				
 				m = re.search('<a href=\".*?offset=(.*?);', infos['actions'][1]['html'], re.S)
@@ -236,8 +241,8 @@ class HeiseTvListScreen(Screen):
 			infos = literal_eval(data)
 			try:
 				for i in range(len(infos)):
-					title = decodeHtml(infos[i]['titel'])
-					desc = decodeHtml(infos[i]['anrisstext']).strip()
+					title = self.decodeStr(infos[i]['titel'])
+					desc = self.decodeStr(infos[i]['anrisstext'])
 					self.filmliste.append((title,infos[i]['url'],infos[i]['anrissbild']['src'],desc))
 			except KeyError, e:
 				print 'Video infos key error: ', e
@@ -253,7 +258,7 @@ class HeiseTvListScreen(Screen):
 				if stvDaten:
 					print "Videos found"
 					for (img,href,title) in stvDaten:
-						title = decodeHtml(title)
+						title = self.decodeStr(title)
 						self.filmliste.append((title,href,img,''))
 						
 		elif self.genreID == 4:
@@ -264,8 +269,8 @@ class HeiseTvListScreen(Screen):
 				if stvDaten:
 					print "Videos found"
 					for (img,href,title,desc) in stvDaten:
-						title = decodeHtml(title)
-						desc = decodeHtml(desc).strip()
+						title = self.decodeStr(title)
+						desc = self.decodeStr(desc)
 						self.filmliste.append((title,href,img,desc))
 		else:
 			print "Wrong genre"
@@ -351,7 +356,7 @@ class HeiseTvListScreen(Screen):
 	def keyPageDown(self):
 		if self.keyLocked or self.genreID != 1:
 			return
-		if self.pages > 1:
+		if self.page > 1:
 			self.page -= 1
 			self.reiter_ofs -= self.items_pp
 			self.keyLocked = True
