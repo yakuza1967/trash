@@ -25,7 +25,6 @@ from additions.radio import *
 from additions.cczwei import *
 from additions.baskino import *
 from additions.kinoxto import *
-from additions.vutechtalk import *
 from additions.dreamscreencast import *
 from additions.streamoase import *
 from additions.autobild import *
@@ -409,7 +408,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige KinderKino:", config.mediaportal.showKinderKino))
 		self.configlist.append(getConfigListEntry("Zeige KIKA+:", config.mediaportal.showkika))
 		
-		self.configlist.append(getConfigListEntry("Zeige Vutechtalk:", config.mediaportal.showVutec))
 		self.configlist.append(getConfigListEntry("Zeige Dreamscreencast:", config.mediaportal.showDsc))
 		self.configlist.append(getConfigListEntry("Zeige Focus:", config.mediaportal.showFocus))
 		self.configlist.append(getConfigListEntry("Zeige CCZwei:", config.mediaportal.showCczwei))
@@ -626,8 +624,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("ScienceTV", "sciencetv"))
 		if config.mediaportal.showSportBild.value:
 			self.mediatheken.append(self.hauptListEntry("SportBild", "sportbild"))
-		if config.mediaportal.showVutec.value:
-			self.mediatheken.append(self.hauptListEntry("Vutechtalk", "vutechtalk"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.mediatheken.append(self.hauptListEntry("Wrestlingnetwork", "wrestlingnetwork"))
 		#if config.mediaportal.showViewster.value:
@@ -1098,8 +1094,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(kxMain) 
 		elif auswahl == "Kinox Watchlist":
 			self.session.open(kxWatchlist)
-		elif auswahl == "Vutechtalk":
-			self.session.open(vutechtalk)
 		elif auswahl == "Dreamscreencast":
 			self.session.open(dreamscreencast)
 		elif auswahl == "TV-Kino":
@@ -1691,8 +1685,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("CCZwei", "cczwei", "Mediathek"))
 		if config.mediaportal.showTrailer.value:
 			self.plugin_liste.append(("Filmtrailer", "trailer", "Mediathek"))
-		if config.mediaportal.showVutec.value:
-			self.plugin_liste.append(("Vutechtalk", "vutechtalk", "Mediathek"))
 		if config.mediaportal.showDsc.value:
 			self.plugin_liste.append(("Dreamscreencast", "dreamscreencast", "Mediathek"))
 		if config.mediaportal.showNhl.value:
@@ -2193,9 +2185,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "Kinox Watchlist":
 			self.hit_plugin("Kinox Watchlist")
 			self.session.open(kxWatchlist)
-		elif auswahl == "Vutechtalk":
-			self.hit_plugin("Vutechtalk")
-			self.session.open(vutechtalk)
 		elif auswahl == "Dreamscreencast":
 			self.hit_plugin("Dreamscreencast")
 			self.session.open(dreamscreencast)
