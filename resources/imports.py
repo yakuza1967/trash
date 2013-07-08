@@ -64,33 +64,33 @@ def registerFont(file, name, scale, replacement):
 				addFont(file, name, scale, replacement, 0)
 
 def decodeHtml(text):
-	text = text.replace('&auml;','ae')
-	text = text.replace('\u00e4','ae')
-	text = text.replace('&#228;','ae')
+	text = text.replace('&auml;','ä')
+	text = text.replace('\u00e4','ä')
+	text = text.replace('&#228;','ä')
 
-	text = text.replace('&Auml;','Ae')
-	text = text.replace('\u00c4','Ae')
-	text = text.replace('&#196;','Ae')
+	text = text.replace('&Auml;','Ä')
+	text = text.replace('\u00c4','Ä')
+	text = text.replace('&#196;','Ä')
 	
-	text = text.replace('&ouml;','oe')
-	text = text.replace('\u00f6','oe')
-	text = text.replace('&#246;','oe')
+	text = text.replace('&ouml;','ö')
+	text = text.replace('\u00f6','ö')
+	text = text.replace('&#246;','ö')
 	
-	text = text.replace('&ouml;','Oe')
-	text = text.replace('\u00d6','Oe')
-	text = text.replace('&#214;','Oe')
+	text = text.replace('&ouml;','Ö')
+	text = text.replace('\u00d6','Ö')
+	text = text.replace('&#214;','Ö')
 	
-	text = text.replace('&uuml;','ue')
-	text = text.replace('\u00fc','ue')
-	text = text.replace('&#252;','ue')
+	text = text.replace('&uuml;','ü')
+	text = text.replace('\u00fc','ü')
+	text = text.replace('&#252;','ü')
 	
-	text = text.replace('&Uuml;','Ue')
-	text = text.replace('\u00dc','Ue')
-	text = text.replace('&#220;','Ue')
+	text = text.replace('&Uuml;','Ü')
+	text = text.replace('\u00dc','Ü')
+	text = text.replace('&#220;','Ü')
 	
-	text = text.replace('&szlig;','ss')
-	text = text.replace('\u00df','ss')
-	text = text.replace('&#223;','ss')
+	text = text.replace('&szlig;','ß')
+	text = text.replace('\u00df','ß')
+	text = text.replace('&#223;','ß')
 	
 	text = text.replace('&amp;','&')
 	text = text.replace('&quot;','\"')
@@ -107,20 +107,25 @@ def decodeHtml(text):
 	text = text.replace('&#038;','&')
 	text = text.replace('&#039;','\'')
 	text = text.replace('&#160;',' ')
+	text = text.replace('\u00a0',' ')
 	text = text.replace('&#174;','')
 	text = text.replace('&#225;','a')
 	text = text.replace('&#233;','e')
 	text = text.replace('&#243;','o')
 	text = text.replace('&#8211;',"-")
+	text = text.replace('\u2013',"-")
 	text = text.replace('&#8216;',"'")
 	text = text.replace('&#8217;',"'")
 	text = text.replace('&#8220;',"'")
 	text = text.replace('&#8221;','"')
 	text = text.replace('&#8222;',',')
+	
 	text = text.replace('&#8230;','...')
+	text = text.replace('\u2026','...')
 	return text	
 
 def iso8859_Decode(txt):
-	txt = txt.replace('\xe4','ä').replace('\xf6','ö').replace('\xfc','ü').replace('\xdf','ß')
-	txt = txt.replace('\xc4','Ä').replace('\xd6','Ö').replace('\xdc','Ü')
+	#txt = txt.replace('\xe4','ä').replace('\xf6','ö').replace('\xfc','ü').replace('\xdf','ß')
+	#txt = txt.replace('\xc4','Ä').replace('\xd6','Ö').replace('\xdc','Ü')
+	txt.decode('iso-8859-1').encode('utf8')
 	return txt

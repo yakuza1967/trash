@@ -5,7 +5,7 @@ import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
-DH_Version = "DokuHouse.de v0.97"
+DH_Version = "DokuHouse.de v0.98"
 
 DH_siteEncoding = 'utf-8'
 
@@ -109,6 +109,7 @@ class show_DH_Genre(Screen):
 			("Da wird mir übel", "/da-wird-mir-ubel-spezial"),
 			("Damals in/nach der DDR", "/damals-in-der-ddr"),
 			("Die Deutschen", "/die-deutschen-spezial"),
+			("Der Kalte Krieg", "/der-kalte-krieg"),
 			("Die großen Kriminalfälle", "/die-grosen-kriminalfalle-spezial"),
 			("Die Stone-Skala", "/die-stone-skala-spezial"),
 			("Drogen im Visier", "/drogen-im-visier-special"),
@@ -132,6 +133,7 @@ class show_DH_Genre(Screen):
 			[
 			("Antike", "/antike"),
 			("DDR", "/ddr"),
+			("Fukushima", "/fukushima"),
 			("International", "/international"),
 			("Irakkrieg", "/irakkrieg"),
 			("Kriege", "/kriege"),
@@ -490,7 +492,7 @@ class DH_FilmListeScreen(Screen):
 		
 	def loadPageData(self, data):
 		print "loadPageData:"
-		dokus = re.findall('class="article-image darken"><a href="(.*?)".*?src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
+		dokus = re.findall('class="article-image darken"><a href="(.*?)".*?data-lazy-src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
 		if dokus:
 			print "Dokus found !"
 			print dokus
