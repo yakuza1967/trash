@@ -490,7 +490,7 @@ class DH_FilmListeScreen(Screen):
 		
 	def loadPageData(self, data):
 		print "loadPageData:"
-		dokus = re.findall('class="article-image darken"><a href="(.*?)".*?src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
+		dokus = re.findall('class="article-image darken"><a href="(.*?)".*?data-lazy-src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
 		if dokus:
 			print "Dokus found !"
 			print dokus
