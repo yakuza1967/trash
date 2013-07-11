@@ -4,13 +4,18 @@ from os.path import exists
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
-USER_Version = "USER-Channels v0.95"
+USER_Version = "USER-Channels v0.96"
 
 USER_siteEncoding = 'utf-8'
 
 def show_USER_GenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[1])
+		] 
+		
+def show_USER_GenreListEntry2(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 830, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1])
 		] 
 		
 class show_USER_Genre(Screen):
@@ -112,7 +117,7 @@ class show_USER_Genre(Screen):
 		else:
 			self.genreliste.append((0, "Keine User Channels gefunden !", ""))
 			
-		self.chooseMenuList.setList(map(show_USER_GenreListEntry, self.genreliste))
+		self.chooseMenuList.setList(map(show_USER_GenreListEntry2, self.genreliste))
 	
 	def keyGreen(self):
 		self.getUserFile()
