@@ -1,5 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 
 ck = {}
 
@@ -35,7 +34,7 @@ class chMain(Screen):
 			"cancel": self.keyCancel
 		}, -1)
 		
-		self['title'] = Label("1channel.ch")
+		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("M e n u")
 		self['stationIcon'] = Pixmap()
 		
@@ -50,8 +49,8 @@ class chMain(Screen):
 		
 	def layoutFinished(self):
 		self.keyLocked = True
-		self.streamList.append(("Featured Movies", "http://www.1channel.ch/index.php?sort=featured&page="))
-		self.streamList.append(("TV Shows","http://www.1channel.ch/index.php?tv=&sort=views&page="))
+		self.streamList.append(("Featured Movies", "http://www.primewire.ag/index.php?sort=featured&page="))
+		self.streamList.append(("TV Shows","http://www.primewire.ag/index.php?tv=&sort=views&page="))
 		self.streamMenuList.setList(map(chMainListEntry, self.streamList))
 		self.keyLocked = False
 			
@@ -96,7 +95,7 @@ class chFeatured(Screen):
 			"prevBouquet" : self.keyPageDown
 		}, -1)
 		
-		self['title'] = Label("1channel.ch")
+		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("Featured Movies")
 		self['stationIcon'] = Pixmap()
 		
@@ -223,7 +222,7 @@ class chTVshows(Screen):
 			"prevBouquet" : self.keyPageDown
 		}, -1)
 		
-		self['title'] = Label("1channel.ch")
+		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("TV Shows")
 		self['stationIcon'] = Pixmap()
 		
@@ -343,7 +342,7 @@ class chTVshowsEpisode(Screen):
 			"cancel": self.keyCancel,
 		}, -1)
 		
-		self['title'] = Label("1channel.ch")
+		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("Season Episode")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
@@ -431,7 +430,7 @@ class chStreams(Screen):
 			"cancel": self.keyCancel,
 		}, -1)
 		
-		self['title'] = Label("1channel.ch")
+		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("Streams")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
@@ -450,10 +449,10 @@ class chStreams(Screen):
 		getPage(self.movielink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 	
 	def parseData(self, data):
-		streams = re.findall('<a\shref="/external.php\?vid=(.*?)&.*?document.writeln\(\'(.*?)\'\)',data, re.S)
+		streams = re.findall('<a\shref="/external.php\?gd=(.*?)&.*?document.writeln\(\'(.*?)\'\)',data, re.S)
 		if streams:
 			for (chCode, chStreamHoster) in streams:
-				chUrl = 'http://www.1channel.ch/external.php?vid=%s&%s' % (chCode, chStreamHoster)
+				chUrl = 'http://www.primewire.ag/external.php?gd=%s&%s' % (chCode, chStreamHoster)
 				print chStreamHoster, chUrl
 				if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn|sharesix)', chStreamHoster, re.S):
 					self.streamList.append((chStreamHoster, chUrl))
