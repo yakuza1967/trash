@@ -2877,6 +2877,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			config.mediaportal.showporn.value = False
 			if config.mediaportal.filter.value == "Porn":
 				self.chFilter()
+			config.mediaportal.filter.save()
 			configfile.save()
 			self.restart()
 		else:
