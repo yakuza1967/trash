@@ -118,6 +118,7 @@ class chFeatured(Screen):
 		chMovies = re.findall('<div\sclass="index_item\sindex_item_ie">.*?<a\shref="(.*?)"\stitle="Watch.(.*?)"><img\ssrc="(.*?)"', data, re.S)
 		if chMovies:
 			for (chUrl,chTitle,chImage) in chMovies:
+				chUrl = "http://www.primewire.ag" + chUrl
 				self.streamList.append((decodeHtml(chTitle),chUrl,chImage))
 				self.streamMenuList.setList(map(chListEntry, self.streamList))
 			self.keyLocked = False
@@ -245,6 +246,7 @@ class chTVshows(Screen):
 		chMovies = re.findall('<div\sclass="index_item\sindex_item_ie">.*?<a\shref="(.*?)"\stitle="Watch.(.*?)"><img\ssrc="(.*?)"', data, re.S)
 		if chMovies:
 			for (chUrl,chTitle,chImage) in chMovies:
+				chUrl = "http://www.primewire.ag" + chUrl
 				self.streamList.append((decodeHtml(chTitle),chUrl,chImage))
 				self.streamMenuList.setList(map(chListEntry, self.streamList))
 			self.keyLocked = False
@@ -449,10 +451,10 @@ class chStreams(Screen):
 		getPage(self.movielink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 	
 	def parseData(self, data):
-		streams = re.findall('<a\shref="/external.php\?gd=(.*?)&.*?document.writeln\(\'(.*?)\'\)',data, re.S)
+		streams = re.findall('<a\shref="/external.php\?gd=(.*?)&.*?&url=(.*?)&.*?document.writeln\(\'(.*?)\'\)',data, re.S)
 		if streams:
-			for (chCode, chStreamHoster) in streams:
-				chUrl = 'http://www.primewire.ag/external.php?gd=%s&%s' % (chCode, chStreamHoster)
+			for (chCode, chUrl, chStreamHoster) in streams:
+				chUrl = 'http://www.primewire.ag/external.php?gd=%s&url=%s&%s' % (chCode, chUrl, chStreamHoster)
 				print chStreamHoster, chUrl
 				if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn|sharesix)', chStreamHoster, re.S):
 					self.streamList.append((chStreamHoster, chUrl))
@@ -491,11 +493,13 @@ class chStreams(Screen):
 			return
 		auswahl = self['streamlist'].getCurrent()[0][1]
 		print auswahl
-		req = urllib2.Request(auswahl)
-		res = urllib2.urlopen(req)
-		url = res.geturl()
-		get_stream_link(self.session).check_link(url, self.got_link)
+		getPage(auswahl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
 		
+	def get_link(self, data):
+		hoster = re.findall('<noframes>(.*?)</noframes>',data, re.S)
+		if hoster:
+			get_stream_link(self.session).check_link(hoster[0], self.got_link)
+			
 	def got_link(self, stream_url):
 		print stream_url
 		sref = eServiceReference(0x1001, 0, stream_url)
