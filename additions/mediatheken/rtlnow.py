@@ -56,7 +56,8 @@ class RTLnowGenreScreen(Screen):
 	def loadPageData(self, data):
 		self.genreliste = []
 		genre = []
-		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		parse = re.search('id="contentleft"(.*?)id="contentright"', data, re.S)
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', parse.group(1), re.S|re.I)
 		if genre:
 			for (url,image,pay,title,handlung) in genre:
 					if pay == "FREE":
@@ -71,7 +72,8 @@ class RTLnowGenreScreen(Screen):
 
 	def loadPageData2(self, data):
 		genre = []
-		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', data, re.S|re.I)
+		parse = re.search('id="contentleft"(.*?)id="contentright"', data, re.S)
+		genre = re.findall('class="m03img">\n{0,1}<a\shref="(.*?.php).*?"\starget="_self">\n{0,1}<img.*?src="(.*?)">.*?class="m03date">(.*?)\s\|.*?</span>\n{0,1}<h2>(.*?)</h2>\n{0,1}(.*?)</div>', parse.group(1), re.S|re.I)
 		if genre:
 			for (url,image,pay,title,handlung) in genre:
 					if pay == "FREE":
