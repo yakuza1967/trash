@@ -34,6 +34,9 @@ class checkupdate:
 			return
 
 	def finishedPluginUpdate(self,retval):
+		config.mediaportal.filter.value = "ALL"
+		config.mediaportal.filter.save()
+		configfile.save()
 		self.session.openWithCallback(self.restartGUI, MessageBox, _("MediaPortal successfully updated!\nDo you want to restart the Enigma2 GUI now?"), MessageBox.TYPE_YESNO)
 
 	def restartGUI(self, answer):
