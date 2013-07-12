@@ -1,7 +1,6 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
 MUSIC_Version = "MUSIC-Channels v0.94"
@@ -325,6 +324,7 @@ class show_MUSIC_ListScreen(Screen):
 		else:
 			self.videoPrio += 1
 		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyLeft(self):
@@ -441,7 +441,8 @@ class show_MUSIC_ListScreen(Screen):
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
 		"""
-		self.session.open(
+		self.session.openWithCallback(
+			self.setVideoPrio,
 			YoutubePlayer,
 			self.filmliste,
 			self['liste'].getSelectedIndex(),

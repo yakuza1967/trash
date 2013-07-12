@@ -819,6 +819,7 @@ class YT_ListScreen(Screen):
 		else:
 			self.videoPrio += 1
 		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def delFavo(self):
@@ -1082,7 +1083,8 @@ class YT_ListScreen(Screen):
 				self.session.open(MoviePlayer, sref)
 			"""
 			
-			self.session.open(
+			self.session.openWithCallback(
+			self.setVideoPrio,
 				YoutubePlayer,
 				self.filmliste,
 				self['liste'].getSelectedIndex(),

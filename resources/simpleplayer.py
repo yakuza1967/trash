@@ -114,7 +114,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		
 	def playStream(self, title, url=None, album='', artist='', imgurl=''):
 		print "playStream: ",title,url
-		if url == None:
+		if not url:
 			return
 			
 		if self.cover:

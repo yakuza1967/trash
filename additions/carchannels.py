@@ -143,7 +143,6 @@ class show_CAR_ListScreen(Screen):
 			"prevBouquet": self.keyPageDownFast,
 			"red" 		:  self.keyTxtPageUp,
 			"blue" 		:  self.keyTxtPageDown,
-			"yellow"	: self.keyYellow,
 			"1" 		: self.key_1,
 			"3" 		: self.key_3,
 			"4" 		: self.key_4,
@@ -159,7 +158,7 @@ class show_CAR_ListScreen(Screen):
 		self['page'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['VideoPrio'] = Label("")
 		self['vPrio'] = Label("")
@@ -169,7 +168,7 @@ class show_CAR_ListScreen(Screen):
 		self.keyLocked = True
 		self.baseUrl = "http://www.youtube.com"
 
-		self.videoPrio = int(config.mediaportal.youtubeprio.value)-1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 
@@ -307,11 +306,13 @@ class show_CAR_ListScreen(Screen):
 		self['handlung'].setText("Das Video kann leider nicht abgespielt werden !\n"+str(error))
 		
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
-			
+		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyLeft(self):
@@ -428,7 +429,8 @@ class show_CAR_ListScreen(Screen):
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
 		"""
-		self.session.open(
+		self.session.openWithCallback(
+			self.setVideoPrio,
 			YoutubePlayer,
 			self.filmliste,
 			self['liste'].getSelectedIndex(),

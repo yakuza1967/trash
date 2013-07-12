@@ -636,12 +636,12 @@ class HSH_Streams(Screen, ConfigListScreen):
 		self['vPrio'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['Page'] = Label("")
 		self['page'] = Label("")
 		self['coverArt'] = Pixmap()
-		self['VideoPrio'] = Label("")
+		self['VideoPrio'] = Label("VidPrio")
 		
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
@@ -728,6 +728,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 		else:
 			self.videoPrio += 1
 		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyOK(self):
@@ -748,7 +749,8 @@ class HSH_Streams(Screen, ConfigListScreen):
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
 		"""
-		self.session.open(
+		self.session.openWithCallback(
+			self.setVideoPrio,
 			YoutubePlayer,
 			[(None, dhTitle, dhVideoId, None)],
 			listTitle = self.dokuName,

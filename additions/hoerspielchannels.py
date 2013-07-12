@@ -293,6 +293,7 @@ class show_HSC_ListScreen(Screen):
 		else:
 			self.videoPrio += 1
 		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyLeft(self):
@@ -409,7 +410,8 @@ class show_HSC_ListScreen(Screen):
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
 		"""
-		self.session.open(
+		self.session.openWithCallback(
+			self.setVideoPrio,
 			YoutubePlayer,
 			self.filmliste,
 			self['liste'].getSelectedIndex(),

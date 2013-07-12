@@ -146,7 +146,6 @@ class HeiseTvListScreen(Screen):
 			"prevBouquet" : self.keyPageDown,
 			"up" : self.keyUp,
 			"down" : self.keyDown,
-			"yellow"	: self.keyYellow,
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
@@ -159,7 +158,7 @@ class HeiseTvListScreen(Screen):
 		self['page'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['Page'] = Label("Page")
 		self['VideoPrio'] = Label("")
@@ -173,7 +172,7 @@ class HeiseTvListScreen(Screen):
 		self.reiter_ofs = 0
 		self.page = 0
 		self.pages = 0
-		self.videoPrio = int(config.mediaportal.youtubeprio.value) - 1
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		self.keyLocked = True
@@ -342,7 +341,7 @@ class HeiseTvListScreen(Screen):
 			#sref = eServiceReference(0x1001, 0, url)
 			#sref.setName(title)
 			#self.session.open(MoviePlayer, sref)
-			self.session.open(HeiseTvPlayer, [(title, url, '')])
+			self.session.openWithCallback(self.setVideoPrio, HeiseTvPlayer, [(title, url, '')])
 	
 	def keyPageUp(self):
 		if self.keyLocked or self.genreID != 1:
@@ -387,10 +386,13 @@ class HeiseTvListScreen(Screen):
 		self.showInfos()
 		
 	def setVideoPrio(self):
+		"""
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
 		else:
 			self.videoPrio += 1
+		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 		
 	def keyYellow(self):

@@ -127,7 +127,6 @@ class show_GAME_ListScreen(Screen):
 			"prevBouquet": self.keyPageDownFast,
 			"red" 		:  self.keyTxtPageUp,
 			"blue" 		:  self.keyTxtPageDown,
-			"yellow"	: self.keyYellow,
 			"1" 		: self.key_1,
 			"3" 		: self.key_3,
 			"4" 		: self.key_4,
@@ -143,7 +142,7 @@ class show_GAME_ListScreen(Screen):
 		self['page'] = Label("")
 		self['F1'] = Label("Text-")
 		self['F2'] = Label("")
-		self['F3'] = Label("VidPrio")
+		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 		self['VideoPrio'] = Label("")
 		self['vPrio'] = Label("")
@@ -297,6 +296,7 @@ class show_GAME_ListScreen(Screen):
 		else:
 			self.videoPrio += 1
 		"""
+		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
 	def keyLeft(self):
@@ -413,7 +413,8 @@ class show_GAME_ListScreen(Screen):
 			sref.setName(dhTitle)
 			self.session.open(MoviePlayer, sref)
 		"""
-		self.session.open(
+		self.session.openWithCallback(
+			self.setVideoPrio,
 			YoutubePlayer,
 			self.filmliste,
 			self['liste'].getSelectedIndex(),
