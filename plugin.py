@@ -828,6 +828,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 	def showPorn(self):
 		if config.mediaportal.showporn.value:
 			config.mediaportal.showporn.value = False
+			config.mediaportal.showporn.save()
 			configfile.save()
 			self.restart()
 		else:
@@ -836,6 +837,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 	def showPornOK(self, pincode):
 		if pincode:
 			config.mediaportal.showporn.value = True
+			config.mediaportal.showporn.save()
 			configfile.save()
 			self.restart()
 
@@ -2877,6 +2879,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			config.mediaportal.showporn.value = False
 			if config.mediaportal.filter.value == "Porn":
 				self.chFilter()
+			config.mediaportal.showporn.save()
 			config.mediaportal.filter.save()
 			configfile.save()
 			self.restart()
@@ -2886,6 +2889,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 	def showPornOK(self, pincode):
 		if pincode:
 			config.mediaportal.showporn.value = True
+			config.mediaportal.showporn.save()
 			configfile.save()
 			self.restart()
 
