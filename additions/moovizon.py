@@ -193,7 +193,7 @@ class moovizonFilmListeScreen(Screen):
 		if countp:
 			self['page'].setText(countp[0])
 
-		movies = re.findall('<li><a\shref="(/movie/.*?)"><img\ssrc="(.*?)"\salt=".*?"\sclass="cover"></a>.*?<h2>(.*?)</h2><img\ssrc="http://moovizon.com/static/img/flag/(.*?).png"',data, re.S)
+		movies = re.findall('<li><a\shref="(/movie/.*?)"><img.*?src="(.*?)"\salt=".*?"\sclass="cover"></a>.*?<h2>(.*?)</h2><img.*?src="http://static.moovizon.com/img/flag/(.*?).png"',data, re.S)
 		if movies:
 			self.filmliste = []
 			for (url,image,title,lang) in movies:
