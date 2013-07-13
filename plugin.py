@@ -20,7 +20,7 @@ from additions.myvideo import *
 from additions.laola import *
 from additions.burningseries import *
 from additions.filmtrailer import *
-from additions.firstchannel import *
+from additions.primewire import *
 from additions.radio import *
 from additions.cczwei import *
 from additions.baskino import *
@@ -164,7 +164,7 @@ config.mediaportal.showkika = ConfigYesNo(default = True)
 config.mediaportal.showSportBild = ConfigYesNo(default = True)
 config.mediaportal.showLaola1 = ConfigYesNo(default = True)
 config.mediaportal.showBs = ConfigYesNo(default = True)
-config.mediaportal.show1channel = ConfigYesNo(default = True)
+config.mediaportal.showprimewire = ConfigYesNo(default = True)
 config.mediaportal.showRadio = ConfigYesNo(default = True)
 config.mediaportal.showCczwei = ConfigYesNo(default = True)
 config.mediaportal.showTrailer = ConfigYesNo(default = True)
@@ -325,7 +325,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Movie4k:", config.mediaportal.showM4k))
 		self.configlist.append(getConfigListEntry("Zeige Cinestream:", config.mediaportal.showCinestream))
 		self.configlist.append(getConfigListEntry("Zeige MLE-HD:", config.mediaportal.showmlehd))
-		self.configlist.append(getConfigListEntry("Zeige 1channel:", config.mediaportal.show1channel))
+		self.configlist.append(getConfigListEntry("Zeige PrimeWire:", config.mediaportal.showprimewire))
 		self.configlist.append(getConfigListEntry("Zeige ddl.me:", config.mediaportal.showDdlme))
 		self.configlist.append(getConfigListEntry("Zeige movie25:", config.mediaportal.showMovie25))
 		self.configlist.append(getConfigListEntry("Zeige watchseries:", config.mediaportal.showWatchseries))
@@ -656,8 +656,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.grauzone.append(self.hauptListEntry("Burning-Series", "burningseries"))
 		if config.mediaportal.showBaskino.value:
 			self.grauzone.append(self.hauptListEntry("Baskino", "baskino"))
-		if config.mediaportal.show1channel.value:
-			self.grauzone.append(self.hauptListEntry("1channel", "1channel"))
+		if config.mediaportal.showprimewire.value:
+			self.grauzone.append(self.hauptListEntry("PrimeWire", "primewire"))
 		if config.mediaportal.showM4kWatchlist.value:
 			self.grauzone.append(self.hauptListEntry("Movie4k Watchlist", "movie4kwatchlist"))
 		if config.mediaportal.showKinoxWatchlist.value:
@@ -1074,7 +1074,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(kinokisteGenreScreen)
 		elif auswahl == "Burning-Series":
 			self.session.open(bsMain)
-		elif auswahl == "1channel":
+		elif auswahl == "PrimeWire":
 			self.session.open(chMain)
 		elif auswahl == "Focus":
 			self.session.open(focusGenre)
@@ -1625,8 +1625,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("KinoKiste", "kinokiste", "Grauzone"))
 		if config.mediaportal.showBs.value:
 			self.plugin_liste.append(("Burning-Series", "burningseries", "Grauzone"))
-		if config.mediaportal.show1channel.value:
-			self.plugin_liste.append(("1channel", "1channel", "Grauzone"))
+		if config.mediaportal.showprimewire.value:
+			self.plugin_liste.append(("PrimeWire", "primewire", "Grauzone"))
 		if config.mediaportal.showNetzKino.value:
 			self.plugin_liste.append(("NetzKino", "netzkino", "Mediathek"))
 		if config.mediaportal.showBaskino.value:
@@ -2154,8 +2154,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "Burning-Series":
 			self.hit_plugin("Burning-Series")
 			self.session.open(bsMain)
-		elif auswahl == "1channel":
-			self.hit_plugin("1channel")
+		elif auswahl == "PrimeWire":
+			self.hit_plugin("PrimeWire")
 			self.session.open(chMain)
 		elif auswahl == "Focus":
 			self.hit_plugin("Focus")
