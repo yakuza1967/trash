@@ -127,8 +127,8 @@ from additions.porn.x4tube import *
 from additions.porn.youporn import *
 
 config.mediaportal = ConfigSubsection()
-config.mediaportal.version = NoSave(ConfigText(default="450"))
-config.mediaportal.versiontext = NoSave(ConfigText(default="4.5.0"))
+config.mediaportal.version = NoSave(ConfigText(default="451"))
+config.mediaportal.versiontext = NoSave(ConfigText(default="4.5.1"))
 config.mediaportal.autoupdate = ConfigYesNo(default = True)
 config.mediaportal.pincode = ConfigPIN(default = 0000)
 config.mediaportal.showporn = ConfigYesNo(default = False)
