@@ -608,7 +608,12 @@ class fourtubeFilmScreen(Screen):
 		getPage(phLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
 
 	def getVideoPage(self, data):
-		videoPage = re.findall("videoUrl = '(.*?)'.*?flashvars','config=(.*?)'", data, re.S)
+		videoPage = re.findall('sources:\s\[\{"file":"(.*?)"', data, re.S)
+		if videoPage:
+			url = videoPage[0].replace('\/','/')
+			self.play(url)
+
+		"""
 		if videoPage:
 			for (phFile, phTeilurl) in videoPage:
 				url = 'http://www.4tube.com%s%s' % (phTeilurl, phFile)
@@ -627,7 +632,8 @@ class fourtubeFilmScreen(Screen):
 			print self.filmQualitaet[0][0], self.filmQualitaet[0][1]
 			file = self.filmQualitaet[0][1]
 			self.play(file)
-		
+		"""
+
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
 		sref = eServiceReference(0x1001, 0, file)
