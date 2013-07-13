@@ -87,7 +87,9 @@ class showIStreamGenre(Screen):
 		genreListe = []
 		if self.mode == "porn":
 			Genre = [
-				("Porn", "http://istream.ws/c/porn/page/"),
+				("All", "http://istream.ws/c/porn/page/"),
+				("German", "http://istream.ws/c/porn/deutsch/page/"),
+				("AbbyWinters", "http://istream.ws/c/clips/abbywinters/page/"),
 				("X-Art", "http://istream.ws/c/porn/x-art-porn/page/")]
 		else:
 			Genre = [
@@ -781,8 +783,17 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self.tw_agent_hlp.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
 	
 	def keyOK2(self, streamLink):
-		get_stream_link(self.session).check_link(streamLink, self.got_link)
+		saveads = re.search('.*?saveads.org', streamLink, re.S)
+		if saveads:
+			id = re.search('url=(.*?)%3D', streamLink, re.S)
+			url = "http://istream.ws/go.php?url=" + id.group(1)
+			self.tw_agent_hlp.getRedirectedUrl(self.keyOK3, self.dataError, url)
+		else:
+			get_stream_link(self.session).check_link(streamLink, self.got_link)
 			
+	def keyOK3(self, streamLink):
+		get_stream_link(self.session).check_link(streamLink, self.got_link)
+
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
 			
