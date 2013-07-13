@@ -398,7 +398,8 @@ class megaskanksStreamListeScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			fx = re.match('.*?flashx', stream_url)
+			#fx = re.match('.*?flashx', stream_url)
+			fx = None
 			if config.mediaportal.useHttpDump.value or fx:
 				if fx:
 					movieinfo = [stream_url,self.streamName,"http://play.flashx.tv/"]
