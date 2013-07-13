@@ -268,7 +268,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def openMediainfo(self):
 		if MediainfoPresent:
 			url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
-			if re.match('.*?http://', url, re.S):
+			if url[:4] == "http":
 				self.session.open(mediaInfo, True)
 
 	def openMenu(self):
