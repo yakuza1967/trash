@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
+from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
 
 def gstreaminxxxGenreListEntry(entry):
 	return [entry,
@@ -339,6 +340,7 @@ class gstreaminxxxStreamListeScreen(Screen):
 		self['name'] = Label('Bitte warten...')
 		self['coverArt'] = Pixmap()
 		
+		self.tw_agent_hlp = TwAgentHelper()
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -404,12 +406,7 @@ class gstreaminxxxStreamListeScreen(Screen):
 			self.get_stream(url)
 		else:
 			print 'Secured Play'
-			geturl = urllib2.urlopen(streamLink)
-			print streamLink
-			url = geturl.geturl()
-			url = unquote(url)
-			print url
-			self.get_stream(url)
+			self.tw_agent_hlp.getRedirectedUrl(self.get_stream, self.dataError, streamLink)
 
 	def get_stream(self,url):
 		get_stream_link(self.session).check_link(url, self.got_link)
