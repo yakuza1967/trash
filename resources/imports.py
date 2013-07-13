@@ -125,7 +125,7 @@ def decodeHtml(text):
 	return text	
 
 def iso8859_Decode(txt):
-	#txt = txt.replace('\xe4','ä').replace('\xf6','ö').replace('\xfc','ü').replace('\xdf','ß')
-	#txt = txt.replace('\xc4','Ä').replace('\xd6','Ö').replace('\xdc','Ü')
-	txt.decode('iso-8859-1').encode('utf8')
+	txt = txt.replace('\xe4','ä').replace('\xf6','ö').replace('\xfc','ü').replace('\xdf','ß')
+	txt = txt.replace('\xc4','Ä').replace('\xd6','Ö').replace('\xdc','Ü')
+	#txt.decode('iso-8859-1').encode('utf-8')
 	return txt
