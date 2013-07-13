@@ -57,7 +57,7 @@ class wetplaceGenreScreen(Screen):
 		phCats = re.findall('<img class="thumb" src="(.*?)" alt="(.*?)"/>.*?<div class="title"><a href="(.*?)"', parse.group(1), re.S)
 		if phCats:
 			for (phImage, phTitle, phUrl) in phCats:
-				self.genreliste.append((phTitle, phUrl, phImage))
+				self.genreliste.append((phTitle.title(), phUrl, phImage))
 			self.genreliste.sort()
 			self.genreliste.insert(0, ("Most Popular", "http://www.wetplace.com/most-popular/", None))
 			self.genreliste.insert(0, ("Top Rated", "http://www.wetplace.com/top-rated/", None))

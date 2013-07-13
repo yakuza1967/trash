@@ -53,11 +53,11 @@ class thenewpornGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
 	def genreData(self, data):
-		parse = re.search('class="category">(.*?)categories_block', data, re.S)
-		phCats = re.findall('<img class="thumb" src="(.*?)" alt="(.*?)"/>.*?<div class="title"><a href="(.*?)"', parse.group(1), re.S)
+		parse = re.search('class="cat">(.*?)clearfix', data, re.S)
+		phCats = re.findall('class="ic">.*?<a\shref="(.*?)".*?<img\ssrc="(.*?)"\salt="(.*?)"/>', parse.group(1), re.S)
 		if phCats:
-			for (phImage, phTitle, phUrl) in phCats:
-				self.genreliste.append((phTitle, phUrl, phImage))
+			for (phUrl, phImage, phTitle) in phCats:
+				self.genreliste.append((phTitle.title(), phUrl, phImage))
 			self.genreliste.sort()
 			self.genreliste.insert(0, ("Most Popular", "http://www.thenewporn.com/most-popular/", None))
 			self.genreliste.insert(0, ("Top Rated", "http://www.thenewporn.com/top-rated/", None))
@@ -207,7 +207,7 @@ class thenewpornFilmScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
 	
 	def loadData(self, data):
-		lastp = re.search('<div>Showing.*of\s(.*?[0-9])\sitems', data, re.S)
+		lastp = re.search('class="info">.*?of\s(.*?[0-9])\sitems', data, re.S)
 		if lastp:
 			lastp = round((float(lastp.group(1)) / 40) + 0.5)
 			print lastp
@@ -215,7 +215,7 @@ class thenewpornFilmScreen(Screen):
 		else:
 			self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
-		phMovies = re.findall('class="video">.*?<a href="(.*?)".*?title="(.*?)"><img class="thumb" src="(.*?)"', data, re.S)
+		phMovies = re.findall('class="ic">.*?<a\shref="(.*?)".*?title="(.*?)"\sclass="lnk">.*?<img\ssrc="(.*?)"', data, re.S)
 		if phMovies:
 			for (phUrl, phTitle, phImage) in phMovies:
 				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
@@ -312,7 +312,7 @@ class thenewpornFilmScreen(Screen):
 		getPage(phLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
 
 	def getVideoPage(self, data):
-		videoPage = re.findall('<source type="video/mp4" src="(.*?)">', data, re.S)
+		videoPage = re.findall('video_url:.*?\'(.*?.mp4)\/', data, re.S)
 		if videoPage:
 			for phurl in videoPage:
 				url = phurl
