@@ -132,10 +132,10 @@ class nunaArtistListeScreen(Screen):
 		else:
 			parse = "nstler"
 
-		raw = re.findall('<select data-placeholder=".*?'+parse+'" class="chzn-select">(.*?)</select>', data, re.S)
+		raw = re.search('<select\sdata-placeholder=".*?'+parse+'"\sclass="chzn-select">(.*)</select>', data, re.S)
 		if raw:
 			self.filmliste = []
-			genre = re.findall('<option value="(/videos.js.*?)">(.*?)</option', raw[0], re.S)
+			genre = re.findall('<option\svalue="(/videos.js.*?)"\s{0,2}>(.*?)</option', raw.group(1), re.S|re.I)
 			if genre:
 				for link,title in genre:
 					url = "http://www.nuna.tv%s" % link
