@@ -51,7 +51,6 @@ class putpattvGenreScreen(Screen):
 		
 	def layoutFinished(self):
 		self.genreliste.append(("--- Search ---", "callSuchen"))
-		self.genreliste.append(("putpat TV", "46"))
 		self.genreliste.append(("Charts", "2"))
 		self.genreliste.append(("Heimat", "3"))
 		self.genreliste.append(("Retro", "4"))
@@ -61,16 +60,10 @@ class putpattvGenreScreen(Screen):
 		self.genreliste.append(("INTRO TV", "9"))
 		self.genreliste.append(("JAZZthing.TV", "11"))
 		self.genreliste.append(("Festival Guide", "12"))
-		self.genreliste.append(("StudiVZ", "15"))
-		self.genreliste.append(("MeinVZ", "16"))
 		self.genreliste.append(("Rockalarm", "27"))
 		self.genreliste.append(("MELT Festival", "29"))
 		self.genreliste.append(("Splash! Festival", "30"))
 		self.genreliste.append(("Berlin Festival", "31"))
-		self.genreliste.append(("Flux TV", "34"))
-		self.genreliste.append(("Rockalarm", "35"))
-		self.genreliste.append(("Introducing", "36"))
-		self.genreliste.append(("20 Jahre Intro", "38"))
 		self.genreliste.append(("Pop10", "39"))
 		self.genreliste.append(("Rock Hard", "41"))
 		self.chooseMenuList.setList(map(putpattvGenreListEntry, self.genreliste))
@@ -84,10 +77,7 @@ class putpattvGenreScreen(Screen):
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]
 		phImage = self['genreList'].getCurrent()[0][1]
-		if phImage == '46':
-			phImage = 'http://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-prn1/559467_461445814956_141502578_n.jpg'
-		else:
-			phImage = 'http://files.putpat.tv/artwork/channelgraphics/%s/channelteaser_500.png' % phImage
+		phImage = 'http://files.putpat.tv/artwork/channelgraphics/%s/channelteaser_500.png' % phImage
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
 		else:
