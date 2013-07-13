@@ -197,7 +197,7 @@ class eroprofileFilmScreen(Screen):
 		phMovies = re.findall('class="video">.*?img\ssrc="(.*?)".*?class="title"><a\shref="(.*?)">(.*?)</a.*?class="duration">(.*?)</div>', data, re.S)
 		if phMovies:
 			for (phImage, phUrl, phTitle, phRuntime) in phMovies:
-				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage, phRuntime))
+				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage.replace('amp;',''), phRuntime))
 			if self.page == 1:
 				self.filmliste.insert(0, ("--- Search ---", None, None, None))
 			self.chooseMenuList.setList(map(eroprofileFilmListEntry, self.filmliste))
