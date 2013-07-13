@@ -365,7 +365,7 @@ class chTVshowsEpisode(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 		
 	def parseData(self, data):
-		episoden = re.findall('class="tv_episode_item.*?">.*?<a\shref="(.*?)"\stitle="Watch.*?Episode\s[0-9]+(.*?)"', data, re.S|re.I)
+		episoden = re.findall('class="tv_episode_item.*?">.*?<a\shref="(.*?)">.*?episode_name">\s{0,2}-\s{0,2}(.*?)</span', data, re.S|re.I)
 		if episoden:
 			for (url,title) in episoden:
 				episode = re.findall('season-(.*?)-episode-(.*?)$', url, re.S)
