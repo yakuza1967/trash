@@ -406,7 +406,8 @@ class chTVshowsEpisode(Screen):
 		titel = self['streamlist'].getCurrent()[0][0]
 		auswahl = self['streamlist'].getCurrent()[0][1]
 		print auswahl
-		self.session.open(chStreams, auswahl, titel)
+		url = "http://www.primewire.ag" + auswahl
+		self.session.open(chStreams, url, titel)
 
 	def keyCancel(self):
 		self.close()
