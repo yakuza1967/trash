@@ -1,8 +1,6 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.yt_url import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 kekse = {}
 def MEHDGenreListEntry(entry):
 	return [entry,
@@ -142,8 +140,8 @@ class MEHDFilmListeScreen(Screen):
 		if filme:
 			self.filmliste = []
 			for (url,name,image) in filme:
-				name = iso8859_Decode(name.replace("HD: ",""))
-				self.filmliste.append((decodeHtml(name), url, image))
+				name = name.replace("HD: ","")
+				self.filmliste.append((decodeHtml2(name), url, image))
 			self.chooseMenuList.setList(map(MEHDFilmListEntry, self.filmliste))
 			self.keyLocked = False
 			self.loadPic()
@@ -164,8 +162,7 @@ class MEHDFilmListeScreen(Screen):
 		handlung = re.findall('<div class="bbcode_quote_container"></div>(.*?)<', data, re.S)
 		if handlung:
 			#print handlung
-			handlung = iso8859_Decode(re.sub(r"\s+", " ", handlung[0]))
-			self['handlung'].setText(decodeHtml(handlung))
+			self['handlung'].setText(decodeHtml2(handlung[0]))
 		else:
 			self['handlung'].setText("Keine infos gefunden.")
 
@@ -463,7 +460,7 @@ class enterSerienListScreen(Screen):
 		if self.folgenCol:
 			self.filmliste = []
 			for (url,name) in self.folgenCol:
-				self.filmliste.append((decodeHtml(iso8859_Decode(name)), url, self.folgenPic))
+				self.filmliste.append((decodeHtml2(name), url, self.folgenPic))
 			self.chooseMenuList.setList(map(enterSerienListEntry, self.filmliste))
 			self.keyLocked = False
 			self.loadPic

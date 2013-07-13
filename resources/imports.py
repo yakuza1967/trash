@@ -129,3 +129,9 @@ def iso8859_Decode(txt):
 	txt = txt.replace('\xc4','Ä').replace('\xd6','Ö').replace('\xdc','Ü')
 	#txt.decode('iso-8859-1').encode('utf-8')
 	return txt
+	
+def decodeHtml2(txt):
+	txt = iso8859_Decode(txt)
+	txt = decodeHtml(txt).strip()
+	return txt
+		

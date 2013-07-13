@@ -5,7 +5,7 @@ from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer, 
 
 STV_Version = "GEO.de v0.91"
 
-STV_siteEncoding = 'utf-8'
+STV_siteEncoding = 'iso8859-1'
 
 def GEOdeListEntry(entry):
 	return [entry,
@@ -77,7 +77,7 @@ class GEOdeGenreScreen(Screen):
 		if stvDaten:
 			print "Podcasts found"
 			for (id, name, mp3, desc, img) in stvDaten:
-				self.filmliste.append(("%s. " % id, iso8859_Decode(name), mp3, iso8859_Decode(desc),img))
+				self.filmliste.append(("%s. " % id, decodeHtml2(name), mp3, decodeHtml2(desc),img))
 			self.keyLocked = False
 		else:
 			self.filmliste.append(('Keine Podcasts gefunden !','','','',''))
