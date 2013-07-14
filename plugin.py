@@ -1075,7 +1075,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "Burning-Series":
 			self.session.open(bsMain)
 		elif auswahl == "PrimeWire":
-			self.session.open(chMain)
+			self.session.open(PrimeWireGenreScreen)
 		elif auswahl == "Focus":
 			self.session.open(focusGenre)
 		elif auswahl == "FilmOn":
@@ -2156,7 +2156,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(bsMain)
 		elif auswahl == "PrimeWire":
 			self.hit_plugin("PrimeWire")
-			self.session.open(chMain)
+			self.session.open(PrimeWireGenreScreen)
 		elif auswahl == "Focus":
 			self.hit_plugin("Focus")
 			self.session.open(focusGenre)
