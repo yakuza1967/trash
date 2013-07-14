@@ -1,7 +1,9 @@
 #	-*-	coding:	utf-8	-*-
 
-import sys
-if sys.version_info >= (2, 7):
+import twisted
+__TW_VER__ = tuple([int(x) for x in twisted.__version__.split('.')])
+
+if __TW_VER__ >= (11,1,0):
 	from twisted.web.client import Agent, RedirectAgent
 	from twisted.internet import reactor
 	from twisted.web.http_headers import Headers
@@ -44,7 +46,7 @@ else:
 	
 class TwAgentHelper:
 
-	if sys.version_info >= (2, 7):
+	if __TW_VER__ >= (11,1,0):
 	
 		instance_ctr = 0
 	

@@ -54,9 +54,7 @@ class PrimeWireGenreScreen(Screen):
 
 	def genreData(self, data):
 		parse = re.search('class="opener-menu-genre">(.*)class="opener-menu-section', data, re.S)
-		print parse
 		phCats = re.findall('<a\shref="(.*?)">(.*?)</a>', parse.group(1), re.S)
-		print phCats
 		if phCats:
 			for (phUrl, phTitle) in phCats:
 				phUrl = "http://www.primewire.ag" + phUrl + "&page="
@@ -165,7 +163,6 @@ class PrimeWireFilmlisteScreen(Screen):
 			return
 		titel = self['streamlist'].getCurrent()[0][0]
 		auswahl = self['streamlist'].getCurrent()[0][1]
-		print auswahl
 		if self.Genre == "TV Shows":
 			self.session.open(PrimeWireEpisodeScreen, auswahl)
 		else:
