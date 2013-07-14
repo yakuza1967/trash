@@ -72,7 +72,12 @@ from additions.wrestlingnetwork import *
 #from additions.viewster import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
-from additions.heisevideo import *
+
+if fileExists('/usr/lib/python2.7/ast.pyo'):
+	from additions.heisevideo import *
+	astModule = True
+else:
+	astModule = False
 
 # kids
 from additions.kinderkino import *
@@ -221,7 +226,8 @@ config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 #config.mediaportal.showViewster = ConfigYesNo(default = True)
 config.mediaportal.showMusicstreamcc = ConfigYesNo(default = True)
 config.mediaportal.showVibeo = ConfigYesNo(default = True)
-config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
+if astModule:
+	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
 
 # mediatheken
 config.mediaportal.showVoxnow = ConfigYesNo(default = True)
@@ -401,7 +407,8 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Moovizon:", config.mediaportal.showMoovizon))
 		#self.configlist.append(getConfigListEntry("Zeige Viewster:", config.mediaportal.showViewster))
 		self.configlist.append(getConfigListEntry("Zeige ARD Mediathek:", config.mediaportal.showARD))
-		self.configlist.append(getConfigListEntry("Zeige HeiseVideo:", config.mediaportal.showHeiseVideo))
+		if astModule:
+			self.configlist.append(getConfigListEntry("Zeige HeiseVideo:", config.mediaportal.showHeiseVideo))
 		
 		# Kinder
 		self.configlist.append(getConfigListEntry("Zeige Tivi:", config.mediaportal.showtivi))
@@ -630,8 +637,9 @@ class haupt_Screen(Screen, ConfigListScreen):
 		#	self.mediatheken.append(self.hauptListEntry("Viewster", "viewster"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
-		if config.mediaportal.showHeiseVideo.value:
-			self.mediatheken.append(self.hauptListEntry("heiseVIDEO", "heisevideo"))
+		if astModule:
+			if config.mediaportal.showHeiseVideo.value:
+				self.mediatheken.append(self.hauptListEntry("heiseVIDEO", "heisevideo"))
 
 		# Grauzone
 		if config.mediaportal.showSzeneStreams.value:
@@ -1767,8 +1775,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Fun"))
 		if config.mediaportal.showMusicstreamcc.value:
 			self.plugin_liste.append(("Musicstream.cc", "musicstreamcc", "Fun"))
-		if config.mediaportal.showHeiseVideo.value:
-			self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
+		if astModule:
+			if config.mediaportal.showHeiseVideo.value:
+				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
 			
 		### mediatheken	
 		if config.mediaportal.showVoxnow.value:
