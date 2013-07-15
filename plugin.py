@@ -73,11 +73,16 @@ from additions.wrestlingnetwork import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
 
-if fileExists('/usr/lib/python2.7/ast.pyo'):
-	from additions.heisevideo import *
-	astModule = True
-else:
+#if fileExists('/usr/lib/python2.7/ast.pyo'):
+try:
+	import ast
+except:
+	print "No 'ast' module"
 	astModule = False
+else:
+	from additions.heisevideo import *
+	print "Module 'ast' loaded"
+	astModule = True
 
 # kids
 from additions.kinderkino import *
