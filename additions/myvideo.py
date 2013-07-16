@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.myvideolink import MyvideoLink
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def myVideoGenreListEntry(entry):
 	return [entry,
@@ -47,7 +48,7 @@ class myVideoGenreScreen(Screen):
 		self.genreliste.append(("Sci-Fi", "74593"))
 		self.genreliste.append(("Western", "75189"))
 		self.genreliste.append(("Dokumentation", "76116"))
-		#self.genreliste.append(("Konzerte", "75833"))
+		self.genreliste.append(("Konzerte", "75833"))
 		self.chooseMenuList.setList(map(myVideoGenreListEntry, self.genreliste))
 
 	def keyOK(self):
@@ -216,49 +217,40 @@ class myVideoFilmScreen(Screen):
 			return
 		mvUrl = self['roflList'].getCurrent()[0][1]
 		print mvUrl
-		"""
-		id = re.findall('/watch/(.*?)/', mvUrl)
-		if id:
-			url = "http://www.myvideo.de/dynamic/get_player_video_xml.php?ID=" + id[0]
-			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData, id[0]).addErrback(self.dataError)
-		"""
 		id = re.findall('/watch/(.*?)/', mvUrl)
 		if id:
 			url = "http://www.myvideo.de/dynamic/get_player_video_xml.php?ID=" + id[0]
 			kiTitle = self['roflList'].getCurrent()[0][0]
-			MyvideoLink(self.session).getLink(self.playStream, self.dataError, kiTitle, url, id[0])
-
+			imgurl = self['roflList'].getCurrent()[0][2]
+			#MyvideoLink(self.session).getLink(self.playStream, self.dataError, kiTitle, url, id[0])
+			
+			self.session.open(MyvideoPlayer, [(kiTitle, url, id[0], imgurl)])
 	"""
-	def parseData(self, data, token):
-		data = data.replace("_encxml=","")
-		kiTitle = self['roflList'].getCurrent()[0][0]
-		enc_data_b = unhexlify(data)
-		sk = self.__md5(b64decode(b64decode(self.GK)) + self.__md5(str(token)))
-		dec_data = self.__rc4crypt(enc_data_b, sk)
-		if dec_data:
-			url = re.findall("connectionurl='(.*?)'", dec_data, re.S)
-			source = re.findall("source='(.*?)'", dec_data, re.S)
-			url = unquote(url[0])
-			token = re.findall('\\?(.*)', url, re.S)
-			source = unquote(source[0])
-			vorne = re.findall('(.*?)\.', source, re.S)
-			hinten = re.findall('\.(.*[a-zA-Z0-9])', source, re.S)
-			string23 = "/%s:%s" % (hinten[0], vorne[0])
-			playpath = '%s:%s?%s' % (hinten[0], vorne[0],token[0])
-			mvStream = '%s%s playpath=%s' % (url, string23,playpath)
-			if mvStream:
-				print mvStream
-				sref = eServiceReference(0x1001, 0, mvStream)
-				sref.setName(kiTitle)
-				self.session.open(MoviePlayer, sref)
-	"""
-	
 	def playStream(self, title, url, imgurl='', artist=''):
 		if url != None:
 			print url
 			sref = eServiceReference(0x1001, 0, url)
 			sref.setName(title)
 			self.session.open(MoviePlayer, sref)
+	"""
 	
 	def keyCancel(self):
 		self.close()
+
+class MyvideoPlayer(SimplePlayer):
+
+	def __init__(self, session, playList):
+		print "MyvideoPlayer:"
+		
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='myvideo', cover=True)
+		
+		self.onLayoutFinish.append(self.getVideo)
+		
+	def getVideo(self):
+		titel = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		token = self.playList[self.playIdx][2]
+		imgurl = self.playList[self.playIdx][3]
+		print titel, url, token
+		
+		MyvideoLink(self.session).getLink(self.playStream, self.dataError, titel, url, token, imgurl=imgurl)
