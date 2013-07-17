@@ -80,9 +80,8 @@ class VirtualKeyBoardmod(Screen):
 		<widget source="global.CurrentTime" render="Label" position="1140,42" size="100,28" font="mediaportal;26" halign="center" backgroundColor="#26181d20" transparent="1" foregroundColor="#00555555">
 		  <convert type="ClockToText">Default</convert>
 		</widget>
-		<eLabel position="912,135" size="330,188" backgroundColor="#00ffffff" zPosition="0" name="Videoback" foregroundColor="#00ffffff" />
-		<eLabel text="Virtual KeyBoard" position="70,47" size="800,43" font="mediaportal;18" backgroundColor="metrixBackground2" transparent="1" />
-		<widget name="header" position="70,130" size="700,40" font="SetrixHD;28" halign="center" transparent="1" noWrap="1" />
+		<eLabel text="Virtual KeyBoard" position="70,47" size="800,43" font="mediaportal;18" backgroundColor="#00000000" transparent="1" />
+		<widget name="header" position="70,130" size="700,40" font="mediaportal;25" halign="center" transparent="1" noWrap="1" />
 		<widget name="text" position="80,213" size="680,50" zPosition="3" font="mediaportal;26" noWrap="1" halign="right" />
 		<widget name="list" position="72,330" size="696,250" selectionDisabled="1" transparent="1" />
 		<widget name="coverArt" position="920,130" size="256,256" transparent="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt.png" alphatest="blend" />
