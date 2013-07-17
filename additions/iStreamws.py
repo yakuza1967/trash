@@ -19,7 +19,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-IS_Version = "iStream.ws v1.11"
+IS_Version = "iStream.ws v1.12"
 
 IS_siteEncoding = 'utf-8'
 
@@ -321,13 +321,13 @@ class IStreamFilmListeScreen(Screen):
 		self.chooseMenuList.setList(map(IStreamFilmListEntry,	self.filmListe))
 		
 	def loadPageData(self, data):
-		print "loadPageData:"
+		print "loadPageData:",len(data)
 			
 		if not self.neueFilme:
-			#filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)"><img class=.*?\?src=(.*?)&h=', data, re.S)
 			filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)">.*?data-original="(.*?)"', data, re.S)
 		else:
-			filme = re.findall('<div class="voting".*?<a href="(.*?)".*?title="(.*?)">.*?data-original="(.*?)" alt', data)
+			print "Parse new movies"
+			filme = re.findall('<div class="voting".*?<a href="(.*?)".*?title="(.*?)">.*?data-original="(.*?)"', data)
 
 		if filme:
 			print "Movies found !"

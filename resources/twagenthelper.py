@@ -4,7 +4,7 @@ import twisted
 __TW_VER__ = tuple([int(x) for x in twisted.__version__.split('.')])
 
 if __TW_VER__ >= (11,1,0):
-	from twisted.web.client import Agent, RedirectAgent
+	from twisted.web.client import Agent, RedirectAgent, getPage
 	from twisted.internet import reactor
 	from twisted.web.http_headers import Headers
 	from twisted.internet.protocol import Protocol
@@ -16,7 +16,8 @@ if __TW_VER__ >= (11,1,0):
 		'User-Agent': ['Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'],
 		'Accept-Charset': ['ISO-8859-1,utf-8;q=0.7,*;q=0.7'],
 		'Accept': ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
-		'Accept-Language': ['en-us,en;q=0.5'],
+		'Accept-Language': ['en-us,en;q=0.5']
+		#'Content-Type': ['application/x-www-form-urlencoded']
 	}
 	
 	class GetResource(Protocol):
@@ -41,7 +42,7 @@ else:
 		'User-Agent': 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6',
 		'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
 		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-		'Accept-Language': 'en-us,en;q=0.5',
+		'Accept-Language': 'en-us,en;q=0.5'
 	}
 	
 class TwAgentHelper:
@@ -63,6 +64,7 @@ class TwAgentHelper:
 			print "getRedirectedUrl: ", url
 			self._rd_callback = callback
 			self.url = url
+			self.data = ""
 			
 			self.agent.request('HEAD', url, headers=self.headers).addCallback(self.__getResponse, *args, **kwargs).addErrback(cb_err)
 			
@@ -91,16 +93,23 @@ class TwAgentHelper:
 			print "getWebPage: ", url
 			self._wp_callback = callback
 			self._errback = cb_err
+			self.data = ""
 			if follow_redir:
 				self.getRedirectedUrl(self.__getWebPageDef, cb_err, url, *args, **kwargs)
 			else:
 				self.__getWebPageDef(url, *args, **kwargs)
-			
+				
+		"""
 		def __getWebPageDef(self, url, *args, **kwargs):
 			d = self.agent.request('GET', url, headers=self.headers)
 			d.addCallback(self.__getResource)
 			d.addCallbacks(self._wp_callback, self._errback, callbackArgs=args, callbackKeywords=kwargs)
 			
+		"""
+		
+		def __getWebPageDef(self, url, *args, **kwargs):
+			getPage(url, followRedirect=True, agent=self.headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self._wp_callback, *args, **kwargs).addErrback(self._errback)
+		
 		def __getResource(self, response):
 			print "__getResource:"
 			finished = Deferred()
