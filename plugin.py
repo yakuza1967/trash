@@ -73,7 +73,6 @@ from additions.wrestlingnetwork import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
 
-#if fileExists('/usr/lib/python2.7/ast.pyo'):
 try:
 	import ast
 except:
@@ -300,8 +299,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			
 		Screen.__init__(self, session)
 		
-		self.oldstoragepathvalue = config.mediaportal.storagepath.value
-
 		self.configlist = []
 		ConfigListScreen.__init__(self, self.configlist)
 
@@ -472,6 +469,12 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		}, -1)
 
 	def keyOK(self):
+		if config.mediaportal.watchlistpath.value[-1] != '/':
+			config.mediaportal.watchlistpath.value = config.mediaportal.watchlistpath.value + '/'
+		if config.mediaportal.storagepath.value[-1] != '/':
+			config.mediaportal.storagepath.value = config.mediaportal.storagepath.value + '/'
+		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
+			config.mediaportal.filter.value = 'ALL'
 		for x in self["config"].list:
 			x[1].save()
 
