@@ -154,6 +154,7 @@ config.mediaportal.pornpin = ConfigYesNo(default = True)
 config.mediaportal.watchlistpath = ConfigText(default="/etc/enigma2/", fixed_size=False)
 config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("hits", _("Hits")), ("abc", _("ABC")), ("user", _("User"))])
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
+config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
 
 config.mediaportal.showDoku = ConfigYesNo(default = True)
 config.mediaportal.showRofl = ConfigYesNo(default = True)
@@ -457,6 +458,9 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige XXXSaVe:", config.mediaportal.showxxxsave))
 		self.configlist.append(getConfigListEntry("Zeige YouPorn:", config.mediaportal.showyouporn))
 		
+		self.configlist.append(getConfigListEntry("----- Debug -----", config.mediaportal.fake_entry))
+		self.configlist.append(getConfigListEntry("Debug-Mode:", config.mediaportal.debugMode))
+
 		self["config"].setList(self.configlist)
 
 		self['title'] = Label("MediaPortal - Setup - (Version %s)" % config.mediaportal.versiontext.value)
@@ -1814,6 +1818,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
 			
 		### porn
+		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
+			config.mediaportal.filter.value = 'ALL'
 		if config.mediaportal.showporn.value:
 			if config.mediaportal.show4tube.value:
 				self.plugin_liste.append(("4Tube", "4tube", "Porn"))

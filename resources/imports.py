@@ -47,6 +47,7 @@ from time import *
 
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 
+from debuglog import printlog as printl
 import mp_globals
 from Components.ScrollLabel import ScrollLabel
 
