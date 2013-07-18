@@ -2,7 +2,6 @@
 
 # General imports
 from resources.imports import *
-from resources.decrypt import *
 from resources.update import *
 	
 # Stream-Sites import
