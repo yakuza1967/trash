@@ -72,7 +72,7 @@ class kinderKinoScreen(Screen):
 		self.showPic()
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showPic(self):
 		kkTitle = self['roflList'].getCurrent()[0][0]

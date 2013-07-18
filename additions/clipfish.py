@@ -505,7 +505,7 @@ class CF_FilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self['handlung'].setText("Fehler:\n" + str(error))
 		
 	def loadPageData(self, data):

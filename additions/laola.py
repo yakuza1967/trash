@@ -196,7 +196,7 @@ class laolaVideosOverviewScreen(Screen):
 		self.session.open(laolaVideosSubOverviewScreen)	
 	
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 class laolaVideosSubOverviewScreen(Screen):		
 
@@ -346,7 +346,7 @@ class laolaTopVideosScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showPic(self):
 		laTitle = self['roflList'].getCurrent()[0][0]

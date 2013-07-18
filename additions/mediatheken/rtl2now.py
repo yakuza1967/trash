@@ -66,7 +66,7 @@ class RTL2nowGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -134,7 +134,7 @@ class RTL2nowFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		reiter_posts = []

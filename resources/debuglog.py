@@ -69,7 +69,7 @@ def printlog (string, parent=None, verbLevel=VERB_DEFAULT):
 		if len(classname) == 2:
 			classname = classname[1]
 			classname = classname.rstrip("\'>")
-			classname += ":"
+			classname += "::"
 			out = str(classname) + str(sys._getframe(1).f_code.co_name) +" " + str(string)
 		else:
 			classname = ""

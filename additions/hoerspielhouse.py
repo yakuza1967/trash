@@ -392,7 +392,7 @@ class HSH_FilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.musicListe.append(("No audio drama found !","","",""))
 		self.chooseMenuList.setList(map(HSH_FilmListEntry, self.musicListe))
 		
@@ -717,7 +717,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 		
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.streamListe.append(("Read error !",""))			
 		self.streamMenuList.setList(map(HSH_StreamListEntry, self.streamListe))
 			

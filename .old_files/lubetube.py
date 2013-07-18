@@ -67,7 +67,7 @@ class lubetubeGenreScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]
@@ -206,7 +206,7 @@ class lubetubeFilmScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]

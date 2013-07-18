@@ -119,7 +119,7 @@ class kinokisteKinoScreen(Screen):
 			self.showInfos()
 			
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showInfos(self):
 		kkTitle = self['streamlist'].getCurrent()[0][0]
@@ -315,7 +315,7 @@ class kinokistePartsScreen(Screen):
 			self.session.open(MoviePlayer, sref)
 			
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def keyCancel(self):
 		self.close()
@@ -433,7 +433,7 @@ class kinokisteFilmLetterScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def keyPageDown(self):
 		print "PageDown"

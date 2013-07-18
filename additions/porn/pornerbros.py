@@ -71,7 +71,7 @@ class pornerbrosGenreScreen(Screen):
 			self.showInfos()	
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
@@ -262,7 +262,7 @@ class pornerbrosFilmScreen(Screen):
 					del self.picload
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 	
 	def keyOK(self):
 		if self.keyLocked:

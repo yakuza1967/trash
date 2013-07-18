@@ -196,7 +196,7 @@ class Radiode(Screen):
 		getPage(stationUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamTOmp3).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def getStreamTOmp3(self, data):
 		if re.match('.*?"stream"', data, re.S):

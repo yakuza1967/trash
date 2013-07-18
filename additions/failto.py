@@ -65,7 +65,7 @@ class failScreen(Screen):
 			self.showPic()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showPic(self):
 		flTitle = self['roflList'].getCurrent()[0][0]

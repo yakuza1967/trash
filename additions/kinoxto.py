@@ -236,7 +236,7 @@ class kxKino(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -367,7 +367,7 @@ class kxNeuesteKino(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -495,7 +495,7 @@ class kxNeuesteOnline(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -673,7 +673,7 @@ class kxABCpage(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -817,7 +817,7 @@ class kxNeuesteSerien(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -1015,7 +1015,7 @@ class kxSerienABCpage(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -1223,7 +1223,7 @@ class kxEpisoden(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -1334,7 +1334,7 @@ class kxWatchlist(Screen):
 			finished = defer.DeferredList(downloads).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def download(self, item):
 		return getPage(item)
@@ -1483,7 +1483,7 @@ class kxStreams(Screen):
 			self.keyLocked = False
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -1593,7 +1593,7 @@ class kxParts(Screen):
 		self.keyLocked = False
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -1719,7 +1719,7 @@ class kxSucheAlleFilmeListeScreen(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()

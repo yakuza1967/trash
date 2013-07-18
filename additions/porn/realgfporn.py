@@ -67,7 +67,7 @@ class realgfpornGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
@@ -229,7 +229,7 @@ class realgfpornFilmScreen(Screen):
 		self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phUrl = self['genreList'].getCurrent()[0][1]

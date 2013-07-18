@@ -154,7 +154,7 @@ class eightiesMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def openMenu(self):
 		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')

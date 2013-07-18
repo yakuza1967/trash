@@ -163,7 +163,7 @@ class appletrailersFilmScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]

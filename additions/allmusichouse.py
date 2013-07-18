@@ -367,7 +367,7 @@ class AMH_FilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.musicListe.append(("No music found !","",""))
 		self.chooseMenuList.setList(map(AMH_FilmListEntry, self.musicListe))
 		
@@ -693,7 +693,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 		
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.streamListe.append(("Read error !","",""))			
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
 			

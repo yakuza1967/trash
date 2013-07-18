@@ -402,7 +402,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def openMenu(self):
 		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')
@@ -630,7 +630,7 @@ class cannaJahreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def seekFwd(self):
 		self['genreList'].pageDown()
@@ -718,7 +718,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def openMenu(self):
 		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')

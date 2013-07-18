@@ -70,7 +70,7 @@ class dokuScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyLeft(self):
 		if self.keyLocked:

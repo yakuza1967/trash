@@ -116,7 +116,7 @@ class oasetvFilmListeScreen(Screen):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -383,7 +383,7 @@ class oasetvCDListeScreen(Screen):
 
 	def dataError(self, error):
 		self.keyLocked = False
-		print error
+		printl(error,self,"E")
 		
 	def keyCancel(self):
 		self.close()

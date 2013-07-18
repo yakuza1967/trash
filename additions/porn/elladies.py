@@ -110,7 +110,7 @@ class elladiesGenreScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -238,7 +238,7 @@ class elladiesFilmScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]

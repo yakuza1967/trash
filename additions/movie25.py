@@ -138,7 +138,7 @@ class movie25FilmeListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -274,7 +274,7 @@ class movie25StreamListeScreen(Screen):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"

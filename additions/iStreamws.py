@@ -316,7 +316,7 @@ class IStreamFilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.filmListe.append(("No movies found !",""))
 		self.chooseMenuList.setList(map(IStreamFilmListEntry,	self.filmListe))
 		
@@ -400,7 +400,7 @@ class IStreamFilmListeScreen(Screen):
 	
 	def dataErrorP(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.ShowCoverNone()
 		
 	def getHandlung(self, url):
@@ -426,7 +426,7 @@ class IStreamFilmListeScreen(Screen):
 	def dataErrorH(self, error):
 		self.eventH.clear()
 		print "dataErrorH:"
-		print error
+		printl(error,self,"E")
 		self['handlung'].setText("Keine infos gefunden.")
 
 	def setHandlung(self, data):
@@ -760,7 +760,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.streamListe.append(("Read error !",""))			
 		self.streamMenuList.setList(map(IStreamStreamListEntry, self.streamListe))
 			

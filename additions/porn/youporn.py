@@ -73,7 +73,7 @@ class youpornGenreScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
@@ -215,7 +215,7 @@ class youpornCountryScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -318,7 +318,7 @@ class youpornChannelScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
@@ -491,7 +491,7 @@ class youpornFilmScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]

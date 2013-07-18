@@ -57,7 +57,7 @@ class auditvGenreScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -153,7 +153,7 @@ class auditvFilmScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyLeft(self):
 		if self.keyLocked:

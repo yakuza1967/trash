@@ -61,7 +61,7 @@ class roflScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showPic(self):
 		roflPicLink = self['roflList'].getCurrent()[0][2]

@@ -573,7 +573,7 @@ class DOKUHFilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.dokusListe.append(("No dokus found !","","",""))
 		self.chooseMenuList.setList(map(DOKUHFilmListEntry, self.dokusListe))
 		
@@ -663,7 +663,7 @@ class DOKUHFilmListeScreen(Screen):
 		
 	def dataErrorP(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.ShowCoverNone()
 		
 	def getHandlung(self, desc):
@@ -971,7 +971,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		
 	def dataErrorP(self, error):
 		print "dataErrorP:"
-		print error
+		printl(error,self,"E")
 		self.ShowCoverNone()
 	
 	def ShowCover(self, picData):
@@ -1002,7 +1002,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.streamListe.append(("Read error !","","","",""))			
 		self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
 			

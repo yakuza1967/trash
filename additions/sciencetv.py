@@ -264,7 +264,7 @@ class ScienceTvPlayer2(SimplePlayer):
 			self.playStream(self.stvTitle, self.stvLink)
 			
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def doEofInternal(self, playing):
 		print "doEofInt:"

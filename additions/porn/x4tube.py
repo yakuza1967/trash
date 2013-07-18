@@ -81,7 +81,7 @@ class fourtubeGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -205,7 +205,7 @@ class fourtubePornstarsScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]
@@ -364,7 +364,7 @@ class fourtubeSitesScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]
@@ -520,7 +520,7 @@ class fourtubeFilmScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]

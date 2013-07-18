@@ -486,7 +486,7 @@ class DH_FilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.dokusListe.append(("No dokus found !","","",""))
 		self.chooseMenuList.setList(map(DH_FilmListEntry, self.dokusListe))
 		
@@ -559,7 +559,7 @@ class DH_FilmListeScreen(Screen):
 		
 	def dataErrorP(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.ShowCoverNone()
 		
 	def getHandlung(self, desc):
@@ -881,7 +881,7 @@ class DH_Streams(Screen, ConfigListScreen):
 		
 	def dataErrorP(self, error):
 		print "dataErrorP:"
-		print error
+		printl(error,self,"E")
 		self.ShowCoverNone()
 	
 	def ShowCover(self, picData):
@@ -912,7 +912,7 @@ class DH_Streams(Screen, ConfigListScreen):
 			
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.streamListe.append(("Read error !","","",""))			
 		self.streamMenuList.setList(map(DH_StreamListEntry, self.streamListe))
 			

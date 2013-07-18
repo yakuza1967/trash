@@ -67,7 +67,7 @@ class SRFGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPic(self):
 		streamName = self['List'].getCurrent()[0][0]
@@ -98,7 +98,7 @@ class SRFGenreScreen(Screen):
 		self.session.open(SRFFilmeListeScreen, streamGenreLink)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyLeft(self):
 		self['List'].pageUp()
@@ -155,7 +155,7 @@ class SRFFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		self.filmliste = []

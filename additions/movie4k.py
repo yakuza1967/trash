@@ -271,7 +271,7 @@ class m4kWatchlist(Screen):
 			finished = defer.DeferredList(downloads).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def download(self, item):
 		return getPage(item)
@@ -402,7 +402,7 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 		getPage(url,method='POST',postdata=urllib.urlencode({'search':sData}),headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		kino = re.findall('<TR id="coverPreview(.*?)">.*?<a href="(.*?)">(.*?)     ', data, re.S)
@@ -562,7 +562,7 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadXXXPageData(self, data):
 		self.XXX = True
@@ -740,7 +740,7 @@ class m4kKinoFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -866,7 +866,7 @@ class m4kVideoFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -992,7 +992,7 @@ class m4kupdateFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -1128,7 +1128,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -1283,7 +1283,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen2"
@@ -1720,7 +1720,7 @@ class m4kPartListeScreen(Screen):
 			self.session.open(MoviePlayer, sref)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def keyCancel(self):
 		self.close()
@@ -1765,7 +1765,7 @@ class m4kEpisodenListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		self.watched_liste = []
@@ -1934,7 +1934,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		getPage(url, agent=std_headers, headers={'Cookie': 'xxx2=ok', 'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -2150,7 +2150,7 @@ class m4kSerienABCListe(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		print self.streamGenreLink
@@ -2167,7 +2167,7 @@ class m4kSerienABCListe(Screen):
 			print "parsen - Keine Daten gefunden"
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPic(self):
 		landImageUrl = self['filmList'].getCurrent()[0][2]
@@ -2326,7 +2326,7 @@ class m4kSerienABCListeStaffeln(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		print self.streamGenreLink
@@ -2416,7 +2416,7 @@ class m4kSerienABCListeStaffelnFilme(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		print self.streamGenreLink

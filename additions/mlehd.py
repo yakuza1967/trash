@@ -80,7 +80,7 @@ class mlehdGenreScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 			
 	def keyOK(self):
@@ -175,7 +175,7 @@ class mlehdFilmListeScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][2]
@@ -357,7 +357,7 @@ class mlehdFilmAuswahlScreen(Screen):
 			self.session.open(MoviePlayer, sref)
 			
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def keyCancel(self):
 		self.close()

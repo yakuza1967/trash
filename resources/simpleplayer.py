@@ -109,7 +109,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.playNextStream()
 		
 	def playStream(self, title, url=None, album='', artist='', imgurl=''):

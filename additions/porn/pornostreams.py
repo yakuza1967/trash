@@ -73,7 +73,7 @@ class pornostreamsGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -197,7 +197,7 @@ class pornostreamsFilmScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]
@@ -336,7 +336,7 @@ class pornostreamsStreamListeScreen(Screen):
 		getPage(self.streamFilmLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"

@@ -84,7 +84,7 @@ class moovizonGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def change_lang(self):
 		if self.language == "de":
@@ -205,7 +205,7 @@ class moovizonFilmListeScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][2]

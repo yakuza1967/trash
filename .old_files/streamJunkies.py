@@ -133,7 +133,7 @@ class streamFilmListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
@@ -328,7 +328,7 @@ class streamCDListeScreen(Screen):
 
 	def dataError(self, error):
 		self.keyLocked = False
-		print error
+		printl(error,self,"E")
 		
 	def keyCancel(self):
 		self.close()

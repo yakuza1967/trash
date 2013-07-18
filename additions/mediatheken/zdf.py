@@ -56,7 +56,7 @@ class ZDFGenreScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -133,7 +133,7 @@ class ZDFSubGenreScreen(Screen):
 		self.loadPic()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPic(self):
 		streamPic = self['List'].getCurrent()[0][2]
@@ -238,7 +238,7 @@ class ZDFFilmeListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		self.filmliste = []

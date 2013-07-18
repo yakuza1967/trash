@@ -44,12 +44,12 @@ class CannaLink:
 							return url
 							
 		except urllib2.HTTPError, error:
-			print error
+			printl(error,self,"E")
 			message = self.session.open(MessageBox, ("Fehler: %s" % error), MessageBox.TYPE_INFO, timeout=3)
 			return False
 
 		except urllib2.URLError, error:
-			print error.reason
+			printl(error.reason,self,"E")
 			message = self.session.open(MessageBox, ("Fehler: %s" % error), MessageBox.TYPE_INFO, timeout=3)
 			return False
 				

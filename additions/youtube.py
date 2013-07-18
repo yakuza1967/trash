@@ -764,7 +764,7 @@ class YT_ListScreen(Screen):
 
 	def dataErrorP(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.ShowCoverNone()
 		
 	def showInfos(self):

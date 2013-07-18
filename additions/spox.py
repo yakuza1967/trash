@@ -93,7 +93,7 @@ class spoboxSubGenreScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		genre = re.findall('<li><a href="(/'+self.streamGenreName+'.*?/.*?)">(.*?)</a></li>', data, re.I)
@@ -159,7 +159,7 @@ class spoboxFilmListeScreen(Screen):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"

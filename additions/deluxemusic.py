@@ -88,7 +88,7 @@ class deluxemusicGenreScreen(Screen):
 				self.session.open(DeluxemusicPlayer, playlist)
 
 	def dataError(self, error):
-		print error#
+		printl(error,self,"E")
 
 	def keyCancel(self):
 		self.close()

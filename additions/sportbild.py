@@ -65,7 +65,7 @@ class sportBildScreen(Screen):
 			self.showPic()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showPic(self):
 		spTitle = self['roflList'].getCurrent()[0][0]

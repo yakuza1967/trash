@@ -125,7 +125,7 @@ class netzKinoFilmeScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		nkTitle = self['genreList'].getCurrent()[0][0]

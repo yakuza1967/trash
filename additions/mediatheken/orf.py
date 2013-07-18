@@ -66,7 +66,7 @@ class ORFGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -75,7 +75,7 @@ class ORFGenreScreen(Screen):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.check_xml).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def check_xml(self,data):
 		if re.match('.*?<span>Weitere Folgen</span>', data, re.S):
@@ -143,7 +143,7 @@ class ORFFilmeListeScreen(Screen):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		self.filmliste = []

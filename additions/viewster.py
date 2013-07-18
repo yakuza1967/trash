@@ -95,7 +95,7 @@ class viewsterGenreScreen(Screen):
 			self.loadPic()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def change_lang(self):
 		if self.language == "de":

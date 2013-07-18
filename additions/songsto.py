@@ -144,7 +144,7 @@ class showSongstoAll(Screen, InfoBarBase, InfoBarSeek):
 			] 
 				
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def scRead(self, stationIconLink):
 		downloadPage(stationIconLink, "/tmp/scIcon.jpg").addCallback(self.scCoverShow)
@@ -309,7 +309,7 @@ class showSongstoTop(Screen, InfoBarBase, InfoBarSeek):
 			] 
 				
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def scRead(self, stationIconLink):
 		downloadPage(stationIconLink, "/tmp/scIcon.jpg").addCallback(self.scCoverShow)

@@ -154,7 +154,7 @@ class focus(Screen):
 					del self.picload
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def keyOK(self):
 		if self.keyLocked:

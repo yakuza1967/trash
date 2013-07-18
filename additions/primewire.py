@@ -66,7 +66,7 @@ class PrimeWireGenreScreen(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -155,7 +155,7 @@ class PrimeWireFilmlisteScreen(Screen):
 					del self.picload
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -283,7 +283,7 @@ class PrimeWireEpisodeScreen(Screen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -354,7 +354,7 @@ class PrimeWireStreamsScreen(Screen):
 			self.showInfos(image)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def showInfos(self,coverUrl):
 		print coverUrl

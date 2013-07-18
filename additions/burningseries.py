@@ -125,7 +125,7 @@ class bsSerien(Screen, ConfigListScreen):
 				self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -316,7 +316,7 @@ class bsStaffeln(Screen, ConfigListScreen):
 					del self.picload
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -434,7 +434,7 @@ class bsEpisoden(Screen, ConfigListScreen):
 					del self.picload
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -522,7 +522,7 @@ class bsStreams(Screen, ConfigListScreen):
 					del self.picload
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()

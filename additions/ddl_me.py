@@ -465,7 +465,7 @@ class DDLME_FilmListeScreen(Screen):
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self['handlung'].setText("Fehler:\n" + str(error))
 		
 	def loadPageData(self, data):
@@ -1027,7 +1027,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 
 	def dataError(self, error):
 		print "dataError:"
-		print error
+		printl(error,self,"E")
 		self.streamListe.append(("Read error !","","",""))			
 		self.streamMenuList.setList(map(DDLMEStreamListEntry, self.streamListe))
 			

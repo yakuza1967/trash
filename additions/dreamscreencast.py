@@ -59,7 +59,7 @@ class dreamscreencast(Screen):
 			self.showInfos()
 					
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 			
 	def showInfos(self):
 		self.Dscname = self['streamlist'].getCurrent()[0][0]

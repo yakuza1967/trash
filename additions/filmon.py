@@ -58,7 +58,7 @@ class filmON(Screen):
 			self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 		
 	def keyOK(self):
 		if self.keyLocked:

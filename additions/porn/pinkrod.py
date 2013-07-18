@@ -69,7 +69,7 @@ class pinkrodGenreScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
@@ -225,7 +225,7 @@ class pinkrodFilmScreen(Screen):
 			self.showInfos()
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def showInfos(self):
 		phTitle = self['genreList'].getCurrent()[0][0]
