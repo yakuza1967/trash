@@ -2150,259 +2150,176 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		mp_globals.activeIcon = icon
 		print "Plugin:", auswahl
 
+		self.hit_plugin(auswahl)
 		if auswahl == "Doku.me":
-			self.hit_plugin("Doku.me")
 			self.session.open(dokuScreen)
 		elif auswahl == "Rofl.to":
-			self.hit_plugin("Rofl.to")
 			self.session.open(roflScreen)
 		elif auswahl == "Fail.to":
-			self.hit_plugin("Fail.to")
 			self.session.open(failScreen)
 		elif auswahl == "KinderKino":
-			self.hit_plugin("KinderKino")
 			self.session.open(kinderKinoScreen)
 		elif auswahl == "MyVideo":
-			self.hit_plugin("MyVideo")
 			self.session.open(myVideoGenreScreen)
 		elif auswahl == "SportBild":
-			self.hit_plugin("SportBild")
 			self.session.open(sportBildScreen)
 		elif auswahl == "Laola1":
-			self.hit_plugin("Laola1")
 			self.session.open(laolaVideosOverviewScreen)
 		elif auswahl == "KinoKiste":
-			self.hit_plugin("KinoKiste")
 			self.session.open(kinokisteGenreScreen)
 		elif auswahl == "Burning-Series":
-			self.hit_plugin("Burning-Series")
 			self.session.open(bsMain)
 		elif auswahl == "PrimeWire":
-			self.hit_plugin("PrimeWire")
 			self.session.open(PrimeWireGenreScreen)
 		elif auswahl == "Focus":
-			self.hit_plugin("Focus")
 			self.session.open(focusGenre)
 		elif auswahl == "FilmOn":
-			self.hit_plugin("FilmOn")
 			self.session.open(filmON)
 		elif auswahl == "NetzKino":
-			self.hit_plugin("NetzKino")
 			self.session.open(netzKinoGenreScreen)
 		elif auswahl == "Spobox":
-			self.hit_plugin("Spobox")
 			self.session.open(spoboxGenreScreen)
 		elif auswahl == "Radio.de":
-			self.hit_plugin("Radio.de")
 			self.session.open(Radiode)
 		elif auswahl == "CCZwei":
-			self.hit_plugin("CCZwei")
 			self.session.open(cczwei)
 		elif auswahl == "Filmtrailer":
-			self.hit_plugin("Filmtrailer")
 			self.session.open(trailer)
 		elif auswahl == "Baskino":
-			self.hit_plugin("Baskino")
 			self.session.open(baskino)
 		elif auswahl == "Kinox":
-			self.hit_plugin("Kinox")
 			self.session.open(kxMain)
 		elif auswahl == "Kinox Watchlist":
-			self.hit_plugin("Kinox Watchlist")
 			self.session.open(kxWatchlist)
 		elif auswahl == "Dreamscreencast":
-			self.hit_plugin("Dreamscreencast")
 			self.session.open(dreamscreencast)
 		elif auswahl == "TV-Kino":
-			self.hit_plugin("TV-Kino")
 			self.session.open(tvkino)
 		elif auswahl == "StreamOase":
-			self.hit_plugin("StreamOase")
 			self.session.open(oasetvGenreScreen)
 		elif auswahl == "AutoBild":
-			self.hit_plugin("AutoBild")
 			self.session.open(autoBildGenreScreen)
 		elif auswahl == "NHL":
-			self.hit_plugin("NHL")
 			self.session.open(nhlGenreScreen)
 		elif auswahl == "4Players":
-			self.hit_plugin("4Players")
 			self.session.open(forPlayersGenreScreen)
 		elif auswahl == "GIGA.de":
-			self.hit_plugin("GIGA.de")
 			self.session.open(gigatvGenreScreen)
 		elif auswahl == "Audi.tv":
-			self.hit_plugin("Audi.tv")
 			self.session.open(auditvGenreScreen)
 		elif auswahl == "gronkh.de":
-			self.hit_plugin("gronkh.de")
 			self.session.open(gronkhGenreScreen)
 		elif auswahl == "Tivi":
-			self.hit_plugin("Tivi")
 			self.session.open(tiviGenreListeScreen)
 		elif auswahl == "My-Entertainment":
-			self.hit_plugin("My-Entertainment")
 			self.session.open(showMEHDGenre)
 		elif auswahl == "Songs.to":
-			self.hit_plugin("Songs.to")
 			self.session.open(showSongstoGenre)
 		elif auswahl == "Movie4k":
-			self.hit_plugin("Movie4k")
 			self.session.open(m4kGenreScreen, "default")
 		elif auswahl == "Movie4k Watchlist":
-			self.hit_plugin("Movie4k Watchlist")
 			self.session.open(m4kWatchlist)
 		elif auswahl == "IStream":
-			self.hit_plugin("IStream")
 			self.session.open(showIStreamGenre, "default")
 		elif auswahl == "mahlzeit.tv":
-			self.hit_plugin("mahlzeit.tv")
 			self.session.open(mahlzeitMainScreen)
 		elif auswahl == "fiwitu.tv":
-			self.hit_plugin("fiwitu.tv")
 			self.session.open(fiwituGenreScreen)
 		elif auswahl == "AppleTrailer":
-			self.hit_plugin("AppleTrailer")
 			self.session.open(appletrailersGenreScreen)
 		elif auswahl == "DOKUh":
-			self.hit_plugin("DOKUh")
 			self.session.open(showDOKUHGenre)
 		elif auswahl == "DokuHouse":
-			self.hit_plugin("DokuHouse")
 			self.session.open(show_DH_Genre)
 		elif auswahl == "AllMusicHouse":
-			self.hit_plugin("AllMusicHouse")
 			self.session.open(show_AMH_Genre)
 		elif auswahl == "putpat.tv":
-			self.hit_plugin("putpat.tv")
 			self.session.open(putpattvGenreScreen)
 		elif auswahl == "LiveLeak":
-			self.hit_plugin("LiveLeak")
 			self.session.open(LiveLeakScreen)
 		elif auswahl == "DokuStream":
-			self.hit_plugin("DokuStream")
 			self.session.open(show_DS_Genre)
 		elif auswahl == "ScienceTV":
-			self.hit_plugin("ScienceTV")
 			self.session.open(scienceTvGenreScreen)
 		elif auswahl == "SzeneStreams":
-			self.hit_plugin("SzeneStreams")
 			self.session.open(SzeneStreamsGenreScreen)
 		elif auswahl == "HörspielHouse":
-			self.hit_plugin("HörspielHouse")
 			self.session.open(show_HSH_Genre)
 		elif auswahl == "Hörspiel-Channels":
-			self.hit_plugin("Hörspiel-Channels")
 			self.session.open(show_HSC_Genre)
 		elif auswahl == "CAR-Channels":
-			self.hit_plugin("CAR-Channels")
 			self.session.open(show_CAR_Genre)
 		elif auswahl == "GAME-Channels":
-			self.hit_plugin("GAME-Channels")
 			self.session.open(show_GAME_Genre)
 		elif auswahl == "MUSIC-Channels":
-			self.hit_plugin("MUSIC-Channels")
 			self.session.open(show_MUSIC_Genre)
 		elif auswahl == "USER-Channels":
-			self.hit_plugin("USER-Channels")
 			self.session.open(show_USER_Genre)
 		elif auswahl == "Cinestream":
-			self.hit_plugin("Cinestream")
 			self.session.open(cinestreamFilmListeScreen)
 		elif auswahl == "Moovizon":
-			self.hit_plugin("Moovizon")
 			self.session.open(moovizonGenreScreen)
 		elif auswahl == "YouTube":
-			self.hit_plugin("YouTube")
 			self.session.open(youtubeGenreScreen)
 		elif auswahl == "Clipfish":
-			self.hit_plugin("Clipfish")
 			self.session.open(show_CF_Genre)
 		elif auswahl == "ddl.me":
-			self.hit_plugin("ddl.me")
 			self.session.open(show_DDLME_Genre)
 		elif auswahl == "MLE-HD":
-			self.hit_plugin("MLE-HD")
 			self.session.open(mlehdGenreScreen)
 		elif auswahl == "Canna-Power":
-			self.hit_plugin("Canna-Power")
 			self.session.open(cannaGenreScreen)
 		elif auswahl == "Ran.de":
-			self.hit_plugin("Ran.de")
 			self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":
-			self.hit_plugin("Movie25")
 			self.session.open(movie25GenreScreen)
 		elif auswahl == "80s & 90s Music":
-			self.hit_plugin("80s & 90s Music")
 			self.session.open(eightiesGenreScreen)
 		elif auswahl == "Teledunet":
-			self.hit_plugin("Teledunet")
 			self.session.open(teleGenreScreen)
 		elif auswahl == "GEO.de":
-			self.hit_plugin("GEOde")
 			self.session.open(GEOdeGenreScreen)
 		elif auswahl == "Deluxemusic":
-			self.hit_plugin("Deluxemusic")
 			self.session.open(deluxemusicGenreScreen)
 		elif auswahl == "Nuna":
-			self.hit_plugin("Nuna")
 			self.session.open(nunaGenreScreen)
 		elif auswahl == "Watchseries":
-			self.hit_plugin("Watchseries")
 			self.session.open(watchseriesGenreScreen)
 		elif auswahl == "Myvideo Top 100":
-			self.hit_plugin("Myvideo Top 100")
 			self.session.open(myvideoTop100GenreScreen)
 		elif auswahl == "Musicstream.cc":
-			self.hit_plugin("Musicstream.cc")
 			self.session.open(show_MSCC_Genre)
 		elif auswahl == "Vibeo":
-			self.hit_plugin("Vibeo")
 			self.session.open(vibeoFilmListeScreen)
 		elif auswahl == "heiseVIDEO":
-			self.hit_plugin("heiseVIDEO")
 			self.session.open(HeiseTvGenreScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
-			self.hit_plugin("VOXNOW")
 			self.session.open(VOXnowGenreScreen)
 		elif auswahl == "RTLNOW":
-			self.hit_plugin("RTLNOW")
 			self.session.open(RTLnowGenreScreen)
 		elif auswahl == "N-TVNOW":
-			self.hit_plugin("N-TVNOW")
 			self.session.open(NTVnowGenreScreen)
 		elif auswahl == "RTL2NOW":
-			self.hit_plugin("RTL2NOW")
 			self.session.open(RTL2nowGenreScreen)
 		elif auswahl == "RTLNITRONOW":
-			self.hit_plugin("RTLNITRONOW")
 			self.session.open(RTLNITROnowGenreScreen)
 		elif auswahl == "SUPERRTLNOW":
-			self.hit_plugin("SUPERRTLNOW")
 			self.session.open(SUPERRTLnowGenreScreen)
 		elif auswahl == "ZDF Mediathek":
-			self.hit_plugin("ZDF Mediathek")
 			self.session.open(ZDFGenreScreen)
 		elif auswahl == "ORF TVthek":
-			self.hit_plugin("ORF TVthek")
 			self.session.open(ORFGenreScreen)
 		elif auswahl == "SRF Player":
-			self.hit_plugin("SRF Player")
 			self.session.open(SRFGenreScreen)
 		elif auswahl == "KIKA+":
-			self.hit_plugin("KIKA+")
 			self.session.open(kikaGenreScreen)
 		elif auswahl == "Wrestlingnetwork":
-			self.hit_plugin("Wrestlingnetwork")
 			self.session.open(wrestlingnetworkGenreScreen)
 		#elif auswahl == "Viewster":
-		#	self.hit_plugin("Viewster")
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
-			self.hit_plugin("ARD Mediathek")
 			self.session.open(ARDGenreScreen)
 			
 		# porn
@@ -2410,342 +2327,280 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pin4tube, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("4Tube")
 				self.session.open(fourtubeGenreScreen)
 		elif auswahl == "Ah-Me":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinahme, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("Ah-Me")
 				self.session.open(ahmeGenreScreen)
 		elif auswahl == "AmateurPorn":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinamateurporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("AmateurPorn")
 				self.session.open(amateurpornGenreScreen)
 		elif auswahl == "beeg":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinbeeg, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("beeg")
 				self.session.open(beegGenreScreen)
 		elif auswahl == "DrTuber":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pindrtuber, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("DrTuber")
 				self.session.open(drtuberGenreScreen)
 		elif auswahl == "El-Ladies":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinelladies, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("El-Ladies")
 				self.session.open(elladiesGenreScreen)
 		elif auswahl == "Eporner":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pineporner, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("Eporner")
 				self.session.open(epornerGenreScreen)
 		elif auswahl == "EroProfile":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pineroprofile, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("EroProfile")
 				self.session.open(eroprofileGenreScreen)
 		elif auswahl == "ExtremeTube":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinextremetube, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("ExtremeTube")
 				self.session.open(extremetubeGenreScreen)
 		elif auswahl == "G-Stream-XXX":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pingstreaminxxx, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("G-Stream-XXX")
 				self.session.open(gstreaminxxxGenreScreen)
 		elif auswahl == "HDPorn":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinhdporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("HDPorn")
 				self.session.open(hdpornGenreScreen)
 		elif auswahl == "hotshame":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinhotshame, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("hotshame")
 				self.session.open(hotshameGenreScreen)
 		elif auswahl == "MegaSkanks":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinmegaskanks, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("MegaSkanks")
 				self.session.open(megaskanksGenreScreen)
 		elif auswahl == "IStream-XXX":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinistreamporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("IStream-XXX")
 				self.session.open(showIStreamGenre, "porn")
 		elif auswahl == "Movie4k-XXX":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinmovie4kporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("Movie4k-XXX")
 				self.session.open(m4kGenreScreen, "porn")
 		elif auswahl == "Pinkrod":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinpinkrod, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("Pinkrod")
 				self.session.open(pinkrodGenreScreen)
 		elif auswahl == "PlayPorn":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinplayporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("PlayPorn")
 				self.session.open(playpornGenreScreen)
 		elif auswahl == "PornoStreams":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinpornostreams, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("PornoStreams")
 				self.session.open(pornostreamsGenreScreen)
 		elif auswahl == "PornerBros":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinpornerbros, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("PornerBros")
 				self.session.open(pornerbrosGenreScreen)
 		elif auswahl == "Pornhub":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinpornhub, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("Pornhub")
 				self.session.open(pornhubGenreScreen)
 		elif auswahl == "PornRabbit":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinpornrabbit, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("PornRabbit")
 				self.session.open(pornrabbitGenreScreen)
 		elif auswahl == "RealGFPorn":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinrealgfporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("RealGFPorn")
 				self.session.open(realgfpornGenreScreen)
 		elif auswahl == "RedTube":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinredtube, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("RedTube")
 				self.session.open(redtubeGenreScreen)
 		elif auswahl == "SeXXX-HD":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinsexxxhd, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("SeXXX-HD")
 				self.session.open(sexxxhdGenreScreen)
 		elif auswahl == "SunPorno":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinsunporno, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("SunPorno")
 				self.session.open(sunpornoGenreScreen)
 		elif auswahl == "TheNewPorn":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinthenewporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("TheNewPorn")
 				self.session.open(thenewpornGenreScreen)
 		elif auswahl == "UpdateTube":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinupdatetube, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("UpdateTube")
 				self.session.open(updatetubeGenreScreen)
 		elif auswahl == "WetPlace":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinwetplace, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("WetPlace")
 				self.session.open(wetplaceGenreScreen)
 		elif auswahl == "xHamster":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinxhamster, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("xHamster")
 				self.session.open(xhamsterGenreScreen)
 		elif auswahl == "XXXSaVe":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinxxxsave, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("XXXSaVe")
 				self.session.open(xxxsaveFilmScreen)
 		elif auswahl == "YouPorn":
 			if config.mediaportal.pornpin.value:
 				self.session.openWithCallback(self.pinyouporn, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.hit_plugin("YouPorn")
 				self.session.open(youpornGenreScreen)
 
 	def pin4tube(self, pincode):
 		if pincode:
-			self.hit_plugin("4Tube")
 			self.session.open(fourtubeGenreScreen)
 
 	def pinahme(self, pincode):
 		if pincode:
-			self.hit_plugin("Ah-Me")
 			self.session.open(ahmeGenreScreen)
 
 	def pinamateurporn(self, pincode):
 		if pincode:
-			self.hit_plugin("AmateurPorn")
 			self.session.open(amateurpornGenreScreen)
 
 	def pinbeeg(self, pincode):
 		if pincode:
-			self.hit_plugin("beeg")
 			self.session.open(beegGenreScreen)
 
 	def pindrtuber(self, pincode):
 		if pincode:
-			self.hit_plugin("DrTuber")
 			self.session.open(drtuberGenreScreen)
 
 	def pinelladies(self, pincode):
 		if pincode:
-			self.hit_plugin("El-Ladies")
 			self.session.open(elladiesGenreScreen)
 
 	def pineporner(self, pincode):
 		if pincode:
-			self.hit_plugin("Eporner")
 			self.session.open(epornerGenreScreen)
 
 	def pineroprofile(self, pincode):
 		if pincode:
-			self.hit_plugin("EroProfile")
 			self.session.open(eroprofileGenreScreen)
 
 	def pinextremetube(self, pincode):
 		if pincode:
-			self.hit_plugin("ExtremeTube")
 			self.session.open(extremetubeGenreScreen)
 
 	def pingstreaminxxx(self, pincode):
 		if pincode:
-			self.hit_plugin("G-Stream-XXX")
 			self.session.open(gstreaminxxxGenreScreen)
 
 	def pinhdporn(self, pincode):
 		if pincode:
-			self.hit_plugin("HDPorn")
 			self.session.open(hdpornGenreScreen)
 
 	def pinhotshame(self, pincode):
 		if pincode:
-			self.hit_plugin("hotshame")
 			self.session.open(hotshameGenreScreen)
 
 	def pinmegaskanks(self, pincode):
 		if pincode:
-			self.hit_plugin("MegaSkanks")
 			self.session.open(megaskanksGenreScreen)
 
 	def pinistreamporn(self, pincode):
 		if pincode:
-			self.hit_plugin("IStream-XXX")
 			self.session.open(showIStreamGenre, "porn")
 
 	def pinmovie4kporn(self, pincode):
 		if pincode:
-			self.hit_plugin("Movie4k-XXX")
 			self.session.open(m4kGenreScreen, "porn")
 			
 	def pinpinkrod(self, pincode):
 		if pincode:
-			self.hit_plugin("Pinkrod")
 			self.session.open(pinkrodGenreScreen)
 
 	def pinplayporn(self, pincode):
 		if pincode:
-			self.hit_plugin("PlayPorn")
 			self.session.open(playpornGenreScreen)
 
 	def pinpornostreams(self, pincode):
 		if pincode:
-			self.hit_plugin("PornoStreams")
 			self.session.open(pornostreamsGenreScreen)
 
 	def pinpornerbros(self, pincode):
 		if pincode:
-			self.hit_plugin("PornerBros")
 			self.session.open(pornerbrosGenreScreen)
 
 	def pinpornhub(self, pincode):
 		if pincode:
-			self.hit_plugin("Pornhub")
 			self.session.open(pornhubGenreScreen)
 
 	def pinpornrabbit(self, pincode):
 		if pincode:
-			self.hit_plugin("PornRabbit")
 			self.session.open(pornrabbitGenreScreen)
 
 	def pinrealgfporn(self, pincode):
 		if pincode:
-			self.hit_plugin("RealGFPorn")
 			self.session.open(realgfpornGenreScreen)
 
 	def pinredtube(self, pincode):
 		if pincode:
-			self.hit_plugin("RedTube")
 			self.session.open(redtubeGenreScreen)
 
 	def pinsexxxhd(self, pincode):
 		if pincode:
-			self.hit_plugin("SeXXX-HD")
 			self.session.open(sexxxhdGenreScreen)
 
 	def pinsunporno(self, pincode):
 		if pincode:
-			self.hit_plugin("SunPorno")
 			self.session.open(sunpornoGenreScreen)
 
 	def pinthenewporn(self, pincode):
 		if pincode:
-			self.hit_plugin("TheNewPorn")
 			self.session.open(thenewpornGenreScreen)
 
 	def pinupdatetube(self, pincode):
 		if pincode:
-			self.hit_plugin("UpdateTube")
 			self.session.open(updatetubeGenreScreen)
 
 	def pinwetplace(self, pincode):
 		if pincode:
-			self.hit_plugin("WetPlace")
 			self.session.open(wetplaceGenreScreen)
 
 	def pinxhamster(self, pincode):
 		if pincode:
-			self.hit_plugin("xHamster")
 			self.session.open(xhamsterGenreScreen)
 
 	def pinxxxsave(self, pincode):
 		if pincode:
-			self.hit_plugin("XXXSaVe")
 			self.session.open(xxxsaveFilmScreen)
 
 	def pinyouporn(self, pincode):
 		if pincode:
-			self.hit_plugin("YouPorn")
 			self.session.open(youpornGenreScreen)
 	
 	def	keyLeft(self):
