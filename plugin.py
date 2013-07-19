@@ -141,6 +141,7 @@ config.mediaportal.autoupdate = ConfigYesNo(default = True)
 config.mediaportal.pincode = ConfigPIN(default = 0000)
 config.mediaportal.showporn = ConfigYesNo(default = False)
 config.mediaportal.showgrauzone = ConfigYesNo(default = False)
+config.mediaportal.pingrauzone = ConfigYesNo(default = False)
 config.mediaportal.skin = ConfigSelection(default = "tec", choices = [("tec", _("tec")),("liquidblue", _("liquidblue")), ("original", _("original"))])
 config.mediaportal.ansicht = ConfigSelection(default = "liste", choices = [("liste", _("Liste")),("wall", _("Wall"))])
 config.mediaportal.selektor = ConfigSelection(default = "blue", choices = [("blue", _("blau")),("green", _(u"gr\xfcn")),("red", _("rot")),("turkis", _(u"t\xfcrkis"))])
@@ -159,7 +160,7 @@ config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["Hig
 config.mediaportal.showDoku = ConfigYesNo(default = True)
 config.mediaportal.showRofl = ConfigYesNo(default = True)
 config.mediaportal.showFail = ConfigYesNo(default = True)
-config.mediaportal.showKinoKiste = ConfigYesNo(default = True)
+config.mediaportal.showKinoKiste = ConfigYesNo(default = False)
 config.mediaportal.showStreamOase = ConfigYesNo(default = False)
 config.mediaportal.showMyvideo = ConfigYesNo(default = True)
 config.mediaportal.showFocus = ConfigYesNo(default = True)
@@ -211,7 +212,7 @@ config.mediaportal.showGameChannels = ConfigYesNo(default = True)
 config.mediaportal.showFiwitu = ConfigYesNo(default = True)
 config.mediaportal.showMusicChannels = ConfigYesNo(default = True)
 config.mediaportal.showUserChannels = ConfigYesNo(default = True)
-config.mediaportal.showCinestream = ConfigYesNo(default = True)
+config.mediaportal.showCinestream = ConfigYesNo(default = False)
 config.mediaportal.showMoovizon = ConfigYesNo(default = False)
 config.mediaportal.showYoutube = ConfigYesNo(default = True)
 config.mediaportal.showClipfish = ConfigYesNo(default = True)
@@ -220,7 +221,7 @@ config.mediaportal.showDdlme = ConfigYesNo(default = False)
 config.mediaportal.showCanna = ConfigYesNo(default = False)
 config.mediaportal.showRan = ConfigYesNo(default = True)
 config.mediaportal.showMovie25 = ConfigYesNo(default = False)
-config.mediaportal.showEighties = ConfigYesNo(default = True)
+config.mediaportal.showEighties = ConfigYesNo(default = False)
 config.mediaportal.showTeledunet = ConfigYesNo(default = True)
 config.mediaportal.showGEOde = ConfigYesNo(default = True)
 config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
@@ -306,7 +307,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		## Allgemein
 		self.configlist.append(getConfigListEntry("----- Allgemein -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Automatic Update Check:", config.mediaportal.autoupdate))
-		self.configlist.append(getConfigListEntry("Filter:", config.mediaportal.filter))
 		self.configlist.append(getConfigListEntry("Pincode:", config.mediaportal.pincode))
 		self.configlist.append(getConfigListEntry("XXX-Erweiterungen sichtbar:", config.mediaportal.showporn))
 		self.configlist.append(getConfigListEntry("XXX-Pincodeabfrage:", config.mediaportal.pornpin))
@@ -371,7 +371,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige USER-Channels:", config.mediaportal.showUserChannels))
 		self.configlist.append(getConfigListEntry("Zeige YouTube:", config.mediaportal.showYoutube))
 		self.configlist.append(getConfigListEntry("Zeige Clipfish:", config.mediaportal.showClipfish))
-		self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 		self.configlist.append(getConfigListEntry("Zeige Teledunet:", config.mediaportal.showTeledunet))
 		self.configlist.append(getConfigListEntry("Zeige GEOde:", config.mediaportal.showGEOde))
 		self.configlist.append(getConfigListEntry("Zeige Deluxemusic:", config.mediaportal.showDeluxemusic))
@@ -379,6 +378,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Myvideo Top 100:", config.mediaportal.showMyvideoTop100))
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
 		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
 			self.configlist.append(getConfigListEntry("Zeige Canna-Power:", config.mediaportal.showCanna))
 			self.configlist.append(getConfigListEntry("Zeige Musicstream.cc:", config.mediaportal.showMusicstreamcc))
@@ -482,12 +482,42 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			config.mediaportal.storagepath.value = config.mediaportal.storagepath.value + '/'
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
 			config.mediaportal.filter.value = 'ALL'
+		if (config.mediaportal.showgrauzone.value == False and config.mediaportal.filter.value == 'Grauzone'):
+			config.mediaportal.filter.value = 'ALL'
+		
+		if (config.mediaportal.showgrauzone.value and not config.mediaportal.pingrauzone.value):
+			self.session.openWithCallback(self.keyOK2,MessageBox,_("Some of the plugins may not be legally used in your country!\nIf you accept this then enter the following code now:\n\nFour Five Eight Nine"), MessageBox.TYPE_YESNO)
+		else:
+			if not config.mediaportal.showgrauzone.value:
+				config.mediaportal.pingrauzone.value = False
+			self.confSave()
+
+	def keyOK2(self, answer):
+		if answer is True:
+			self.session.openWithCallback(self.validcode, PinInput, pinList = [(4589)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct code"), windowTitle = _("Enter code"))
+		else:
+			config.mediaportal.showgrauzone.value = False
+			config.mediaportal.pingrauzone.value = False
+			self.confSave()
+
+	def getTriesEntry(self):
+		return config.ParentalControl.retries.setuppin
+
+	def validcode(self, validcode):
+		if validcode:
+			config.mediaportal.pingrauzone.value = True
+			self.confSave()
+		else:
+			config.mediaportal.showgrauzone.value = False
+			config.mediaportal.pingrauzone.value = False
+			self.confSave()
+
+	def confSave(self):
 		for x in self["config"].list:
 			x[1].save()
-
 		configfile.save()
 		self.close()
-	
+
 	def keyCancel(self):
 		self.close()
 
