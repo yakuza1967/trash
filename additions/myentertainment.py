@@ -1,4 +1,4 @@
-#	-*-	coding:	utf-8	-*-
+﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
 kekse = {}
@@ -199,9 +199,8 @@ class MEHDFilmListeScreen(Screen):
 				print 'Ein Free Stream....',stream
 				getPage(stream[0], cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamLink).addErrback(self.dataError)
 			else:
-				searchTitle = re.findall('<title>(.*?)</title>', data, re.S)
+				searchTitle = re.findall('>*\s*\r*\n<.*?>*\r*\n*\s(.*?)<.*?>*\r*\n*\s*<*>*\r*\n*<div style="margin: 5px;">', decodeTitle(data))
 				searchCol = re.findall('<img src="(http://my-entertainment.biz.*?)".*?href="(http://my-entertainment.biz/server/Free-Member.php\\?mov=.*?)"', data, re.S)
-				print 'Mehrere Free-Streams...',searchCol
 				# Jetzt muessen wir eine neue Screen oeffnen um die Filme der Collection anzuzeigen
 				self.session.open(enterColListScreen, searchCol, searchTitle)
 
@@ -210,7 +209,7 @@ class MEHDFilmListeScreen(Screen):
 			#print 'streamdata...:', data
 			streamName = self['filmList'].getCurrent()[0][0]
 			#stream_url = re.findall('<source src="(.*?)".*?type="video/mp4"', data, re.S)
-			stream_url = re.findall('(http://free-s1.my-entertainment.biz.*?)"', data, re.S)
+			stream_url = re.findall('(http://free.+.my-entertainment.biz.*?)"', data, re.S)
 			print stream_url
 			if stream_url:
 				streamName = self['filmList'].getCurrent()[0][0]
@@ -329,10 +328,10 @@ class enterColListScreen(Screen):
 		
 		
 	def showColData(self):
-		i=1
+		i=0
 		if self.pageCol:
 			for enterPic,enterUrl in self.pageCol:
-				self.auswahlColListe.append((self.pageTitle[0]+' '+str(i), enterUrl, enterPic))
+				self.auswahlColListe.append((self.pageTitle[i], enterUrl, enterPic))
 				i=i+1
 			self.chooseMenuList.setList(map(enterColListEntry, self.auswahlColListe))
 			self.keyLocked = False
@@ -541,3 +540,88 @@ class enterSerienListScreen(Screen):
 		
 	def keyCancel(self):
 		self.close()
+		
+def decodeTitle(text):
+	text = text.replace('<font size="3">',"")
+	text = text.replace('\xe4',"ae")
+	text = text.replace('%3A',":")
+	text = text.replace('\xb2','2')
+	text = text.replace('\xb3','3')
+	text = text.replace('&auml;','ae')
+	text = text.replace('\u00e4','ae')
+	text = text.replace('\xe4','ae')
+	text = text.replace('&#228;','ae')
+
+	text = text.replace('&Auml;','Ae')
+	text = text.replace('\u00c4','Ae')
+	text = text.replace('&#196;','Ae')
+	text = text.replace('\xc4','Ae')
+	
+	text = text.replace('&ouml;','oe')
+	text = text.replace('\u00f6','oe')
+	text = text.replace('&#246;','oe')
+	text = text.replace('\xf6','oe')
+	
+	text = text.replace('<font size="4">',"")
+	text = text.replace('/font',"")
+	text = text.replace('\xd6','Oe')
+	text = text.replace('&ouml;','Oe')
+	text = text.replace('\u00d6','Oe')
+	text = text.replace('&#214;','Oe')
+	
+	text = text.replace('br /',"")
+	text = text.replace('<b>',"")
+	text = text.replace('&uuml;','ue')
+	text = text.replace('\u00fc','ue')
+	text = text.replace('\xfc','ue')
+	text = text.replace('&#252;','ue')
+	
+	text = text.replace('\xdc','Ue')
+	text = text.replace('&Uuml;','Ue')
+	text = text.replace('\u00dc','Ue')
+	text = text.replace('&#220;','Ue')
+	
+	text = text.replace('&szlig;','ss')
+	text = text.replace('\u00df','ss')
+	text = text.replace('&#223;','ss')
+	
+	text = text.replace('%2F',"/")
+	text = text.replace('&amp;','&')
+	text = text.replace('%26',"&")
+	text = text.replace('%3F',"?")
+	text = text.replace('&amp','')
+	text = text.replace('\xde',"s")
+	text = text.replace('\xfe',"s")
+	text = text.replace('&quot;','\"')
+	text = text.replace('&gt;','\'')
+	text = text.replace('&apos;',"'")
+	text = text.replace('&acute;','\'')
+	text = text.replace('%3D',"=")
+	text = text.replace('&ndash;','-')
+	text = text.replace('&bdquo;','"')
+	text = text.replace('&rdquo;','"')
+	text = text.replace('&ldquo;','"')
+	text = text.replace('&lsquo;','\'')
+	text = text.replace('&rsquo;','\'')
+	text = text.replace('\xe7',"c")
+	text = text.replace('\xf0',"g")
+	text = text.replace('&#038;','&')
+	text = text.replace('&#039;','\'')
+	text = text.replace('&#160;',' ')
+	text = text.replace('&#174;','')
+	text = text.replace('&#225;','a')
+	text = text.replace('\xc7',"c")
+	text = text.replace('&#233;','e')
+	text = text.replace('&#243;','o')
+	text = text.replace('&#8211;',"-")
+	text = text.replace('&#8216;',"'")
+	text = text.replace('&#8217;',"'")
+	text = text.replace('&#8220;',"'")
+	text = text.replace('\xfd',"i")
+	text = text.replace('&#8221;','"')
+	text = text.replace('&#8222;',',')
+	text = text.replace('\xdd','I')
+	text = text.replace('&#8230;','...')
+	text = text.replace('\xdf',"ss")
+	text = text.replace('\xe9',"e")
+	return text	
