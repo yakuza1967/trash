@@ -490,7 +490,12 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			config.mediaportal.filter.value = 'ALL'
 		
 		if (config.mediaportal.showgrauzone.value and not config.mediaportal.pingrauzone.value):
-			self.session.openWithCallback(self.keyOK2,MessageBox,_("Some of the plugins may not be legally used in your country!\nIf you accept this then enter the following code now:\n\nFour Five Eight Nine"), MessageBox.TYPE_YESNO)
+			self.a = str(random.randint(1,9))
+			self.b = str(random.randint(0,9))
+			self.c = str(random.randint(0,9))
+			self.d = str(random.randint(0,9))
+			message = "Some of the plugins may not be legally used in your country!\n\nIf you accept this then enter the following code now:\n\n%s %s %s %s" % (self.a,self.b,self.c,self.d)
+			self.session.openWithCallback(self.keyOK2,MessageBox,_(message), MessageBox.TYPE_YESNO) 
 		else:
 			if not config.mediaportal.showgrauzone.value:
 				config.mediaportal.pingrauzone.value = False
@@ -498,7 +503,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 
 	def keyOK2(self, answer):
 		if answer is True:
-			self.session.openWithCallback(self.validcode, PinInput, pinList = [(4589)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct code"), windowTitle = _("Enter code"))
+			self.session.openWithCallback(self.validcode, PinInput, pinList = [(int(self.a+self.b+self.c+self.d))], triesEntry = self.getTriesEntry(), title = _("Please enter the correct code"), windowTitle = _("Enter code"))
 		else:
 			config.mediaportal.showgrauzone.value = False
 			config.mediaportal.pingrauzone.value = False
