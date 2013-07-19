@@ -437,15 +437,18 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Eporner:", config.mediaportal.showeporner))
 		self.configlist.append(getConfigListEntry("Zeige EroProfile:", config.mediaportal.showeroprofile))
 		self.configlist.append(getConfigListEntry("Zeige ExtremeTube:", config.mediaportal.showextremetube))
-		self.configlist.append(getConfigListEntry("Zeige G-Stream-XXX:", config.mediaportal.showgstreaminxxx))
+		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige G-Stream-XXX:", config.mediaportal.showgstreaminxxx))
 		self.configlist.append(getConfigListEntry("Zeige HDPorn:", config.mediaportal.showhdporn))
 		self.configlist.append(getConfigListEntry("Zeige hotshame:", config.mediaportal.showhotshame))
-		self.configlist.append(getConfigListEntry("Zeige MegaSkanks:", config.mediaportal.showmegaskanks))
-		self.configlist.append(getConfigListEntry("Zeige IStream-XXX:", config.mediaportal.showIStreamPorn))
-		self.configlist.append(getConfigListEntry("Zeige Movie4k-XXX:", config.mediaportal.showM4kPorn))
+		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige MegaSkanks:", config.mediaportal.showmegaskanks))
+			self.configlist.append(getConfigListEntry("Zeige IStream-XXX:", config.mediaportal.showIStreamPorn))
+			self.configlist.append(getConfigListEntry("Zeige Movie4k-XXX:", config.mediaportal.showM4kPorn))
 		self.configlist.append(getConfigListEntry("Zeige Pinkrod:", config.mediaportal.showpinkrod))
-		self.configlist.append(getConfigListEntry("Zeige PlayPorn:", config.mediaportal.showplayporn))
-		self.configlist.append(getConfigListEntry("Zeige PornoStreams:", config.mediaportal.showpornostreams))
+		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige PlayPorn:", config.mediaportal.showplayporn))
+			self.configlist.append(getConfigListEntry("Zeige PornoStreams:", config.mediaportal.showpornostreams))
 		self.configlist.append(getConfigListEntry("Zeige PornerBros:", config.mediaportal.showpornerbros))
 		self.configlist.append(getConfigListEntry("Zeige Pornhub:", config.mediaportal.showPornhub))
 		self.configlist.append(getConfigListEntry("Zeige PornRabbit:", config.mediaportal.showpornrabbit))
@@ -457,7 +460,8 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige UpdateTube:", config.mediaportal.showupdatetube))
 		self.configlist.append(getConfigListEntry("Zeige WetPlace:", config.mediaportal.showwetplace))
 		self.configlist.append(getConfigListEntry("Zeige xHamster:", config.mediaportal.showXhamster))
-		self.configlist.append(getConfigListEntry("Zeige XXXSaVe:", config.mediaportal.showxxxsave))
+		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige XXXSaVe:", config.mediaportal.showxxxsave))
 		self.configlist.append(getConfigListEntry("Zeige YouPorn:", config.mediaportal.showyouporn))
 		
 		self.configlist.append(getConfigListEntry("----- Debug -----", config.mediaportal.fake_entry))
