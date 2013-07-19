@@ -32,6 +32,7 @@ class showMEHDGenre(Screen):
 		
 		self.keyLocked = True
 		self.filmliste = []
+		self.searchTxt = ""
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
@@ -41,7 +42,8 @@ class showMEHDGenre(Screen):
 		
 	def loadPage(self):
 		filmliste = []
-		Genre = [("Neueinsteiger", "http://my-entertainment.biz/forum/content.php?r=1969-Aktuelle-HD-Filme&page="),
+		Genre = [("Suche", "suche"),
+			("Neueinsteiger", "http://my-entertainment.biz/forum/content.php?r=1969-Aktuelle-HD-Filme&page="),
 			("Cineline", "http://my-entertainment.biz/forum/list.php?r=category/169-Cineline&page="),
 			("Collection", "http://my-entertainment.biz/forum/content.php?r=3501-hd-collection&page="),
 			("Abenteuer", "http://my-entertainment.biz/forum/list.php?r=category/65-HD-Abenteuer&page="),
@@ -73,8 +75,23 @@ class showMEHDGenre(Screen):
 		genreName = self['filmList'].getCurrent()[0][0]
 		genreLink = self['filmList'].getCurrent()[0][1]
 		print genreLink
-		self.session.open(MEHDFilmListeScreen, genreLink, genreName)
+		if genreName == "Suche":
+			print 'suchen'
+			self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche.....")), text = self.searchTxt)
+		else:
+			self.session.open(MEHDFilmListeScreen, genreLink, genreName)
 		
+	
+	def mySearch(self, callback = None):
+		print 'mySearch'
+		if callback != None:
+			self.searchTxt = callback.replace(' ', "%20")
+			print self.searchTxt
+			tmpEnterPre = "http://my-entertainment.biz/forum/search.php?query='%s'" % self.searchTxt
+			enterAuswahlLink = tmpEnterPre + "&titleonly=0&beforeafter=after&contenttypeid=18&sortby=dateline&order=descending&sortorder=descending&searchfromtype=vBForum%3ASearchCommon&type[]=18&do=process" 
+			self.session.open(MEHDFilmListeScreen, enterAuswahlLink, "Suche")
+
+	
 	def keyCancel(self):
 		self.close()
 		
@@ -127,24 +144,36 @@ class MEHDFilmListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 		
 	def loadPage(self):
-		url = "%s%s" % (self.genreLink, str(self.page))
-		print url
-		getPage(url, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		if self.genreName == "Suche":
+			url = self.genreLink
+			print url
+			getPage(url, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		else:
+			url = "%s%s" % (self.genreLink, str(self.page))
+			print url
+			getPage(url, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
-		filme = re.findall('<div class="article_preview">.*?<a href="(.*?)"><span>(.*?)</span>.*?<img.*?src="(.*?)"', data, re.S)
-		if filme:
-			self.filmliste = []
-			for (url,name,image) in filme:
-				name = name.replace("HD: ","")
-				self.filmliste.append((decodeHtml2(name), url, image))
+		if self.genreName == "Suche":
+			links = re.findall('<h3 class="searchtitle">.*?<a href="(.*?)".*?title="">(.*?)</a>', data, re.S)
+			for enterLink, enterName in links:
+				self.filmliste.append((decodeHtml2(enterName), enterLink, ""))
 			self.chooseMenuList.setList(map(MEHDFilmListEntry, self.filmliste))
 			self.keyLocked = False
-			self.loadPic()
+		else:
+			filme = re.findall('<div class="article_preview">.*?<a href="(.*?)"><span>(.*?)</span>.*?<img.*?src="(.*?)"', data, re.S)
+			if filme:
+				self.filmliste = []
+				for (url,name,image) in filme:
+					name = name.replace("HD: ","")
+					self.filmliste.append((decodeHtml2(name), url, image))
+				self.chooseMenuList.setList(map(MEHDFilmListEntry, self.filmliste))
+				self.keyLocked = False
+				self.loadPic()
 
 	def loadPic(self):
 		self['page'].setText(str(self.page))
