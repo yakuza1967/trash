@@ -744,7 +744,7 @@ class m4kKinoFilmeListeScreen(Screen):
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
-		kino = re.findall('<div style="float:left"><a href="(.*?)" ><img src="(.*?)" border=0 style="width:105px;max-width:105px;max-height:160px;min-height:140px;" alt=".*?kostenlos" title="(.*?).kostenlos"></a>', data, re.S)
+		kino = re.findall('<div style="float:left">.*?<a href="(.*?)"><img src="(.*?)" border=0 style="width:105px;max-width:105px;max-height:160px;min-height:140px;" alt=".*?kostenlos" title="(.*?).kostenlos"></a>', data, re.S)
 		if kino:
 			for url,image,title in kino:
 				url = "%s%s" % ("http://www.movie4k.to/", url)
@@ -870,7 +870,7 @@ class m4kVideoFilmeListeScreen(Screen):
 		
 	def loadPageData(self, data):
 		print "daten bekommen"
-		video = re.findall('<div style="float: left;"><a href="(.*?)" ><img src="(.*?)" alt=".*?" title="(.*?)" border="0" style="width:105px;max-width:105px;max-height:160px;min-height:140px;"></a>', data, re.S)
+		video = re.findall('<div style="float: left;">.*?<a href="(.*?)"><img src="(.*?)" alt=".*?" title="(.*?)" border="0" style="width:105px;max-width:105px;max-height:160px;min-height:140px;"></a>', data, re.S)
 		if video:
 			for url,image,title in video:
 				url = "%s%s" % ("http://www.movie4k.to/", url)
