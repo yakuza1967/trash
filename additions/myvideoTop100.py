@@ -1,17 +1,12 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.myvideolink import MyvideoLink
-from base64 import b64decode
-from binascii import unhexlify
-import hashlib, re, os, sha
-from urllib import unquote, urlencode
-from time import strptime, mktime
 
 def myvideoTop100GenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def myvideoTop100ListEntry(entry):
 	#TYPE_TEXT, x, y, width, height, fnt, flags, string [, color, backColor, backColorSelected, borderWidth, borderColor])
 	return [entry,
@@ -19,10 +14,10 @@ def myvideoTop100ListEntry(entry):
 		]
 
 class myvideoTop100GenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 		
@@ -33,18 +28,18 @@ class myvideoTop100GenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 			"red": self.keyCancel
 		}, -1)
-		
+
 		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
 		self.playing = False
-		
+
 		self.keyLocked = True
 		self['title'] = Label("myvideo.de")
 		self['ContentTitle'] = Label("Charts:")
@@ -70,7 +65,7 @@ class myvideoTop100GenreScreen(Screen):
 							('Top100 Rock',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Rock"),
 							('Top100 Rap & RnB',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Rap/R%26B"),
 							('Top100 Diverse',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Diverse")]
-							
+			
 		self.chooseMenuList.setList(map(myvideoTop100GenreListEntry, self.genreliste))
 		self.keyLocked = False
 
@@ -83,19 +78,18 @@ class myvideoTop100GenreScreen(Screen):
 		print myvideoTop100Name, myvideoTop100Url
 		self.session.open(myvideoTop100SongListeScreen, myvideoTop100Name, myvideoTop100Url)
 
-		
 	def keyCancel(self):
 		self.close()
-		
+
 class myvideoTop100SongListeScreen(Screen):
-	
+
 	def __init__(self, session, genreName, genreLink):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -103,14 +97,14 @@ class myvideoTop100SongListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("myvideo.de")
 		self['ContentTitle'] = Label("Charts: %s" % self.genreName)
@@ -129,12 +123,12 @@ class myvideoTop100SongListeScreen(Screen):
 		self['genreList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-			
+
 	def loadPage(self):
 		self.keyLocked = True
 		print self.genreLink
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
 		charts = re.findall("<a href='/watch/.*?' title='(.*?)'><img id='i(\d+)'.*?longdesc='(.*?.jpg)'.*?<span class='vViews'>(.*?)</span>.*?<span class='chartTop.*?'>(.*?)</span>", data, re.S)
@@ -163,7 +157,7 @@ class myvideoTop100SongListeScreen(Screen):
 
 		print idx, myvideoTop100Name, myvideoTop100Url
 		self.session.open(myvideoTop100Player, self.filmliste, int(idx) , True, self.genreName)
-		
+
 	def keyCancel(self):
 		self.close()
 
@@ -172,16 +166,16 @@ class myvideoTop100Player(SimplePlayer):
 	def __init__(self, session, playList, playIdx=0, playAll=True, listTitle=None):
 		print "myvideoTop100Player:"
 		print listTitle
-		
+
 		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, ltype='myvideo')
-		
+
 		self.onLayoutFinish.append(self.getVideo)
-		
+
 	def getVideo(self):
 		titel = self.playList[self.playIdx][self.title_inr]
 		url = self.playList[self.playIdx][1]
 		token = self.playList[self.playIdx][2]
 		imgurl = self.playList[self.playIdx][3]
 		print titel, url, token
-		
+
 		MyvideoLink(self.session).getLink(self.playStream, self.dataError, titel, url, token, imgurl=imgurl)
