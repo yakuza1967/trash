@@ -63,8 +63,8 @@ class SRFGenreScreen(Screen):
 				self.genreliste.append((decodeHtml(title), url, image, handlung))
 			self.genreliste.sort()
 			self.chooseMenuList.setList(map(SRFGenreListEntry, self.genreliste))
-			self.loadPic()
 			self.keyLocked = False
+			self.loadPic()
 
 	def dataError(self, error):
 		printl(error,self,"E")
