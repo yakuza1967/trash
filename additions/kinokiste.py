@@ -102,7 +102,6 @@ class kinokisteKinoScreen(Screen):
 		self.onLayoutFinish.append(self.loadpage)
 		
 	def loadpage(self):
-		self.keyLocked = True
 		self.filmeliste = []
 		url = "http://kkiste.to/aktuelle-kinofilme/?page=%s" % str(self.page)
 		self['page'].setText(str(self.page))
