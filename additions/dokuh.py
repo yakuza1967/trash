@@ -670,7 +670,7 @@ class DOKUHFilmListeScreen(Screen):
 		print "getHandlung:"
 		if desc == None:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			return
 		self.setHandlung(desc)
 		
@@ -934,7 +934,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 				self.streamListe.append((self.dokuName,v,None,"",None))
 			else:
 				print "No dokus found !"
-				self.streamListe.append(("No streams found !","","","",""))
+				self.streamListe.append(("No streams found!","","","",""))
 			
 		self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
 		self.loadPic()
@@ -943,7 +943,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		print "getHandlung:"
 		if desc == None:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			return
 			
 		self.setHandlung(desc)

@@ -864,7 +864,7 @@ class DS_Streams(Screen, ConfigListScreen):
 		else:
 			print "No dokus found !"
 			desc = None
-			self.streamListe.append(("No streams found !","","",""))
+			self.streamListe.append(("No streams found!","","",""))
 			
 		self.streamMenuList.setList(map(DS_StreamListEntry, self.streamListe))
 		self.loadPic()

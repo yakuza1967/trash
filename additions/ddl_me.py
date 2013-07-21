@@ -931,7 +931,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 						a = l
 						
 			if len(self.streamListe) == 0:
-				self.streamListe.append(("No streams found !","","",""))
+				self.streamListe.append(("No streams found!","","",""))
 			
 			self.streamMenuList.setList(map(DDLMEStreamListEntry, self.streamListe))
 		else:
@@ -997,7 +997,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 						a = l
 
 			if len(self.streamListe) == 0:
-				self.streamListe.append(("No streams found !","","",""))
+				self.streamListe.append(("No streams found!","","",""))
 			
 			self.streamMenuList.setList(map(DDLMEStreamListEntry2, self.streamListe))
 			

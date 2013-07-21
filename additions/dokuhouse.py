@@ -566,7 +566,7 @@ class DH_FilmListeScreen(Screen):
 		print "getHandlung:"
 		if desc == None:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			return
 		self.setHandlung(desc)
 		
@@ -845,7 +845,7 @@ class DH_Streams(Screen, ConfigListScreen):
 		else:
 			print "No dokus found !"
 			desc = None
-			self.streamListe.append(("No streams found !","","",""))
+			self.streamListe.append(("No streams found!","","",""))
 			
 		self.streamMenuList.setList(map(DH_StreamListEntry, self.streamListe))
 		self.loadPic()

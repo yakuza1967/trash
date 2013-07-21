@@ -189,7 +189,7 @@ class tiviFilmListeScreen(Screen):
 		if handlung != "":
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos vorhanden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 	

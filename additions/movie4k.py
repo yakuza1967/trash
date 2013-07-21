@@ -433,7 +433,7 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -609,7 +609,7 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -768,7 +768,7 @@ class m4kKinoFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -894,7 +894,7 @@ class m4kVideoFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -1022,7 +1022,7 @@ class m4kupdateFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -1156,7 +1156,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -1312,7 +1312,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
@@ -1969,7 +1969,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 			handlung = re.sub(r"\s+", " ", handlung[0])
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):

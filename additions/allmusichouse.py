@@ -429,7 +429,7 @@ class AMH_FilmListeScreen(Screen):
 		print "getHandlung:"
 		if desc == None:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			return
 		self.setHandlung(desc)
 		
@@ -658,7 +658,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 			self.streamListe.append((decodeHtml(m.group(4))+pstr,m.group(2),desc))
 		else:
 			print "No music found !"
-			self.streamListe.append(("No streams found !","",""))
+			self.streamListe.append(("No streams found!","",""))
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
 		self.loadPic()
 
@@ -674,7 +674,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 		print "getHandlung:"
 		if desc == None:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 		else:
 			self.setHandlung(desc)
 		

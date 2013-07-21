@@ -407,7 +407,7 @@ class IStreamFilmListeScreen(Screen):
 		print "getHandlung:"
 		if url == None:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			return
 			
 		self.hanQ.put(url)
@@ -427,7 +427,7 @@ class IStreamFilmListeScreen(Screen):
 		self.eventH.clear()
 		print "dataErrorH:"
 		printl(error,self,"E")
-		self['handlung'].setText("Keine infos gefunden.")
+		self['handlung'].setText("Keine Infos gefunden.")
 
 	def setHandlung(self, data):
 		print "setHandlung:"
@@ -437,7 +437,7 @@ class IStreamFilmListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(re.sub(r"\s+", " ", m[0])))
 		else:
 			print "No Infos found !"
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 		if not self.hanQ.empty():
 			self.getHandlungQeued()
@@ -734,7 +734,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 					print isUrl
 		else:
 			print "No Streams found"
-			self.streamListe.append(("No streams found !","",""))
+			self.streamListe.append(("No streams found!","",""))
 			
 		self.streamMenuList.setList(map(IStreamStreamListEntry, self.streamListe))
 		self['handlung'].setText(decodeHtml(desc))

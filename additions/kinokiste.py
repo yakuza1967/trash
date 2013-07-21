@@ -136,7 +136,7 @@ class kinokisteKinoScreen(Screen):
 		if ddDescription:
 			self['handlung'].setText(decodeHtml(ddDescription[0]))
 		else:
-			self['handlung'].setText("keine infos.")
+			self['handlung'].setText("Keine Infos gefunden.")
 			
 	def kkCoverShow(self, picData):
 		if fileExists("/tmp/kkIcon.jpg"):

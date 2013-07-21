@@ -193,7 +193,7 @@ class MEHDFilmListeScreen(Screen):
 			#print handlung
 			self['handlung'].setText(decodeHtml2(handlung[0]))
 		else:
-			self['handlung'].setText("Keine infos gefunden.")
+			self['handlung'].setText("Keine Infos gefunden.")
 
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
