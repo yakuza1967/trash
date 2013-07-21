@@ -133,7 +133,7 @@ class MTVdeChartsSongListeScreen(Screen):
 			self.filmliste = []
 			for (token, title, image) in charts:
 				if not re.match('.*?Video nicht', title):
-					self.filmliste.append((title,token,image))
+					self.filmliste.append((decodeHtml(title),token,image))
 			self.chooseMenuList.setList(map(MTVdeChartsSongListEntry, self.filmliste))
 			self.keyLocked = False
 

@@ -28,5 +28,7 @@ class MTVdeLink:
 		if rtmpURL:
 			data = urllib.urlopen(rtmpURL[0]).read()
 			rtmpLink = re.findall('<src>(rtmp.*?)</src>', data)
+			
+		videourl = rtmpLink[-1] + ' swfUrl=http://player.mtvnn.com/g2/g2player_2.1.4.swf swfVfy=1'
 
-		self._callback(self.title, rtmpLink[-1], imgurl=self.imgurl, artist=self.artist)
+		self._callback(self.title, videourl, imgurl=self.imgurl, artist=self.artist)
