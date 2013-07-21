@@ -159,7 +159,7 @@ class MTVdeChartsPlayer(SimplePlayer):
 		print "MTVdeChartsPlayer:"
 		print listTitle
 
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, ltype='mtv')
 
 		self.onLayoutFinish.append(self.getVideo)
 
