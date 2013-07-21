@@ -10,6 +10,7 @@ from myvideolink import MyvideoLink
 from songstolink import SongstoLink
 from cannalink import CannaLink
 from eightieslink import EightiesLink
+from mtvdelink import MTVdeLink
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
 	MediainfoPresent = True
@@ -224,6 +225,8 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 			elif ltype == 'eighties':
 				token = self.playList2[self.playIdx][6]
 				EightiesLink(self.session).getLink(self.playStream, self.dataError, titel, artist, album, url, token, imgurl)
+			elif ltype == 'mtv':
+				MTVdeLink(self.session).getLink(self.playStream, self.dataError, titel, url, imgurl=imgurl)
 			elif url:
 				self.playStream(titel, url, album, artist, imgurl=imgurl)
 		else:
@@ -285,20 +288,21 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 					self.session.open(MessageBox, _("Fehler: Service darf nur von der lok. PL hinzugefügt werden"), MessageBox.TYPE_INFO, timeout=5)
 					return
 					
-				url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
-				
-				if re.match('.*?(putpattv)', url, re.I):
-					self.session.open(MessageBox, _("Fehler: URL ist nicht persistent !"), MessageBox.TYPE_INFO, timeout=5)
-					return
-				
 				if self.pl_entry[4] == 'youtube':
 					url = self.playList[self.playIdx][2]
-				elif self.pl_entry[4] == 'putpattv':
-					url = self.playList[self.playIdx][1]
-					self.pl_entry[5] = self.playList[self.playIdx][2]
 				elif self.pl_entry[4] == 'myvideo':
 					url = self.playList[self.playIdx][1]
 					self.pl_entry[5] = self.playList[self.playIdx][2]
+				elif self.pl_entry[4] == 'mtv':
+					url = self.playList[self.playIdx][1]
+					self.pl_entry[5] = self.playList[self.playIdx][2]
+				else:
+					url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
+				
+					if re.match('.*?(putpattv)', url, re.I):
+						self.session.open(MessageBox, _("Fehler: URL ist nicht persistent !"), MessageBox.TYPE_INFO, timeout=5)
+						return
+				
 					
 				self.pl_entry[1] = url
 				self.pl_name = data[1]
