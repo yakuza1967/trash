@@ -102,6 +102,7 @@ from additions.mediatheken.ard import *
 # music
 from additions.canna import *
 from additions.myvideoTop100 import *
+from additions.mtvdecharts import *
 
 # porn
 from additions.porn.ahme import *
@@ -207,6 +208,7 @@ config.mediaportal.showGEOde = ConfigYesNo(default = True)
 config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
 config.mediaportal.showNuna = ConfigYesNo(default = True)
 config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
+config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 if astModule:
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
@@ -378,6 +380,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Deluxemusic:", config.mediaportal.showDeluxemusic))
 		self.configlist.append(getConfigListEntry("Zeige Nuna:", config.mediaportal.showNuna))
 		self.configlist.append(getConfigListEntry("Zeige Myvideo Top 100:", config.mediaportal.showMyvideoTop100))
+		self.configlist.append(getConfigListEntry("Zeige MTV.de Charts:", config.mediaportal.showMTVdeCharts))
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
@@ -787,6 +790,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("Nuna", "nuna"))
 		if config.mediaportal.showMyvideoTop100.value:
 			self.funsport.append(self.hauptListEntry("Myvideo Top 100", "myvideotop100"))
+		if config.mediaportal.showMTVdeCharts.value:
+			self.funsport.append(self.hauptListEntry("MTV.de Charts", "mtvdecharts"))
 		if config.mediaportal.showgrauzone.value:
 			if config.mediaportal.showMusicstreamcc.value:
 				self.funsport.append(self.hauptListEntry("Musicstream.cc", "musicstreamcc"))
@@ -1267,6 +1272,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(watchseriesGenreScreen)
 		elif auswahl == "Myvideo Top 100":
 			self.session.open(myvideoTop100GenreScreen)
+		elif auswahl == "MTV.de Charts":
+			self.session.open(MTVdeChartsGenreScreen)
 		elif auswahl == "Musicstream.cc":
 			self.session.open(show_MSCC_Genre)
 		elif auswahl == "Vibeo":
@@ -1678,6 +1685,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Nuna", "nuna", "Fun"))
 		if config.mediaportal.showMyvideoTop100.value:
 			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Fun"))
+		if config.mediaportal.showMTVdeCharts.value:
+			self.plugin_liste.append(("MTV.de Charts", "mtvdecharts", "Fun"))
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
@@ -2186,6 +2195,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(watchseriesGenreScreen)
 		elif auswahl == "Myvideo Top 100":
 			self.session.open(myvideoTop100GenreScreen)
+		elif auswahl == "MTV.de Charts":
+			self.session.open(MTVdeChartsGenreScreen)
 		elif auswahl == "Musicstream.cc":
 			self.session.open(show_MSCC_Genre)
 		elif auswahl == "Vibeo":
