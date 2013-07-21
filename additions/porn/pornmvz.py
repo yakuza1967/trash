@@ -84,7 +84,7 @@ class pornmvzGenreScreen(Screen):
 	def SuchenCallback(self, callback = None, entry = None):
 		if callback is not None and len(callback):
 			self.suchString = callback.replace(' ', '+')
-			pornmvzUrl = '%s' % (self['genreList'].getCurrent()[0][1],self.suchString)
+			pornmvzUrl = '%s' % (self.suchString)
 			pornmvzGenre = "--- Search ---"
 			self.session.open(pornmvzFilmListeScreen, pornmvzGenre, pornmvzUrl)
 
