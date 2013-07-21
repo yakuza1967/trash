@@ -78,8 +78,8 @@ class ranGenreScreen(Screen):
 				image = "http://www.ran.de%s" % image
 				self.genreliste.append((decodeHtml(cat.replace('Champions League','CL')),decodeHtml(title),url,image))
 			self.chooseMenuList.setList(map(ranListEntry, self.genreliste))
-			self.loadPic()
 			self.keyLocked = False
+			self.loadPic()
 
 	def dataError(self, error):
 		printl(error,self,"E")

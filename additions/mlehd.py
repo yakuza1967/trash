@@ -170,9 +170,9 @@ class mlehdFilmListeScreen(Screen):
 				print title, url
 				self.filmliste.append((decodeHtml(title),url,image))
 			self.chooseMenuList.setList(map(mlehdListEntry, self.filmliste))
-			self.loadPic()
 			self['Page'].setText(str(self.page)+" von")
 			self.keyLocked = False
+			self.loadPic()
 
 	def dataError(self, error):
 		printl(error,self,"E")

@@ -80,8 +80,8 @@ class cinestreamFilmListeScreen(Screen):
 			for url,title,image,handlung in movies:
 				self.filmliste.append((title,url,image,decodeHtml(handlung)))
 			self.chooseMenuList.setList(map(cinestreamListEntry, self.filmliste))
-			self.loadPic()
 			self.keyLocked = False
+			self.loadPic()
 
 	def dataError(self, error):
 		printl(error,self,"E")

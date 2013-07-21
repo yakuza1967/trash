@@ -152,8 +152,8 @@ class movie25FilmeListeScreen(Screen):
 			for (link,image,title) in movies:
 				self.filmliste.append((decodeHtml(title),link,image))
 			self.chooseMenuList.setList(map(movie25FilmListEntry, self.filmliste))
-			self.loadPic()
 			self.keyLocked = False
+			self.loadPic()
 
 	def loadPic(self):		
 		streamPic = self['liste'].getCurrent()[0][2]

@@ -1949,8 +1949,8 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 				title.replace("\t","")
 				self.filmliste.append((decodeHtml(title), url))
 			self.chooseMenuList.setList(map(m4kFilmListEntry, self.filmliste))
-			self.keyLocked = False
 			self['page'].setText(str(self.page))
+			self.keyLocked = False
 			self.loadPic()
 
 	def loadPic(self):

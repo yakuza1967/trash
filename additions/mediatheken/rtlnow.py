@@ -86,8 +86,8 @@ class RTLnowGenreScreen(Screen):
 			self.genreliste = list(set(self.genreliste))
 			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
 			self.chooseMenuList.setList(map(RTLnowGenreListEntry, self.genreliste))
-			self.loadPic()
 			self.keyLocked = False		
+			self.loadPic()
 
 	def dataError(self, error):
 		printl(error,self,"E")
