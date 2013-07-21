@@ -113,6 +113,7 @@ from additions.porn.elladies import *
 from additions.porn.eporner import *
 from additions.porn.eroprofile import *
 from additions.porn.extremetube import *
+from additions.porn.freeomovie import *
 from additions.porn.gstreaminxxx import *
 from additions.porn.hdporn import *
 from additions.porn.hotshame import *
@@ -121,6 +122,7 @@ from additions.porn.pinkrod import *
 from additions.porn.playporn import *
 from additions.porn.pornerbros import *
 from additions.porn.pornhub import *
+from additions.porn.pornmvz import *
 from additions.porn.pornostreams import *
 from additions.porn.pornrabbit import *
 from additions.porn.realgfporn import *
@@ -261,6 +263,7 @@ config.mediaportal.showelladies = ConfigYesNo(default = False)
 config.mediaportal.showeporner = ConfigYesNo(default = False)
 config.mediaportal.showeroprofile = ConfigYesNo(default = False)
 config.mediaportal.showextremetube = ConfigYesNo(default = False)
+config.mediaportal.showfreeomovie = ConfigYesNo(default = False)
 config.mediaportal.showgstreaminxxx = ConfigYesNo(default = False)
 config.mediaportal.showhdporn = ConfigYesNo(default = False)
 config.mediaportal.showhotshame = ConfigYesNo(default = False)
@@ -269,9 +272,10 @@ config.mediaportal.showIStreamPorn = ConfigYesNo(default = False)
 config.mediaportal.showM4kPorn = ConfigYesNo(default = False)
 config.mediaportal.showpinkrod = ConfigYesNo(default = False)
 config.mediaportal.showplayporn = ConfigYesNo(default = False)
-config.mediaportal.showpornostreams = ConfigYesNo(default = False)
 config.mediaportal.showpornerbros = ConfigYesNo(default = False)
 config.mediaportal.showPornhub = ConfigYesNo(default = False)
+config.mediaportal.showpornmvz = ConfigYesNo(default = False)
+config.mediaportal.showpornostreams = ConfigYesNo(default = False)
 config.mediaportal.showpornrabbit = ConfigYesNo(default = False)
 config.mediaportal.showrealgfporn = ConfigYesNo(default = False)
 config.mediaportal.showredtube = ConfigYesNo(default = False)
@@ -443,6 +447,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige EroProfile:", config.mediaportal.showeroprofile))
 		self.configlist.append(getConfigListEntry("Zeige ExtremeTube:", config.mediaportal.showextremetube))
 		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige Free Online Movies:", config.mediaportal.showfreeomovie))
 			self.configlist.append(getConfigListEntry("Zeige G-Stream-XXX:", config.mediaportal.showgstreaminxxx))
 		self.configlist.append(getConfigListEntry("Zeige HDPorn:", config.mediaportal.showhdporn))
 		self.configlist.append(getConfigListEntry("Zeige hotshame:", config.mediaportal.showhotshame))
@@ -453,9 +458,11 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Pinkrod:", config.mediaportal.showpinkrod))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige PlayPorn:", config.mediaportal.showplayporn))
-			self.configlist.append(getConfigListEntry("Zeige PornoStreams:", config.mediaportal.showpornostreams))
 		self.configlist.append(getConfigListEntry("Zeige PornerBros:", config.mediaportal.showpornerbros))
 		self.configlist.append(getConfigListEntry("Zeige Pornhub:", config.mediaportal.showPornhub))
+		if config.mediaportal.showgrauzone.value:
+			self.configlist.append(getConfigListEntry("Zeige PORNMVZ:", config.mediaportal.showpornmvz))
+			self.configlist.append(getConfigListEntry("Zeige PornoStreams:", config.mediaportal.showpornostreams))
 		self.configlist.append(getConfigListEntry("Zeige PornRabbit:", config.mediaportal.showpornrabbit))
 		self.configlist.append(getConfigListEntry("Zeige RealGFPorn:", config.mediaportal.showrealgfporn))
 		self.configlist.append(getConfigListEntry("Zeige RedTube:", config.mediaportal.showredtube))
@@ -823,6 +830,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.showextremetube.value:
 				self.porn.append(self.hauptListEntry("ExtremeTube", "extremetube"))
 			if config.mediaportal.showgrauzone.value:
+				if config.mediaportal.showfreeomovie.value:
+					self.porn.append(self.hauptListEntry("Free Online Movies", "freeomovie"))
 				if config.mediaportal.showgstreaminxxx.value:
 					self.porn.append(self.hauptListEntry("G-Stream-XXX", "gstreaminxxx"))
 			if config.mediaportal.showhdporn.value:
@@ -841,12 +850,15 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.showgrauzone.value:
 				if config.mediaportal.showplayporn.value:
 					self.porn.append(self.hauptListEntry("PlayPorn", "playporn"))
-				if config.mediaportal.showpornostreams.value:
-					self.porn.append(self.hauptListEntry("PornoStreams", "pornostreams"))
 			if config.mediaportal.showpornerbros.value:
 				self.porn.append(self.hauptListEntry("PornerBros", "pornerbros"))
 			if config.mediaportal.showPornhub.value:
 				self.porn.append(self.hauptListEntry("Pornhub", "pornhub"))
+			if config.mediaportal.showgrauzone.value:
+				if config.mediaportal.showpornmvz.value:
+					self.porn.append(self.hauptListEntry("PORNMVZ", "pornmvz"))
+				if config.mediaportal.showpornostreams.value:
+					self.porn.append(self.hauptListEntry("PornoStreams", "pornostreams"))
 			if config.mediaportal.showpornrabbit.value:
 				self.porn.append(self.hauptListEntry("PornRabbit", "pornrabbit"))
 			if config.mediaportal.showrealgfporn.value:
@@ -1339,6 +1351,9 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "ExtremeTube":
 			self.pornscreen = extremetubeGenreScreen
 			self.pincheck()
+		elif auswahl == "Free Online Movies":
+			self.pornscreen = freeomovieGenreScreen
+			self.pincheck()
 		elif auswahl == "G-Stream-XXX":
 			self.pornscreen = gstreaminxxxGenreScreen
 			self.pincheck()
@@ -1365,14 +1380,17 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "PlayPorn":
 			self.pornscreen = playpornGenreScreen
 			self.pincheck()
-		elif auswahl == "PornoStreams":
-			self.pornscreen = pornostreamsGenreScreen
-			self.pincheck()
 		elif auswahl == "PornerBros":
 			self.pornscreen = pornerbrosGenreScreen
 			self.pincheck()
 		elif auswahl == "Pornhub":
 			self.pornscreen = pornhubGenreScreen
+			self.pincheck()
+		elif auswahl == "PORNMVZ":
+			self.pornscreen = pornmvzGenreScreen
+			self.pincheck()
+		elif auswahl == "PornoStreams":
+			self.pornscreen = pornostreamsGenreScreen
 			self.pincheck()
 		elif auswahl == "PornRabbit":
 			self.pornscreen = pornrabbitGenreScreen
@@ -1742,6 +1760,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showextremetube.value:
 				self.plugin_liste.append(("ExtremeTube", "extremetube", "Porn"))
 			if config.mediaportal.showgrauzone.value:
+				if config.mediaportal.showfreeomovie.value:
+					self.plugin_liste.append(("Free Online Movies", "freeomovie", "Porn"))
 				if config.mediaportal.showgstreaminxxx.value:
 					self.plugin_liste.append(("G-Stream-XXX", "gstreaminxxx", "Porn"))
 			if config.mediaportal.showhdporn.value:
@@ -1760,12 +1780,15 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showgrauzone.value:
 				if config.mediaportal.showplayporn.value:
 					self.plugin_liste.append(("PlayPorn", "playporn", "Porn"))
-				if config.mediaportal.showpornostreams.value:
-					self.plugin_liste.append(("PornoStreams", "pornostreams", "Porn"))
 			if config.mediaportal.showpornerbros.value:
 				self.plugin_liste.append(("PornerBros", "pornerbros", "Porn"))
 			if config.mediaportal.showPornhub.value:
 				self.plugin_liste.append(("Pornhub", "pornhub", "Porn"))
+			if config.mediaportal.showgrauzone.value:
+				if config.mediaportal.showpornmvz.value:
+					self.plugin_liste.append(("PORNMVZ", "pornmvz", "Porn"))
+				if config.mediaportal.showpornostreams.value:
+					self.plugin_liste.append(("PornoStreams", "pornostreams", "Porn"))
 			if config.mediaportal.showpornrabbit.value:
 				self.plugin_liste.append(("PornRabbit", "pornrabbit", "Porn"))
 			if config.mediaportal.showrealgfporn.value:
@@ -2260,6 +2283,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "ExtremeTube":
 			self.pornscreen = extremetubeGenreScreen
 			self.pincheck()
+		elif auswahl == "Free Online Movies":
+			self.pornscreen = freeomovieGenreScreen
+			self.pincheck()
 		elif auswahl == "G-Stream-XXX":
 			self.pornscreen = gstreaminxxxGenreScreen
 			self.pincheck()
@@ -2286,14 +2312,17 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "PlayPorn":
 			self.pornscreen = playpornGenreScreen
 			self.pincheck()
-		elif auswahl == "PornoStreams":
-			self.pornscreen = pornostreamsGenreScreen
-			self.pincheck()
 		elif auswahl == "PornerBros":
 			self.pornscreen = pornerbrosGenreScreen
 			self.pincheck()
 		elif auswahl == "Pornhub":
 			self.pornscreen = pornhubGenreScreen
+			self.pincheck()
+		elif auswahl == "PORNMVZ":
+			self.pornscreen = pornmvzGenreScreen
+			self.pincheck()
+		elif auswahl == "PornoStreams":
+			self.pornscreen = pornostreamsGenreScreen
 			self.pincheck()
 		elif auswahl == "PornRabbit":
 			self.pornscreen = pornrabbitGenreScreen
