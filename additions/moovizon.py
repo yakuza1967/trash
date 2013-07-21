@@ -46,12 +46,12 @@ class moovizonGenreScreen(Screen):
 		}, -1)
 		
 		self.keyLocked = True
-		self.language = "de"
+		self.language = "all"
 		self['title'] = Label("moovizon.com")
 		self['ContentTitle'] = Label("Genre:")
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
-		self['F2'] = Label("de")
+		self['F2'] = Label("all")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
 		self['F3'].hide()
