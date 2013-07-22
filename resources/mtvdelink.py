@@ -18,6 +18,7 @@ class MTVdeLink:
 			data = urlopen2(url).read()
 		except (URLError, HTTPException, socket.error), err:
 			printl(err,self,"E")
+			cb_err('MTVdeLink: Cannot get link!')
 
 		rtmpurl = re.search("<media:content.*?url='(.*?)'>", data)
 		if rtmpurl:
