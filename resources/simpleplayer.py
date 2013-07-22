@@ -226,7 +226,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 				token = self.playList2[self.playIdx][6]
 				EightiesLink(self.session).getLink(self.playStream, self.dataError, titel, artist, album, url, token, imgurl)
 			elif ltype == 'mtv':
-				MTVdeLink(self.session).getLink(self.playStream, self.dataError, titel, url, imgurl=imgurl)
+				MTVdeLink(self.session).getLink(self.playStream, self.dataError, titel, artist, url, imgurl)
 			elif url:
 				self.playStream(titel, url, album, artist, imgurl=imgurl)
 		else:

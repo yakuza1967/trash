@@ -164,9 +164,15 @@ class MTVdeChartsPlayer(SimplePlayer):
 		self.onLayoutFinish.append(self.getVideo)
 
 	def getVideo(self):
-		titel = self.playList[self.playIdx][self.title_inr]
+		title = self.playList[self.playIdx][self.title_inr]
 		token = self.playList[self.playIdx][1]
 		imgurl = self.playList[self.playIdx][2]
-		print titel, token
+		print title, token
 
-		MTVdeLink(self.session).getLink(self.playStream, self.dataError, titel, token, imgurl=imgurl)
+		artist = ''
+		p = title.find(' - ')
+		if p > 0:
+			artist = title[:p].strip()
+			title = title[p+3:].strip()
+
+		MTVdeLink(self.session).getLink(self.playStream, self.dataError, title, artist, token, imgurl)
