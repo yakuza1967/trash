@@ -1526,7 +1526,7 @@ class pluginSort(Screen):
 		config_read = open("/etc/enigma2/mp_pluginliste","r")
 		self.config_list = []
 		self.config_list_select = []
-		print "Filer:", config.mediaportal.filter.value
+		print "Filter:", config.mediaportal.filter.value
 		for line in config_read.readlines():
 			ok = re.findall('"(.*?)" "(.*?)" "(.*?)" "(.*?)" "(.*?)"', line, re.S)
 			if ok:
@@ -2007,7 +2007,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.filter.value != "ALL":
 			self.plugin_liste = []
 			self.plugin_liste = [x for x in self.dump_liste if config.mediaportal.filter.value == x[2]]
-
+		if len(self.plugin_liste) == 0:
+			self.chFilter()
+			self['blue'].setText(config.mediaportal.filter.value)
+			
 		if config.mediaportal.sortplugins.value == "hits":
 			self.plugin_liste.sort(key=lambda x: int(x[3]))
 			self.plugin_liste.reverse()
