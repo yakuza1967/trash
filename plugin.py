@@ -156,6 +156,7 @@ config.mediaportal.autoplayThreshold = ConfigInteger(default = 50, limits = (1,1
 config.mediaportal.filter = ConfigSelection(default = "ALL", choices = [("ALL", ("ALL")), ("Mediathek", ("Mediathek")), ("Grauzone", ("Grauzone")), ("Fun", ("Fun")), ("Sport", ("Sport")), ("Porn", ("Porn"))])
 config.mediaportal.youtubeprio = ConfigSelection(default = "1", choices = [("0", _("Low")),("1", _("Medium")),("2", _("High"))])
 config.mediaportal.pornpin = ConfigYesNo(default = True)
+config.mediaportal.setuppin = ConfigYesNo(default = False)
 config.mediaportal.watchlistpath = ConfigText(default="/etc/enigma2/", fixed_size=False)
 config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("hits", _("Hits")), ("abc", _("ABC")), ("user", _("User"))])
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
@@ -330,6 +331,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("YouTube Video Quality Priority:", config.mediaportal.youtubeprio))
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
+		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
 
 		### Grauzone
 		if config.mediaportal.showgrauzone.value:
@@ -942,7 +944,10 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.restart()
 
 	def keySetup(self):
-		self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
+		if config.mediaportal.setuppin.value:
+			self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
+		else:
+			self.session.openWithCallback(self.restart, hauptScreenSetup)
 
 	def keyHelp(self):
 		self.session.open(HelpScreen)
@@ -2013,7 +2018,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if len(self.plugin_liste) == 0:
 			self.chFilter()
 			self['blue'].setText(config.mediaportal.filter.value)
-			
+
 		if config.mediaportal.sortplugins.value == "hits":
 			self.plugin_liste.sort(key=lambda x: int(x[3]))
 			self.plugin_liste.reverse()
@@ -2478,8 +2483,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self["zeile"+str(x)].show()
 
 	def keySetup(self):
-		print config.mediaportal.pincode.value
-		self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
+		if config.mediaportal.setuppin.value:
+			self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
+		else:
+			self.session.openWithCallback(self.restart, hauptScreenSetup)
 
 	def keyHelp(self):
 		self.session.open(HelpScreen)
