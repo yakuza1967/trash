@@ -196,10 +196,10 @@ class paradisehillFilmListeScreen(Screen):
 		printl(error,self,"E")
 
 	def loadPic(self):
-		steamTitle = self['liste'].getCurrent()[0][0]
+		streamTitle = self['liste'].getCurrent()[0][0]
 		streamUrl = self['liste'].getCurrent()[0][1]
 		streamPic = self['liste'].getCurrent()[0][2]
-		self['name'].setText(steamTitle)
+		self['name'].setText(streamTitle)
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 
 	def ShowCover(self, picData):
