@@ -10,7 +10,7 @@ def RTLnitroGenreListEntry(entry):
 def RTLnitroFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class RTLNITROnowGenreScreen(Screen):
 
@@ -207,7 +207,7 @@ class RTLNITROnowFilmeListeScreen(Screen):
 			tabSelects = "&xajaxargs[]="+selects.group(1)+"&xajaxargs[]="+selects.group(2)+"&xajaxargs[]="+selects.group(3)+"&xajaxargs[]="+selects.group(4)+"&xajaxargs[]="+selects.group(5)+"&xajax=show_top_and_movies&xajaxr="+str(time()).replace('.','')
 			tabs = re.compile('<option.*?value=\'(\d)\'.*?>',re.DOTALL).findall(selects.group(6))
 			for tab in tabs:
-				ajax_posts.append(("xajaxargs[]="+tab+tabSelects)) 
+				ajax_posts.append(("xajaxargs[]="+tab+tabSelects))
 
 		if len(ajax_posts) != 0:
 			seitenanzahl = len(ajax_posts)

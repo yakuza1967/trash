@@ -12,10 +12,10 @@ class youtubeUrl:
 
   def addCallback(self, cbFunc):
 	self.callBack = cbFunc
-  
+
   def addErrback(self, errFunc):
 	self.errBack = errFunc
-		
+
   def errReturn(self, url):
 	print self.error
 	#print url
@@ -24,7 +24,7 @@ class youtubeUrl:
 		return url
 	else:
 		self.errBack(self.error)
-  
+
   def getVideoUrl(self, url, videoPrio=2):
 	# this part is from mtube plugin
 	print "got url:", url
@@ -55,7 +55,7 @@ class youtubeUrl:
 			'18' : 4, #MP4 360p
 			'34' : 6, #FLV 360p
 		}
-		
+
 	video_url = None
 	video_id = url
 
@@ -70,7 +70,7 @@ class youtubeUrl:
 		self.error = "Error: Unable to retrieve watchpage - Error code: %s" % str(err)
 		self.errReturn(video_url)
 		return video_url
-		
+
 		# Get video info
 	for el in ['&el=embedded', '&el=detailpage', '&el=vevo', '']:
 		info_url = ('http://www.youtube.com/get_video_info?&video_id=%s%s&ps=default&eurl=&gl=US&hl=en' % (video_id, el))
@@ -84,7 +84,7 @@ class youtubeUrl:
 			self.error = "Error: unable to download video infopage - %s" % str(err)
 			self.errReturn(video_url)
 			return video_url
-			
+
 	if ('url_encoded_fmt_stream_map' or 'fmt_url_map') not in videoinfo:
 		# Attempt to see if YouTube has issued an error message
 		if 'reason' not in videoinfo:
@@ -118,7 +118,7 @@ class youtubeUrl:
 							fmturl = value
 						elif key == 'sig':
 							fmtsig = value
-								
+
 				if fmtid != "" and fmturl != "" and fmtsig != ""  and VIDEO_FMT_PRIORITY_MAP.has_key(fmtid):
 					video_fmt_map[VIDEO_FMT_PRIORITY_MAP[fmtid]] = { 'fmtid': fmtid, 'fmturl': unquote_plus(fmturl), 'fmtsig': fmtsig }
 					fmt_infomap[int(fmtid)] = "%s&signature=%s" %(unquote_plus(fmturl), fmtsig)
@@ -128,7 +128,7 @@ class youtubeUrl:
 				self.error = "error parsing fmtstring: %s" % fmtstring
 				self.errReturn(video_url)
 				return video_url
-					
+
 		else:
 			(fmtid,fmturl) = fmtstring.split('|')
 		if VIDEO_FMT_PRIORITY_MAP.has_key(fmtid) and fmtid != "":

@@ -5,9 +5,9 @@ def failListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class failScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/failScreen.xml" % config.mediaportal.skin.value
@@ -17,9 +17,9 @@ class failScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -31,7 +31,7 @@ class failScreen(Screen):
 			"prevBouquet" : self.keyPageDown,
 			"green" : self.keyPageNumber
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("Fail.to")
@@ -45,12 +45,12 @@ class failScreen(Screen):
 		self['roflList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.fail.to/genre/1-videos/p-%s" % str(self.page)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		parse = re.search('<body>(.*?)Fan werden', data, re.S)
 		flVideos = re.findall('class="entry">.*?</span><a href="(.*?)" title=".*?">(.*?)</a></h3>.*?class="preview".*?<img src="(.*?)"', parse.group(1), re.S)
@@ -66,14 +66,14 @@ class failScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def showPic(self):
 		flTitle = self['roflList'].getCurrent()[0][0]
 		flPicLink = self['roflList'].getCurrent()[0][2]
 		self['name'].setText(flTitle)
 		self['page'].setText(str(self.page))
 		downloadPage(flPicLink, "/tmp/flPic.jpg").addCallback(self.roflCoverShow)
-		
+
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/flPic.jpg"):
 			self['roflPic'].instance.setPixmap(gPixmapPtr())
@@ -103,38 +103,38 @@ class failScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadPage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['roflList'].pageUp()
 		self.showPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['roflList'].pageDown()
 		self.showPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['roflList'].up()
 		self.showPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['roflList'].down()
 		self.showPic()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return

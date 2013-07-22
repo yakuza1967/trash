@@ -9,15 +9,15 @@ def SzeneStreamsGenreListEntry(entry):
 def SzeneStreamsFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def SzeneStreamsHosterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class SzeneStreamsGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/SzeneStreamsGenreScreen.xml" % config.mediaportal.skin.value
@@ -27,26 +27,26 @@ class SzeneStreamsGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Szene-Streams.com")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		#self.genreliste.append(("Last Updates", "http://szene-streams.com/"))
 		self.genreliste.append(("Kinofilme", "http://szene-streams.com/publ/aktuelle_kinofilme/1-"))
@@ -61,7 +61,7 @@ class SzeneStreamsGenreScreen(Screen):
 		self.close()
 
 class SzeneStreamsFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -72,9 +72,9 @@ class SzeneStreamsFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -92,7 +92,7 @@ class SzeneStreamsFilmeListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
 		self['page'] = Label("1")
-		
+
 		self.keyLocked = True
 		self.page = 1
 		self.filmliste = []
@@ -100,9 +100,9 @@ class SzeneStreamsFilmeListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		if not self.streamGenreLink == "http://szene-streams.com/":
 			url = "%s%s" % (self.streamGenreLink, str(self.page))
@@ -113,7 +113,7 @@ class SzeneStreamsFilmeListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		movies = re.findall('<div class="ImgWrapNews"><a href="(.*?.[jpg|png])".*?<a class="newstitl entryLink" href="(.*?)"><h2><b>(.*?)</b></h2></a>.*?<div class="MessWrapsNews2" style="height:110px;">(.*?)<', data, re.S)
@@ -134,7 +134,7 @@ class SzeneStreamsFilmeListeScreen(Screen):
 		self['handlung'].setText(decodeHtml(streamHandlung.replace('\n','')))
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -166,13 +166,13 @@ class SzeneStreamsFilmeListeScreen(Screen):
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -184,7 +184,7 @@ class SzeneStreamsFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -199,12 +199,12 @@ class SzeneStreamsFilmeListeScreen(Screen):
 			return
 		self.page += 1
 		self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class SzeneStreamsStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamFilmLink, streamName):
 		self.session = session
 		self.streamFilmLink = streamFilmLink
@@ -217,9 +217,9 @@ class SzeneStreamsStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -229,22 +229,22 @@ class SzeneStreamsStreamListeScreen(Screen):
 		self['name'] = Label(self.streamName)
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		getPage(self.streamFilmLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		raw = re.findall('(<legend><b><font color="#ff0000">.*?</fieldset></div>)', data, re.S)

@@ -57,7 +57,7 @@ class deluxemusicGenreScreen(Screen):
 
 		self.onLayoutFinish.append(self.loadPage)
 
-	def loadPage(self):	
+	def loadPage(self):
 		self.genreliste = [('Deluxemusic Live',"http://deluxemusic.tv.cms.ipercast.net/?ContentId=14")]
 
 		self.chooseMenuList.setList(map(deluxemusicGenreListEntry, self.genreliste))

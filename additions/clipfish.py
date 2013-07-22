@@ -16,7 +16,7 @@ Sondertastenbelegung:
 Genre Auswahl:
 	KeyCancel	: Menu Up / Exit
 	KeyOK		: Menu Down / Select
-	
+
 Doku Auswahl:
 	Bouquet +/-			: Seitenweise blättern in 1er Schritten Up/Down
 	'1', '4', '7',
@@ -34,24 +34,24 @@ class ClipfishPlayer(SimplePlayer):
 		print "ClipfishPlayer:"
 		self.genreVideos = genreVideos
 		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
-		
+
 	def getVid(self, data):
 		print "getVid: "
 		if not self.genreVideos:
 			m = re.search('NAME="FlashVars".*?data=(.*?)&amp', data)
 		else:
 			m = re.search('data: "(.*?)"', data, re.S)
-			
+
 		if m:
 			url = m.group(1)
 			if url[0:4] != "http":
 				url = "http://www.clipfish.de" + url
-				
+
 			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getXml).addErrback(self.dataError)
 		else:
 			print "No xml data found!"
 			self.dataError('No video data found!')
-	
+
 	def getXml(self, data):
 		print "getXml:"
 		url = None
@@ -60,7 +60,7 @@ class ClipfishPlayer(SimplePlayer):
 			rtmp_vid = True
 		else:
 			rtmp_vid = False
-			
+
 		if rtmp_vid:
 			print "musik url:"
 			m = re.search('<filename>.*?ondemand/(.*?):(.*?)\?', data)
@@ -73,11 +73,11 @@ class ClipfishPlayer(SimplePlayer):
 			if m:
 				print "m: ",m.group(1)
 				url = 'http://video.clipfish.de/' + m.group(1) + m.group(2)
-		
+
 		if url != None:
 			title = self.playList[self.playIdx][0]
 			imgurl = self.playList[self.playIdx][2]
-			
+
 			scArtist = ''
 			scTitle = title
 			if re.match('.*?Musikvideo', self.listTitle):
@@ -85,29 +85,29 @@ class ClipfishPlayer(SimplePlayer):
 				if p > 0:
 					scArtist = title[:p].strip()
 					scTitle = title[p+3:].strip()
-			
+
 			self.playStream(scTitle, url, imgurl=imgurl, artist=scArtist)
 		else:
 			print "No video url found!"
 			self.dataError('No video data found!')
-	
+
 	def getVideo(self):
 		url = self.playList[self.playIdx][1]
 		print "getVidPage: ", len(url), ',', url
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVid).addErrback(self.dataError)
-			
+
 def CF_menuListentry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class show_CF_Genre(Screen):
 
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path = mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -115,9 +115,9 @@ class show_CF_Genre(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -135,7 +135,7 @@ class show_CF_Genre(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
-		
+
 		self.param_qr = ''
 		self.menuLevel = 0
 		self.menuMaxLevel = 1
@@ -152,7 +152,7 @@ class show_CF_Genre(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.genreMenu = [
 			[
 			("Suche...", ""),
@@ -217,9 +217,9 @@ class show_CF_Genre(Screen):
 			[None]
 			]
 			]
-			
+
 		self.onLayoutFinish.append(self.loadMenu)
-		
+
 	def setGenreStrTitle(self):
 		genreName = self['genreList'].getCurrent()[0][0]
 		genreLink = self['genreList'].getCurrent()[0][1]
@@ -228,7 +228,7 @@ class show_CF_Genre(Screen):
 				self.genreName[self.menuLevel] = genreName
 			else:
 				self.genreName[self.menuLevel] = ':'+genreName
-				
+
 			self.genreUrl[self.menuLevel] = genreLink
 		self.genreTitle = "%s%s%s" % (self.genreName[0],self.genreName[1],self.genreName[2])
 		self['name'].setText("Genre: "+self.genreTitle)
@@ -245,22 +245,22 @@ class show_CF_Genre(Screen):
 		self['genreList'].up()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyDown(self):
 		self['genreList'].down()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyRight(self):
 		self['genreList'].pageDown()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyLeft(self):
 		self['genreList'].pageUp()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyMenuUp(self):
 		print "keyMenuUp:"
 		if self.keyLocked:
@@ -272,10 +272,10 @@ class show_CF_Genre(Screen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-			
+
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setMenu(1)
-		
+
 		if self.genreSelected:
 			print "Genre selected"
 			genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+self.genreUrl[0]+self.genreUrl[1]
@@ -288,7 +288,7 @@ class show_CF_Genre(Screen):
 	def paraQuery(self):
 		self.param_qr = ''
 		self.session.openWithCallback(self.cb_paraQuery, VirtualKeyBoard, title = (_("Suchanfrage")), text = self.param_qr)
-		
+
 	def cb_paraQuery(self, callback = None, entry = None):
 		if callback != None:
 			self.param_qr = callback.strip()
@@ -296,19 +296,19 @@ class show_CF_Genre(Screen):
 				qr = urllib.quote(self.param_qr)
 				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+'/'+qr
 				self.session.open(CF_FilmListeScreen, genreurl, self.genreTitle)
-	
+
 	def setMenu(self, levelIncr, menuInit=False):
 		print "setMenu: ",levelIncr
 		self.genreSelected = False
 		if (self.menuLevel+levelIncr) in range(self.menuMaxLevel+1):
 			if levelIncr < 0:
 				self.genreName[self.menuLevel] = ""
-			
+
 			self.menuLevel += levelIncr
-			
+
 			if levelIncr > 0 or menuInit:
 				self.menuIdx[self.menuLevel] = 0
-			
+
 			if self.menuLevel == 0:
 				print "level-0"
 				if self.genreMenu[0] != None:
@@ -352,7 +352,7 @@ class show_CF_Genre(Screen):
 		else:
 			print "Entry selected"
 			self.genreSelected = True
-				
+
 		print "menuLevel: ",self.menuLevel
 		print "mainIdx: ",self.menuIdx[0]
 		print "subIdx_1: ",self.menuIdx[1]
@@ -360,22 +360,22 @@ class show_CF_Genre(Screen):
 		print "genreSelected: ",self.genreSelected
 		print "menuListe: ",self.menuListe
 		print "genreUrl: ",self.genreUrl
-		
-		self.setGenreStrTitle()		
-		
+
+		self.setGenreStrTitle()
+
 	def keyCancel(self):
 		if self.menuLevel == 0:
 			self.close()
 		else:
 			self.keyMenuUp()
-	
+
 
 def CF_FilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class CF_FilmListeScreen(Screen):
-	
+
 	def __init__(self, session, genreLink, genreName):
 		self.session = session
 		self.genreLink = genreLink
@@ -390,9 +390,9 @@ class CF_FilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions","DirectionActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -441,7 +441,7 @@ class CF_FilmListeScreen(Screen):
 		self['vPrio'] = Label("")
 		self['Page'] = Label("Page")
 		self['coverArt'] = Pixmap()
-		
+
 		self.timerStart = False
 		self.seekTimerRun = False
 		self.filmQ = Queue.Queue(0)
@@ -458,12 +458,12 @@ class CF_FilmListeScreen(Screen):
 		self.genreSearch = re.match('.*?Suche...', self.genreName)
 
 		self.setGenreStrTitle()
-		
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def setGenreStrTitle(self):
@@ -482,22 +482,22 @@ class CF_FilmListeScreen(Screen):
 			url = self.genreLink
 		else:
 			url = "%s/beste/%d/#" % (self.genreLink, self.page)
-			
+
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
-			
+
 		self.filmQ.put(url)
 		if not self.eventL.is_set():
 			self.eventL.set()
 			self.loadPageQueued()
 		print "eventL ",self.eventL.is_set()
-		
+
 	def loadPageQueued(self):
 		print "loadPageQueued:"
 		self['name'].setText('Bitte warten...')
 		while not self.filmQ.empty():
 			url = self.filmQ.get_nowait()
-			
+
 		#self.eventL.clear()
 		print url
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
@@ -507,7 +507,7 @@ class CF_FilmListeScreen(Screen):
 		print "dataError:"
 		printl(error,self,"E")
 		self['handlung'].setText("Fehler:\n" + str(error))
-		
+
 	def loadPageData(self, data):
 		print "loadPageData:"
 		a = 0
@@ -520,14 +520,14 @@ class CF_FilmListeScreen(Screen):
 				mg = re.search('"cf-search-list-item-image">(.*?)</li>', data[a:], re.S)
 			else:
 				mg = re.search('<li id="cf-video-item_(.*?)</li>', data[a:], re.S)
-			
+
 			if mg:
 				a += mg.end()
 				if self.genreMusicCharts or self.genreSearch:
 					m1 = re.search('href="(.*?)".*?<img.*?src="(.*?)".*?alt="(.*?)"', mg.group(1), re.S)
 				else:
 					m1 = re.search('href="(.*?)".*?title="(.*?)">.*?<img.*?src="(.*?)"', mg.group(1), re.S)
-				
+
 				if m1:
 					if self.genreMusicCharts or self.genreSearch:
 						title = decodeHtml(m1.group(3))
@@ -537,11 +537,11 @@ class CF_FilmListeScreen(Screen):
 						title = decodeHtml(m1.group(2))
 						url = m1.group(1)
 						img = m1.group(3)
-					
+
 					self.musicListe.append((title, "%s%s" % (self.baseUrl, url), img))
 			else:
 				a = l
-				
+
 		if len(self.musicListe) == 0:
 			print "No videos found!"
 			self.pages = 0
@@ -549,33 +549,33 @@ class CF_FilmListeScreen(Screen):
 		else:
 			menu_len = len(self.musicListe)
 			print "Music videos found: ",menu_len
-	
+
 			if not self.pages:
 				m1 = re.search('class="cf-page-stepper">(.*?)</div>', data, re.S)
 				if m1:
 					m2 = re.findall('">(\d*?)</a>', m1.group(1))
-					
+
 				if m1 and m2:
 					pages = 0
 					for i in m2:
 						x = int(i)
 						if x > pages:
 							pages = x
-					
+
 					if pages > 999:
 						self.pages = 999
 					else:
 						self.pages = pages
 				else:
 					self.pages = 1
-					
+
 				self.page = 1
 				print "Page: %d / %d" % (self.page,self.pages)
 				self['page'].setText("%d / %d" % (self.page,self.pages))
-	
+
 		self.chooseMenuList.setList(map(CF_FilmListEntry, self.musicListe))
 		self.loadPic()
-	
+
 	def loadPic(self):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
@@ -584,19 +584,19 @@ class CF_FilmListeScreen(Screen):
 		print "streamName: ",streamName
 		#print "streamUrl: ",streamUrl
 		self.getHandlung(desc)
-		
+
 		if not self.filmQ.empty():
 			self.loadPageQueued()
 		else:
 			self.eventL.clear()
 		self.keyLocked	= False
-		
+
 		url = self['liste'].getCurrent()[0][2]
 		if url != '':
 			downloadPage(url, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataError)
 		else:
 			self.ShowCoverNone()
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -604,21 +604,21 @@ class CF_FilmListeScreen(Screen):
 			self['handlung'].setText("Keine weiteren Info's vorhanden.")
 			return
 		self.setHandlung(desc)
-		
+
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-	
+
 	def ShowCover(self, picData):
 		print "ShowCover:"
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		print "ShowCoverNone:"
 		picPath = self.plugin_path + "/images/no_coverArt.png"
 		self.ShowCoverFile(picPath)
-	
+
 	def ShowCoverFile(self, picPath):
 		print "showCoverFile:"
 		if fileExists(picPath):
@@ -634,7 +634,7 @@ class CF_FilmListeScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-	
+
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
@@ -646,67 +646,67 @@ class CF_FilmListeScreen(Screen):
 			playAll = True,
 			listTitle = self.genreName
 			)
-	
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def keyUpRepeated(self):
 		#print "keyUpRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDownRepeated(self):
 		#print "keyDownRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def key_repeatedUp(self):
 		#print "key_repeatedUp"
 		if self.keyLocked:
 			return
 		self.loadPic()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyLeftRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRightRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyPageDown(self):
 		#print "keyPageDown()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageDownFast(1)
-			
+
 	def keyPageUp(self):
 		#print "keyPageUp()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageUpFast(1)
-			
+
 	def keyPageUpFast(self,step):
 		if self.keyLocked:
 			return
@@ -719,7 +719,7 @@ class CF_FilmListeScreen(Screen):
 		#print "Page %d/%d" % (self.page,self.pages)
 		if oldpage != self.page:
 			self.loadPage()
-		
+
 	def keyPageDownFast(self,step):
 		if self.keyLocked:
 			return
@@ -736,33 +736,33 @@ class CF_FilmListeScreen(Screen):
 	def key_1(self):
 		#print "keyPageDownFast(2)"
 		self.keyPageDownFast(2)
-		
+
 	def key_4(self):
 		#print "keyPageDownFast(5)"
 		self.keyPageDownFast(5)
-		
+
 	def key_7(self):
 		#print "keyPageDownFast(10)"
 		self.keyPageDownFast(10)
-		
+
 	def key_3(self):
 		#print "keyPageUpFast(2)"
 		self.keyPageUpFast(2)
-		
+
 	def key_6(self):
 		#print "keyPageUpFast(5)"
 		self.keyPageUpFast(5)
-		
+
 	def key_9(self):
 		#print "keyPageUpFast(10)"
 		self.keyPageUpFast(10)
 
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyCancel(self):
 		self.close()
 

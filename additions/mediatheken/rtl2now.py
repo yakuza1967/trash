@@ -158,7 +158,7 @@ class RTL2nowFilmeListeScreen(Screen):
 					post += "&xajaxargs[]="+each[4]
 					post += "&xajaxargs[]="+each[5]
 					post += "&xajaxargs[]="+each[6]
-					
+
 					reiter_posts.append((post, reitername))
 
 				if len(reiter_posts) != 0:
@@ -177,7 +177,7 @@ class RTL2nowFilmeListeScreen(Screen):
 			tabSelects = "&xajaxargs[]="+selects.group(1)+"&xajaxargs[]="+selects.group(2)+"&xajaxargs[]="+selects.group(3)+"&xajaxargs[]="+selects.group(4)+"&xajaxargs[]="+selects.group(5)+"&xajax=show_top_and_movies&xajaxr="+str(time()).replace('.','')
 			tabs = re.compile('<option.*?value=\'(\d)\'.*?>',re.DOTALL).findall(selects.group(6))
 			for tab in tabs:
-				ajax_posts.append(("xajaxargs[]="+tab+tabSelects)) 
+				ajax_posts.append(("xajaxargs[]="+tab+tabSelects))
 
 		if len(ajax_posts) != 0:
 			seitenanzahl = len(ajax_posts)
@@ -211,7 +211,7 @@ class RTL2nowFilmeListeScreen(Screen):
 				title = "%s - %s" % (reitername, title)
 				self.filmliste.append((title, url, lock))
 			self.chooseMenuList.setList(map(rtl2SerieListEntry, self.filmliste))
-			self.keyLocked = False			
+			self.keyLocked = False
 
 	def keyOK(self):
 		if self.keyLocked:

@@ -9,7 +9,7 @@ def pornmvzGenreListEntry(entry):
 def pornmvzListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		]		
+		]
 
 class pornmvzGenreScreen(Screen):
 
@@ -62,7 +62,7 @@ class pornmvzGenreScreen(Screen):
 		url = "http://pornmvz.com/"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
-	def genreData(self, data):	
+	def genreData(self, data):
 		parse = re.search('Categories</h6>(.*?)</select>', data, re.S)
 		phCat = re.findall('value="(.*?)">(.*?)\sXXX\sMovies', parse.group(1), re.S)
 		if phCat:
@@ -73,7 +73,7 @@ class pornmvzGenreScreen(Screen):
 			self.genreliste.insert(0, ("Newest", "http://pornmvz.com/?paged="))
 			self.genreliste.insert(0, ("--- Search ---", "callSuchen", None))
 			self.chooseMenuList.setList(map(pornmvzGenreListEntry, self.genreliste))
-			self.keyLocked = False	
+			self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -96,7 +96,7 @@ class pornmvzGenreScreen(Screen):
 		print pornmvzGenre, pornmvzUrl
 		if pornmvzGenre == "--- Search ---":
 			self.suchen()
-		else:	
+		else:
 			self.session.open(pornmvzFilmListeScreen, pornmvzGenre, pornmvzUrl)
 
 	def keyCancel(self):
@@ -202,11 +202,11 @@ class pornmvzFilmListeScreen(Screen):
 		ddDescription = re.search('class="post-content-single">\n<center>.*?</a><br\s/>\n{0,1}(.*?)<br\s/>.*?</center>', data, re.S)
 		if ddDescription:
 			if ddDescription.group(1) == "&#8230;":
-				self['handlung'].setText("Keine Infos gefunden.")	
+				self['handlung'].setText("Keine Infos gefunden.")
 			else:
 				self['handlung'].setText(decodeHtml(ddDescription.group(1)))
 		else:
-			self['handlung'].setText("Keine Infos gefunden.")	
+			self['handlung'].setText("Keine Infos gefunden.")
 
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):

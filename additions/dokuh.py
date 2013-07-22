@@ -15,7 +15,7 @@ Sondertastenbelegung:
 Genre Auswahl:
 	KeyCancel	: Menu Up / Exit
 	KeyOK		: Menu Down / Select
-	
+
 Doku Auswahl:
 	Bouquet +/-,		: Seitenweise blättern in 1er Schritten Up/Down
 	Rot/Blau			: Die Beschreibung Seitenweise scrollen
@@ -30,16 +30,16 @@ Stream Auswahl:
 def DOKUHmenuListentry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class showDOKUHGenre(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -48,9 +48,9 @@ class showDOKUHGenre(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -68,7 +68,7 @@ class showDOKUHGenre(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
-		
+
 		self.menuLevel = 0
 		self.menuMaxLevel = 2
 		self.menuIdx = [0,0,0]
@@ -86,7 +86,7 @@ class showDOKUHGenre(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		mainGenre = [
 			("NEUESTE DOKUS", ""),
 			("BELIEBTESTE DOKUS", "/"),
@@ -102,8 +102,8 @@ class showDOKUHGenre(Screen):
 			("Kurioses", "/kurioses"),
 			("Staffeln & HD", "/staffeln-und-hd")
 			]
-			
-			
+
+
 		subGenre_0 = [
 			("Antike", "/antike"),
 			("Archäologie", "/archaologie"),
@@ -270,7 +270,7 @@ class showDOKUHGenre(Screen):
 			("HD", "/hd-extra"),
 			("Staffeln", "/staffeln")
 			]
-			
+
 		self.genreMenu = [mainGenre,
 			[None,None,None,subGenre_0,subGenre_1,subGenre_2,subGenre_3,subGenre_4,subGenre_5,subGenre_6,subGenre_7,subGenre_8,subGenre_9
 			],
@@ -300,9 +300,9 @@ class showDOKUHGenre(Screen):
 			]
 			]
 			]
-			
+
 		self.onLayoutFinish.append(self.loadMenu)
-		
+
 	def setGenreStrTitle(self):
 		genreName = self['genreList'].getCurrent()[0][0]
 		genreLink = self['genreList'].getCurrent()[0][1]
@@ -311,7 +311,7 @@ class showDOKUHGenre(Screen):
 				self.genreName[self.menuLevel] = genreName
 			else:
 				self.genreName[self.menuLevel] = ':'+genreName
-				
+
 			self.genreUrl[self.menuLevel] = genreLink
 		self.genreTitle = "%s%s%s" % (self.genreName[0],self.genreName[1],self.genreName[2])
 		self['name'].setText("Genre: "+self.genreTitle)
@@ -325,12 +325,12 @@ class showDOKUHGenre(Screen):
 		self['genreList'].pageDown()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyLeft(self):
 		self['genreList'].pageUp()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyRed(self):
 		pass
 
@@ -338,12 +338,12 @@ class showDOKUHGenre(Screen):
 		self['genreList'].up()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyDown(self):
 		self['genreList'].down()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyMenuUp(self):
 		print "keyMenuUp:"
 		if self.keyLocked:
@@ -355,10 +355,10 @@ class showDOKUHGenre(Screen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-			
+
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setMenu(1)
-		
+
 		if self.genreSelected:
 			print "Genre selected"
 			genreurl = self.baseUrl+self.genreBase+self.genreUrl[0]+self.genreUrl[1]+self.genreUrl[2]
@@ -371,12 +371,12 @@ class showDOKUHGenre(Screen):
 		if (self.menuLevel+levelIncr) in range(self.menuMaxLevel+1):
 			if levelIncr < 0:
 				self.genreName[self.menuLevel] = ""
-			
+
 			self.menuLevel += levelIncr
-			
+
 			if levelIncr > 0 or menuInit:
 				self.menuIdx[self.menuLevel] = 0
-			
+
 			if self.menuLevel == 0:
 				print "level-0"
 				if self.genreMenu[0] != None:
@@ -420,7 +420,7 @@ class showDOKUHGenre(Screen):
 		else:
 			print "Entry selected"
 			self.genreSelected = True
-				
+
 		print "menuLevel: ",self.menuLevel
 		print "mainIdx: ",self.menuIdx[0]
 		print "subIdx_1: ",self.menuIdx[1]
@@ -428,9 +428,9 @@ class showDOKUHGenre(Screen):
 		print "genreSelected: ",self.genreSelected
 		print "menuListe: ",self.menuListe
 		print "genreUrl: ",self.genreUrl
-		
-		self.setGenreStrTitle()		
-		
+
+		self.setGenreStrTitle()
+
 	def keyCancel(self):
 		if self.menuLevel == 0:
 			self.close()
@@ -440,17 +440,17 @@ class showDOKUHGenre(Screen):
 def DOKUHFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class DOKUHFilmListeScreen(Screen):
-	
+
 	def __init__(self, session, genreLink, genreName):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/dokuListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/dokuListScreen.xml"
@@ -459,9 +459,9 @@ class DOKUHFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions","DirectionActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -510,7 +510,7 @@ class DOKUHFilmListeScreen(Screen):
 		self['Page'] = Label("Page")
 		self['VideoPrio'] = Label("")
 		self['vPrio'] = Label("")
-		
+
 		self.timerStart = False
 		self.seekTimerRun = False
 		self.filmQ = Queue.Queue(0)
@@ -532,12 +532,12 @@ class DOKUHFilmListeScreen(Screen):
 		self.genreSpecial = self.genreNEUESTE or self.genreBELIEBTESTE or self.genreMEISTGESEHEN
 
 		self.setGenreStrTitle()
-		
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def setGenreStrTitle(self):
@@ -551,16 +551,16 @@ class DOKUHFilmListeScreen(Screen):
 			url = "%s/page/%d/%s" % (self.genreLink, self.page, self.sortParAZ)
 		else:
 			url = self.baseUrl
-			
+
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
-			
+
 		self.filmQ.put(url)
 		if not self.eventL.is_set():
 			self.eventL.set()
 			self.loadPageQueued()
 		print "eventL ",self.eventL.is_set()
-		
+
 	def loadPageQueued(self):
 		print "loadPageQueued:"
 		self['name'].setText('Bitte warten...')
@@ -569,17 +569,17 @@ class DOKUHFilmListeScreen(Screen):
 		#self.eventL.clear()
 		print url
 		getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
 		printl(error,self,"E")
 		self.dokusListe.append(("No dokus found !","","",""))
 		self.chooseMenuList.setList(map(DOKUHFilmListEntry, self.dokusListe))
-		
+
 	def loadPageData(self, data):
 		print "loadPageData:"
-		
+
 		if self.genreNEUESTE:
 			print "Neueste Dokus suche..."
 			m=re.search('class="name">neueste Dokus<(.*?)<!-- end .section-box -->',data,re.S)
@@ -592,12 +592,12 @@ class DOKUHFilmListeScreen(Screen):
 		else:
 			print "Normal search.."
 			m=re.search('<div class="loop-content.*?class="thumb">(.*)<!-- end .loop-content -->',data,re.S)
-			
+
 		if m:
 			dokus = re.findall('class="clip-link".*?title="(.*?)" href="(.*?)".*?<img src="(.*?)".*?class="desc">(.*?)</p>', m.group(1), re.S)
 		else:
 			dokus = None
-		
+
 		if dokus:
 			print "Dokus found !"
 			if not self.pages:
@@ -609,13 +609,13 @@ class DOKUHFilmListeScreen(Screen):
 				self.page = 1
 				print "Page: %d / %d" % (self.page,self.pages)
 				self['page'].setText("%d / %d" % (self.page,self.pages))
-			
+
 			self.dokusListe = []
 			for	(name,url,img,desc) in dokus:
 				#print	"Url: ", url, "Name: ", name
 				self.dokusListe.append((decodeHtml(name), url, img, desc))
 			self.chooseMenuList.setList(map(DOKUHFilmListEntry, self.dokusListe))
-			
+
 			self.loadPicQueued()
 		else:
 			print "No dokus found !"
@@ -628,21 +628,21 @@ class DOKUHFilmListeScreen(Screen):
 
 	def loadPic(self):
 		print "loadPic:"
-		
+
 		if self.picQ.empty():
 			self.eventP.clear()
 			print "picQ is empty"
 			return
-		
+
 		if self.updateP:
 			print "Pict. or descr. update in progress"
 			print "eventP: ",self.eventP.is_set()
 			print "updateP: ",self.updateP
 			return
-			
+
 		while not self.picQ.empty():
 			self.picQ.get_nowait()
-		
+
 		streamName = self['liste'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamPic = self['liste'].getCurrent()[0][2]
@@ -660,12 +660,12 @@ class DOKUHFilmListeScreen(Screen):
 			print "Download pict."
 			#print "Url: ",streamPic
 			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataErrorP)
-		
+
 	def dataErrorP(self, error):
 		print "dataError:"
 		printl(error,self,"E")
 		self.ShowCoverNone()
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -673,21 +673,21 @@ class DOKUHFilmListeScreen(Screen):
 			self['handlung'].setText("Keine Infos gefunden.")
 			return
 		self.setHandlung(desc)
-		
+
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-		
+
 	def ShowCover(self, picData):
 		print "ShowCover:"
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		print "ShowCoverNone:"
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/no_coverArt.png"
 		self.ShowCoverFile(picPath)
-	
+
 	def ShowCoverFile(self, picPath):
 		print "showCoverFile:"
 		if fileExists(picPath):
@@ -702,7 +702,7 @@ class DOKUHFilmListeScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-				
+
 		self.updateP = 0;
 		self.keyLocked	= False
 		if not self.filmQ.empty():
@@ -710,7 +710,7 @@ class DOKUHFilmListeScreen(Screen):
 		else:
 			self.eventL.clear()
 			self.loadPic()
-			
+
 	def loadPicQueued(self):
 		print "loadPicQueued:"
 		self.picQ.put(None)
@@ -718,13 +718,13 @@ class DOKUHFilmListeScreen(Screen):
 			self.eventP.set()
 			self.loadPic()
 		print "eventP: ",self.eventP.is_set()
-		
+
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
@@ -735,67 +735,67 @@ class DOKUHFilmListeScreen(Screen):
 		print "Name: ",streamName
 		print "Link: ",streamLink
 		self.session.open(DOKUHStreams, streamLink, streamName)
-	
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def keyUpRepeated(self):
 		#print "keyUpRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDownRepeated(self):
 		#print "keyDownRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def key_repeatedUp(self):
 		#print "key_repeatedUp"
 		if self.keyLocked:
 			return
 		self.loadPicQueued()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyLeftRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRightRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyPageDown(self):
 		#print "keyPageDown()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageDownFast(1)
-			
+
 	def keyPageUp(self):
 		#print "keyPageUp()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageUpFast(1)
-			
+
 	def keyPageUpFast(self,step):
 		if self.keyLocked:
 			return
@@ -808,7 +808,7 @@ class DOKUHFilmListeScreen(Screen):
 		#print "Page %d/%d" % (self.page,self.pages)
 		if oldpage != self.page:
 			self.loadPage()
-		
+
 	def keyPageDownFast(self,step):
 		if self.keyLocked:
 			return
@@ -825,23 +825,23 @@ class DOKUHFilmListeScreen(Screen):
 	def key_1(self):
 		#print "keyPageDownFast(2)"
 		self.keyPageDownFast(2)
-		
+
 	def key_4(self):
 		#print "keyPageDownFast(5)"
 		self.keyPageDownFast(5)
-		
+
 	def key_7(self):
 		#print "keyPageDownFast(10)"
 		self.keyPageDownFast(10)
-		
+
 	def key_3(self):
 		#print "keyPageUpFast(2)"
 		self.keyPageUpFast(2)
-		
+
 	def key_6(self):
 		#print "keyPageUpFast(5)"
 		self.keyPageUpFast(5)
-		
+
 	def key_9(self):
 		#print "keyPageUpFast(10)"
 		self.keyPageUpFast(10)
@@ -852,17 +852,17 @@ class DOKUHFilmListeScreen(Screen):
 def DOKUHStreamListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+entry[3])
-		] 
+		]
 class DOKUHStreams(Screen, ConfigListScreen):
-	
+
 	def __init__(self, session, dokuUrl, dokuName):
 		self.session = session
 		self.dokuUrl = dokuUrl
 		self.dokuName = dokuName
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/dokuListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/dokuListScreen.xml"
@@ -871,7 +871,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -885,7 +885,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			"red" 		: self.keyTxtPageUp,
 			"blue" 		: self.keyTxtPageDown
 		}, -1)
-		
+
 		self['title'] = Label(DOKUH_Version)
 		self['ContentTitle'] = Label("Streams für "+dokuName)
 		self['coverArt'] = Pixmap()
@@ -899,7 +899,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		self['VideoPrio'] = Label("VidPrio")
 		self['Page'] = Label("")
 		self['page'] = Label("")
-		
+
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
@@ -910,14 +910,14 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		self['liste'] = self.streamMenuList
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print "loadPage:"
 		streamUrl = self.dokuUrl
 		#print "FilmUrl: %s" % self.dokuUrl
 		#print "FilmName: %s" % self.dokuName
 		getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		print "parseData:"
 		streams = re.findall('class="related-item".*?loadVideo\(\'(.*?)\'\).*?<img src="(.*?)".*?"duration">'\
@@ -935,23 +935,23 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			else:
 				print "No dokus found !"
 				self.streamListe.append(("No streams found!","","","",""))
-			
+
 		self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
 		self.loadPic()
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
 			print "No Infos found !"
 			self['handlung'].setText("Keine Infos gefunden.")
 			return
-			
+
 		self.setHandlung(desc)
-		
+
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-		
+
 	def loadPic(self):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
@@ -968,22 +968,22 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			print "Download pict."
 			print "Url: ",streamPic
 			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataErrorP)
-		
+
 	def dataErrorP(self, error):
 		print "dataErrorP:"
 		printl(error,self,"E")
 		self.ShowCoverNone()
-	
+
 	def ShowCover(self, picData):
 		print "ShowCover:"
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		print "ShowCoverNone:"
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/no_coverArt.png"
 		self.ShowCoverFile(picPath)
-	
+
 	def ShowCoverFile(self, picPath):
 		print "showCoverFile:"
 		if fileExists(picPath):
@@ -999,13 +999,13 @@ class DOKUHStreams(Screen, ConfigListScreen):
 					self['coverArt'].show()
 					del self.picload
 		self.keyLocked	= False
-			
+
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")
-		self.streamListe.append(("Read error !","","","",""))			
+		self.streamListe.append(("Read error !","","","",""))
 		self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
-			
+
 	def setVideoPrio(self):
 		"""
 		if self.videoPrio+1 > 2:
@@ -1015,7 +1015,7 @@ class DOKUHStreams(Screen, ConfigListScreen):
 		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
-		
+
 	def keyOK(self):
 		print "keyOK:"
 		if self.keyLocked:
@@ -1040,40 +1040,39 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			title_inr=1,
 			showPlaylist=False
 			)
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
 		self.loadPic()
-		
+
 	def keyPageUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
 		self.loadPic()
-		
+
 	def keyPageDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		self.loadPic()
-	
+
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyYellow(self):
 		self.setVideoPrio()
-		
+
 	def keyCancel(self):
 		self.close()
-		

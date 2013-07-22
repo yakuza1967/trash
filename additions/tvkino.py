@@ -4,10 +4,10 @@ from Plugins.Extensions.MediaPortal.resources.decrypt import *
 def tvkinoGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class tvkino(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/tvkino.xml" % config.mediaportal.skin.value
@@ -17,9 +17,9 @@ class tvkino(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -28,22 +28,22 @@ class tvkino(Screen):
 		self['title'] = Label("TV-Kino.net - Watch Live TV")
 		self['name'] = Label("Sender Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.senderliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.keyLocked = False
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://www.tv-kino.net/"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.pageData).addErrback(self.dataError)
-	
+
 	def pageData(self, data):
 		sender = re.findall('<div class="portfolio-thumbnail">.*?<a title="(.*?)" href="(/stream/live/.*?)">', data, re.S)
 		if sender:
@@ -56,7 +56,7 @@ class tvkino(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -65,7 +65,7 @@ class tvkino(Screen):
 		print url
 		self.keyLocked = True
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.streamData).addErrback(self.dataError)
-		
+
 	def streamData(self, data):
 		stream_raw = re.findall('name="flashvars" value="(.*?)"', data, re.S)
 		if stream_raw:
@@ -80,6 +80,6 @@ class tvkino(Screen):
 				sref = eServiceReference(0x1001, 0, streamUrl)
 				sref.setName(name)
 				self.session.open(MoviePlayer, sref)
-		
+
 	def keyCancel(self):
 		self.close()

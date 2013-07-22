@@ -9,11 +9,11 @@ class CannaLink:
 		self.session = session
 		self._errback = None
 		self._callback = None
-		
+
 	def getLink(self, cb_play, cb_err, sc_title, sc_artist, sc_album, url, imgurl):
 		self._errback = cb_err
 		self._callback = cb_play
-		
+
 		stream_url = self.getDLurl(url)
 		if stream_url:
 			cb_play(sc_title, stream_url, sc_album, sc_artist, imgurl)
@@ -42,7 +42,7 @@ class CannaLink:
 							url='http://ua.canna.to/canna/avzt/'+code
 							print url
 							return url
-							
+
 		except urllib2.HTTPError, error:
 			printl(error,self,"E")
 			message = self.session.open(MessageBox, ("Fehler: %s" % error), MessageBox.TYPE_INFO, timeout=3)
@@ -52,12 +52,11 @@ class CannaLink:
 			printl(error.reason,self,"E")
 			message = self.session.open(MessageBox, ("Fehler: %s" % error), MessageBox.TYPE_INFO, timeout=3)
 			return False
-				
+
 	def getUrl(self,url):
 		req = mechanize.Request(url)
 		req.add_header('User-Agent', ' Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 		response = mechanize.urlopen(req)
 		link = response.read()
 		response.close()
-		return link	
-
+		return link

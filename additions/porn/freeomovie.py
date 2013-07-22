@@ -9,7 +9,7 @@ def freeomovieGenreListEntry(entry):
 def freeomovieListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		]		
+		]
 
 class freeomovieGenreScreen(Screen):
 
@@ -62,7 +62,7 @@ class freeomovieGenreScreen(Screen):
 		url = "http://www.freeomovie.com/"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
-	def genreData(self, data):	
+	def genreData(self, data):
 		parse = re.search('Categories</h3>(.*?)</div>', data, re.S)
 		phCat = re.findall('href="(.*?)".*?>(.*?)\s{0,2}<span', parse.group(1), re.S)
 		if phCat:
@@ -73,7 +73,7 @@ class freeomovieGenreScreen(Screen):
 			self.genreliste.insert(0, ("Newest", "http://www.freeomovie.com/page/"))
 			self.genreliste.insert(0, ("--- Search ---", "callSuchen", None))
 			self.chooseMenuList.setList(map(freeomovieGenreListEntry, self.genreliste))
-			self.keyLocked = False		
+			self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -96,7 +96,7 @@ class freeomovieGenreScreen(Screen):
 		print freeomovieGenre, freeomovieUrl
 		if freeomovieGenre == "--- Search ---":
 			self.suchen()
-		else:	
+		else:
 			self.session.open(freeomovieFilmListeScreen, freeomovieGenre, freeomovieUrl)
 
 	def keyCancel(self):

@@ -7,9 +7,9 @@ def kinderKinoListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class kinderKinoScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinderKinoScreen.xml" % config.mediaportal.skin.value
@@ -19,9 +19,9 @@ class kinderKinoScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -32,7 +32,7 @@ class kinderKinoScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("KinderKino.de")
@@ -47,12 +47,12 @@ class kinderKinoScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['roflList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://kostenlos-dyn.kinderkino.de/api/get_category_posts/?id=3&page=%s&count=50&order_by=date&thumbnail_size=full&include=title,slug,thumbnail,content,categories,custom_fields,comments&custom_fields=Streaming,FSK,Jahr,IMDb-Bewertung,Stars,mobileCover,Highlight,Highlight-Bottom,Regisseur,Wikipedia,IMDb-Link,IPTV,Video,Youtube,Duration"  % (self.loadPageNo)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parsePageData).addErrback(self.dataError)
-		
+
 	def parsePageData(self, data):
 		self.kkListe = []
 		# In json Format laden
@@ -61,7 +61,7 @@ class kinderKinoScreen(Screen):
 		self.maxPages = json_data['pages']
 		# Alle Videos extrahieren
 		kkVideos = json_data['posts']
-		# Alle Filmtitel einer Seite 
+		# Alle Filmtitel einer Seite
 		for kkVideo in kkVideos:
 			kkTitle = str(kkVideo['title']).replace('&#8211;', '-')
 			kkLinkPart = kkVideo['custom_fields']['Streaming']
@@ -70,17 +70,17 @@ class kinderKinoScreen(Screen):
 		self.chooseMenuList.setList(map(kinderKinoListEntry, self.kkListe))
 		self.keyLocked = False
 		self.showPic()
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def showPic(self):
 		kkTitle = self['roflList'].getCurrent()[0][0]
 		kkPicLink = self['roflList'].getCurrent()[0][2]
 		self['name'].setText(kkTitle)
 		self['page'].setText(str(self.page))
 		downloadPage(kkPicLink, "/tmp/kkPic.jpg").addCallback(self.roflCoverShow)
-		
+
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/kkPic.jpg"):
 			self['roflPic'].instance.setPixmap(gPixmapPtr())
@@ -103,7 +103,7 @@ class kinderKinoScreen(Screen):
 			self.page -= 1
 			self.loadPageNo = self.page
 			self.loadPage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -112,31 +112,31 @@ class kinderKinoScreen(Screen):
 			self.page += 1
 			self.loadPageNo = self.page
 			self.loadPage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['roflList'].pageUp()
 		self.showPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['roflList'].pageDown()
 		self.showPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['roflList'].up()
 		self.showPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['roflList'].down()
 		self.showPic()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return

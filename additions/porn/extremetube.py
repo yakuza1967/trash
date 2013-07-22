@@ -3,15 +3,15 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 def extremetubeGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def extremetubeFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class extremetubeGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +21,9 @@ class extremetubeGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -38,19 +38,19 @@ class extremetubeGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://www.extremetube.com/video-categories"
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)	
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
 	def genreData(self, data):
 		parse = re.search('class="title-general">Categories</h1>(.*?)footer', data, re.S)
@@ -70,7 +70,7 @@ class extremetubeGenreScreen(Screen):
 			self.chooseMenuList.setList(map(extremetubeGenreListEntry, self.genreliste))
 			self.chooseMenuList.moveToIndex(0)
 			self.keyLocked = False
-			self.showInfos()	
+			self.showInfos()
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -86,11 +86,11 @@ class extremetubeGenreScreen(Screen):
 	def ShowCover(self, picData):
 		picPath = "/tmp/phIcon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverFile(self, picPath):
 		if fileExists(picPath):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -104,7 +104,7 @@ class extremetubeGenreScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-					
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -115,7 +115,7 @@ class extremetubeGenreScreen(Screen):
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(extremetubeFilmScreen, streamGenreLink)
-		
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -130,19 +130,19 @@ class extremetubeGenreScreen(Screen):
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -153,7 +153,7 @@ class extremetubeGenreScreen(Screen):
 		self.close()
 
 class extremetubeFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -164,9 +164,9 @@ class extremetubeFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -187,15 +187,15 @@ class extremetubeFilmScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.page = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -203,7 +203,7 @@ class extremetubeFilmScreen(Screen):
 		url = "%s%s" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		lastp = re.search('class="pagination.*href=".*?page=(.*?)"></a>', data, re.S)
 		if lastp:
@@ -235,7 +235,7 @@ class extremetubeFilmScreen(Screen):
 		self['runtime'].setText(phRuntime)
 		self['views'].setText(phViews)
 		downloadPage(phImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -273,7 +273,7 @@ class extremetubeFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -281,31 +281,31 @@ class extremetubeFilmScreen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -321,7 +321,7 @@ class extremetubeFilmScreen(Screen):
 				url = urllib.unquote(phurl)
 				self.keyLocked = False
 				self.play(url)
-		
+
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
 		sref = eServiceReference(0x1001, 0, file)

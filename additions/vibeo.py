@@ -4,19 +4,19 @@ def vibeoListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 850, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def vibeoStreamsListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 850, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
 
 class vibeoFilmListeScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -24,14 +24,14 @@ class vibeoFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 
 		self['title'] = Label("vibeo.tv")
@@ -49,7 +49,7 @@ class vibeoFilmListeScreen(Screen):
 		self['Page'] = Label("Page")
 		self['page'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -57,7 +57,7 @@ class vibeoFilmListeScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		self.filmliste = []
@@ -66,7 +66,7 @@ class vibeoFilmListeScreen(Screen):
 
 		self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
 		self.keyLocked = False
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -77,16 +77,16 @@ class vibeoFilmListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class vibeoTypeListeScreen(Screen):
-	
+
 	def __init__(self, session, filmtitle, filmlink):
 		self.session = session
 		self.filmlink = filmlink
 		self.filmtitle = filmtitle
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -94,14 +94,14 @@ class vibeoTypeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("vibeo.tv")
 		self['ContentTitle'] = Label("%s:" % self.filmtitle)
@@ -118,7 +118,7 @@ class vibeoTypeListeScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -126,7 +126,7 @@ class vibeoTypeListeScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print "starte aufruf"
 		self.keyLocked = True
@@ -169,7 +169,7 @@ class vibeoTypeListeScreen(Screen):
 				'type': self.filmlink}
 		url = "http://vibeo.tv/request"
 		getPage(url, method='POST', postdata=urlencode(values), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		infos = re.findall('alt=."(Movie|Cinema|Series).".*?/>"."<span rel=.*?"#tt(.*?).">(.*?)<.*?/de.png." style=."opacity: (.*?);', data, re.S|re.I)
@@ -180,7 +180,7 @@ class vibeoTypeListeScreen(Screen):
 					title = "(%s) - %s" % (type, title)
 					self.filmliste.append((title,linkid))
 					self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
-				
+
 			self.keyLocked = False
 
 	def dataError(self, error):
@@ -199,16 +199,16 @@ class vibeoTypeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class vibeoEpisdenListeScreen(Screen):
-	
+
 	def __init__(self, session, filmtitle, filmlink):
 		self.session = session
 		self.filmlink = filmlink
 		self.filmtitle = filmtitle
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -216,14 +216,14 @@ class vibeoEpisdenListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("vibeo.tv")
 		self['ContentTitle'] = Label("Streams for %s:" % self.filmtitle)
@@ -240,7 +240,7 @@ class vibeoEpisdenListeScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -248,12 +248,12 @@ class vibeoEpisdenListeScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-	
+
 	def loadPage(self):
 		values = {'mID': self.filmlink}
 		url = "http://vibeo.tv/request"
 		getPage(url, method='POST', postdata=urlencode(values), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-			
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		print data
@@ -271,7 +271,7 @@ class vibeoEpisdenListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -284,9 +284,9 @@ class vibeoEpisdenListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class vibeoStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, filmtitle, filmlink, season, episode):
 		self.session = session
 		self.filmlink = filmlink
@@ -295,7 +295,7 @@ class vibeoStreamListeScreen(Screen):
 		self.episode = episode
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -303,14 +303,14 @@ class vibeoStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("vibeo.tv")
 		self['ContentTitle'] = Label("Streams for %s:" % self.filmtitle)
@@ -327,7 +327,7 @@ class vibeoStreamListeScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -335,18 +335,18 @@ class vibeoStreamListeScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-	
+
 	def loadPage(self):
 		if re.match('.*?(Series)', self.filmtitle, re.S):
 			values = {'language': 'de', 'mID': self.filmlink, 'raw': 'true', 'season': self.season, 'episode': self.episode}
 			url = "http://vibeo.tv/request"
 			getPage(url, method='POST', postdata=urlencode(values), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-			
+
 		else:
 			values = {'language': 'de', 'mID': self.filmlink, 'raw': 'true'}
 			url = "http://vibeo.tv/request"
 			getPage(url, method='POST', postdata=urlencode(values), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-			
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		print data
@@ -362,14 +362,14 @@ class vibeoStreamListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		vibeourl = self['liste'].getCurrent()[0][1]
 		print vibeourl
 		get_stream_link(self.session).check_link(vibeourl, self.got_link, False)
-	
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)

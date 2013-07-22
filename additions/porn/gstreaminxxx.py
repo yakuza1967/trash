@@ -5,18 +5,18 @@ from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
 def gstreaminxxxGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def gstreaminxxxFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 def gstreaminxxxHosterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 sitechrx = ''
 
 special_headers = {
@@ -28,7 +28,7 @@ special_headers = {
 }
 
 class gstreaminxxxGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -38,9 +38,9 @@ class gstreaminxxxGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -55,20 +55,20 @@ class gstreaminxxxGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.get_site_cookie1)
-		
+
 	def get_site_cookie1(self):
 		self.keyLocked = True
 		url = "http://g-stream.in"
 		getPage(url, agent=special_headers, headers={'Cookie': 'overkill_in='+str(time())}).addCallback(self.get_site_cookie2).addErrback(self.dataError)
-		
+
 	def get_site_cookie2(self, data):
 		x = re.search('searchfrm', data, re.S)
 		if x:
@@ -78,7 +78,7 @@ class gstreaminxxxGenreScreen(Screen):
 		raw = re.findall('javascript"\ssrc="(.*?)">.*?scf\(\'(.*?)\'\+\'(.*?)\'.*?', data, re.S)
 		url = "http://g-stream.in" + str(raw[0][0])
 		getPage(url, agent=special_headers, headers={'Cookie': 'overkill_in='+str(time())}).addCallback(self.get_site_cookie3, raw[0][1], raw[0][2]).addErrback(self.dataError)
-		
+
 	def get_site_cookie3(self, data, cookie1, cookie2):
 		raw = re.findall('escape\(hsh.*?"(.*?)"\)', data, re.S)
 		global sitechrx
@@ -114,22 +114,22 @@ class gstreaminxxxGenreScreen(Screen):
 			return
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		self.session.open(gstreaminxxxFilmScreen, streamGenreLink)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -139,7 +139,7 @@ class gstreaminxxxGenreScreen(Screen):
 		self.close()
 
 class gstreaminxxxFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -150,9 +150,9 @@ class gstreaminxxxFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -174,15 +174,15 @@ class gstreaminxxxFilmScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self.lastpage = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -190,7 +190,7 @@ class gstreaminxxxFilmScreen(Screen):
 		url = "%s%s" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, agent=special_headers, headers={'Cookie': 'sitechrx='+sitechrx+'; overkill_in='+str(time())}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		lastp = re.search('normal">Seite.*?von\s(.*?)</td>', data, re.S)
 		if lastp:
@@ -199,7 +199,7 @@ class gstreaminxxxFilmScreen(Screen):
 			self.lastpage = int(lastp)
 		else:
 			self.lastpage = 1
-		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))	
+		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
 		phMovies = re.findall('class="p1"\shref="(.*?)".*?class="large"\ssrc="(.*?)".*?thread_title_[0-9]+".*?>(.*?)</a>', data, re.S)
 		if phMovies:
 			for (phUrl, phImage, phTitle) in phMovies:
@@ -224,7 +224,7 @@ class gstreaminxxxFilmScreen(Screen):
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 		else:
-			self.ShowCoverNone()		
+			self.ShowCoverNone()
 
 	def ShowCover(self, picData):
 		picPath = "/tmp/Icon.jpg"
@@ -271,7 +271,7 @@ class gstreaminxxxFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -279,31 +279,31 @@ class gstreaminxxxFilmScreen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -315,7 +315,7 @@ class gstreaminxxxFilmScreen(Screen):
 		self.close()
 
 class gstreaminxxxStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamFilmLink, streamName):
 		self.session = session
 		self.streamFilmLink = streamFilmLink
@@ -328,9 +328,9 @@ class gstreaminxxxStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -339,7 +339,7 @@ class gstreaminxxxStreamListeScreen(Screen):
 		self['title'] = Label("G-Stream.in")
 		self['name'] = Label('Bitte warten...')
 		self['coverArt'] = Pixmap()
-		
+
 		self.tw_agent_hlp = TwAgentHelper()
 		self.keyLocked = True
 		self.filmliste = []
@@ -347,15 +347,15 @@ class gstreaminxxxStreamListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		getPage(self.streamFilmLink, agent=special_headers, headers={'Cookie': 'sitechrx='+sitechrx+'; overkill_in='+str(time())}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		raw = re.findall('<table\sid="post[0-9]+"(.*?)id="post_thanks_box', data, re.S)

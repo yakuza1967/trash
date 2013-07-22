@@ -10,7 +10,7 @@ def radioplayListEntry(entry):
 		]
 
 class Radiode(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/Radiode.xml" % config.mediaportal.skin.value
@@ -20,9 +20,9 @@ class Radiode(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -36,40 +36,40 @@ class Radiode(Screen):
 			"green" : self.keyAdd,
 			"red" : self.keyDel
 		}, -1)
-		
+
 		self['title'] = Label("Radio.de - Radio online hoeren")
 		self['leftContentTitle'] = Label("S e n d e r l i s t e")
 		self['rightContentTitle'] = Label("P l a y l i s t")
 		self['stationIcon'] = Pixmap()
 		self['stationInfo'] = Label("")
 		self['stationDesc'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.playList = []
 		self.playMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.playMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.playMenuList.l.setItemHeight(25)
 		self['playlist'] = self.playMenuList
-		
+
 		self.currentList = "playlist"
 		self.keyLocked = False
 		self.playing = False
 		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		self.loadStations("streamlist")
 		self.loadStations("playlist")
 		self["streamlist"].selectionEnabled(0)
 		self["playlist"].selectionEnabled(1)
-		
+
 	def loadStations(self, list):
 		print list
 		if list == "streamlist":
@@ -81,7 +81,7 @@ class Radiode(Screen):
 				os.system("touch "+config.mediaportal.watchlistpath.value+"mp_radiode_playlist")
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_radiode_playlist"):
 				path = config.mediaportal.watchlistpath.value+"mp_radiode_playlist"
-			
+
 		if fileExists(path):
 			readStations = open(path,"r")
 			for rawData in readStations.readlines():
@@ -98,7 +98,7 @@ class Radiode(Screen):
 			else:
 				self.playList.sort()
 				self.playMenuList.setList(map(radioplayListEntry, self.playList))
-				
+
 			readStations.close()
 
 			exist = self[list].getCurrent()
@@ -107,13 +107,13 @@ class Radiode(Screen):
 				self.stationIconRead(stationImage)
 				stationDesc = self[list].getCurrent()[0][3]
 				self['stationDesc'].setText(stationDesc)
-				
+
 			self.keyLocked = False
 
 
 	def stationIconRead(self, stationIconLink):
 		downloadPage(stationIconLink, "/tmp/stationIcon.jpg").addCallback(self.statonIconShow)
-		
+
 	def statonIconShow(self, picData):
 		if fileExists("/tmp/stationIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -137,7 +137,7 @@ class Radiode(Screen):
 			self["playlist"].selectionEnabled(0)
 			self["streamlist"].selectionEnabled(1)
 			self.currentList = "streamlist"
-			
+
 	def keyLeft(self):
 		exist = self[self.currentList].getCurrent()
 		if self.keyLocked or exist == None:
@@ -149,7 +149,7 @@ class Radiode(Screen):
 		self.stationIconRead(stationImage)
 		stationDesc = self[self.currentList].getCurrent()[0][3]
 		self['stationDesc'].setText(decodeHtml(stationDesc))
-		
+
 	def keyRight(self):
 		exist = self[self.currentList].getCurrent()
 		if self.keyLocked or exist == None:
@@ -161,7 +161,7 @@ class Radiode(Screen):
 		self.stationIconRead(stationImage)
 		stationDesc = self[self.currentList].getCurrent()[0][3]
 		self['stationDesc'].setText(decodeHtml(stationDesc))
-		
+
 	def keyUp(self):
 		exist = self[self.currentList].getCurrent()
 		if self.keyLocked or exist == None:
@@ -173,7 +173,7 @@ class Radiode(Screen):
 		self.stationIconRead(stationImage)
 		stationDesc = self[self.currentList].getCurrent()[0][3]
 		self['stationDesc'].setText(decodeHtml(stationDesc))
-		
+
 	def keyDown(self):
 		exist = self[self.currentList].getCurrent()
 		if self.keyLocked or exist == None:
@@ -190,14 +190,14 @@ class Radiode(Screen):
 		exist = self[self.currentList].getCurrent()
 		if self.keyLocked or exist == None:
 			return
-			
+
 		stationUrl = self[self.currentList].getCurrent()[0][1]
 		print stationUrl
 		getPage(stationUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamTOmp3).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def getStreamTOmp3(self, data):
 		if re.match('.*?"stream"', data, re.S):
 			pattern = re.compile('"stream":"(.*?)"')
@@ -233,12 +233,12 @@ class Radiode(Screen):
 			self["streamlist"].selectionEnabled(1)
 			self.currentList = "streamlist"
 			return
-		
+
 		selectedName = self['playlist'].getCurrent()[0][0]
-		
+
 		pathTmp = config.mediaportal.watchlistpath.value+"mp_radiode_playlist.tmp"
 		writeTmp = open(pathTmp,"w")
-		
+
 		path = config.mediaportal.watchlistpath.value+"mp_radiode_playlist"
 		if fileExists(path):
 			readStations = open(path,"r")
@@ -257,13 +257,13 @@ class Radiode(Screen):
 				self["playlist"].selectionEnabled(0)
 				self["streamlist"].selectionEnabled(1)
 				self.currentList = "streamlist"
-			
+
 	def keyStop(self):
 		if self.playing:
 			self.session.nav.stopService()
 			self.session.nav.playService(self.lastservice)
 			self.playing = False
-				
+
 	def keyCancel(self):
 		if self.playing:
 			self.session.nav.stopService()

@@ -15,13 +15,13 @@ class PutpattvLink:
 		self._callback = cb_play
 		self.title = title
 		self.imgurl = imgurl
-		
+
 		self.artist = ''
 		p = title.find(' - ')
 		if p > 0:
 			self.artist = title[:p].strip()
 			self.title = title[p+3:].strip()
-			
+
 		if url != None:
 			self._callback(self.title, url, imgurl=imgurl, artist=self.artist)
 		else:

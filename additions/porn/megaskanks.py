@@ -4,20 +4,20 @@ from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
 def megaskanksGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def megaskanksFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 def megaskanksHosterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class megaskanksGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -27,9 +27,9 @@ class megaskanksGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -44,15 +44,15 @@ class megaskanksGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://xxxpornvideos.eu"
@@ -84,7 +84,7 @@ class megaskanksGenreScreen(Screen):
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(megaskanksFilmScreen, streamGenreLink, streamGenreName)
-		
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -99,17 +99,17 @@ class megaskanksGenreScreen(Screen):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -119,7 +119,7 @@ class megaskanksGenreScreen(Screen):
 		self.close()
 
 class megaskanksFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink, phCatName):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -131,9 +131,9 @@ class megaskanksFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -155,15 +155,15 @@ class megaskanksFilmScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self.lastpage = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -174,7 +174,7 @@ class megaskanksFilmScreen(Screen):
 			url = "%s%s/" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		lastp = re.search('class=\'pages\'>.*?of\s(.*?)</span>', data, re.S)
 		if lastp:
@@ -184,7 +184,7 @@ class megaskanksFilmScreen(Screen):
 			self.lastpage = int(lastp)
 		else:
 			self.lastpage = 1
-		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))	
+		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
 		phMovies = re.findall('post_header.*?<h2><a\shref="(.*?)"\stitle="(.*?)".*?img.*?src=["|\'](.*?)["|\'].*?postmetadata', data, re.S|re.I)
 		if phMovies:
 			for (phUrl, phTitle, phImage) in phMovies:
@@ -205,8 +205,8 @@ class megaskanksFilmScreen(Screen):
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 		else:
-			self.ShowCoverNone()			
-		
+			self.ShowCoverNone()
+
 	def ShowCover(self, picData):
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
@@ -252,7 +252,7 @@ class megaskanksFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -260,31 +260,31 @@ class megaskanksFilmScreen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -296,7 +296,7 @@ class megaskanksFilmScreen(Screen):
 		self.close()
 
 class megaskanksStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamFilmLink, streamName):
 		self.session = session
 		self.streamFilmLink = streamFilmLink
@@ -309,9 +309,9 @@ class megaskanksStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -320,22 +320,22 @@ class megaskanksStreamListeScreen(Screen):
 		self['title'] = Label("MegaSkanks.com")
 		self['name'] = Label(self.streamName)
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		getPage(self.streamFilmLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		parse = re.search('putlocker.png(.*?)id="respond"', data, re.S)
@@ -380,8 +380,8 @@ class megaskanksStreamListeScreen(Screen):
 			self.get_stream(url)
 		else:
 			print 'Secured Play'
-			getPage(streamLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)		
-		
+			getPage(streamLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
+
 	def getVideoPage(self, data):
 		# secured putlocker url
 		videoPage = re.findall('TargetUrl\s=\s\'(.*?)\';', data, re.S)
@@ -391,8 +391,8 @@ class megaskanksStreamListeScreen(Screen):
 				self.get_stream(url)
 
 	def get_stream(self,url):
-		get_stream_link(self.session).check_link(url, self.got_link)		
-		
+		get_stream_link(self.session).check_link(url, self.got_link)
+
 	def got_link(self, stream_url):
 		self['name'].setText(self.streamName)
 		if stream_url == None:

@@ -4,10 +4,10 @@ from Plugins.Extensions.MediaPortal.resources.decrypt import *
 def focusGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class focusGenre(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/focusGenre.xml" % config.mediaportal.skin.value
@@ -17,9 +17,9 @@ class focusGenre(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -28,15 +28,15 @@ class focusGenre(Screen):
 		self['title'] = Label("Focus.de - VideoPortal")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Neueste Videos", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=newest"))
 		self.genreliste.append(("Politik", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=politik"))
@@ -58,14 +58,14 @@ class focusGenre(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 def focusListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class focus(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/focus.xml" % config.mediaportal.skin.value
@@ -75,10 +75,10 @@ class focus(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		self.streamGenreLink = streamGenreLink
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -87,12 +87,12 @@ class focus(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("Focus.de - VideoPortal")
 		self['coverArt'] = Pixmap()
 		self['name'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -103,12 +103,12 @@ class focus(Screen):
 		self.page = 1
 
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self.streamList = []
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.pageData).addErrback(self.dataError)
-		
+
 	def pageData(self, data):
 		focusVideos = re.findall('<img heig.*?[rel|src]="(.*?.jpg)".*?[alt|title]="(.*?)".*?<a href="(.*?)"', data, re.S|re.I)
 		if focusVideos:
@@ -155,7 +155,7 @@ class focus(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -163,7 +163,7 @@ class focus(Screen):
 		Link = self['streamlist'].getCurrent()[0][2]
 		print Link
 		getPage(Link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.searchStream).addErrback(self.dataError)
-	
+
 	def searchStream(self, data):
 		Title = self['streamlist'].getCurrent()[0][0]
 		streamUrl = re.findall('sVideoURL = "(.*?)"', data, re.S)
@@ -172,34 +172,34 @@ class focus(Screen):
 				streamUrl = streamUrl[1]
 			else:
 				streamUrl = streamUrl[0]
-				
+
 			sref = eServiceReference(0x1001, 0, streamUrl)
 			sref.setName(Title)
 			self.session.open(MoviePlayer, sref)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].down()
 		self.showInfos()
-		
+
 	def keyCancel(self):
 		self.close()

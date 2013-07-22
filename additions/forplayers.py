@@ -9,10 +9,10 @@ api = VuBox4PlayersApi()
 def forPlayersGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class forPlayersGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/forPlayersGenreScreen.xml" % config.mediaportal.skin.value
@@ -22,14 +22,14 @@ class forPlayersGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("4Players")
 		self['name'] = Label("Auswahl")
 		self['coverArt'] = Pixmap()
@@ -39,7 +39,7 @@ class forPlayersGenreScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['selectionList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.selectionListe.append(("Aktuelle Videos", "1"))
 		self.selectionListe.append(("Meistgesehene Videos", "2"))
@@ -58,9 +58,9 @@ def forPlayersVideoListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class forPlayersVideoScreen(Screen):
-	
+
 	def __init__(self, session, selectionLink):
 		self.session = session
 		self.selectionLink = selectionLink
@@ -71,9 +71,9 @@ class forPlayersVideoScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -85,7 +85,7 @@ class forPlayersVideoScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.page = 1
 		self['title'] = Label("4Players")
 		self['name'] = Label("")
@@ -100,7 +100,7 @@ class forPlayersVideoScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['videosList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.loadVideos)
-		
+
 	def loadVideos(self):
 		if self.selectionLink == '1':
 			try:
@@ -134,7 +134,7 @@ class forPlayersVideoScreen(Screen):
 				print 'Fehler API-Call...'
 				self.videosListe.append(('4Players nicht verfuegbar....', "", "", ""))
 				self.chooseMenuList.setList(map(forPlayersVideoListEntry, self.videosListe))
-				
+
 	def showData(self, videos):
 		for video in videos:
 			gameTitle = str(video['game']['title'])
@@ -148,14 +148,14 @@ class forPlayersVideoScreen(Screen):
 			self.videosListe.append((videoTitleConv, videoStreamUrl, videoPic, videoTitle, gameId, gameStudio, gameTitle))
 		self.chooseMenuList.setList(map(forPlayersVideoListEntry, self.videosListe))
 		self.showPic()
-		
+
 	def showPic(self):
 		myTitle = self['videosList'].getCurrent()[0][0]
 		myPicLink = self['videosList'].getCurrent()[0][2]
 		self['name'].setText(str(myTitle))
 		self['page'].setText(str(self.page))
 		downloadPage(str(myPicLink), "/tmp/myPic.jpg").addCallback(self.playersCoverShow)
-		
+
 	def playersCoverShow(self, data):
 		if fileExists("/tmp/myPic.jpg"):
 			self['playersPic'].instance.setPixmap(gPixmapPtr())
@@ -205,19 +205,19 @@ class forPlayersVideoScreen(Screen):
 	def keyLeft(self):
 		self['videosList'].pageUp()
 		self.showPic()
-		
+
 	def keyRight(self):
 		self['videosList'].pageDown()
 		self.showPic()
-		
+
 	def keyUp(self):
 		self['videosList'].up()
 		self.showPic()
-		
+
 	def keyDown(self):
 		self['videosList'].down()
 		self.showPic()
-		
+
 	def keyInfo(self):
 		text = []
 		gameStudio = self['videosList'].getCurrent()[0][5]
@@ -243,7 +243,7 @@ class forPlayersVideoScreen(Screen):
 		sText = ''.join(text)
 		print sText
 		self.session.open(MessageBox,_(sText), MessageBox.TYPE_INFO)
-		
+
 	def keyOK(self):
 		playersUrl = self['videosList'].getCurrent()[0][1]
 		streamUrl = str(playersUrl)

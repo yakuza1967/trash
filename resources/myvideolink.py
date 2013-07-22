@@ -6,7 +6,7 @@ class MyvideoLink:
 
 	MASTER_KEY = "c8407a08b3c71ea418ec9dc662f2a56e40cbd6d5a114aa50fb1e1079e17f2b83"
 	MV_BASE_URL = 'http://www.myvideo.de/'
-	
+
 	def __init__(self, session):
 		print "MyvideoLink:"
 		self.session = session
@@ -28,7 +28,7 @@ class MyvideoLink:
 		self.special_headers['Referer'] = self.MV_BASE_URL
 		vpage_url = self.MV_BASE_URL + 'watch/%s/' % token
 		getPage(vpage_url, headers=self.special_headers).addCallback(self.get_video, token).addErrback(cb_err)
-		
+
 	def __md5(self, s):
 		return hashlib.md5(s).hexdigest()
 
@@ -67,12 +67,12 @@ class MyvideoLink:
 				'?flash_playertype=D&ID=%s&_countlimit=4&autorun=yes'
 			) % video_id
 		getPage(xmldata_url, headers=self.special_headers).addCallback(self.get_enc_data, video_id).addErrback(self._errback)
-		
+
 	def get_enc_data(self, enc_data, video_id):
 		r_rtmpurl = re.compile('connectionurl=\'(.*?)\'')
 		r_playpath = re.compile('source=\'(.*?)\'')
 		r_path = re.compile('path=\'(.*?)\'')
-		
+
 		video = {}
 		enc_data = enc_data.replace("_encxml=","")
 		enc_data_b = unhexlify(enc_data)
@@ -92,7 +92,7 @@ class MyvideoLink:
 			video['hls_playlist'] = (
 				video['filepath'] + video['file']
 			).replace('.f4m', '.m3u8')
-			
+
 		if 'hls_playlist' in video:
 			video_url = video['hls_playlist']
 		elif not video['rtmpurl']:
@@ -109,18 +109,18 @@ class MyvideoLink:
 					'%(rtmpurl)s/%(prefix)s '
 					'playpath=%(playpath)s'
 				) % video
-			
+
 		title = self.title
 		pos = title.find('. ', 0, 5)
 		if pos > 0:
 			pos += 2
 			title = title[pos:]
-			
+
 		scArtist = ''
 		scTitle = title
 		p = title.find(' -- ')
 		if p > 0:
 			scArtist = title[:p].strip()
 			scTitle = title[p+4:].strip()
-			
+
 		self._callback(scTitle, video_url, imgurl=self.imgurl, artist=scArtist)

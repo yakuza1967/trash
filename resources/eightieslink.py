@@ -13,7 +13,7 @@ class EightiesLink:
 		self.artist = ''
 		self.album = ''
 		self.imgurl = ''
-		
+
 	def getLink(self, cb_play, cb_err, title, artist, album, url, token, imgurl):
 		self._callback = cb_play
 		self._errback = cb_err
@@ -22,7 +22,7 @@ class EightiesLink:
 		self.album = album
 		self.imgurl = imgurl
 		self.baseurl = "http://www."+token+"smusicvids.com/"
-		
+
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVid).addErrback(cb_err)
 
 	def getVid(self, data):
@@ -32,4 +32,4 @@ class EightiesLink:
 			print stream_url
 			self._callback(self.title, stream_url, self.album, self.artist, self.imgurl)
 		else:
-			self._errback('stream_url not found!')			
+			self._errback('stream_url not found!')

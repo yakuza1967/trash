@@ -15,7 +15,7 @@ Sondertastenbelegung:
 Genre Auswahl:
 	KeyCancel	: Menu Up / Exit
 	KeyOK		: Menu Down / Select
-	
+
 Doku Auswahl:
 	Bouquet +/-			: Seitenweise blättern in 1er Schritten Up/Down
 	'1', '4', '7',
@@ -30,15 +30,15 @@ Stream Auswahl:
 def AMH_menuListentry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class show_AMH_Genre(Screen):
 
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path = mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -46,9 +46,9 @@ class show_AMH_Genre(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -66,7 +66,7 @@ class show_AMH_Genre(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
-		
+
 		self.menuLevel = 0
 		self.menuMaxLevel = 0
 		self.menuIdx = [0,0,0]
@@ -82,7 +82,7 @@ class show_AMH_Genre(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.genreMenu = [
 			[
 			("0-9", "/0-9"),
@@ -104,9 +104,9 @@ class show_AMH_Genre(Screen):
 			[None]
 			]
 			]
-			
+
 		self.onLayoutFinish.append(self.loadMenu)
-		
+
 	def setGenreStrTitle(self):
 		genreName = self['genreList'].getCurrent()[0][0]
 		genreLink = self['genreList'].getCurrent()[0][1]
@@ -115,7 +115,7 @@ class show_AMH_Genre(Screen):
 				self.genreName[self.menuLevel] = genreName
 			else:
 				self.genreName[self.menuLevel] = ':'+genreName
-				
+
 			self.genreUrl[self.menuLevel] = genreLink
 		self.genreTitle = "%s%s%s" % (self.genreName[0],self.genreName[1],self.genreName[2])
 		self['name'].setText("Auswahl: "+self.genreTitle)
@@ -132,22 +132,22 @@ class show_AMH_Genre(Screen):
 		self['genreList'].up()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyDown(self):
 		self['genreList'].down()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyRight(self):
 		self['genreList'].pageDown()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyLeft(self):
 		self['genreList'].pageUp()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyMenuUp(self):
 		print "keyMenuUp:"
 		if self.keyLocked:
@@ -159,10 +159,10 @@ class show_AMH_Genre(Screen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-			
+
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setMenu(1)
-		
+
 		if self.genreSelected:
 			print "Genre selected"
 			genreurl = self.baseUrl+self.genreBase+self.genreUrl[0]+self.genreUrl[1]
@@ -175,12 +175,12 @@ class show_AMH_Genre(Screen):
 		if (self.menuLevel+levelIncr) in range(self.menuMaxLevel+1):
 			if levelIncr < 0:
 				self.genreName[self.menuLevel] = ""
-			
+
 			self.menuLevel += levelIncr
-			
+
 			if levelIncr > 0 or menuInit:
 				self.menuIdx[self.menuLevel] = 0
-			
+
 			if self.menuLevel == 0:
 				print "level-0"
 				if self.genreMenu[0] != None:
@@ -224,7 +224,7 @@ class show_AMH_Genre(Screen):
 		else:
 			print "Entry selected"
 			self.genreSelected = True
-				
+
 		print "menuLevel: ",self.menuLevel
 		print "mainIdx: ",self.menuIdx[0]
 		print "subIdx_1: ",self.menuIdx[1]
@@ -232,22 +232,22 @@ class show_AMH_Genre(Screen):
 		print "genreSelected: ",self.genreSelected
 		print "menuListe: ",self.menuListe
 		print "genreUrl: ",self.genreUrl
-		
-		self.setGenreStrTitle()		
-		
+
+		self.setGenreStrTitle()
+
 	def keyCancel(self):
 		if self.menuLevel == 0:
 			self.close()
 		else:
 			self.keyMenuUp()
-	
+
 
 def AMH_FilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class AMH_FilmListeScreen(Screen):
-	
+
 	def __init__(self, session, genreLink, genreName):
 		self.session = session
 		self.genreLink = genreLink
@@ -262,9 +262,9 @@ class AMH_FilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions","DirectionActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -313,7 +313,7 @@ class AMH_FilmListeScreen(Screen):
 		self['vPrio'] = Label("")
 		self['Page'] = Label("Page")
 		self['coverArt'] = Pixmap()
-		
+
 		self.timerStart = False
 		self.seekTimerRun = False
 		self.filmQ = Queue.Queue(0)
@@ -326,12 +326,12 @@ class AMH_FilmListeScreen(Screen):
 		self.genreSpecials = False
 
 		self.setGenreStrTitle()
-		
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def setGenreStrTitle(self):
@@ -344,17 +344,17 @@ class AMH_FilmListeScreen(Screen):
 		#if not self.genreSpecials:
 		url = "%s/page/%d/" % (self.genreLink, self.page)
 		#else:
-		#	url = 
-			
+		#	url =
+
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
-			
+
 		self.filmQ.put(url)
 		if not self.eventL.is_set():
 			self.eventL.set()
 			self.loadPageQueued()
 		print "eventL ",self.eventL.is_set()
-		
+
 	def loadPageQueued(self):
 		print "loadPageQueued:"
 		self['name'].setText('Bitte warten...')
@@ -363,30 +363,30 @@ class AMH_FilmListeScreen(Screen):
 		#self.eventL.clear()
 		print url
 		getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		self.eventL.clear()
 		print "dataError:"
 		printl(error,self,"E")
 		self.musicListe.append(("No music found !","",""))
 		self.chooseMenuList.setList(map(AMH_FilmListEntry, self.musicListe))
-		
+
 	def loadPageData(self, data):
 		print "loadPageData:"
-		
+
 		if self.genreSpecials:
 			print "Specials suche..."
 			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
 		else:
 			print "Normal search.."
 			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-			
+
 		if m:
 			music = re.findall('<h2 class="title"><a href="(.*?)".*?rel="bookmark">(.*?)</a>.*?class="entry clearfix">'\
 								'.*?<p>(.*?)</p>', m.group(1), re.S)
 		else:
 			music = None
-		
+
 		if music:
 			print "Music found !"
 			if not self.pages:
@@ -398,13 +398,13 @@ class AMH_FilmListeScreen(Screen):
 				self.page = 1
 				print "Page: %d / %d" % (self.page,self.pages)
 				self['page'].setText("%d / %d" % (self.page,self.pages))
-			
+
 			self.musicListe = []
 			for	(url,name,desc) in music:
 				#print	"Url: ", url, "Name: ", name
 				self.musicListe.append((decodeHtml(name), url, desc.lstrip().rstrip()))
 			self.chooseMenuList.setList(map(AMH_FilmListEntry, self.musicListe))
-			
+
 		else:
 			print "No music found !"
 			self.musicListe.append(("No music found !","",""))
@@ -424,7 +424,7 @@ class AMH_FilmListeScreen(Screen):
 		else:
 			self.eventL.clear()
 		self.keyLocked	= False
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -432,11 +432,11 @@ class AMH_FilmListeScreen(Screen):
 			self['handlung'].setText("Keine Infos gefunden.")
 			return
 		self.setHandlung(desc)
-		
+
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-		
+
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
@@ -447,67 +447,67 @@ class AMH_FilmListeScreen(Screen):
 		print "Name: ",streamName
 		print "Link: ",streamLink
 		self.session.open(AMH_Streams, streamLink, streamName)
-	
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def keyUpRepeated(self):
 		#print "keyUpRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDownRepeated(self):
 		#print "keyDownRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def key_repeatedUp(self):
 		#print "key_repeatedUp"
 		if self.keyLocked:
 			return
 		self.loadPic()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyLeftRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRightRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyPageDown(self):
 		#print "keyPageDown()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageDownFast(1)
-			
+
 	def keyPageUp(self):
 		#print "keyPageUp()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageUpFast(1)
-			
+
 	def keyPageUpFast(self,step):
 		if self.keyLocked:
 			return
@@ -520,7 +520,7 @@ class AMH_FilmListeScreen(Screen):
 		#print "Page %d/%d" % (self.page,self.pages)
 		if oldpage != self.page:
 			self.loadPage()
-		
+
 	def keyPageDownFast(self,step):
 		if self.keyLocked:
 			return
@@ -537,42 +537,42 @@ class AMH_FilmListeScreen(Screen):
 	def key_1(self):
 		#print "keyPageDownFast(2)"
 		self.keyPageDownFast(2)
-		
+
 	def key_4(self):
 		#print "keyPageDownFast(5)"
 		self.keyPageDownFast(5)
-		
+
 	def key_7(self):
 		#print "keyPageDownFast(10)"
 		self.keyPageDownFast(10)
-		
+
 	def key_3(self):
 		#print "keyPageUpFast(2)"
 		self.keyPageUpFast(2)
-		
+
 	def key_6(self):
 		#print "keyPageUpFast(5)"
 		self.keyPageUpFast(5)
-		
+
 	def key_9(self):
 		#print "keyPageUpFast(10)"
 		self.keyPageUpFast(10)
 
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyCancel(self):
 		self.close()
 
 def AMH_StreamListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class AMH_Streams(Screen, ConfigListScreen):
-	
+
 	def __init__(self, session, dokuUrl, dokuName):
 		self.session = session
 		self.dokuUrl = dokuUrl
@@ -587,7 +587,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -601,7 +601,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 			"red" 		: self.keyTxtPageUp,
 			"yellow"	: self.keyYellow
 		}, -1)
-		
+
 		self['title'] = Label(AMH_Version)
 		self['ContentTitle'] = Label("Streams für "+dokuName)
 		self['handlung'] = ScrollLabel("")
@@ -615,7 +615,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 		self['page'] = Label("")
 		self['coverArt'] = Pixmap()
 		self['VideoPrio'] = Label("VidPrio")
-		
+
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
@@ -626,14 +626,14 @@ class AMH_Streams(Screen, ConfigListScreen):
 		self['liste'] = self.streamMenuList
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print "loadPage:"
 		streamUrl = self.dokuUrl
 		#print "FilmUrl: %s" % self.dokuUrl
 		#print "FilmName: %s" % self.dokuName
 		getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		print "parseData:"
 		m = re.search('"http://www.youtube.com/(embed|v)/(.*?)("|\?).*?data-text="(.*?)"', data, re.S)
@@ -654,7 +654,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 			else:
 				self.nParts = 0
 				pstr = ""
-				
+
 			self.streamListe.append((decodeHtml(m.group(4))+pstr,m.group(2),desc))
 		else:
 			print "No music found !"
@@ -669,7 +669,7 @@ class AMH_Streams(Screen, ConfigListScreen):
 		self.streamListe.append(("Das Video kann leider nicht abgespielt werden !","",""))
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
 		self['handlung'].setText(str(error))
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -677,11 +677,11 @@ class AMH_Streams(Screen, ConfigListScreen):
 			self['handlung'].setText("Keine Infos gefunden.")
 		else:
 			self.setHandlung(desc)
-		
+
 	def setHandlung(self, data):
 		#print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-		
+
 	def loadPic(self):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
@@ -690,13 +690,13 @@ class AMH_Streams(Screen, ConfigListScreen):
 		print "streamName: ",streamName
 		self.getHandlung(desc)
 		self.keyLocked = False
-		
+
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")
-		self.streamListe.append(("Read error !","",""))			
+		self.streamListe.append(("Read error !","",""))
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
-			
+
 	def setVideoPrio(self):
 		"""
 		if self.videoPrio+1 > 2:
@@ -733,40 +733,39 @@ class AMH_Streams(Screen, ConfigListScreen):
 			title_inr=1,
 			showPlaylist=False
 			)
-			
+
 	def keyYellow(self):
 		self.setVideoPrio()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
 		self.loadPic()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		self.loadPic()
-	
+
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyCancel(self):
 		self.close()
-		

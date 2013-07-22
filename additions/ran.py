@@ -5,16 +5,16 @@ def ranListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 200, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
 		(eListboxPythonMultiContent.TYPE_TEXT, 250, 0, 550, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1])
-		]		
+		]
 
 class ranGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -22,9 +22,9 @@ class ranGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -34,7 +34,7 @@ class ranGenreScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("ran.de")
 		self['ContentTitle'] = Label("Alle Sport Videos:")
@@ -57,14 +57,14 @@ class ranGenreScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-			
+
 	def loadPage(self):
 		self.keyLocked = True
 		self['Page'].setText(str(self.page)+ " von")
 		url = "http://www.ran.de/videoclip-categoryclips.html?conId=ajxVid579060&cat=102&page=%s" % str(self.page)
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
 		self.genreliste = []
@@ -83,11 +83,11 @@ class ranGenreScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
-	def loadPic(self):		
+
+	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][3]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-	
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -100,32 +100,32 @@ class ranGenreScreen(Screen):
 				if ptr != None:
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
-					del self.picload		
+					del self.picload
 
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
 		self.loadPic()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -133,14 +133,14 @@ class ranGenreScreen(Screen):
 		if not self.page < 1:
 			self.page -= 1
 			self.loadPage()
-			
+
 	def keyPageUp(self):
 		print "PageUp"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -148,7 +148,7 @@ class ranGenreScreen(Screen):
 		print ranUrl
 		self.keyLocked = True
 		getPage(ranUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
-		
+
 	def getStream(self, data):
 		stream_url = re.findall('VideoURL":"(.*?)"', data, re.S)
 		if stream_url:
@@ -159,10 +159,9 @@ class ranGenreScreen(Screen):
 			print stream_url[0].replace('\\','')
 			sref = eServiceReference(0x1001, 0, stream_url[0].replace('\\',''))
 			sref.setName(ranName)
-			self.session.open(MoviePlayer, sref)			
+			self.session.open(MoviePlayer, sref)
 		else:
 			message = self.session.open(MessageBox, _("Video not found!"), MessageBox.TYPE_INFO, timeout=5)
-					
+
 	def keyCancel(self):
 		self.close()
-		

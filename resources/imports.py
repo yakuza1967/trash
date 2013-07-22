@@ -57,7 +57,7 @@ std_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Language': 'en-us,en;q=0.5',
 }
-	
+
 def registerFont(file, name, scale, replacement):
 		try:
 				addFont(file, name, scale, replacement)
@@ -72,27 +72,27 @@ def decodeHtml(text):
 	text = text.replace('&Auml;','Ä')
 	text = text.replace('\u00c4','Ä')
 	text = text.replace('&#196;','Ä')
-	
+
 	text = text.replace('&ouml;','ö')
 	text = text.replace('\u00f6','ö')
 	text = text.replace('&#246;','ö')
-	
+
 	text = text.replace('&ouml;','Ö')
 	text = text.replace('\u00d6','Ö')
 	text = text.replace('&#214;','Ö')
-	
+
 	text = text.replace('&uuml;','ü')
 	text = text.replace('\u00fc','ü')
 	text = text.replace('&#252;','ü')
-	
+
 	text = text.replace('&Uuml;','Ü')
 	text = text.replace('\u00dc','Ü')
 	text = text.replace('&#220;','Ü')
-	
+
 	text = text.replace('&szlig;','ß')
 	text = text.replace('\u00df','ß')
 	text = text.replace('&#223;','ß')
-	
+
 	text = text.replace('&amp;','&')
 	text = text.replace('&quot;','\"')
 	text = text.replace('&gt;','>')
@@ -120,19 +120,18 @@ def decodeHtml(text):
 	text = text.replace('&#8220;',"'")
 	text = text.replace('&#8221;','"')
 	text = text.replace('&#8222;',',')
-	
+
 	text = text.replace('&#8230;','...')
 	text = text.replace('\u2026','...')
-	return text	
+	return text
 
 def iso8859_Decode(txt):
 	txt = txt.replace('\xe4','ä').replace('\xf6','ö').replace('\xfc','ü').replace('\xdf','ß')
 	txt = txt.replace('\xc4','Ä').replace('\xd6','Ö').replace('\xdc','Ü')
 	#txt.decode('iso-8859-1').encode('utf-8')
 	return txt
-	
+
 def decodeHtml2(txt):
 	txt = iso8859_Decode(txt)
 	txt = decodeHtml(txt).strip()
 	return txt
-		

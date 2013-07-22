@@ -36,7 +36,7 @@ class PlayRtmpMovie(Screen):
 		self.destination = config.mediaportal.storagepath.value
 		#self.moviepath = self.destination + ASCIItranslit.legacyEncode(self.filename)
 		self.moviepath = self.destination + ".rtmp_movie"
-		
+
 		self.streamactive = False
 		self.isVisible = True
 
@@ -91,10 +91,10 @@ class PlayRtmpMovie(Screen):
 		if not fileExists("/usr/bin/rtmpdump"):
 			message = self.session.open(MessageBox, _("RTMPDump is required for playback of this stream, please install it first."), MessageBox.TYPE_INFO, timeout=10)
 			self.exit()
-			
+
 		if not self.checkStoragePath():
 			self.exit()
-			
+
 		self.copyfile()
 
 	def okbuttonClick(self):
@@ -120,7 +120,7 @@ class PlayRtmpMovie(Screen):
 			return False
 		else:
 			return True
-		
+
 	def UpdateStatus(self):
 		#print "UpdateStatus:"
 		if fileExists(self.moviepath, 'r'):
@@ -243,7 +243,7 @@ class PlayRtmpMovie(Screen):
 		self.StatusTimer.stop()
 		self.session.nav.playService(self.oldService)
 		self.close()
-		
+
 class PlayRtmpPlayer(SimplePlayer):
 
 	def __init__(self, session, playList):

@@ -5,9 +5,9 @@ kekse = {}
 def MEHDGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class showMEHDGenre(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/showMEHDGenre.xml" % config.mediaportal.skin.value
@@ -17,9 +17,9 @@ class showMEHDGenre(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -29,7 +29,7 @@ class showMEHDGenre(Screen):
 		self['name'] = Label("Genre Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.searchTxt = ""
@@ -37,9 +37,9 @@ class showMEHDGenre(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		filmliste = []
 		Genre = [("Suche", "suche"),
@@ -63,7 +63,7 @@ class showMEHDGenre(Screen):
 			("Serien", "http://my-entertainment.biz/forum/content.php?r=1072-Serien&page="),
 			("Thriller", "http://my-entertainment.biz/forum/list.php?r=category/42-HD-Thriller&page="),
 			("Zeichentrick", "http://my-entertainment.biz/forum/list.php?r=category/43-HD-Zeichentrick&page=")]
-					
+
 		for (Name,Url) in Genre:
 			self.filmliste.append((Name,Url))
 			self.chooseMenuList.setList(map(MEHDGenreListEntry, self.filmliste))
@@ -80,27 +80,27 @@ class showMEHDGenre(Screen):
 			self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche.....")), text = self.searchTxt)
 		else:
 			self.session.open(MEHDFilmListeScreen, genreLink, genreName)
-		
-	
+
+
 	def mySearch(self, callback = None):
 		print 'mySearch'
 		if callback != None:
 			self.searchTxt = callback.replace(' ', "%20")
 			print self.searchTxt
 			tmpEnterPre = "http://my-entertainment.biz/forum/search.php?query='%s'" % self.searchTxt
-			enterAuswahlLink = tmpEnterPre + "&titleonly=0&beforeafter=after&contenttypeid=18&sortby=dateline&order=descending&sortorder=descending&searchfromtype=vBForum%3ASearchCommon&type[]=18&do=process" 
+			enterAuswahlLink = tmpEnterPre + "&titleonly=0&beforeafter=after&contenttypeid=18&sortby=dateline&order=descending&sortorder=descending&searchfromtype=vBForum%3ASearchCommon&type[]=18&do=process"
 			self.session.open(MEHDFilmListeScreen, enterAuswahlLink, "Suche")
 
-	
+
 	def keyCancel(self):
 		self.close()
-		
+
 def MEHDFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class MEHDFilmListeScreen(Screen):
-	
+
 	def __init__(self, session, genreLink, genreName):
 		self.session = session
 		self.genreLink = genreLink
@@ -112,9 +112,9 @@ class MEHDFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -132,7 +132,7 @@ class MEHDFilmListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
 		self['page'] = Label("1")
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.page = 1
@@ -140,9 +140,9 @@ class MEHDFilmListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		if self.genreName == "Suche":
 			url = self.genreLink
@@ -155,7 +155,7 @@ class MEHDFilmListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		if self.genreName == "Suche":
@@ -183,10 +183,10 @@ class MEHDFilmListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-	
+
 	def getHandlung(self, url):
 		getPage(url, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.setHandlung).addErrback(self.dataError)
-	
+
 	def setHandlung(self, data):
 		handlung = re.findall('<div class="bbcode_quote_container"></div>(.*?)<', data, re.S)
 		if handlung:
@@ -214,7 +214,7 @@ class MEHDFilmListeScreen(Screen):
 			return
 		streamLink = self['filmList'].getCurrent()[0][1]
 		getPage(streamLink, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
-		
+
 	def getStream(self, data):
 		if self.genreName == 'Serien':
 			print 'getStream__serien'
@@ -244,32 +244,32 @@ class MEHDFilmListeScreen(Screen):
 				streamName = self['filmList'].getCurrent()[0][0]
 				sref = eServiceReference(0x1001, 0, stream_url[0])
 				sref.setName(streamName)
-				self.session.open(MoviePlayer, sref)			
-		
+				self.session.open(MoviePlayer, sref)
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['filmList'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['filmList'].down()
 		self.loadPic()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-			
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -277,18 +277,18 @@ class MEHDFilmListeScreen(Screen):
 		if not self.page < 1:
 			self.page -= 1
 			self.loadPage()
-			
+
 	def keyPageUp(self):
 		print "PageUp"
 		if self.keyLocked:
 			return
-		self.page += 1 
+		self.page += 1
 		self.loadPage()
 
 	def keyBlue(self):
 		streamLink = self['filmList'].getCurrent()[0][1]
 		getPage(streamLink, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getYTrailer).addErrback(self.dataError)
-	
+
 	def getYTrailer(self, data):
 		print "getYTrailer..."
 		ytLinkIds = re.findall('<param name="movie" value="http://www.youtube.com/v/(.*?)\;', data, re.S)
@@ -308,17 +308,17 @@ class MEHDFilmListeScreen(Screen):
 		else:
 			sText = 'Kein Trailer verfuegbar'
 			self.session.open(MessageBox,_(sText), MessageBox.TYPE_INFO)
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 def enterColListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class enterColListScreen(Screen):
-	
+
 	def __init__(self, session, pageCol, pageTitle,):
 		self.session = session
 		self.pageCol = pageCol
@@ -330,9 +330,9 @@ class enterColListScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -346,7 +346,7 @@ class enterColListScreen(Screen):
 		self['name'] = Label("Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.auswahlColListe = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -354,8 +354,8 @@ class enterColListScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['auswahlColList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.showColData)
-		
-		
+
+
 	def showColData(self):
 		i=0
 		if self.pageCol:
@@ -365,7 +365,7 @@ class enterColListScreen(Screen):
 			self.chooseMenuList.setList(map(enterColListEntry, self.auswahlColListe))
 			self.keyLocked = False
 			self.loadPic()
-			
+
 	def loadPic(self):
 		streamName = self['auswahlColList'].getCurrent()[0][0]
 		streamFilmLink = self['auswahlColList'].getCurrent()[0][1]
@@ -373,7 +373,7 @@ class enterColListScreen(Screen):
 		streamPic = self['auswahlColList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/spIcon.jpg").addCallback(self.ShowCover)
 
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/spIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -387,8 +387,8 @@ class enterColListScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-					
-					
+
+
 	def getRealLink(self, data):
 		print 'getRealLink'
 		#stream_url = re.findall('<source src="(.*?)".*?type="video/mp4"', data, re.S)
@@ -402,8 +402,8 @@ class enterColListScreen(Screen):
 		sref = eServiceReference(4097, 0, link)
 		sref.setName(self.streamName)
 		self.session.open(MoviePlayer, sref)
-			
-					
+
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -411,44 +411,44 @@ class enterColListScreen(Screen):
 		self.streamName = self['auswahlColList'].getCurrent()[0][0]
 		print 'RealStreamLink...', streamLink
 		getPage(streamLink, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getRealLink).addErrback(self.dataError)
-	
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].down()
 		self.loadPic()
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 def enterSerienListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class enterSerienListScreen(Screen):
-	
+
 	def __init__(self, session, folgenCol, folgenPic):
 		self.session = session
 		self.folgenCol = folgenCol
@@ -460,9 +460,9 @@ class enterSerienListScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -476,7 +476,7 @@ class enterSerienListScreen(Screen):
 		self['name'] = Label("Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.auswahlColListe = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -484,8 +484,8 @@ class enterSerienListScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['auswahlColList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.showColData)
-		
-		
+
+
 	def showColData(self):
 		i=1
 		if self.folgenCol:
@@ -503,7 +503,7 @@ class enterSerienListScreen(Screen):
 		streamPic = self['auswahlColList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/spIcon.jpg").addCallback(self.ShowCover)
 
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/spIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -517,7 +517,7 @@ class enterSerienListScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-					
+
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -539,37 +539,37 @@ class enterSerienListScreen(Screen):
 			sref = eServiceReference(0x1001, 0, stream_url)
 			sref.setName(self.streamName)
 			self.session.open(MoviePlayer, sref)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['auswahlColList'].down()
 		self.loadPic()
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 def decodeTitle(text):
 	text = text.replace('<font size="3">',"")
 	text = text.replace('\xe4',"ae")
@@ -585,35 +585,35 @@ def decodeTitle(text):
 	text = text.replace('\u00c4','Ae')
 	text = text.replace('&#196;','Ae')
 	text = text.replace('\xc4','Ae')
-	
+
 	text = text.replace('&ouml;','oe')
 	text = text.replace('\u00f6','oe')
 	text = text.replace('&#246;','oe')
 	text = text.replace('\xf6','oe')
-	
+
 	text = text.replace('<font size="4">',"")
 	text = text.replace('/font',"")
 	text = text.replace('\xd6','Oe')
 	text = text.replace('&ouml;','Oe')
 	text = text.replace('\u00d6','Oe')
 	text = text.replace('&#214;','Oe')
-	
+
 	text = text.replace('br /',"")
 	text = text.replace('<b>',"")
 	text = text.replace('&uuml;','ue')
 	text = text.replace('\u00fc','ue')
 	text = text.replace('\xfc','ue')
 	text = text.replace('&#252;','ue')
-	
+
 	text = text.replace('\xdc','Ue')
 	text = text.replace('&Uuml;','Ue')
 	text = text.replace('\u00dc','Ue')
 	text = text.replace('&#220;','Ue')
-	
+
 	text = text.replace('&szlig;','ss')
 	text = text.replace('\u00df','ss')
 	text = text.replace('&#223;','ss')
-	
+
 	text = text.replace('%2F',"/")
 	text = text.replace('&amp;','&')
 	text = text.replace('%26',"&")
@@ -653,4 +653,4 @@ def decodeTitle(text):
 	text = text.replace('&#8230;','...')
 	text = text.replace('\xdf',"ss")
 	text = text.replace('\xe9',"e")
-	return text	
+	return text

@@ -4,10 +4,10 @@ from Plugins.Extensions.MediaPortal.resources.decrypt import *
 def kinokisteGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class kinokisteGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinokisteGenreScreen.xml" % config.mediaportal.skin.value
@@ -17,27 +17,27 @@ class kinokisteGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
-		
+
+
 		self['title'] = Label("KinoKiste")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Kinofilme", "http://kkiste.to/aktuelle-kinofilme/"))
 		self.genreliste.append(("Filmlisten", "http://kkiste.to/film-index/"))
@@ -51,17 +51,17 @@ class kinokisteGenreScreen(Screen):
 			self.session.open(kinokisteKinoScreen)
 		else:
 			self.session.open(kinokisteFilmlistenScreen)
-			
+
 	def keyCancel(self):
 		self.close()
 
 def kinokisteKinoListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class kinokisteKinoScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinokisteKinoScreen.xml" % config.mediaportal.skin.value
@@ -71,9 +71,9 @@ class kinokisteKinoScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -84,13 +84,13 @@ class kinokisteKinoScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self['title'] = Label("KinoKiste")
 		self['name'] = Label("Film Auswahl")
 		self['handlung'] = Label("")
 		self['page'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.page = 1
 		self.filmeliste = []
 		self.keyLocked = True
@@ -98,15 +98,15 @@ class kinokisteKinoScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.filmeliste = []
 		url = "http://kkiste.to/aktuelle-kinofilme/?page=%s" % str(self.page)
 		self['page'].setText(str(self.page))
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.filmData).addErrback(self.dataError)
-		
+
 	def filmData(self, data):
 		kkDaten = re.findall('<a href="(.*?)" title="Jetzt (.*?) Stream ansehen" class="image">\n<img src="(.*?)"', data)
 		if kkDaten:
@@ -116,10 +116,10 @@ class kinokisteKinoScreen(Screen):
 			self.chooseMenuList.setList(map(kinokisteKinoListEntry, self.filmeliste))
 			self.keyLocked = False
 			self.showInfos()
-			
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def showInfos(self):
 		kkTitle = self['streamlist'].getCurrent()[0][0]
 		self['name'].setText(kkTitle)
@@ -129,14 +129,14 @@ class kinokisteKinoScreen(Screen):
 		print kkImageUrl.replace('_170_120','_145_215')
 		downloadPage(kkImageUrl.replace('_170_120','_145_215'), "/tmp/kkIcon.jpg").addCallback(self.kkCoverShow)
 		getPage(kkUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDescription).addErrback(self.dataError)
-		
+
 	def getDescription(self, data):
 		ddDescription = re.findall('<meta name="description" content="(.*?)"', data, re.S)
 		if ddDescription:
 			self['handlung'].setText(decodeHtml(ddDescription[0]))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def kkCoverShow(self, picData):
 		if fileExists("/tmp/kkIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -157,13 +157,13 @@ class kinokisteKinoScreen(Screen):
 		kkName = self['streamlist'].getCurrent()[0][0]
 		kkUrl = self['streamlist'].getCurrent()[0][1]
 		getPage(kkUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getParts).addErrback(self.dataError)
-		
+
 	def getParts(self, data):
 		kkName = self['streamlist'].getCurrent()[0][0]
 		streams = re.findall('<a href="(http://www.ecostream.tv/stream/.*?)"', data, re.S)
 		if streams:
 			self.session.open(kinokistePartsScreen, streams, kkName)
-	
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -171,48 +171,48 @@ class kinokisteKinoScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].down()
 		self.showInfos()
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 def kinokistePartsListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class kinokistePartsScreen(Screen):
-	
+
 	def __init__(self, session, parts, stream_name):
 		self.session = session
 		self.parts = parts
@@ -224,9 +224,9 @@ class kinokistePartsScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -235,16 +235,16 @@ class kinokistePartsScreen(Screen):
 		self['title'] = Label("KinoKiste")
 		self['name'] = Label("Parts Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 		self.keyLocked = False
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		print self.parts
 		self.parts = list(set(self.parts)) # remove dupes
@@ -255,7 +255,7 @@ class kinokistePartsScreen(Screen):
 			partsName = "PART %s" % self.count_disks
 			print partsName, part
 			self.genreliste.append((partsName, part))
-		
+
 		self.chooseMenuList.setList(map(kinokistePartsListEntry, self.genreliste))
 
 	def keyOK(self):
@@ -265,14 +265,14 @@ class kinokistePartsScreen(Screen):
 		print kkLink
 		self.keyLocked = True
 		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.dataError)
-		
+
 	def eco_read(self, data):
 		post_url = re.findall('<form name="setss" method="post" action="(.*?)">', data, re.S)
 		if post_url:
 			info = urlencode({'': '1', 'sss': '1'})
 			print info
 			getPage(post_url[0], method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_post).addErrback(self.dataError)
-			
+
 	def eco_post(self, data):
 		url = "http://www.ecostream.tv/assets/js/common.js"
 		data2 = urllib.urlopen(url).read()
@@ -296,7 +296,7 @@ class kinokistePartsScreen(Screen):
 				getPage(sNextUrl, method='POST', postdata = info, headers={'Referer':'http://www.ecostream.tv', 'X-Requested-With':'XMLHttpRequest'}).addCallback(self.eco_final).addErrback(self.dataError)
 		else:
 			print "no post url.."
-	
+
 	def eco_final(self, data):
 		part = self['genreList'].getCurrent()[0][0]
 		stream_url = re.findall('flashvars="file=(.*?)&', data)
@@ -312,20 +312,20 @@ class kinokistePartsScreen(Screen):
 			sref = eServiceReference(0x1001, 0, finalurl)
 			sref.setName(streamname)
 			self.session.open(MoviePlayer, sref)
-			
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyCancel(self):
 		self.close()
 
 def kinokisteFilmlistenListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class kinokisteFilmlistenScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinokisteFilmlistenScreen.xml" % config.mediaportal.skin.value
@@ -335,9 +335,9 @@ class kinokisteFilmlistenScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -346,15 +346,15 @@ class kinokisteFilmlistenScreen(Screen):
 		self['title'] = Label("KinoKiste")
 		self['name'] = Label("FilmListen Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		abc = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9"]
 		for letter in abc:
@@ -368,17 +368,17 @@ class kinokisteFilmlistenScreen(Screen):
 		self.session.open(kinokisteFilmLetterScreen, kkLink)
 
 	def keyCancel(self):
-		self.close()		
+		self.close()
 
 def kinokisteFilmLetterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 500, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
 		(eListboxPythonMultiContent.TYPE_TEXT, 520, 0, 150, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1]),
 		(eListboxPythonMultiContent.TYPE_TEXT, 670, 0, 150, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[2])
-		] 
+		]
 
 class kinokisteFilmLetterScreen(Screen):
-	
+
 	def __init__(self, session, kkLink):
 		self.session = session
 		self.kkLink = kkLink
@@ -389,9 +389,9 @@ class kinokisteFilmLetterScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -404,7 +404,7 @@ class kinokisteFilmLetterScreen(Screen):
 		self['page'] = Label("1")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -412,16 +412,16 @@ class kinokisteFilmLetterScreen(Screen):
 		self['genreList'] = self.chooseMenuList
 		self.keyLocked = True
 		self.page = 1
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.genreliste = []
 		self['page'].setText(str(self.page))
 		kkLink = "%s?page=%s" % (self.kkLink, str(self.page))
 		print kkLink
 		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.pageData).addErrback(self.dataError)
-		
+
 	def pageData(self, data):
 		kkMovies = re.findall('<li class="mbox list".*?<a href="(.*?)" title="Jetzt (.*?) Stream ansehen".*?<p class="year">(.*?)</p>\n<p class="genre">(.*?)</p>', data, re.S)
 		if kkMovies:
@@ -433,7 +433,7 @@ class kinokisteFilmLetterScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -441,21 +441,21 @@ class kinokisteFilmLetterScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadpage()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		kkLink = self['genreList'].getCurrent()[0][3]
 		print kkLink
 		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getParts).addErrback(self.dataError)
-		
+
 	def getParts(self, data):
 		kkName = self['genreList'].getCurrent()[0][0]
 		streams = re.findall('<a href="(http://www.ecostream.tv/stream/.*?)"', data, re.S)

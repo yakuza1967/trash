@@ -10,7 +10,7 @@ def ORFGenreListEntry(entry):
 def ORFFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class ORFGenreScreen(Screen):
 

@@ -3,7 +3,7 @@
 from imports import *
 
 class checkupdate:
-	
+
 	def __init__(self, session):
 		self.session = session
 

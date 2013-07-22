@@ -5,7 +5,7 @@ def dreamscreencastListEntry(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT, entry[0])
 		]
 class dreamscreencast(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/dreamscreencast.xml" % config.mediaportal.skin.value
@@ -15,7 +15,7 @@ class dreamscreencast(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -26,27 +26,27 @@ class dreamscreencast(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("Dreamscreencast.com")
 		self['leftContentTitle'] = Label("Videos:")
 		self['stationIcon'] = Pixmap()
 		self['name'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.streamList = []
 		url = "http://feeds.feedburner.com/dreamscreencast?format=xml"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		videos = re.findall('<item>.*?<title>(.*?)</title>.*?<link>(.*?)</link>.*?<itunes:summary>(.*?)</itunes:summary>.*?<media:content url="(.*?)"', data, re.S)
 		if videos:
@@ -57,10 +57,10 @@ class dreamscreencast(Screen):
 			self.streamMenuList.setList(map(dreamscreencastListEntry, self.streamList))
 			self.keyLocked = False
 			self.showInfos()
-					
+
 	def dataError(self, error):
 		printl(error,self,"E")
-			
+
 	def showInfos(self):
 		self.Dscname = self['streamlist'].getCurrent()[0][0]
 		handlung = self['streamlist'].getCurrent()[0][2]
@@ -70,13 +70,13 @@ class dreamscreencast(Screen):
 		if url:
 			print url
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getImage).addErrback(self.dataError)
-			
+
 	def getImage(self, data):
 		image = re.findall('<a rel="gallery" href="(.*?)"', data, re.S)
 		if image:
 			print image[0]
 			downloadPage(image[0], "/tmp/dscIcon.jpg").addCallback(self.showCover)
-		
+
 	def showCover(self, picData):
 		if fileExists("/tmp/dscIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -89,7 +89,7 @@ class dreamscreencast(Screen):
 				if ptr != None:
 					self['stationIcon'].instance.setPixmap(ptr)
 					self['stationIcon'].show()
-					del self.picload			
+					del self.picload
 
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
@@ -100,31 +100,31 @@ class dreamscreencast(Screen):
 			print stream
 			sref = eServiceReference(0x1001, 0, stream)
 			sref.setName(self.Dscname)
-			self.session.open(MoviePlayer, sref)			
+			self.session.open(MoviePlayer, sref)
 
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].down()
 		self.showInfos()
-		
+
 	def keyCancel(self):
 		self.close()
