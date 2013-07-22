@@ -849,7 +849,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 				if config.mediaportal.showM4kPorn.value:
 					self.porn.append(self.hauptListEntry("Movie4k-XXX", "movie4kporn"))
 				if config.mediaportal.showparadisehill.value:
-					self.porn.append(self.hauptListEntry("ParadiseHill", "paradisehill"))	
+					self.porn.append(self.hauptListEntry("ParadiseHill", "paradisehill"))
 			if config.mediaportal.showpinkrod.value:
 				self.porn.append(self.hauptListEntry("Pinkrod", "pinkrod"))
 			if config.mediaportal.showgrauzone.value:
@@ -1381,7 +1381,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.pincheck()
 		elif auswahl == "ParadiseHill":
 			self.pornscreen = paradisehillGenreScreen
-			self.pincheck()			
+			self.pincheck()
 		elif auswahl == "Pinkrod":
 			self.pornscreen = pinkrodGenreScreen
 			self.pincheck()

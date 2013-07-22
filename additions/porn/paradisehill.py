@@ -9,7 +9,7 @@ def paradisehillGenreListEntry(entry):
 def paradisehillListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		]		
+		]
 
 class paradisehillGenreScreen(Screen):
 
@@ -96,7 +96,7 @@ class paradisehillGenreScreen(Screen):
 		print paradisehillGenre, paradisehillUrl
 		if paradisehillGenre == "--- Search ---":
 			self.suchen()
-		else:	
+		else:
 			self.session.open(paradisehillFilmListeScreen, paradisehillGenre, paradisehillUrl)
 
 	def keyCancel(self):
@@ -277,7 +277,7 @@ class paradisehillFilmListeScreen(Screen):
 			return
 		self.paradisehillName = self['liste'].getCurrent()[0][0]
 		paradisehillurl = self['liste'].getCurrent()[0][1]
-		paradisehillurl = "http://www.paradisehill.tv%s" % paradisehillurl 
+		paradisehillurl = "http://www.paradisehill.tv%s" % paradisehillurl
 		print self.paradisehillName, paradisehillurl
 		self.session.open(paradisehillFilmAuswahlScreen, self.paradisehillName, paradisehillurl)
 
