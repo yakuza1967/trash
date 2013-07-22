@@ -3,15 +3,15 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 def pornrabbitGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def pornrabbitFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class pornrabbitGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +21,9 @@ class pornrabbitGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -38,15 +38,15 @@ class pornrabbitGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://www.pornrabbit.com/page/categories/"
@@ -79,11 +79,11 @@ class pornrabbitGenreScreen(Screen):
 	def ShowCover(self, picData):
 		picPath = "/tmp/phIcon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverFile(self, picPath):
 		if fileExists(picPath):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -108,7 +108,7 @@ class pornrabbitGenreScreen(Screen):
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(pornrabbitFilmScreen, streamGenreLink)
-		
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -123,19 +123,19 @@ class pornrabbitGenreScreen(Screen):
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -146,7 +146,7 @@ class pornrabbitGenreScreen(Screen):
 		self.close()
 
 class pornrabbitFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -157,9 +157,9 @@ class pornrabbitFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -180,15 +180,15 @@ class pornrabbitFilmScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.page = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -197,7 +197,7 @@ class pornrabbitFilmScreen(Screen):
 		url = "http://www.pornrabbit.com%s%s/" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		x = 0
 		phMovies = re.findall('class="video">.*?<a href="(.*?)" title="(.*?)".*?<img.*?src="(.*?)".*?views: <b>(.*?)</b>.*?runtime: <b>(.*?)</b>', data, re.S)
@@ -228,11 +228,11 @@ class pornrabbitFilmScreen(Screen):
 			downloadPage(phImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 		else:
 			self.ShowCoverNone()
-		
+
 	def ShowCover(self, picData):
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
@@ -270,38 +270,38 @@ class pornrabbitFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -319,7 +319,7 @@ class pornrabbitFilmScreen(Screen):
 				url = phurl
 				self.play(url)
 		self.keyLocked = False
-		
+
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
 		sref = eServiceReference(0x1001, 0, file)

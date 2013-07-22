@@ -10,10 +10,10 @@ def SRFGenreListEntry(entry):
 def SRFFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class SRFGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowGenreScreen.xml" % config.mediaportal.skin.value
@@ -89,7 +89,7 @@ class SRFGenreScreen(Screen):
 				if ptr != None:
 					self['Pic'].instance.setPixmap(ptr)
 					self['Pic'].show()
-					del self.picload		
+					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -141,7 +141,7 @@ class SRFFilmeListeScreen(Screen):
 
 		self['title'] = Label("SRF Player")
 		self['name'] = Label("Folgen Auswahl")
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)

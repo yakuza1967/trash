@@ -5,7 +5,7 @@ def baskinoMainListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT, entry[0])
 		]
-		
+
 class baskino(Screen):
 	def __init__(self, session):
 		self.session = session
@@ -16,7 +16,7 @@ class baskino(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -29,28 +29,28 @@ class baskino(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self['title'] = Label("Baskino.com")
 		self['leftContentTitle'] = Label("Movies")
 		self['stationIcon'] = Pixmap()
 		self['page'] = Label("1")
 		self['name'] = Label("Choose a Movie")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = False
 		self.page = 1
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://baskino.com/new/page/%s/" % str(self.page)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		movies = re.findall('<div class="postcover">.*?<a href="(.*?)">.*?<img title="(.*?)" src="(.*?)"', data, re.S)
 		if movies:
@@ -60,7 +60,7 @@ class baskino(Screen):
 			self.streamMenuList.setList(map(baskinoMainListEntry, self.streamList))
 		self.keyLocked = False
 		self.showInfos()
-			
+
 	def dataError(self, error):
 		printl(error,self,"E")
 
@@ -71,7 +71,7 @@ class baskino(Screen):
 		self['name'].setText(self.filmName)
 		if coverUrl:
 			downloadPage(coverUrl, "/tmp/baIcon.jpg").addCallback(self.showCover)
-		
+
 	def showCover(self, picData):
 		if fileExists("/tmp/baIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -85,7 +85,7 @@ class baskino(Screen):
 					self['stationIcon'].instance.setPixmap(ptr)
 					self['stationIcon'].show()
 					del self.picload
-					
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -93,7 +93,7 @@ class baskino(Screen):
 		url = self['streamlist'].getCurrent()[0][1]
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideo).addErrback(self.dataError)
-		
+
 	def parseVideo(self, data):
 		video = re.findall('file:"(.*?)"', data, re.S)
 		if video:
@@ -109,25 +109,25 @@ class baskino(Screen):
 			return
 		self['streamlist'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].down()
 		self.showInfos()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -135,13 +135,13 @@ class baskino(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadPage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyCancel(self):
 		self.close()

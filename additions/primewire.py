@@ -122,7 +122,7 @@ class PrimeWireFilmlisteScreen(Screen):
 
 	def loadPage(self):
 		self.streamList = []
-		url = "%s%s" % (self.chGotLink, str(self.page)) 
+		url = "%s%s" % (self.chGotLink, str(self.page))
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
@@ -211,7 +211,7 @@ class PrimeWireFilmlisteScreen(Screen):
 		self.close()
 
 class PrimeWireEpisodeScreen(Screen):
-		
+
 	def __init__(self, session, chGotLink):
 		self.chGotLink = chGotLink
 		self.session = session
@@ -222,34 +222,34 @@ class PrimeWireEpisodeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 		}, -1)
-		
+
 		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("Episoden")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.page = 1
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.streamList = []
-		url = "%s%s" % (self.chGotLink, str(self.page)) 
+		url = "%s%s" % (self.chGotLink, str(self.page))
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		episoden = re.findall('class="tv_episode_item.*?">.*?<a\shref="(.*?)">.*?episode_name">\s{0,2}-\s{0,2}(.*?)</span', data, re.S|re.I)
 		if episoden:
@@ -267,7 +267,7 @@ class PrimeWireEpisodeScreen(Screen):
 
 	def showInfos(self, coverUrl):
 		downloadPage(coverUrl, "/tmp/chIcon.jpg").addCallback(self.showCover)
-		
+
 	def showCover(self, picData):
 		if fileExists("/tmp/chIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -281,10 +281,10 @@ class PrimeWireEpisodeScreen(Screen):
 					self['stationIcon'].instance.setPixmap(ptr)
 					self['stationIcon'].show()
 					del self.picload
-					
+
 	def dataError(self, error):
 		printl(error,self,"E")
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -297,9 +297,9 @@ class PrimeWireEpisodeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class PrimeWireStreamsScreen(Screen):
-	
+
 	def __init__(self, session, movielink, name):
 		self.session = session
 		self.movielink = movielink
@@ -311,32 +311,32 @@ class PrimeWireStreamsScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 		}, -1)
-		
+
 		self['title'] = Label("PrimeWire.ag")
 		self['leftContentTitle'] = Label("Streams")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		print self.movielink
 		getPage(self.movielink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-	
+
 	def parseData(self, data):
 		streams = re.findall('<a\shref="/external.php\?gd=(.*?)&.*?&url=(.*?)&.*?document.writeln\(\'(.*?)\'\)',data, re.S)
 		if streams:
@@ -355,11 +355,11 @@ class PrimeWireStreamsScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def showInfos(self,coverUrl):
 		print coverUrl
 		downloadPage(coverUrl, "/tmp/chIcon.jpg").addCallback(self.showCover)
-		
+
 	def showCover(self, picData):
 		if fileExists("/tmp/chIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -373,7 +373,7 @@ class PrimeWireStreamsScreen(Screen):
 					self['stationIcon'].instance.setPixmap(ptr)
 					self['stationIcon'].show()
 					del self.picload
-					
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -381,17 +381,17 @@ class PrimeWireStreamsScreen(Screen):
 		auswahl = self['streamlist'].getCurrent()[0][1]
 		print auswahl
 		getPage(auswahl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
-		
+
 	def get_link(self, data):
 		hoster = re.findall('<noframes>(.*?)</noframes>',data, re.S)
 		if hoster:
 			get_stream_link(self.session).check_link(hoster[0], self.got_link)
-			
+
 	def got_link(self, stream_url):
 		print stream_url
 		sref = eServiceReference(0x1001, 0, stream_url)
 		sref.setName(self.titel)
 		self.session.open(MoviePlayer, sref)
-		
+
 	def keyCancel(self):
 		self.close()

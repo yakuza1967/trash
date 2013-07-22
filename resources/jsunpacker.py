@@ -1,4 +1,3 @@
-
 import re
 
 class cJsUnpacker:
@@ -13,14 +12,14 @@ class cJsUnpacker:
         k = aSplit[2].split(".")[0].replace("'", '').split('|')
         e = ''
         d = ''
-       
+
         sUnpacked = str(self.__unpack(p, a, c, k, e, d))
         return sUnpacked.replace('\\', '')
 
     def __unpack(self, p, a, c, k, e, d):
         while (c > 1):
             c = c -1
-            if (k[c]):               
+            if (k[c]):
                 p = re.sub('\\b' + str(self.__itoa(c, a)) +'\\b', k[c], p)
         return p
 

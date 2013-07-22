@@ -219,19 +219,19 @@ def urs(a, b):
     else:
         a = (a >> b)
     return a
-	
+
 def pornhubGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 def pornhubFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class pornhubGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -241,9 +241,9 @@ class pornhubGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -258,20 +258,20 @@ class pornhubGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://www.pornhub.com/categories"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
-	
+
 	def genreData(self, data):
 		phCats = re.findall('<div\sclass="category-wrapper">.*?<a\shref="(/video\?c=.*?)"><img\ssrc="(.*?)".*?alt="(.*?)"', data, re.S)
 		if phCats:
@@ -304,11 +304,11 @@ class pornhubGenreScreen(Screen):
 	def ShowCover(self, picData):
 		picPath = "/tmp/phIcon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverFile(self, picPath):
 		if fileExists(picPath):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -322,7 +322,7 @@ class pornhubGenreScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-	
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -333,7 +333,7 @@ class pornhubGenreScreen(Screen):
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(pornhubFilmScreen, streamGenreLink)
-		
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -348,30 +348,30 @@ class pornhubGenreScreen(Screen):
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-	
+
 	def keyCancel(self):
 		self.close()
 
 class pornhubFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -382,9 +382,9 @@ class pornhubFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -405,15 +405,15 @@ class pornhubFilmScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.page = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -422,7 +422,7 @@ class pornhubFilmScreen(Screen):
 		url = "%s%s" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
-	
+
 	def genreData(self, data):
 		phMovies = re.findall('<div\sclass="wrap">.*?<a\shref="(.*?)".*?\stitle="(.*?)".*?data-mediumthumb="(.*?)".*?<var\sclass="duration">(.*?)</var>.*?<span\sclass="views"><var>(.*?)<.*?<var\sclass="added">(.*?)<', data, re.S)
 		if phMovies:
@@ -447,7 +447,7 @@ class pornhubFilmScreen(Screen):
 		self['views'].setText(phViews)
 		self['runtime'].setText(phRuntime)
 		downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/phIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -488,32 +488,32 @@ class pornhubFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -538,6 +538,6 @@ class pornhubFilmScreen(Screen):
 			sref = eServiceReference(0x1001, 0, phStream)
 			sref.setName(phTitle)
 			self.session.open(MoviePlayer, sref)
-		
+
 	def keyCancel(self):
 		self.close()

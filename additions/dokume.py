@@ -7,7 +7,7 @@ def auswahlListEntry(entry):
 		]
 
 class dokuScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/dokuScreen.xml" % config.mediaportal.skin.value
@@ -17,9 +17,9 @@ class dokuScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -37,21 +37,21 @@ class dokuScreen(Screen):
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self.videoPrioS = ['Low','Medium', 'High']
 		self['name'].setText('Doku.me (Video Quality: ' + self.videoPrioS[self.videoPrio] + ')')
-		
+
 		self.filmliste = []
-		
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://doku.me/liste-aller-dokumentationen"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.allData).addErrback(self.dataError)
-	
+
 	def keyVideoQuality(self):
 		if self.videoPrio+1 > 2:
 			self.videoPrio = 0
@@ -76,29 +76,29 @@ class dokuScreen(Screen):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		dkLink = self['genreList'].getCurrent()[0][1]
 		print dkLink
 		getPage(dkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
-		
+
 	def getVideoPage(self, data):
 		videoPage = re.findall('"http://www.youtube.com/(v|embed)/(.*?)\?.*?"', data, re.S)
 		if videoPage:
@@ -109,7 +109,7 @@ class dokuScreen(Screen):
 		else:
 			message = self.session.open(MessageBox, _("Dieses Video ist nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=5)
 		self.keyLocked = False
-					
+
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
 		sref = eServiceReference(0x1001, 0, file)

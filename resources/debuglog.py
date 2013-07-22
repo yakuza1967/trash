@@ -89,22 +89,22 @@ def printlog (string, parent=None, verbLevel=VERB_DEFAULT):
 			writeToLog(type, out)
 
 	elif verbLevel == VERB_HIGHLIGHT and debugMode == "High": #only in debugMode high
-		print '\033[0;36m' + "[MediaPortal] " + '\033[1;m' + '\033[1;37m' + "H" + "  " + str(out) + '\033[1;m'	
+		print '\033[0;36m' + "[MediaPortal] " + '\033[1;m' + '\033[1;37m' + "H" + "  " + str(out) + '\033[1;m'
 		if debugMode != "Silent":
 			writeToLog(type, out)
 
 	elif verbLevel == VERB_ADDITIONAL and debugMode == "High": #only in debugMode high
-		print '\033[0;36m' + "[MediaPortal] " + '\033[1;m' + '\033[1;32m' + "A" + "  " + str(out) + '\033[1;m'	
+		print '\033[0;36m' + "[MediaPortal] " + '\033[1;m' + '\033[1;32m' + "A" + "  " + str(out) + '\033[1;m'
 		if debugMode != "Silent":
 			writeToLog(type, out)
 
 	elif verbLevel == VERB_CLOSING and debugMode == "High": #only in debugMode high
-		print '\033[0;36m' + "[MediaPortal] " + '\033[1;m' + '\033[1;32m' + "C" + "  " + str(out) + '\033[1;m'	
+		print '\033[0;36m' + "[MediaPortal] " + '\033[1;m' + '\033[1;32m' + "C" + "  " + str(out) + '\033[1;m'
 		if debugMode != "Silent":
 			writeToLog(type, out)
 
 	elif verbLevel <= VERB_TOLOG:
-		print '\033[0;36m' + "[MediaPortal] " + "I" + "  " + '\033[1;m' + str(out) 
+		print '\033[0;36m' + "[MediaPortal] " + "I" + "  " + '\033[1;m' + str(out)
 		if debugMode != "Silent":
 			writeToLog(type, out)
 
@@ -119,7 +119,7 @@ def writeToLog(type, out):
 
 	now = datetime.datetime.now()
 	gLogFile.write("%02d:%02d:%02d.%07d " % (now.hour, now.minute, now.second, now.microsecond) + str(type) + "  " + str(out) + "\n")
-	gLogFile.flush()	
+	gLogFile.flush()
 
 def openLogFile():
 	global gLogFile
@@ -128,12 +128,12 @@ def openLogFile():
 
 	now = datetime.datetime.now()
 
-	try: 
+	try:
 		os.makedirs(baseDir)
 	except OSError, e:
 		pass
 
-	try: 
+	try:
 		os.makedirs(logDir)
 	except OSError, e:
 		pass

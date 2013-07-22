@@ -13,7 +13,7 @@ def ARDGenreListEntry(entry):
 def ARDFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class ARDGenreScreen(Screen):
 
@@ -237,7 +237,7 @@ class ARDFilmeListeScreen(Screen):
 		self['name'] = Label("Folgen Auswahl")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		self.page = 1		
+		self.page = 1
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -442,7 +442,7 @@ class ARDFilmeListeScreen(Screen):
 		print "PageUp"
 		if self.keyLocked:
 			return
-		self.page += 1 
+		self.page += 1
 		self.loadPage()
 
 	def keyCancel(self):

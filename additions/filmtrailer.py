@@ -5,9 +5,9 @@ def trailerMainListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT, entry[0])
 		]
-		
+
 class trailer(Screen, ConfigListScreen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/trailer.xml" % config.mediaportal.skin.value
@@ -17,7 +17,7 @@ class trailer(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -30,28 +30,28 @@ class trailer(Screen, ConfigListScreen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self['title'] = Label("Filmtrailer.net")
 		self['leftContentTitle'] = Label("Trailer")
 		self['stationIcon'] = Pixmap()
 		self['page'] = Label("1")
 		self['name'] = Label("Trailer Auswahl")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = False
 		self.page = 1
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.filmtrailer.net/page/%s" % str(self.page)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		trailer = re.findall('<div class="entry-content">.*?<a href="(http://www.filmtrailer.net/trailer/.*?)".*?<span class="slide-title">(.*?)</span>.*?<img class="attachment-thumbnail" src="(http://www.filmtrailer.net/filmposter/.*?)"', data, re.S)
 		if trailer:
@@ -61,7 +61,7 @@ class trailer(Screen, ConfigListScreen):
 			self.streamMenuList.setList(map(trailerMainListEntry, self.streamList))
 		self.keyLocked = False
 		self.showInfos()
-			
+
 	def dataError(self, error):
 		printl(error,self,"E")
 
@@ -72,7 +72,7 @@ class trailer(Screen, ConfigListScreen):
 		self['name'].setText(self.filmtrailer)
 		if coverUrl:
 			downloadPage(coverUrl, "/tmp/trIcon.jpg").addCallback(self.showCover)
-		
+
 	def showCover(self, picData):
 		if fileExists("/tmp/trIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -86,7 +86,7 @@ class trailer(Screen, ConfigListScreen):
 					self['stationIcon'].instance.setPixmap(ptr)
 					self['stationIcon'].show()
 					del self.picload
-					
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -101,7 +101,7 @@ class trailer(Screen, ConfigListScreen):
 			print channelID
 			url = "http://de.player-feed.filmtrailer.com/v2.0/cinema/" + channelID[0]
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideo).addErrback(self.dataError)
-		
+
 	def parseVideo(self, data):
 		video = re.findall('<url>(.*?)<', data, re.S)
 		if video:
@@ -115,25 +115,25 @@ class trailer(Screen, ConfigListScreen):
 			return
 		self['streamlist'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['streamlist'].down()
 		self.showInfos()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -141,13 +141,13 @@ class trailer(Screen, ConfigListScreen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadPage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyCancel(self):
 		self.close()

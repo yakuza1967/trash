@@ -4,18 +4,18 @@ from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
 def playpornGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def playpornFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 def playpornHosterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 sitechrx = ''
 
 special_headers = {
@@ -27,7 +27,7 @@ special_headers = {
 }
 
 class playpornGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -37,9 +37,9 @@ class playpornGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -54,20 +54,20 @@ class playpornGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.get_site_cookie1)
-		
+
 	def get_site_cookie1(self):
 		self.keyLocked = True
 		url = "http://playporn.to"
 		getPage(url, headers=special_headers).addCallback(self.get_site_cookie2).addErrback(self.dataError)
-		
+
 	def get_site_cookie2(self, data):
 		x = re.search('searchform', data, re.S)
 		if x:
@@ -77,7 +77,7 @@ class playpornGenreScreen(Screen):
 		raw = re.findall('javascript"\ssrc="(.*?)">.*?scf\(\'(.*?)\'\+\'(.*?)\'.*?', data, re.S)
 		url = "http://playporn.to" + str(raw[0][0])
 		getPage(url, headers=special_headers).addCallback(self.get_site_cookie3, raw[0][1], raw[0][2]).addErrback(self.dataError)
-		
+
 	def get_site_cookie3(self, data, cookie1, cookie2):
 		raw = re.findall('escape\(hsh.*?"(.*?)"\)', data, re.S)
 		global sitechrx
@@ -118,7 +118,7 @@ class playpornGenreScreen(Screen):
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(playpornFilmScreen, streamGenreLink, streamGenreName)
-		
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -133,17 +133,17 @@ class playpornGenreScreen(Screen):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -153,7 +153,7 @@ class playpornGenreScreen(Screen):
 		self.close()
 
 class playpornFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink, phCatName):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -165,9 +165,9 @@ class playpornFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -189,15 +189,15 @@ class playpornFilmScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self.lastpage = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -208,7 +208,7 @@ class playpornFilmScreen(Screen):
 			url = "%s%s" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, agent=special_headers, headers={'Cookie': 'sitechrx='+sitechrx}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		lastp = re.search('class=\'pages\'>.*?of (.*?)</span>', data, re.S)
 		if lastp:
@@ -217,7 +217,7 @@ class playpornFilmScreen(Screen):
 			self.lastpage = int(lastp)
 		else:
 			self.lastpage = 1
-		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))	
+		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
 		phMovies = re.findall('class="photo-thumb">.*?<a\shref="(.*?)"\stitle="(.*?)".*?thumbindex"\ssrc="(.*?)"', data, re.S)
 		if phMovies:
 			for (phUrl, phTitle, phImage) in phMovies:
@@ -240,7 +240,7 @@ class playpornFilmScreen(Screen):
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 		else:
-			self.ShowCoverNone()		
+			self.ShowCoverNone()
 
 	def ShowCover(self, picData):
 		picPath = "/tmp/Icon.jpg"
@@ -287,7 +287,7 @@ class playpornFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -295,31 +295,31 @@ class playpornFilmScreen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -331,7 +331,7 @@ class playpornFilmScreen(Screen):
 		self.close()
 
 class playpornStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamFilmLink, streamName):
 		self.session = session
 		self.streamFilmLink = streamFilmLink
@@ -344,9 +344,9 @@ class playpornStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -355,22 +355,22 @@ class playpornStreamListeScreen(Screen):
 		self['title'] = Label("PlayPorn.to")
 		self['name'] = Label(self.streamName)
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		getPage(self.streamFilmLink, agent=special_headers, headers={'Cookie': 'sitechrx='+sitechrx}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		parse = re.search('class="video">(.*)</div>', data, re.S)
@@ -394,10 +394,10 @@ class playpornStreamListeScreen(Screen):
 		if streamLink == None:
 			return
 		self.get_stream(streamLink)
-		
+
 	def get_stream(self,url):
 		get_stream_link(self.session).check_link(url, self.got_link)
-		
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)

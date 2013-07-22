@@ -16,7 +16,7 @@ elif fileExists('/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo'):
 else:
 	IMDbPresent = False
 	TMDbPresent = False
-	
+
 DDLME_Version = "ddl.me v0.94 (experimental)"
 
 DDLME_siteEncoding = 'utf-8'
@@ -27,7 +27,7 @@ Sondertastenbelegung:
 Genre Auswahl:
 	KeyCancel	: Menu Up / Exit
 	KeyOK		: Menu Down / Select
-	
+
 Tastenfunktionen in der Filmliste:
 	Bouquet +/-				: Seitenweise blättern in 1 Schritten Up/Down
 	'1', '4', '7',
@@ -41,15 +41,15 @@ Stream Auswahl:
 def DDLME_menuListentry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class show_DDLME_Genre(Screen):
 
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path = mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -57,9 +57,9 @@ class show_DDLME_Genre(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -77,7 +77,7 @@ class show_DDLME_Genre(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
-		
+
 		self.param_qr = ''
 		self.menuLevel = 0
 		self.menuMaxLevel = 1
@@ -94,7 +94,7 @@ class show_DDLME_Genre(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.genreMenu = [
 			[
 			("Suche...", ""),
@@ -172,9 +172,9 @@ class show_DDLME_Genre(Screen):
 			None, None, None, None
 			]
 			]
-			
+
 		self.onLayoutFinish.append(self.loadMenu)
-		
+
 	def setGenreStrTitle(self):
 		genreName = self['genreList'].getCurrent()[0][0]
 		genreLink = self['genreList'].getCurrent()[0][1]
@@ -183,7 +183,7 @@ class show_DDLME_Genre(Screen):
 				self.genreName[self.menuLevel] = genreName
 			else:
 				self.genreName[self.menuLevel] = ':'+genreName
-				
+
 			self.genreUrl[self.menuLevel] = genreLink
 		self.genreTitle = "%s%s%s" % (self.genreName[0],self.genreName[1],self.genreName[2])
 		self['name'].setText("Genre: "+self.genreTitle)
@@ -200,22 +200,22 @@ class show_DDLME_Genre(Screen):
 		self['genreList'].up()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyDown(self):
 		self['genreList'].down()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyRight(self):
 		self['genreList'].pageDown()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyLeft(self):
 		self['genreList'].pageUp()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-		
+
 	def keyMenuUp(self):
 		print "keyMenuUp:"
 		if self.keyLocked:
@@ -227,10 +227,10 @@ class show_DDLME_Genre(Screen):
 		print "keyOK:"
 		if self.keyLocked:
 			return
-			
+
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setMenu(1)
-		
+
 		if self.genreSelected:
 			print "Genre selected"
 			if re.match('.*?Neue (Filme|Serien)', self.genreTitle):
@@ -246,7 +246,7 @@ class show_DDLME_Genre(Screen):
 	def paraQuery(self):
 		self.param_qr = ''
 		self.session.openWithCallback(self.cb_paraQuery, VirtualKeyBoard, title = (_("Suchanfrage")), text = self.param_qr)
-		
+
 	def cb_paraQuery(self, callback = None, entry = None):
 		if callback != None:
 			self.param_qr = callback.strip()
@@ -254,19 +254,19 @@ class show_DDLME_Genre(Screen):
 				qr = urllib.quote(self.param_qr)
 				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+qr
 				self.session.open(DDLME_FilmListeScreen, genreurl, self.genreTitle)
-	
+
 	def setMenu(self, levelIncr, menuInit=False):
 		print "setMenu: ",levelIncr
 		self.genreSelected = False
 		if (self.menuLevel+levelIncr) in range(self.menuMaxLevel+1):
 			if levelIncr < 0:
 				self.genreName[self.menuLevel] = ""
-			
+
 			self.menuLevel += levelIncr
-			
+
 			if levelIncr > 0 or menuInit:
 				self.menuIdx[self.menuLevel] = 0
-			
+
 			if self.menuLevel == 0:
 				print "level-0"
 				if self.genreMenu[0] != None:
@@ -310,7 +310,7 @@ class show_DDLME_Genre(Screen):
 		else:
 			print "Entry selected"
 			self.genreSelected = True
-				
+
 		print "menuLevel: ",self.menuLevel
 		print "mainIdx: ",self.menuIdx[0]
 		print "subIdx_1: ",self.menuIdx[1]
@@ -318,22 +318,22 @@ class show_DDLME_Genre(Screen):
 		print "genreSelected: ",self.genreSelected
 		print "menuListe: ",self.menuListe
 		print "genreUrl: ",self.genreUrl
-		
-		self.setGenreStrTitle()		
-		
+
+		self.setGenreStrTitle()
+
 	def keyCancel(self):
 		if self.menuLevel == 0:
 			self.close()
 		else:
 			self.keyMenuUp()
-	
+
 
 def DDLME_FilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class DDLME_FilmListeScreen(Screen):
-	
+
 	def __init__(self, session, genreLink, genreName, imgLink=None):
 		self.session = session
 		self.genreLink = genreLink
@@ -349,9 +349,9 @@ class DDLME_FilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions","DirectionActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -395,7 +395,7 @@ class DDLME_FilmListeScreen(Screen):
 		self['F4'] = Label("Text+")
 		self['Page'] = Label("Page")
 		self['coverArt'] = Pixmap()
-		
+
 		self.timerStart = False
 		self.seekTimerRun = False
 		self.filmQ = Queue.Queue(0)
@@ -414,12 +414,12 @@ class DDLME_FilmListeScreen(Screen):
 		self.genreSpecials = self.serienEpisoden or self.genreSearch or self.genreUpdates
 
 		self.setGenreStrTitle()
-		
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def setGenreStrTitle(self):
@@ -429,7 +429,7 @@ class DDLME_FilmListeScreen(Screen):
 		else:
 			self['F3'].show()
 			genreName = "%s%s - Sortierung: %s" % (self.genreTitle,self.genreName,self.sortOrderTxt[mp_globals.ddlme_sortOrder])
-			
+
 		#print genreName
 		self['ContentTitle'].setText(genreName)
 
@@ -442,22 +442,22 @@ class DDLME_FilmListeScreen(Screen):
 			if page < 1:
 				page = 1
 			url = self.genreLink % (mp_globals.ddlme_sortOrder, page)
-			
+
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
-			
+
 		self.filmQ.put(url)
 		if not self.eventL.is_set():
 			self.eventL.set()
 			self.loadPageQueued()
 		print "eventL ",self.eventL.is_set()
-		
+
 	def loadPageQueued(self):
 		print "loadPageQueued:"
 		self['name'].setText('Bitte warten...')
 		while not self.filmQ.empty():
 			url = self.filmQ.get_nowait()
-			
+
 		#self.eventL.clear()
 		print url
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
@@ -467,11 +467,11 @@ class DDLME_FilmListeScreen(Screen):
 		print "dataError:"
 		printl(error,self,"E")
 		self['handlung'].setText("Fehler:\n" + str(error))
-		
+
 	def loadPageData(self, data):
 		print "loadPageData:"
 		self.filmListe = []
-		
+
 		if self.serienEpisoden:
 			info = re.search('var subcats =.*?"info":', data)
 			if info:
@@ -488,23 +488,23 @@ class DDLME_FilmListeScreen(Screen):
 						i = nm.find('\u')
 						if i>0:
 							nm = nm[:i]
-							
+
 						#if int(info.group(3)) < 10:
 						#	staffel = "S0"+str(info.group(3))
 						#else:
 						#	staffel = "S"+str(info.group(3))
-						
+
 						#if int(info.group(2)) < 10:
 						#	episode = "E0"+str(info.group(2))
 						#else:
 						#	episode = "E"+str(info.group(2))
-						
+
 						#t = "%s%s - %s" % (staffel, episode, nm)
 						t = 'S%02dE%03d - %s' % (int(info.group(3)), int(info.group(2)), nm)
 						self.filmListe.append((t, h, self.imgLink, ''))
 					else:
 						a = l
-				
+
 				#self.filmListe.sort(key=lambda t : t[0].lower())
 		elif self.genreUpdates:
 			a = 0
@@ -518,13 +518,13 @@ class DDLME_FilmListeScreen(Screen):
 						m = re.search(">Neue Filme<", mg.group(1))
 					else:
 						m = re.search(">Neue Serien<", mg.group(1))
-						
+
 					if m:
 						m = re.search("<div id='view'(.*?)class=\"hr\">", data[a:])
 						break
 				else:
 					a = l
-						
+
 			if m:
 				print "m found"
 				m = re.findall('title=\'(.*?)\'.*?href=\'(.*?)\'.*?<img.*?(http://.*?jpg)', m.group(1))
@@ -540,7 +540,7 @@ class DDLME_FilmListeScreen(Screen):
 				mg = re.search("<div id='view'(.*?)class=\"clear\">", data)
 			else:
 				mg = re.search("<div id='view'(.*?)class='clear'>", data)
-				
+
 			if mg:
 				print "mg found"
 				if self.genreSearch:
@@ -558,25 +558,25 @@ class DDLME_FilmListeScreen(Screen):
 						for (t, h, i) in m:
 							print "tit.: ",t
 							self.filmListe.append((decodeHtml(t), "%s%s" % (self.baseUrl, h), i, ''))
-		
+
 				if not self.pages:
 					m1 = re.search('Seite.*?von(.*?)</h1>', data)
-						
+
 					if m1:
 						pages = int(m1.group(1))
 					else:
 						pages = 1
-						
+
 					if pages > 999:
 						self.pages = 999
 					else:
 						self.pages = pages
-						
+
 					self.page = 1
-	
+
 		print "Page: %d / %d" % (self.page,self.pages)
 		self['page'].setText("%d / %d" % (self.page,self.pages))
-					
+
 		if len(self.filmListe) == 0:
 			print "No videos found!"
 			self.pages = 0
@@ -584,10 +584,10 @@ class DDLME_FilmListeScreen(Screen):
 		else:
 			menu_len = len(self.filmListe)
 			print "Videos found: ",menu_len
-				
+
 		self.chooseMenuList.setList(map(DDLME_FilmListEntry, self.filmListe))
 		self.loadPic()
-	
+
 	def loadPic(self):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
@@ -596,19 +596,19 @@ class DDLME_FilmListeScreen(Screen):
 		print "streamName: ",streamName
 		#print "streamUrl: ",streamUrl
 		self.getHandlung(desc)
-		
+
 		if not self.filmQ.empty():
 			self.loadPageQueued()
 		else:
 			self.eventL.clear()
 		self.keyLocked	= False
-		
+
 		url = self['liste'].getCurrent()[0][2]
 		if url != '':
 			downloadPage(url, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataError)
 		else:
 			self.ShowCoverNone()
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -616,21 +616,21 @@ class DDLME_FilmListeScreen(Screen):
 			self['handlung'].setText("Keine weiteren Info's vorhanden.")
 			return
 		self.setHandlung(desc)
-		
+
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-		
+
 	def ShowCover(self, picData):
 		print "ShowCover:"
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		print "ShowCoverNone:"
 		picPath = self.plugin_path + "/images/no_coverArt.png"
 		self.ShowCoverFile(picPath)
-	
+
 	def ShowCoverFile(self, picPath):
 		print "showCoverFile:"
 		if fileExists(picPath):
@@ -647,7 +647,7 @@ class DDLME_FilmListeScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-		
+
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
@@ -656,72 +656,72 @@ class DDLME_FilmListeScreen(Screen):
 		img = self['liste'].getCurrent()[0][2]
 		sm = self['liste'].getCurrent()[0][3]
 		genreSerien = self.genreSerien or sm == '>TV<' or re.match('.*?Neue Serien', self.genreName)
-		
+
 		if not genreSerien:
 			self.session.open(DDLMEStreams, url, title, img)
 		else:
 			self.session.open(DDLME_FilmListeScreen, url, 'Episoden - ' + title, imgLink=img)
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def keyUpRepeated(self):
 		#print "keyUpRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].up()
-		
+
 	def keyDownRepeated(self):
 		#print "keyDownRepeated"
 		if self.keyLocked:
 			return
 		self['liste'].down()
-		
+
 	def key_repeatedUp(self):
 		#print "key_repeatedUp"
 		if self.keyLocked:
 			return
 		self.loadPic()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyLeftRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
-		
+
 	def keyRightRepeated(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
-			
+
 	def keyPageDown(self):
 		#print "keyPageDown()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageDownFast(1)
-			
+
 	def keyPageUp(self):
 		#print "keyPageUp()"
 		if self.seekTimerRun:
 			self.seekTimerRun = False
 		self.keyPageUpFast(1)
-			
+
 	def keyPageUpFast(self,step):
 		if self.keyLocked:
 			return
@@ -734,7 +734,7 @@ class DDLME_FilmListeScreen(Screen):
 		#print "Page %d/%d" % (self.page,self.pages)
 		if oldpage != self.page:
 			self.loadPage()
-		
+
 	def keyPageDownFast(self,step):
 		if self.keyLocked:
 			return
@@ -751,33 +751,33 @@ class DDLME_FilmListeScreen(Screen):
 	def key_1(self):
 		#print "keyPageDownFast(2)"
 		self.keyPageDownFast(2)
-		
+
 	def key_4(self):
 		#print "keyPageDownFast(5)"
 		self.keyPageDownFast(5)
-		
+
 	def key_7(self):
 		#print "keyPageDownFast(10)"
 		self.keyPageDownFast(10)
-		
+
 	def key_3(self):
 		#print "keyPageUpFast(2)"
 		self.keyPageUpFast(2)
-		
+
 	def key_6(self):
 		#print "keyPageUpFast(5)"
 		self.keyPageUpFast(5)
-		
+
 	def key_9(self):
 		#print "keyPageUpFast(10)"
 		self.keyPageUpFast(10)
 
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyTMDbInfo(self):
 		if not self.keyLocked and TMDbPresent:
 			title = self['liste'].getCurrent()[0][0]
@@ -794,7 +794,7 @@ class DDLME_FilmListeScreen(Screen):
 				mp_globals.ddlme_sortOrder = 0
 			self.setGenreStrTitle()
 			self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()
 
@@ -808,19 +808,19 @@ def DDLMEStreamListEntry2(entry):
 def DDLMEStreamListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0] + entry[2])
-		] 
+		]
 
 class DDLMEStreams(Screen, ConfigListScreen):
-	
+
 	def __init__(self, session, filmUrl, filmName, imageLink):
 		self.session = session
 		self.filmUrl = filmUrl
 		self.filmName = filmName
 		self.imageUrl = imageLink
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -829,7 +829,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -838,7 +838,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 			"ok"    	: self.keyOK,
 			"cancel"	: self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label(DDLME_Version)
 		self['ContentTitle'] = Label("Stream Auswahl")
 		self['coverArt'] = Pixmap()
@@ -850,7 +850,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
-		
+
 		self.streamListe = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
@@ -858,14 +858,14 @@ class DDLMEStreams(Screen, ConfigListScreen):
 		self['liste'] = self.streamMenuList
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print "loadPage:"
 		streamUrl = self.filmUrl
 		#print "FilmUrl: %s" % self.filmUrl
 		#print "FilmName: %s" % self.filmName
 		getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		print "parseData:"
 		mdesc = re.search('class=\'detailCover\'.*?\'>(.*?)</p>', data)
@@ -901,7 +901,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 						#print "st_: ",st_
 						#print "ep_: ",ep_
 						if st == st_ and ep == ep_:
-							#print "episode found"		
+							#print "episode found"
 							a2=0
 							l2=len(info.group(3))
 							while a2<l2:
@@ -910,13 +910,13 @@ class DDLMEStreams(Screen, ConfigListScreen):
 									#print "hoster found"
 									a2 += mg.end()
 									streams = re.findall('"(http:.*?)".*?"stream"\]', mg.group(2))
-									
+
 									if streams:
 										#print "Streams found"
 										s = mg.group(1)
 										if re.match('.*?(played|putlocker|sockshare|flash strea|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Zooupload|Click.*?Play|BitShare)', s, re.I):
 											#print s
-											
+
 											for h in streams:
 												url = h.replace('\\', '')
 												print url
@@ -929,10 +929,10 @@ class DDLMEStreams(Screen, ConfigListScreen):
 							a = l
 					else:
 						a = l
-						
+
 			if len(self.streamListe) == 0:
 				self.streamListe.append(("No streams found!","","",""))
-			
+
 			self.streamMenuList.setList(map(DDLMEStreamListEntry, self.streamListe))
 		else:
 			print "norm. streams"
@@ -942,7 +942,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 				kl = len(data)
 			else:
 				k = kl = 0
-			
+
 			while k < kl:
 				np = re.search('{"0":"(.*?)","1":"(\d)"', data[k:])
 				if np:
@@ -953,7 +953,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 				else:
 					k = kl
 					continue
-					
+
 				ls = re.search('"links":{(.*?)}}', data)
 				if ls:
 					print "links found"
@@ -961,16 +961,16 @@ class DDLMEStreams(Screen, ConfigListScreen):
 					l=len(links)
 				else:
 					continue
-					
+
 				a=0
 				while a<l:
 					mg = re.search('"(.*?)":\[(\[.*?\])\]', links[a:])
 					if mg:
 						print "hoster found"
 						a += mg.end()
-					
+
 						streams = re.findall('\["(.*?)".*?"(http:.*?)".*?"stream"\]', mg.group(2))
-								
+
 						if streams:
 							print "Streams found"
 							s = mg.group(1)
@@ -983,10 +983,10 @@ class DDLMEStreams(Screen, ConfigListScreen):
 										part = "Part " + p
 									else:
 										part = "One Part"
-										
+
 									#if re.match('apitel (\d)',kap):
 									#	kap = self._insert(kap, 'K', 0)
-									
+
 									print url
 									print part
 									self.streamListe.append((s,url,part,kap))
@@ -998,17 +998,17 @@ class DDLMEStreams(Screen, ConfigListScreen):
 
 			if len(self.streamListe) == 0:
 				self.streamListe.append(("No streams found!","","",""))
-			
+
 			self.streamMenuList.setList(map(DDLMEStreamListEntry2, self.streamListe))
-			
+
 		self['handlung'].setText(decodeHtml(desc))
-		self.keyLocked = False			
+		self.keyLocked = False
 		print "imageUrl: ",self.imageUrl
 		if self.imageUrl:
-			downloadPage(self.imageUrl, "/tmp/Icon.jpg").addCallback(self.ShowCover)			
-	
+			downloadPage(self.imageUrl, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+
 	def _insert(self, ori, ins, pos):
-		return ori[:pos] + ins + ori[pos:] 
+		return ori[:pos] + ins + ori[pos:]
 
 	def ShowCover(self, picData):
 		print "ShowCover:"
@@ -1028,9 +1028,9 @@ class DDLMEStreams(Screen, ConfigListScreen):
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")
-		self.streamListe.append(("Read error !","","",""))			
+		self.streamListe.append(("Read error !","","",""))
 		self.streamMenuList.setList(map(DDLMEStreamListEntry, self.streamListe))
-			
+
 	def got_link(self, stream_url):
 		print "got_link:"
 		if stream_url == None:
@@ -1040,29 +1040,29 @@ class DDLMEStreams(Screen, ConfigListScreen):
 				title = self.filmName + ' - ' + self['liste'].getCurrent()[0][2]
 			else:
 				title = self.filmName
-				
+
 			if config.mediaportal.useHttpDump.value:
 				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
 				self.session.open(DDLmePlayer, [(title, stream_url)])
-	
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamLink = self['liste'].getCurrent()[0][1]
 		print "get_streamLink:"
 		get_stream_link(self.session).check_link(streamLink, self.got_link)
-			
+
 	def keyTxtPageUp(self):
 		self['handlung'].pageUp()
-			
+
 	def keyTxtPageDown(self):
 		self['handlung'].pageDown()
-			
+
 	def keyCancel(self):
 		self.close()
-		
+
 class DDLmePlayer(SimplePlayer):
 
 	def __init__(self, session, playList):
@@ -1073,4 +1073,4 @@ class DDLmePlayer(SimplePlayer):
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)		
+		self.playStream(title, url)

@@ -4,10 +4,10 @@ from Plugins.Extensions.MediaPortal.resources.decrypt import *
 def netzKinoGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[1])
-		] 
-		
+		]
+
 class netzKinoGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/netzKinoGenreScreen.xml" % config.mediaportal.skin.value
@@ -17,27 +17,27 @@ class netzKinoGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
-		
+
+
 		self['title'] = Label("Netzkino.de")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(('81', 'Neu bei Netzkino'))
 		self.genreliste.append(('61', 'HD-Kino'))
@@ -67,10 +67,10 @@ class netzKinoGenreScreen(Screen):
 def netzKinoFilmeListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class netzKinoFilmeScreen(Screen):
-	
+
 	def __init__(self, session, genreID):
 		self.session = session
 		self.genreID = genreID
@@ -81,9 +81,9 @@ class netzKinoFilmeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -97,20 +97,20 @@ class netzKinoFilmeScreen(Screen):
 		self['name'] = Label("Film Auswahl")
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://www.netzkino.de/capi/get_category_posts?id=%s&count=500&custom_fields=Streaming" % self.genreID
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
-	
+
 	def genreData(self, data):
 		nkDaten = re.findall('"title_plain":"(.*?)".*?"images":."full":."url":"(.*?)".*?"custom_fields":\{(.*?\})', data, re.S|re.I)
 		if nkDaten:
@@ -133,7 +133,7 @@ class netzKinoFilmeScreen(Screen):
 		print nkImage
 		self['name'].setText(nkTitle)
 		downloadPage(nkImage, "/tmp/nkIcon.jpg").addCallback(self.ShowCover)
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/nkIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -147,31 +147,31 @@ class netzKinoFilmeScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-	
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return

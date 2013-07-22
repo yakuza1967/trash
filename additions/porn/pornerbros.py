@@ -3,15 +3,15 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 def pornerbrosGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def pornerbrosStreamListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class pornerbrosGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +21,9 @@ class pornerbrosGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -38,15 +38,15 @@ class pornerbrosGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		url = "http://www.pornerbros.com/categories/"
@@ -68,7 +68,7 @@ class pornerbrosGenreScreen(Screen):
 			self.chooseMenuList.setList(map(pornerbrosGenreListEntry, self.genreliste))
 			self.chooseMenuList.moveToIndex(0)
 			self.keyLocked = False
-			self.showInfos()	
+			self.showInfos()
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -84,11 +84,11 @@ class pornerbrosGenreScreen(Screen):
 	def ShowCover(self, picData):
 		picPath = "/tmp/phIcon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverFile(self, picPath):
 		if fileExists(picPath):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -113,7 +113,7 @@ class pornerbrosGenreScreen(Screen):
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(pornerbrosFilmScreen, streamGenreLink)
-		
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -128,19 +128,19 @@ class pornerbrosGenreScreen(Screen):
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -149,9 +149,9 @@ class pornerbrosGenreScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class pornerbrosFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -162,9 +162,9 @@ class pornerbrosFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -176,7 +176,7 @@ class pornerbrosFilmScreen(Screen):
 			"prevBouquet" : self.keyPageDown,
 			"green" : self.keyPageNumber
 		}, -1)
-		
+
 		self['title'] = Label("Pornerbros.com")
 		self['name'] = Label("Film Auswahl")
 		self['views'] = Label("")
@@ -243,7 +243,7 @@ class pornerbrosFilmScreen(Screen):
 		self['name'].setText(ptTitle)
 		self['runtime'].setText(ptRuntime)
 		self['views'].setText(ptViews)
-		
+
 	def ptRead(self, stationIconLink):
 		downloadPage(stationIconLink, "/tmp/xhIcon.jpg").addCallback(self.ptCoverShow)
 
@@ -263,7 +263,7 @@ class pornerbrosFilmScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-	
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -272,7 +272,7 @@ class pornerbrosFilmScreen(Screen):
 		xhTitle = self['genreList'].getCurrent()[0][0]
             	data = urllib.urlopen(xhLink).read()
             	xhStream = re.findall("url.*?escape.*?'(.*?)'", data, re.S)
-		
+
 		if xhStream:
 			sref = eServiceReference(0x1001, 0, xhStream[0])
 			sref.setName(xhTitle)
@@ -303,7 +303,7 @@ class pornerbrosFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -311,30 +311,30 @@ class pornerbrosFilmScreen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyCancel(self):
 		self.close()

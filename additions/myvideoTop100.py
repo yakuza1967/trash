@@ -20,7 +20,7 @@ class myvideoTop100GenreScreen(Screen):
 
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -59,13 +59,13 @@ class myvideoTop100GenreScreen(Screen):
 
 		self.onLayoutFinish.append(self.loadPage)
 
-	def loadPage(self):	
+	def loadPage(self):
 		self.genreliste = [('Top100 Single Charts',"http://www.myvideo.de/Top_100/Top_100_Single_Charts"),
 							('Top100 Pop',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Pop"),
 							('Top100 Rock',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Rock"),
 							('Top100 Rap & RnB',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Rap/R%26B"),
 							('Top100 Diverse',"http://www.myvideo.de/Musik/Musik_Charts/Top_100_Diverse")]
-			
+
 		self.chooseMenuList.setList(map(myvideoTop100GenreListEntry, self.genreliste))
 		self.keyLocked = False
 

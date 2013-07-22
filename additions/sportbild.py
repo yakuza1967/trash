@@ -4,9 +4,9 @@ def sportBildListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class sportBildScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/sportBildScreen.xml" % config.mediaportal.skin.value
@@ -16,9 +16,9 @@ class sportBildScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -29,7 +29,7 @@ class sportBildScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.page = 0
 		self['title'] = Label("SportBild.de")
@@ -45,13 +45,13 @@ class sportBildScreen(Screen):
 		self['roflList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://sportbild.bild.de/SPORT/video/clip/video-home/teaser-alle-videos,templateId=renderVideoChannelList,page=%s,rootDocumentId=13275342.html" % str(self.page)
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		spVideos = re.findall('<a href="(/SPORT/video.*?)" target="btobody"><img src="(.*?.jpg)".*?<div class="bdeVideoDachzeile">(.*?)</div>.*?<div class="bdeVideoTeaser11 bdeVideoTime">(.*?)</div>.*?<div class="bdeVideoTeaser11 bdeVideoDate">(.*?)</div>', data, re.S)
 		print spVideos
@@ -66,7 +66,7 @@ class sportBildScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def showPic(self):
 		spTitle = self['roflList'].getCurrent()[0][0]
 		spPicLink = self['roflList'].getCurrent()[0][2]
@@ -77,7 +77,7 @@ class sportBildScreen(Screen):
 		self['date'].setText(spDate)
 		self['runtime'].setText(spRuntime)
 		downloadPage(spPicLink, "/tmp/spPic.jpg").addCallback(self.roflCoverShow)
-		
+
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/spPic.jpg"):
 			self['roflPic'].instance.setPixmap(gPixmapPtr())
@@ -99,38 +99,38 @@ class sportBildScreen(Screen):
 		if not self.page < 1:
 			self.page -= 1
 			self.loadPage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['roflList'].pageUp()
 		self.showPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['roflList'].pageDown()
 		self.showPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['roflList'].up()
 		self.showPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['roflList'].down()
 		self.showPic()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return

@@ -19,7 +19,7 @@ class MTVdeChartsGenreScreen(Screen):
 
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -58,7 +58,7 @@ class MTVdeChartsGenreScreen(Screen):
 
 		self.onLayoutFinish.append(self.loadPage)
 
-	def loadPage(self):	
+	def loadPage(self):
 		self.genreliste = [('German Top100 Single Charts',"http://www.mtv.de/charts/5-hitlist-germany-top-100"),
 							('MTV.de Video Charts',"http://www.mtv.de/musikvideos/11-mtv-de-videocharts/playlist"),
 							('German Black Charts',"http://www.mtv.de/charts/9-deutsche-black-charts"),
@@ -79,7 +79,7 @@ class MTVdeChartsGenreScreen(Screen):
 	def keyCancel(self):
 		self.close()
 
-class MTVdeChartsSongListeScreen(Screen):		
+class MTVdeChartsSongListeScreen(Screen):
 
 	def __init__(self, session, genreName, genreLink):
 		self.session = session

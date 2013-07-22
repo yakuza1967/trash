@@ -40,10 +40,10 @@ class PlayHttpMovie(Screen):
 			self.referer = "--header 'Referer: %s'" % self.referer_val
 		else:
 			self.referer = ''
-		
+
 		self.useragent = "QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)"
 		self.useragent_header = "--user-agent '%s'" % self.useragent
-		
+
 		self.streamactive = False
 		self.isVisible = True
 
@@ -68,9 +68,9 @@ class PlayHttpMovie(Screen):
 
 		if filesize is None:
 			filesize = 0
-			
+
 		self.filesize = int(filesize) # in bytes
-		
+
 		self.timeleft = ""
 		self.dummyfilesize = False
 		self.lastcmddata = None
@@ -110,10 +110,10 @@ class PlayHttpMovie(Screen):
 		if not fileExists("/usr/bin/wget"):
 			message = self.session.open(MessageBox, _("WGET is required for playback of this stream, please install it first."), MessageBox.TYPE_INFO, timeout=10)
 			self.exit()
-			
+
 		if not self.checkStoragePath():
 			self.exit()
-			
+
 		self.copyfile()
 
 	def okbuttonClick(self):
@@ -139,7 +139,7 @@ class PlayHttpMovie(Screen):
 			return False
 		else:
 			return True
-		
+
 	def UpdateStatus(self):
 		#print "UpdateStatus:"
 		if fileExists(self.moviepath, 'r'):
@@ -176,7 +176,7 @@ class PlayHttpMovie(Screen):
 		if timeleft > 0:
 			self.timeleft = str(datetime.timedelta(seconds=timeleft))
 			print "self.timeleft2: ",self.timeleft
-			
+
 		self["label_speed"].setText("Speed: " + str(transferspeed) + " KBit/s")
 		self["label_progress"].setText("Progress: " + str(self.localsize >> 20) + "MB of " + str(self.filesize >> 20) + "MB (" + str(self.progressperc) + "%)")
 		self["label_timeleft"].setText("Time left: " + self.timeleft)

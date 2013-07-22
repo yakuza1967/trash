@@ -27,7 +27,7 @@ class get_stream_link:
 		print "check_link"
 		self._callback = got_link
 		self.showmsgbox = showmsgbox
-		if data:		
+		if data:
 			if re.match(".*?http://www.putlocker.com/(file|embed)/", data, re.S):
 				link = data.replace('file','embed')
 				#print "ok:", link
@@ -73,7 +73,7 @@ class get_stream_link:
 			elif re.match('.*?http://www.uploadc.com', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.uploadc, link).addErrback(self.errorload)							
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.uploadc, link).addErrback(self.errorload)
 
 			elif re.match('.*?http://vreer.com', data, re.S):
 				link = data
@@ -83,12 +83,12 @@ class get_stream_link:
 			elif re.match('.*?http://www.monsteruploads.eu', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.monsteruploads, link).addErrback(self.errorload)			
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.monsteruploads, link).addErrback(self.errorload)
 
 			elif re.match('.*?flashstream.in', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashstream).addErrback(self.errorload)			
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashstream).addErrback(self.errorload)
 
 			elif re.match('.*?ginbig.com', data, re.S):
 				link = data
@@ -113,7 +113,7 @@ class get_stream_link:
 			elif re.match('.*divxstage', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.divxstage).addErrback(self.errorload)				
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.divxstage).addErrback(self.errorload)
 
 			elif re.match('.*?yesload.net', data, re.S):
 				link = data
@@ -151,7 +151,7 @@ class get_stream_link:
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.check_istream_link).addErrback(self.errorload)
-				
+
 			elif re.match('.*?http:/.*?flashx.tv', data, re.S):
 			#elif re.match('.*?http:/disabled', data, re.S):
 				link = data
@@ -181,7 +181,7 @@ class get_stream_link:
 				else:
 					print "flashx_tv link not found: ",link
 					self.stream_not_found()
-					
+
 			elif re.match('.*?putme.org', data, re.S):
 				link = data
 				#print link
@@ -214,9 +214,9 @@ class get_stream_link:
 
 			elif re.match('.*?userporn.com', data, re.S):
 				link = data
-				#print link 
+				#print link
 				self.userporn_tv(link)
-				
+
 			elif re.match('.*?ecostream.tv', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.errorload)
@@ -232,7 +232,7 @@ class get_stream_link:
 			elif re.match('.*?limevideo.net', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.lmv, link).addErrback(self.errorload)
-			
+
 			elif re.match('.*?videomega.tv', data, re.S):
 				link = data
 				if re.match('.*?iframe.php', link):
@@ -244,11 +244,11 @@ class get_stream_link:
 						getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.videomega).addErrback(self.errorload)
 					else:
 						self.stream_not_found()
-				
+
 			elif re.match('.*?vk.com', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vkme).addErrback(self.errorload)
-				
+
 			elif re.match('.*?mightyupload.com/embed', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)
@@ -258,21 +258,21 @@ class get_stream_link:
 				id = link.split('/')
 				url = "http://www.mightyupload.com/embed-%s.html" % id[3]
 				print url
-				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)				
+				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)
 
 			elif re.match('.*?http://youwatch.org', data, re.S):
 				link = data
 				id = link.split('org/')
 				url = "http://youwatch.org/embed-%s.html" % id[1]
 				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.youwatch).addErrback(self.errorload)
-					
+
 			else:
 				message = self.session.open(MessageBox, _("No supported Stream Hoster, try another one !"), MessageBox.TYPE_INFO, timeout=5)
 		else:
 			print "Invalid link",link
 			if self.showmsgbox:
 				message = self.session.open(MessageBox, _("Invalid Stream link, try another Stream Hoster !"), MessageBox.TYPE_INFO, timeout=5)
-				
+
 	def stream_not_found(self):
 		self._callback(None)
 		print "stream_not_found!"
@@ -286,7 +286,7 @@ class get_stream_link:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-	
+
 	def mightyupload(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -316,7 +316,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-			
+
 	def vkme(self, data):
 		print "vk.me.."
 		stream_urls = re.findall('url[0-9]+=(http://.*?.vk.me/.*?/videos/.*?[0-9]+.mp4)', data)
@@ -328,7 +328,7 @@ class get_stream_link:
 		else:
 			self.stream_not_found()
 
-	def videomega(self, data):		
+	def videomega(self, data):
 		unescape = re.findall('unescape."(.*?)"', data, re.S)
 		if unescape:
 			javadata = urllib2.unquote(unescape[0])
@@ -343,7 +343,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-		
+
 	def lmv(self, data, url):
 		dataPost = {}
 		r = re.findall('input type="hidden".*?name="(.*?)".*?value="(.*?)"', data, re.S)
@@ -361,7 +361,7 @@ class get_stream_link:
 			dataPost.update({'method_free':'Continue to Video'})
 		print dataPost
 		getPage(url, method='POST', postdata=urlencode(dataPost), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.lmvPlay).addErrback(self.errorload)
-	
+
 	def lmvPlay(self, data):
 		print data
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
@@ -399,7 +399,7 @@ class get_stream_link:
 			self._callback(file[0])
 		else:
 			self.stream_not_found()
-			
+
 	def played(self, data, url):
 		print "hole daten"
 		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
@@ -416,17 +416,17 @@ class get_stream_link:
 				'referer': "",
 				'hash': hash[0],
 				'usr_login': ""})
-				
-			print info	
+
+			print info
 			getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.played_data2).addErrback(self.errorload)
 			#reactor.callLater(5, self.played_data, url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
 		else:
-			self.stream_not_found()		
+			self.stream_not_found()
 
 	def played_data(self, *args, **kwargs):
 		print "drin"
 		getPage(*args, **kwargs).addCallback(self.played_data2).addErrback(self.errorload)
-		
+
 	def played_data2(self, data):
 		print data
 		stream_url = re.findall('file: "(.*?)"', data, re.S)
@@ -435,7 +435,7 @@ class get_stream_link:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-	
+
 	def eco_read(self, data):
 		post_url = re.findall('<form name="setss" method="post" action="(.*?)">', data, re.S)
 		if post_url:
@@ -444,7 +444,7 @@ class get_stream_link:
 			getPage(post_url[0], method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_post).addErrback(self.errorload)
 		else:
 			self.stream_not_found()
-		
+
 	def eco_post(self, data):
 		url = "http://www.ecostream.tv/assets/js/common.js"
 		data2 = urllib.urlopen(url).read()
@@ -470,7 +470,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-			
+
 	def eco_final(self, data):
 		print "final gefunden"
 		stream_url = re.findall('flashvars="file=(.*?)&', data)
@@ -481,7 +481,7 @@ class get_stream_link:
 			self._callback(kkStreamUrl)
 		else:
 			self.stream_not_found()
-			
+
 	def zooupload(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -511,7 +511,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-						
+
 	def wupfile_post(self, data, url):
 		print "hole daten"
 		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
@@ -526,12 +526,12 @@ class get_stream_link:
 				'op': "download1",
 				'referer': "",
 				'usr_login': ""})
-				
-			print info	
+
+			print info
 			getPage(url, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.wupfile_data).addErrback(self.errorload)
 		else:
 			self.stream_not_found()
-	
+
 	def wupfile_data(self, data):
 		print "hole streamlink"
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
@@ -562,7 +562,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-	
+
 	def sharesix(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -593,9 +593,9 @@ class get_stream_link:
 			else:
 				self.stream_not_found()
 		else:
-			self.stream_not_found()				
-			
-	
+			self.stream_not_found()
+
+
 	def divxmov(self, data):
 		stream_url = re.findall('<embed type="video/divx" src="(.*?)"', data, re.S)
 		if stream_url:
@@ -611,12 +611,12 @@ class get_stream_link:
 			for name, value in r:
 				dataPost[name] = value
 				dataPost.update({'method_free':'Continue to Video'})
-				
+
 			print dataPost
 			getPage(url, method='POST', cookies=cj, postdata=urlencode(dataPost), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.putme_org_post, url).addErrback(self.errorload)
 		else:
 			self.stream_not_found()
-			
+
 	def putme_org_post(self, data, url):
 		print "hole post infos2"
 		dataPost = {}
@@ -625,12 +625,12 @@ class get_stream_link:
 			for name, value in r:
 				dataPost[name] = value
 				dataPost.update({'method_free':'Continue to Video'})
-				
+
 			print dataPost
 			getPage(url, method='POST', postdata=urlencode(dataPost), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.putme_org_data).addErrback(self.errorload)
 		else:
 			self.stream_not_found()
-		
+
 	def putme_org_data(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -648,7 +648,7 @@ class get_stream_link:
 						self._callback(stream_url[0].replace('0://','http://'))
 					else:
 						self.stream_not_found()
-						
+
 				elif re.match(".*?file:", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("file:'(.*?)'", sUnpacked)
@@ -657,7 +657,7 @@ class get_stream_link:
 						self._callback(stream_url[0].replace('0://','http://'))
 					else:
 						self.stream_not_found()
-						
+
 				elif re.match('.*?value="src=', sUnpacked):
 					stream_url = re.findall('value="src=(.*?flv)&', sUnpacked)
 					if stream_url:
@@ -670,8 +670,8 @@ class get_stream_link:
 			else:
 				self.stream_not_found()
 		else:
-			self.stream_not_found()				
-	
+			self.stream_not_found()
+
 	def errorload(self, error):
 		print "[streams]:", error
 		self.stream_not_found()
@@ -682,7 +682,7 @@ class get_stream_link:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-			
+
 	def flashx_tv2(self, data):
 		print "flashx_tv2: ",data
 		hash = re.findall('http://play.flashx.tv/player/fxtv.php.hash=(.*?)&', data, re.S)
@@ -691,7 +691,7 @@ class get_stream_link:
 			#print url
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashx_tv).addErrback(self.errorload)
 		else:
-			self.stream_not_found()			
+			self.stream_not_found()
 
 	def flashx_tv3(self, link):
 		print "flashx_tv3: ",link
@@ -701,15 +701,15 @@ class get_stream_link:
 			self._callback(stream_url)
 		else:
 			self.stream_not_found()
-		
+
 	def flashx_tv3b(self, data):
 		stream_url = re.findall('id="normal_player_cont">.*?src="(.*?)"', data, re.S)
 		if stream_url:
 			self.flashx_tv3(stream_url[0])
 		else:
 			self.stream_not_found()
-		
-		
+
+
 	def vidstream_in(self, data, url):
 		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
 		fname = re.findall('type="hidden" name="fname".*?value="(.*?)"', data, re.S)
@@ -725,14 +725,14 @@ class get_stream_link:
 	def vidstream_in_getPage(self, *args, **kwargs):
 		print "drin"
 		getPage(*args, **kwargs).addCallback(self.vidstream_in_data).addErrback(self.errorload)
-			
+
 	def vidstream_in_data(self, data):
 		stream_url = re.findall('file: "(.*?)"', data, re.S)
 		if stream_url:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-			
+
 	def vidstream_us(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -759,23 +759,23 @@ class get_stream_link:
 			else:
 				self.stream_not_found()
 		else:
-			self.stream_not_found()			
-	
-	
+			self.stream_not_found()
+
+
 	def primeshare(self, data, url):
 		hash = re.findall('<input type="hidden".*?name="hash".*?value="(.*?)"', data)
 		if hash:
-			info = urlencode({'hash': hash[0]})	
+			info = urlencode({'hash': hash[0]})
 			print info
 			reactor.callLater(16, self.primeshare_getPage, url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
 			message = self.session.open(MessageBox, _("Stream startet in 16 sec."), MessageBox.TYPE_INFO, timeout=16)
-		else:	
+		else:
 			self.stream_not_found()
 
 	def primeshare_getPage(self, *args, **kwargs):
 		print "drin"
 		getPage(*args, **kwargs).addCallback(self.primeshare_data).addErrback(self.errorload)
-		
+
 	def primeshare_data(self, data):
 		print data
 		stream_url = re.findall('file: \'(.*?)\'', data, re.S)
@@ -788,7 +788,7 @@ class get_stream_link:
 				self._callback(stream_url[0])
 			else:
 				self.stream_not_found()
-		
+
 	def faststream(self, data, url):
 		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
 		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
@@ -804,31 +804,31 @@ class get_stream_link:
 				'op':"download1",
 				'referer': "",
 				'usr_login': ""})
-				
+
 			print info
 			reactor.callLater(5, self.faststream_getPage, url, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
 			message = self.session.open(MessageBox, _("Stream startet in 6 sec."), MessageBox.TYPE_INFO, timeout=6)
-		else:	
+		else:
 			self.stream_not_found()
 
 	def faststream_getPage(self, *args, **kwargs):
 		print "drin"
 		getPage(*args, **kwargs).addCallback(self.faststream_data).addErrback(self.errorload)
-		
+
 	def faststream_data(self, data):
 		stream_url = re.findall('file: "(.*?)"', data, re.S)
 		if stream_url:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-			
+
 	def yesload(self, data):
 		stream_url = re.findall('url=(.*?.flv)', data)
 		if stream_url:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-				
+
 	def videoweed(self, data):
 		print "drin okdf"
 		r = re.search('flashvars.domain="(.+?)".*flashvars.file="(.+?)".*' + 'flashvars.filekey="(.+?)"', data, re.DOTALL)
@@ -858,7 +858,7 @@ class get_stream_link:
 		file = re.findall('flashvars.file="(.*?)"', data)
 		key = re.findall('flashvars.filekey="(.*?)"', data)
 		if file and key:
-			url = "http://www.novamov.com/api/player.api.php?file=%s&key=%s" % (file[0], key[0])	
+			url = "http://www.novamov.com/api/player.api.php?file=%s&key=%s" % (file[0], key[0])
 			aage = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.2.17) Gecko/20110420 Firefox/3.6.17"
 			getPage(url, agent=aage, method='GET').addCallback(self.novamov_data).addErrback(self.errorload)
 		else:
@@ -871,7 +871,7 @@ class get_stream_link:
 			print stream_url
 			self._callback(stream_url)
 		else:
-			self.stream_not_found()			
+			self.stream_not_found()
 
 	def divxstage(self, data):
 		print "divxstage drin"
@@ -885,11 +885,11 @@ class get_stream_link:
 		else:
 			print "ja"
 			self.stream_not_found()
-			
+
 	def movshare(self, data, url):
 		info = {}
 		getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare_post).addErrback(self.errorload)
-			
+
 	def movshare_post(self, data):
 		print "movshare drin"
 		file = re.findall('flashvars.file="(.*?)"', data, re.S)
@@ -937,8 +937,8 @@ class get_stream_link:
 			else:
 				self.stream_not_found()
 		else:
-			self.stream_not_found()		
-			
+			self.stream_not_found()
+
 	def ginbig_flashstream(self, data, url):
 		op = re.findall('<input type="hidden" name="op" value="(.*?)">', data, re.S)
 		id = re.findall('<input type="hidden" name="id" value="(.*?)">', data, re.S)
@@ -964,7 +964,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-			
+
 	def monsteruploads(self, data, url):
 		if not re.match('.*?eval\(function\(p\,a\,c\,k\,e\,d', data, re.S):
 			id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
@@ -979,9 +979,9 @@ class get_stream_link:
 				'method_free':  "Kostenloser Download"
 				})
 			getPage(url, method='POST', postdata = info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.monsteruploads_post).addErrback(self.errorload)
-			
+
 		else:
-		
+
 			get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 			if get_packedjava:
 				sJavascript = get_packedjava[1]
@@ -990,14 +990,14 @@ class get_stream_link:
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
 						print stream_url[0]
-						self._callback(stream_url[0])		
+						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
 				else:
 					self.stream_not_found()
 			else:
 				self.stream_not_found()
-				
+
 	def	monsteruploads_post(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -1024,7 +1024,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-			
+
 	def vreer(self, data, url):
 		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
 		fname = re.findall('type="hidden" name="fname".*?value="(.*?)"', data, re.S)
@@ -1033,26 +1033,26 @@ class get_stream_link:
 		if id and fname and hash and referer:
 			post_data = urlencode({'op': "download2", 'usr_login': "", 'id': id[0], 'fname': fname[0], 'hash': hash[0], 'referer': "", 'method_free': "Free Download"})
 			getPage(url, method='POST', postdata = post_data, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vreer_post).addErrback(self.errorload)
-			
+
 		else:
 			self.stream_not_found()
-		
+
 	def vreer_post(self, data):
 		if re.match('.*?video.flv', data, re.S):
 			stream_url = re.findall('file:."(.*?)"', data, re.S)
 			if stream_url:
 				print stream_url[0]
 				self._callback(stream_url[0])
-				
+
 			else:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-			
+
 	def uploadc(self, data, url):
 		ipcount_val = re.findall('<input type="hidden" name="ipcount_val".*?value="(.*?)">', data)
 		id = re.findall('<input type="hidden" name="id".*?value="(.*?)">', data)
-		fname = re.findall('<input type="hidden" name="fname".*?alue="(.*?)">', data)	
+		fname = re.findall('<input type="hidden" name="fname".*?alue="(.*?)">', data)
 		if id and fname and ipcount_val:
 			post_data = urllib.urlencode({'ipcount_val' : ipcount_val[0], 'op' : 'download2', 'usr_login' : '', 'id' : id[0], 'fname' : fname[0], 'method_free' : 'Slow access'})
 			print post_data
@@ -1068,7 +1068,7 @@ class get_stream_link:
 		if stream:
 			print stream
 			self._callback(stream[0])
-			
+
 		elif get_packedjava:
 			sJavascript = get_packedjava[1]
 			print sJavascript
@@ -1101,8 +1101,8 @@ class get_stream_link:
 			stream_url = rapi.group(1)
 			self._callback(stream_url)
 		else:
-			self.stream_not_found()		
-		
+			self.stream_not_found()
+
 	def xvidstream(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -1112,14 +1112,14 @@ class get_stream_link:
 				stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 				if stream_url:
 					print stream_url[0]
-					self._callback(stream_url[0])		
+					self._callback(stream_url[0])
 				else:
 					self.stream_not_found()
 			else:
 				self.stream_not_found()
 		else:
-			self.stream_not_found()	
-	
+			self.stream_not_found()
+
 	def movreel_data(self, data, url):
 		id = re.findall('<input type="hidden" name="id".*?value="(.*?)">', data)
 		fname = re.findall('<input type="hidden" name="fname".*?value="(.*?)">', data)
@@ -1128,7 +1128,7 @@ class get_stream_link:
 			getPage(url, method='POST', postdata = post_data, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movreel_post_data, url, fname[0]).addErrback(self.errorload)
 		else:
 			self.stream_not_found()
-			
+
 	def movreel_post_data(self, data, url, fname):
 		id = re.findall('<input type="hidden" name="id".*?value="(.*?)">', data)
 		rand = re.findall('<input type="hidden" name="rand".*?value="(.*?)">', data)
@@ -1137,14 +1137,14 @@ class get_stream_link:
 			getPage(url, method='POST', postdata = post_data, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movreel_post_data2, fname).addErrback(self.errorload)
 		else:
 			self.stream_not_found()
-			
+
 	def movreel_post_data2(self, data, fname):
 		stream_url = re.findall("var file_link = '(.*?)'", data, re.S)
 		if stream_url:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-			
+
 	def filenuke(self, data, url):
 		print "drin "
 		id = re.findall('<input type="hidden" name="id".*?value="(.*?)">', data)
@@ -1183,12 +1183,12 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-		
+
 	def streamPutlockerSockshare(self, data, url, provider):
 		if re.match('.*?File Does not Exist', data, re.S):
 			message = self.session.open(MessageBox, "File Does not Exist, or Has Been Removed", MessageBox.TYPE_INFO, timeout=5)
 		elif re.match('.*?Encoding to enable streaming is in progresss', data, re.S):
-			message = self.session.open(MessageBox, "Encoding to enable streaming is in progresss. Try again soon.", MessageBox.TYPE_INFO, timeout=5)			
+			message = self.session.open(MessageBox, "Encoding to enable streaming is in progresss. Try again soon.", MessageBox.TYPE_INFO, timeout=5)
 		else:
 			print "provider:", provider
 			enter = re.findall('<input type="hidden" value="(.*?)" name="fuck_you">', data)
@@ -1297,7 +1297,7 @@ class get_stream_link:
 				self.stream_not_found()
 		else:
 			self.stream_not_found()
-			
+
 	def bitshare(self, data):
 		stream_url = re.findall('(url: |src=)\'(.*?.avi|.*?.mp4)\'', data)
 		if stream_url:
@@ -1306,7 +1306,7 @@ class get_stream_link:
 			self.session.open(MessageBox, _("Stream startet in 6 sec."), MessageBox.TYPE_INFO, timeout=6)
 		else:
 			self.stream_not_found()
-			
+
 	def bitshare_start(self, link):
 		#print "bs_start: ",link
 		self._callback(link)
@@ -1322,4 +1322,3 @@ class get_stream_link:
 
 	def check_istream_link(self, data):
 		self.check_link(data, self._callback)
-				

@@ -1,13 +1,13 @@
-""" 
+"""
 	Created on Apr 7, 2013
 	@author: space-hunter
 	v0.1
-	
+
 	userporn.com video resolver for enigma
-	
+
 	thanks to urlresolver XBMC Addon by t0mm0
 	https://github.com/Eldorados/script.module.urlresolver
-	
+
 	Aufruf:
 	import Userporn..
 	...
@@ -15,9 +15,8 @@
 	url = http://userporn.com/player_control/settings.php?v=gDqph2lvGrJd&em=TRUE&
 	url = http://userporn.com/watch_video.php?v=gDqph2lvGrJd
 	...get_media_url(link)
-	
-"""
 
+"""
 import re
 import urllib2
 from cookielib import CookieJar
@@ -41,7 +40,7 @@ class Userporn(object):
 			print "HTTP Error: ",e
 		except urllib2.URLError, e:
 			print "URL Error: ",e
-		
+
 		if not decode:
 			return data
 		if data != None:
@@ -52,7 +51,7 @@ class Userporn(object):
 				html = self.__decodeX(c,x)
 				return html
 		return data
-	
+
 	def get_media_url(self, url):
 		host_and_id = self.get_host_and_id(url)
 		host = host_and_id[0]
@@ -65,13 +64,13 @@ class Userporn(object):
 		except urllib2.URLError, e:
 			print 'userporn: got http error %d fetching %s' % (e.code, json_url)
 			return False
-	
+
 		# find highest quality URL
 		max_res = 99999
 #		max_res = [240, 480, 99999][int(self.get_setting('q'))]
 		r = re.finditer('"l".*?:.*?"(.+?)".+?"u".*?:.*?"(.+?)"', json)
 		chosen_res = 0
-			
+
 		if r:
 			for match in r:
 				res, url = match.groups()
@@ -82,7 +81,7 @@ class Userporn(object):
 					chosen_res = res
 				else:
 					print 'userporn: streamres not found'
-					return False	
+					return False
 		else:
 			print 'userporn: stream url part1 not found'
 			return False
@@ -93,7 +92,7 @@ class Userporn(object):
 		except:
 			print 'userporn: ERROR'
 			return False
-	
+
 		# Try to load the datas from json.
 		aData = loads(json)
 		# Decode the link from the json data settings
@@ -121,14 +120,14 @@ class Userporn(object):
 				sLink = sLink + item[0] + '=' + self.__decrypt(aData["settings"]["login_status"]["euno"], aData["settings"]["login_status"]["pepper"], key, 10, 12254, 95369, 39, 21544, 545555) + '&'
 			elif(int(item[1]) == 6):
 				sLink = sLink + item[0] + '=' + self.__decrypt(aData["settings"]["login_status"]["sugar"], aData["settings"]["banner"]["lightbox2"]["time"], key, 22, 66595, 17447, 52, 66852, 400595) + '&'
-		
+
 		sLink = sLink + "start=0"
 		stream_url = stream_url_part1 + '&' + sLink
 		return stream_url
-		
+
 	def get_url(self, host, media_id):
 		return 'http://userporn.com/video/%s' % media_id
-		
+
 	def get_host_and_id(self, url):
 		r = re.search('//(.+?)/(?:e/|video/|watch_video.php\?v=)([0-9a-zA-Z]+)', url)
 		if r:
@@ -137,10 +136,10 @@ class Userporn(object):
 			return False
 
 	def valid_url(self, url, host):
-		return re.match('http://(www.)?userporn.com/' + 
-						'(e/|video/|watch_video.php\?v=)' + 
+		return re.match('http://(www.)?userporn.com/' +
+						'(e/|video/|watch_video.php\?v=)' +
 						'[0-9A-Za-z]+', url) or 'userporn' in host
-	
+
 	def __decrypt(self, str1, k1, k2, p4=11, p5=77213, p6=81371, p7=17, p8=92717, p9=192811):
 		tobin = self.hex2bin(str1, len(str1) * 4)
 		tobin_lenght = len(tobin)

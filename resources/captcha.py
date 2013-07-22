@@ -18,7 +18,7 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 	key_shift_sel = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/vkey_shift_sel.png"))
 	key_space = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/vkey_space.png"))
 	res = [ (keys) ]
-	
+
 	x = 0
 	count = 0
 	if shiftMode:
@@ -49,14 +49,14 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 		#	res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(45, 45), png=key_left))
 		#elif key == "->":
 		#	res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(45, 45), png=key_right))
-		
+
 		else:
 			width = key_bg.size().width()
 			res.extend((
 				MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_bg),
 				MultiContentEntryText(pos=(x, 0), size=(width, 45), font=0, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER)
 			))
-		
+
 		if selectedKey == count:
 			width = key_sel.size().width()
 			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_sel))
@@ -66,7 +66,7 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 		else:
 			x += 45
 		count += 1
-	
+
 	return res
 
 
@@ -86,7 +86,7 @@ class VirtualKeyBoardmod(Screen):
 		<widget name="list" position="72,330" size="696,250" selectionDisabled="1" transparent="1" />
 		<widget name="coverArt" position="920,130" size="256,256" transparent="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt.png" alphatest="blend" />
 	  </screen>"""
-		  
+
 	def __init__(self, session, title="", text=""):
 		Screen.__init__(self, session)
 		self.keys_list = []
@@ -96,13 +96,13 @@ class VirtualKeyBoardmod(Screen):
 		self.shiftMode = False
 		self.text = text
 		self.selectedKey = 0
-		
+
 		self['coverArt'] = Pixmap()
 		self["country"] = StaticText("")
 		self["header"] = Label(title)
 		self["text"] = Label(self.text)
 		self["list"] = VirtualKeyBoardList([])
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "WizardActions", "ColorActions", "KeyboardInputActions", "InputBoxActions", "InputAsciiActions"],
 			{
 				"gotAsciiCode": self.keyGotAscii,
@@ -116,7 +116,7 @@ class VirtualKeyBoardmod(Screen):
 				"green": self.ok,
 				"yellow": self.switchLang,
 				"deleteBackward": self.backClicked,
-				"back": self.exit				
+				"back": self.exit
 			}, -2)
 		self.setLang()
 		self.onExecBegin.append(self.setKeyboardModeAscii)
@@ -141,7 +141,7 @@ class VirtualKeyBoardmod(Screen):
 				print "fehler"
 		else:
 			print "bild nicht vorhanden"
-					
+
 	def switchLang(self):
 		self.lang = self.nextLang
 		self.setLang()
@@ -248,13 +248,13 @@ class VirtualKeyBoardmod(Screen):
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"OK"]]
 			self.lang = 'en_EN'
-			self.nextLang = 'de_DE'		
+			self.nextLang = 'de_DE'
 		self["country"].setText(self.lang)
 		self.max_key=47+len(self.keys_list[4])
 
 	def buildVirtualKeyBoard(self, selectedKey=0):
 		list = []
-		
+
 		if self.shiftMode:
 			self.k_list = self.shiftkeys_list
 			for keys in self.k_list:
@@ -273,9 +273,9 @@ class VirtualKeyBoardmod(Screen):
 				else:
 					list.append(VirtualKeyBoardEntryComponent(keys, -1))
 				selectedKey -= keyslen
-		
+
 		self["list"].setList(list)
-	
+
 	def backClicked(self):
 		self.text = self["text"].getText()[:-1]
 		self["text"].setText(self.text)
@@ -285,7 +285,7 @@ class VirtualKeyBoardmod(Screen):
 			list = self.shiftkeys_list
 		else:
 			list = self.keys_list
-		
+
 		selectedKey = self.selectedKey
 
 		text = None
@@ -306,30 +306,30 @@ class VirtualKeyBoardmod(Screen):
 
 		if text == "EXIT":
 			self.close(None)
-		
+
 		elif text == "BACKSPACE":
 			self.text = self["text"].getText()[:-1]
 			self["text"].setText(self.text)
-		
+
 		elif text == "CLEAR":
 			self.text = ""
 			self["text"].setText(self.text)
-		
+
 		elif text == "SHIFT":
 			if self.shiftMode:
 				self.shiftMode = False
 			else:
 				self.shiftMode = True
-			
+
 			self.buildVirtualKeyBoard(self.selectedKey)
-		
+
 		elif text == "SPACE":
 			self.text += " "
 			self["text"].setText(self.text)
-		
+
 		elif text == "OK":
 			self.close(self["text"].getText())
-		
+
 		else:
 			self.text = self["text"].getText()
 			self.text += text
@@ -343,7 +343,7 @@ class VirtualKeyBoardmod(Screen):
 
 	def left(self):
 		self.selectedKey -= 1
-		
+
 		if self.selectedKey == -1:
 			self.selectedKey = 11
 		elif self.selectedKey == 11:
@@ -354,12 +354,12 @@ class VirtualKeyBoardmod(Screen):
 			self.selectedKey = 47
 		elif self.selectedKey == 47:
 			self.selectedKey = self.max_key
-		
+
 		self.showActiveKey()
 
 	def right(self):
 		self.selectedKey += 1
-		
+
 		if self.selectedKey == 12:
 			self.selectedKey = 0
 		elif self.selectedKey == 24:
@@ -370,27 +370,27 @@ class VirtualKeyBoardmod(Screen):
 			self.selectedKey = 36
 		elif self.selectedKey > self.max_key:
 			self.selectedKey = 48
-		
+
 		self.showActiveKey()
 
 	def up(self):
 		self.selectedKey -= 12
-		
+
 		if (self.selectedKey < 0) and (self.selectedKey > (self.max_key-60)):
 			self.selectedKey += 48
 		elif self.selectedKey < 0:
-			self.selectedKey += 60	
-		
+			self.selectedKey += 60
+
 		self.showActiveKey()
 
 	def down(self):
 		self.selectedKey += 12
-		
+
 		if (self.selectedKey > self.max_key) and (self.selectedKey > 59):
 			self.selectedKey -= 60
 		elif self.selectedKey > self.max_key:
 			self.selectedKey -= 48
-		
+
 		self.showActiveKey()
 
 	def showActiveKey(self):
@@ -414,7 +414,7 @@ class VirtualKeyBoardmod(Screen):
 			list = self.shiftkeys_list
 		else:
 			self.shiftMode = False
-			list = self.keys_list	
+			list = self.keys_list
 
 		if char == " ":
 			char = "SPACE"

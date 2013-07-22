@@ -4,19 +4,19 @@ def cinestreamListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 850, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def cinestreamStreamsListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 850, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
 
 class cinestreamFilmListeScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -24,9 +24,9 @@ class cinestreamFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -37,7 +37,7 @@ class cinestreamFilmListeScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("Cinestream.cc")
@@ -55,7 +55,7 @@ class cinestreamFilmListeScreen(Screen):
 		self['Page'] = Label("Page")
 		self['page'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -63,12 +63,12 @@ class cinestreamFilmListeScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://cinestream.cc/page/%s/" % str(self.page)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		lastparse = re.search('class="pagesList"(.*?)class="turn"', data, re.S)
 		countp = re.findall('href=.*>([0-9]+)<', lastparse.group(1), re.S)
@@ -91,7 +91,7 @@ class cinestreamFilmListeScreen(Screen):
 		handlung = self['liste'].getCurrent()[0][3]
 		self['handlung'].setText(handlung)
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -120,19 +120,19 @@ class cinestreamFilmListeScreen(Screen):
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -144,7 +144,7 @@ class cinestreamFilmListeScreen(Screen):
 			return
 		self['liste'].down()
 		self.loadPic()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -155,16 +155,16 @@ class cinestreamFilmListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class cinestreamStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, filmtitle, filmlink):
 		self.session = session
 		self.filmlink = filmlink
 		self.filmtitle = filmtitle
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -172,14 +172,14 @@ class cinestreamStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("Cinestream.cc")
 		self['ContentTitle'] = Label("Streams von %s" % self.filmtitle)
@@ -196,7 +196,7 @@ class cinestreamStreamListeScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -204,11 +204,11 @@ class cinestreamStreamListeScreen(Screen):
 		self['liste'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		getPage(self.filmlink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		streams = re.findall('<div class="storybottom">.*?value="(.*?)".*?<div class="streambox".*?[<iframe|<a href].*?="(http://.*?)"',data, re.S)
 		if streams:
@@ -228,7 +228,7 @@ class cinestreamStreamListeScreen(Screen):
 		cinestreamurl = self['liste'].getCurrent()[0][1]
 		print cinestreamurl
 		get_stream_link(self.session).check_link(cinestreamurl, self.got_link, False)
-	
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)

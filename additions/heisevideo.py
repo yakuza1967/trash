@@ -11,16 +11,16 @@ HTV_siteEncoding = 'utf-8'
 def heiseTvGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[1])
-		] 
-		
+		]
+
 class HeiseTvGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -29,15 +29,15 @@ class HeiseTvGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
-		
+
+
 		self['title'] = Label(HTV_Version)
 		self['ContentTitle'] = Label("Auswahl")
 		self['name'] = Label("")
@@ -45,7 +45,7 @@ class HeiseTvGenreScreen(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
-		
+
 		self.keyLocked = True
 		self.data_rubrikid="2523"
 		self.baseUrl = 'http://www.heise.de'
@@ -54,9 +54,9 @@ class HeiseTvGenreScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append((0, 'Bitte warten...', '', ''))
 		self.chooseMenuList.setList(map(heiseTvGenreListEntry, self.genreliste))
@@ -64,7 +64,7 @@ class HeiseTvGenreScreen(Screen):
 
 	def buildMenu(self, data):
 		self.genreliste = []
-		
+
 		m = re.search('<ul id="teaser_reiter_nav">(.*?)</ul>', data, re.S)
 		if m:
 			list = re.findall('href="#(reiter.*?)">(.*?)</a></li>', m.group(1), re.S)
@@ -75,13 +75,13 @@ class HeiseTvGenreScreen(Screen):
 						self.genreliste.append((1, n, '/video/%s;offset=%%d;into=%s&hajax=1' % (m2.group(1), r), ''))
 					else:
 						self.genreliste.append((4, n, '/video', r))
-		
+
 		list = re.findall('<section class="kasten video.*?<h3><span></span>(.*?)</h3>', data, re.S)
 		if list:
 			for x in list:
 				if not [1 for item in self.genreliste if item[1] == x]:
 					self.genreliste.append((3, x, '/video', ''))
-					
+
 		m = re.search('<section id="cttv_archiv">(.*?)</section>', data, re.S)
 		if m:
 			list = re.findall('data-jahr="(.*?)"', m.group(1), re.S)
@@ -89,18 +89,18 @@ class HeiseTvGenreScreen(Screen):
 				for j in list:
 					url = '/video/includes/cttv_archiv_json.pl?jahr=%s&rubrik=%s' % (j, self.data_rubrikid)
 					self.genreliste.append((2, "c't-TV Archiv %s" % j, url, ''))
-				
+
 		self.chooseMenuList.setList(map(heiseTvGenreListEntry, self.genreliste))
 		self.keyLocked = False
-		
-	
+
+
 	def dataError(self, failure):
 		print "dataError: ", failure
-	
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
+
 		genreID = self['genreList'].getCurrent()[0][0]
 		genre = self['genreList'].getCurrent()[0][1]
 		stvLink = self['genreList'].getCurrent()[0][2]
@@ -113,10 +113,10 @@ class HeiseTvGenreScreen(Screen):
 def heiseTvListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class HeiseTvListScreen(Screen):
-	
+
 	def __init__(self, session, baseUrl, genreID, stvLink, stvGenre, m_reiter):
 		self.session = session
 		self.genreID = genreID
@@ -124,10 +124,10 @@ class HeiseTvListScreen(Screen):
 		self.genreName = stvGenre
 		self.baseUrl = baseUrl
 		self.m_reiter = m_reiter
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/dokuListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/dokuListScreen.xml"
@@ -136,9 +136,9 @@ class HeiseTvListScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -163,11 +163,11 @@ class HeiseTvListScreen(Screen):
 		self['Page'] = Label("Page")
 		self['VideoPrio'] = Label("")
 		self['vPrio'] = Label("")
-		
+
 		if self.genreID != 1:
 			self['Page'].hide()
 			self['page'].hide()
-			
+
 		self.items_pp = 0
 		self.reiter_ofs = 0
 		self.page = 0
@@ -181,25 +181,25 @@ class HeiseTvListScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-	
+
 	def layoutFinished(self):
 		self.getHtml()
-		
+
 	def getHtml(self):
 		self.chooseMenuList.setList(map(heiseTvListEntry, [('Bitte warten...','','','')]))
-		
+
 		self.filmliste = []
 		url = self.stvLink
 		if self.genreID == 1:
 			url = self.baseUrl+(url % self.reiter_ofs)
 		else:
 			url = self.baseUrl+url
-			
+
 		print "getPage: ", url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
-	
+
 	def genreData(self, data):
 		print "genreData:"
 		if self.genreID == 1:
@@ -211,7 +211,7 @@ class HeiseTvListScreen(Screen):
 					title = decodeHtml2(title)
 					desc = decodeHtml2(desc)
 					self.filmliste.append((title,href,img,desc))
-				
+
 				m = re.search('<a href=\".*?offset=(.*?);', infos['actions'][1]['html'], re.S)
 				if m:
 					if not self.page:
@@ -227,7 +227,7 @@ class HeiseTvListScreen(Screen):
 				page = '%d / %d' % (self.page, self.pages)
 			else:
 				page = '%d' % self.page
-				
+
 			self['page'].setText(page)
 
 		elif self.genreID == 2:
@@ -241,7 +241,7 @@ class HeiseTvListScreen(Screen):
 				print 'Video infos key error: ', e
 			else:
 				print "Videos found"
-			
+
 		elif self.genreID == 3:
 			patt = '<section class="kasten video.*?<h3><span></span>%s</h3>(.*?)</section>' % self.genreName
 			m = re.search(patt, data, re.S)
@@ -253,7 +253,7 @@ class HeiseTvListScreen(Screen):
 					for (img,href,title) in stvDaten:
 						title = decodeHtml2(title)
 						self.filmliste.append((title,href,img,''))
-						
+
 		elif self.genreID == 4:
 			m = re.search('<li id="%s">(.*?)</li>\s+</ul>' % self.m_reiter, data, re.S)
 			if m:
@@ -275,8 +275,8 @@ class HeiseTvListScreen(Screen):
 			self.keyLocked = False
 			self.chooseMenuList.setList(map(heiseTvListEntry, self.filmliste))
 			self.showInfos()
-			
-		
+
+
 	def dataError(self, error):
 		print "dataError: ",error
 
@@ -289,7 +289,7 @@ class HeiseTvListScreen(Screen):
 		self['handlung'].setText(desc)
 		if stvImage:
 			downloadPage(stvImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -303,7 +303,7 @@ class HeiseTvListScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-	
+
 	def getVid(self, data):
 		print "getVid:"
 		try:
@@ -314,7 +314,7 @@ class HeiseTvListScreen(Screen):
 		else:
 			print "getPage: ", url
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVidInfos).addErrback(self.dataError)
-			
+
 	def getVidInfos(self, data):
 		print "getVidInfos:"
 		try:
@@ -325,7 +325,7 @@ class HeiseTvListScreen(Screen):
 				url = infos['formats']['mp4']['360']['url']
 			else:
 				url = infos['formats']['mp4']['270']['url']
-				
+
 			#title = infos['title']
 		except KeyError, e:
 			print "KeyError: ", e
@@ -336,7 +336,7 @@ class HeiseTvListScreen(Screen):
 			#sref.setName(title)
 			#self.session.open(MoviePlayer, sref)
 			self.session.openWithCallback(self.setVideoPrio, HeiseTvPlayer, [(title, url, '')])
-	
+
 	def keyPageUp(self):
 		if self.keyLocked or self.genreID != 1:
 			return
@@ -345,7 +345,7 @@ class HeiseTvListScreen(Screen):
 			self.reiter_ofs += self.items_pp
 			self.keyLocked = True
 			self.getHtml()
-			
+
 	def keyPageDown(self):
 		if self.keyLocked or self.genreID != 1:
 			return
@@ -354,31 +354,31 @@ class HeiseTvListScreen(Screen):
 			self.reiter_ofs -= self.items_pp
 			self.keyLocked = True
 			self.getHtml()
-			
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['liste'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['liste'].down()
 		self.showInfos()
-		
+
 	def setVideoPrio(self):
 		"""
 		if self.videoPrio+1 > 2:
@@ -388,10 +388,10 @@ class HeiseTvListScreen(Screen):
 		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
-		
+
 	def keyYellow(self):
 		self.setVideoPrio()
-		
+
 	def keyOK(self):
 		print "keyOK:"
 		if self.keyLocked:
@@ -399,7 +399,7 @@ class HeiseTvListScreen(Screen):
 		url = self.baseUrl + self['liste'].getCurrent()[0][1]
 		print "getPage: ", url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVid).addErrback(self.dataError)
-			
+
 	def keyCancel(self):
 		self.close()
 
@@ -414,4 +414,4 @@ class HeiseTvPlayer(SimplePlayer):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
 		iurl = self.playList[self.playIdx][2]
-		self.playStream(title, url, imgurl=iurl)		
+		self.playStream(title, url, imgurl=iurl)

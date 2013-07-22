@@ -9,14 +9,14 @@ def fiwituGenre2ListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def fiwituGenre3ListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class fiwituGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -26,9 +26,9 @@ class fiwituGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -42,15 +42,15 @@ class fiwituGenreScreen(Screen):
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Muskeltraining", "http://fiwitu.tv/muskeltraining"))
 		self.genreliste.append(("Beweglichkeit und Entspannung", "http://fiwitu.tv/beweglichkeit-und-entspannung"))
@@ -65,22 +65,22 @@ class fiwituGenreScreen(Screen):
 	def keyOK(self):
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		self.session.open(fiwituGenre2Screen, streamGenreLink)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -90,7 +90,7 @@ class fiwituGenreScreen(Screen):
 		self.close()
 
 class fiwituGenre2Screen(Screen):
-	
+
 	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -101,9 +101,9 @@ class fiwituGenre2Screen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -128,14 +128,14 @@ class fiwituGenre2Screen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('fiwitu.tv')
 		self.filmliste = []
 		url = self.phCatLink
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		genreList = re.findall('<h2 class="label">(.*?)</h2>.*?<a href="(.*?)"', data, re.S)
 		for genre, uri in genreList:
@@ -153,7 +153,7 @@ class fiwituGenre2Screen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -161,27 +161,27 @@ class fiwituGenre2Screen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -191,9 +191,9 @@ class fiwituGenre2Screen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class fiwituGenre3Screen(Screen):
-	
+
 	def __init__(self, session, phTitle, phLink):
 		self.session = session
 		self.ftwTitle = phTitle
@@ -205,9 +205,9 @@ class fiwituGenre3Screen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -234,13 +234,13 @@ class fiwituGenre3Screen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('fiwitu.tv')
 		url = self.ftwLink
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		allVideos = re.findall('urlTemplate: "(.*?)"', data, re.S)
 		allVideosLink =  re.sub(r"limit=[0-9]", "limit=999", allVideos[0])
@@ -265,7 +265,7 @@ class fiwituGenre3Screen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -273,27 +273,27 @@ class fiwituGenre3Screen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
-		
+
 	def keyOK(self):
 		playLink = "%s%s" % ("http://fiwitu.tv", self['genreList'].getCurrent()[0][1])
 		getPage(playLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideoPage).addErrback(self.dataError)
@@ -318,10 +318,10 @@ class fiwituGenre3Screen(Screen):
 			else:
 				if self.sdUrl:
 					self.playVideo(self.sdUrl)
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 	def playVideo(self,url):
 		title = self['genreList'].getCurrent()[0][0]
 		sref = eServiceReference(0x1001, 0, url)

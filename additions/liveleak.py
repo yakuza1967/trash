@@ -4,9 +4,9 @@ def LiveLeakEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class LiveLeakScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/LiveLeakScreen.xml" % config.mediaportal.skin.value
@@ -16,14 +16,14 @@ class LiveLeakScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("LiveLeak.com")
 		self['Pic'] = Pixmap()
 		self['name'] = Label("Genre Auswahl")
@@ -69,9 +69,9 @@ class LiveLeakClips(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -82,7 +82,7 @@ class LiveLeakClips(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("LiveLeak.com")
@@ -95,13 +95,13 @@ class LiveLeakClips(Screen):
 		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "%s%s" % (self.streamGenreLink, str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		rssfeed = re.findall('<title>(.*?)</title>.*?<link>(http://www.liveleak.com/view.*?)</link>.*?<media:thumbnail url="(.*?)"', data, re.S)
 		if rssfeed:
@@ -115,14 +115,14 @@ class LiveLeakClips(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def showPic(self):
 		llTitle = self['List'].getCurrent()[0][0]
 		llPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(llTitle)
 		self['page'].setText(str(self.page))
 		downloadPage(llPicLink, "/tmp/Pic.jpg").addCallback(self.ShowImage)
-		
+
 	def ShowImage(self, data):
 		if fileExists("/tmp/Pic.jpg"):
 			self['Pic'].instance.setPixmap(gPixmapPtr())

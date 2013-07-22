@@ -10,7 +10,7 @@ class SongstoLink:
 		self._errback = None
 		self._baseurl = "http://s.songs.to/data.php?id="
 		self.imgurl = ''
-		
+
 	def getLink(self, cb_play, cb_err, sc_title, sc_artist, sc_album, token, imgurl):
 		self._callback = cb_play
 		self._errback = cb_err
@@ -25,14 +25,14 @@ class SongstoLink:
 			url = "http://songs.to/json/songlist.php?quickplay=1"
 			dataPost = "data=%7B%22data%22%3A%5B%7B%22artist%22%3A%22"+artist+"%22%2C%20%22album%22%3A%22%22%2C%20%22title%22%3A%22"+title+"%22%7D%5D%7D"
 			getPage(url, method='POST', postdata=dataPost, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.scDataPost).addErrback(cb_err)
-			
+
 	def scDataPost(self, data):
 		findSongs = re.findall('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)"', data)
 		found = False
 		if findSongs:
 			print findSongs
 			(scHash, scTitle, scArtist, scAlbum) = findSongs[0]
-			
+
 			if scHash:
 				found = True
 				print "hash: ",scHash

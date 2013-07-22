@@ -5,15 +5,15 @@ from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 def auditvGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def auditvFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class auditvGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -23,9 +23,9 @@ class auditvGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -40,15 +40,15 @@ class auditvGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Deutsch", "1"))
 		self.genreliste.append(("Englisch", "2"))
@@ -63,24 +63,24 @@ class auditvGenreScreen(Screen):
 		if self.keyLocked:
 			return
 		streamGenreName = self['genreList'].getCurrent()[0][0]
-		streamGenreLink = self['genreList'].getCurrent()[0][1]		
+		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		self.session.open(auditvFilmScreen, streamGenreLink, streamGenreName)
-			
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -90,7 +90,7 @@ class auditvGenreScreen(Screen):
 		self.close()
 
 class auditvFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink, catName):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -102,9 +102,9 @@ class auditvFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -122,15 +122,15 @@ class auditvFilmScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.page = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText(self.catName)
@@ -138,7 +138,7 @@ class auditvFilmScreen(Screen):
 		url = "http://tv.audi.com/tvnext/services/epg/?channelId=%s&showRunning=true" % (self.phCatLink)
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		phMovies = re.findall('<item>.*?<title><\!\[CDATA\[(.*?)\]\]></title>.*?<cms_id>(.*?)</cms_id>', data, re.S)
 		if phMovies:
@@ -159,17 +159,17 @@ class auditvFilmScreen(Screen):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return

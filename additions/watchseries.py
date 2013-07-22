@@ -8,20 +8,20 @@ def watchseriesGenreListEntry(entry):
 def watchseriesFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def watchseriesHosterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class watchseriesGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -29,14 +29,14 @@ class watchseriesGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("watchseries.lt")
 		self['ContentTitle'] = Label("Genre:")
@@ -47,21 +47,21 @@ class watchseriesGenreScreen(Screen):
 		self['F4'] = Label("")
 		self['F3'].hide()
 		self['F4'].hide()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
-	def loadPage(self):	
+
+	def loadPage(self):
 		self.genreliste = [('Series',"http://watchseries.lt/letters/"),
 							('Newest Episodes Added',"http://watchseries.lt/latest"),
 							('Popular Episodes Added This Week',"http://watchseries.lt/new"),
 							('TV Schedule',"http://watchseries.lt/tvschedule/-1")]
-							
+
 		self.chooseMenuList.setList(map(watchseriesGenreListEntry, self.genreliste))
 		self.keyLocked = False
 
@@ -69,7 +69,7 @@ class watchseriesGenreScreen(Screen):
 		streamGenreName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		print streamGenreName, streamGenreLink
-		
+
 		if streamGenreName == "Series":
 			self.session.open(watchseriesSeriesLetterScreen, streamGenreLink, streamGenreName)
 		#elif streamGenreName == "Newest Episodes Added":
@@ -84,14 +84,14 @@ class watchseriesGenreScreen(Screen):
 		self.close()
 
 class watchseriesNewSeriesScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamGenreName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
 		self.streamGenreName = streamGenreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -99,14 +99,14 @@ class watchseriesNewSeriesScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("watchseries.lt")
 		self['ContentTitle'] = Label("%s:" % self.streamGenreName)
@@ -117,29 +117,29 @@ class watchseriesNewSeriesScreen(Screen):
 		self['F4'] = Label("")
 		self['F3'].hide()
 		self['F4'].hide()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.streamGenreLink
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		eps = re.findall('<li><a title=".*?" href="(/episode/.*?)">(.*?)</a></li>', data, re.S)
 		if eps:
 			for link,title in eps:
 				title = title.replace('Seas. ','- S').replace('Ep. ','E')
 				url = "http://watchseries.lt%s" % link
-				self.genreliste.append((title, url))				
+				self.genreliste.append((title, url))
 			self.chooseMenuList.setList(map(watchseriesFilmListEntry, self.genreliste))
 			self.keyLocked = False
 
@@ -147,21 +147,21 @@ class watchseriesNewSeriesScreen(Screen):
 		streamGenreName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		print streamGenreName, streamGenreLink
-		
+
 		self.session.open(watchseriesStreamListeScreen, streamGenreLink, streamGenreName)
 
 	def keyCancel(self):
 		self.close()
 
 class watchseriesSeriesLetterScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamGenreName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
 		self.streamGenreName = streamGenreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -169,14 +169,14 @@ class watchseriesSeriesLetterScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.keyLocked = True
 		self['title'] = Label("watchseries.lt")
 		self['ContentTitle'] = Label("Letter:")
@@ -187,21 +187,21 @@ class watchseriesSeriesLetterScreen(Screen):
 		self['F4'] = Label("")
 		self['F3'].hide()
 		self['F4'].hide()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		abc = ["09","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 		for letter in abc:
 			url = "http://watchseries.lt/letters/%s" % letter
 			self.genreliste.append((letter, url))
-							
+
 		self.chooseMenuList.setList(map(watchseriesGenreListEntry, self.genreliste))
 		self.keyLocked = False
 
@@ -209,21 +209,21 @@ class watchseriesSeriesLetterScreen(Screen):
 		streamGenreName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		print streamGenreName, streamGenreLink
-		
+
 		self.session.open(watchseriesSeriesScreen, streamGenreLink, streamGenreName)
 
 	def keyCancel(self):
 		self.close()
-		
+
 class watchseriesSeriesScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamGenreName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
 		self.streamGenreName = streamGenreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -231,9 +231,9 @@ class watchseriesSeriesScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -258,23 +258,23 @@ class watchseriesSeriesScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.streamGenreLink
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 
@@ -288,10 +288,10 @@ class watchseriesSeriesScreen(Screen):
 			#self.loadPic()
 			self.keyLocked = False
 
-	def loadPic(self):		
+	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-	
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -305,15 +305,15 @@ class watchseriesSeriesScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-					
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamName = self['liste'].getCurrent()[0][0]
 		streamLink = self['liste'].getCurrent()[0][1]
-		
+
 		print streamName, streamLink
-		
+
 		self.session.open(watchseriesEpisodeListeScreen, streamLink, streamName)
 
 	def keyLeft(self):
@@ -321,13 +321,13 @@ class watchseriesSeriesScreen(Screen):
 			return
 		self['liste'].pageUp()
 		#self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		#self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -339,7 +339,7 @@ class watchseriesSeriesScreen(Screen):
 			return
 		self['liste'].down()
 		#self.loadPic()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -354,19 +354,19 @@ class watchseriesSeriesScreen(Screen):
 			return
 		self.page += 1
 		self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()
-		
+
 class watchseriesEpisodeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamGenreName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
 		self.streamGenreName = streamGenreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -374,9 +374,9 @@ class watchseriesEpisodeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -395,23 +395,23 @@ class watchseriesEpisodeListeScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.streamGenreLink
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		eps = re.findall('<li><a href="(/episode/.*?)">', data, re.S)
@@ -427,28 +427,28 @@ class watchseriesEpisodeListeScreen(Screen):
 					self.filmliste.append((decodeHtml(episode),url))
 			self.chooseMenuList.setList(map(watchseriesGenreListEntry, self.filmliste))
 			self.keyLocked = False
-					
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamName = self['liste'].getCurrent()[0][0]
 		streamLink = self['liste'].getCurrent()[0][1]
 		print streamName, streamLink
-		
+
 		self.session.open(watchseriesStreamListeScreen, streamLink, streamName)
 
 	def keyCancel(self):
 		self.close()
-		
+
 class watchseriesStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamGenreName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
 		self.streamGenreName = streamGenreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -456,9 +456,9 @@ class watchseriesStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -477,23 +477,23 @@ class watchseriesStreamListeScreen(Screen):
 		self['page'] = Label("")
 		self['Page'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.streamGenreLink
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen: streamlist"
 		if re.match('.*?there are no links available for this episode', data, re.S|re.I):
@@ -510,7 +510,7 @@ class watchseriesStreamListeScreen(Screen):
 					if re.match('.*?(sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn)', shname, re.S|re.I):
 						url = "http://watchseries.lt%s" % shurl
 						self.filmliste.append((decodeHtml(shname),url))
-						
+
 				if len(self.filmliste) == 0:
 					self.filmliste.append(("No supported streams found.", "No supported streams found."))
 					self.chooseMenuList.setList(map(watchseriesHosterListEntry, self.filmliste))
@@ -520,7 +520,7 @@ class watchseriesStreamListeScreen(Screen):
 			else:
 				self.filmliste.append(("Wrong parsing..", "No supported streams found."))
 				self.chooseMenuList.setList(map(watchseriesHosterListEntry, self.filmliste))
-					
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -528,7 +528,7 @@ class watchseriesStreamListeScreen(Screen):
 		streamLink = self['liste'].getCurrent()[0][1]
 		print streamName, streamLink
 		getPage(streamLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLink).addErrback(self.dataError)
-		
+
 	def getLink(self, data):
 		link = re.findall('<a class="myButton" href="(.*?)">Click Here to Play</a>', data, re.S)
 		if link:
@@ -536,7 +536,7 @@ class watchseriesStreamListeScreen(Screen):
 			get_stream_link(self.session).check_link(link[0], self.got_link, False)
 		else:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
-	
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
@@ -544,7 +544,6 @@ class watchseriesStreamListeScreen(Screen):
 			sref = eServiceReference(0x1001, 0, stream_url)
 			sref.setName(self.streamGenreName)
 			self.session.open(MoviePlayer, sref)
-			
+
 	def keyCancel(self):
 		self.close()
-		

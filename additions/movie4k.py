@@ -21,7 +21,7 @@ def m4kLetterEntry(entry):
 def m4kFilmListEntry2(entry):
 	png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/%s.png" % entry[2]
 	if fileExists(png):
-		flag = LoadPixmap(png)	
+		flag = LoadPixmap(png)
 		return [entry,
 			(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 5, 3, 20, 20, flag),
 			(eListboxPythonMultiContent.TYPE_TEXT, 30, 0, 880, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
@@ -30,7 +30,7 @@ def m4kFilmListEntry2(entry):
 		return [entry,
 			(eListboxPythonMultiContent.TYPE_TEXT, 30, 0, 880, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 			]
-		
+
 def m4kSerienABCEntry(entry):
 	flag_name = False
 
@@ -59,16 +59,16 @@ def m4kSerienABCStaffelnEntry(entry):
 def m4kFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 def m4kWatchSeriesListEntry(entry):
 	if int(entry[4]) != 0:
 		new_eps = str(entry[4])
 	else:
 		new_eps = ""
-		
+
 	png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/%s.png" % entry[2]
 	if fileExists(png):
-		flag = LoadPixmap(png)	
+		flag = LoadPixmap(png)
 		return [entry,
 			(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 15, 3, 20, 20, flag),
 			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 750, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
@@ -81,7 +81,7 @@ def m4kWatchSeriesListEntry(entry):
 			]
 
 class m4kGenreScreen(Screen):
-	
+
 	def __init__(self, session, mode):
 		self.session = session
 		self.showM4kPorn = mode
@@ -92,27 +92,27 @@ class m4kGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("movie4k.to")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.searchStr = ''
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		if self.showM4kPorn == "porn":
 			self.genreliste.append(("Letzte Updates (XXX)", "http://www.movie4k.to/xxx-updates.html"))
@@ -162,7 +162,7 @@ class m4kGenreScreen(Screen):
 	def keyOK(self):
 		streamGenreName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
-		
+
 		if streamGenreName == "Watchlist":
 			self.session.open(m4kWatchlist)
 		elif streamGenreName == "Kinofilme":
@@ -188,23 +188,23 @@ class m4kGenreScreen(Screen):
 			self.session.open(m4kKinoAlleFilmeListeScreen, streamGenreLink)
 		else:
 			self.session.open(m4kKinoAlleFilmeListeScreen, streamGenreLink)
-			
+
 	def searchCallback(self, callbackStr):
 		if callbackStr is not None:
 			self.searchStr = callbackStr
 			url = self.streamGenreLink
 			self.searchData = self.searchStr
 			self.session.open(m4kSucheAlleFilmeListeScreen, url, self.searchData)
-			
+
 	def keyCancel(self):
 		self.close()
-		
+
 class m4kWatchlist(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal"
-		
+
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxWatchlist.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxWatchlist.xml"
@@ -212,7 +212,7 @@ class m4kWatchlist(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -221,19 +221,19 @@ class m4kWatchlist(Screen):
 			"red" : self.keyDel,
 			"info": self.update
 		}, -1)
-		
+
 		self['title'] = Label("Watchlist")
 		self['leftContentTitle'] = Label("Movie4k Watchlist")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
 		self['name'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPlaylist)
 
@@ -251,17 +251,17 @@ class m4kWatchlist(Screen):
 			self.streamMenuList.setList(map(m4kWatchSeriesListEntry, self.streamList))
 			readStations.close()
 			self.keyLocked = False
-			
+
 	def update(self):
 		self.count = len(self.streamList)
 		self.counting = 0
-		
+
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist.tmp"):
 			self.write_tmp = open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist.tmp" , "a")
 			self.write_tmp.truncate(0)
 		else:
 			self.write_tmp = open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist.tmp" , "a")
-					
+
 		if len(self.streamList) != 0:
 			self.keyLocked = True
 			self.streamList2 = []
@@ -272,10 +272,10 @@ class m4kWatchlist(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def download(self, item):
 		return getPage(item)
-		
+
 	def check_data(self, data, sname, surl, slang, stotaleps):
 		#print sname, surl, slang, stotaleps
 		count_all_eps = 0
@@ -288,12 +288,12 @@ class m4kWatchlist(Screen):
 			episodes = re.findall('<OPTION value=".*?".*?>Episode.(.*?)</OPTION>', ep_data, re.S)
 			count_all_eps += int(len(episodes))
 			last_new_ep = staffel, episodes[-1]
-			
-			
-		new_eps =  int(count_all_eps) - int(stotaleps)	
-			
+
+
+		new_eps =  int(count_all_eps) - int(stotaleps)
+
 		self.write_tmp.write('"%s" "%s" "%s" "%s"\n' % (sname, surl, slang, count_all_eps))
-		
+
 		self.streamList2.append((sname, surl, slang, str(stotaleps), str(new_eps)))
 		self.streamList2.sort()
 		self.streamMenuList.setList(map(m4kWatchSeriesListEntry, self.streamList2))
@@ -305,7 +305,7 @@ class m4kWatchlist(Screen):
 			self.write_tmp.close()
 			shutil.move(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist.tmp", config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
 			self.keyLocked = False
-			
+
 		if last_new_ep:
 			(staffel, episode) = last_new_ep
 			if int(staffel) < 10:
@@ -317,9 +317,9 @@ class m4kWatchlist(Screen):
 				episode3 = "E0"+str(episode)
 			else:
 				episode3 = "E"+str(episode)
-								
+
 			SeEp = "%s%s" % (staffel3, episode3)
-	
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -328,12 +328,12 @@ class m4kWatchlist(Screen):
 		url = self['streamlist'].getCurrent()[0][1]
 		print stream_name, url
 		self.session.open(m4kEpisodenListeScreen, url, stream_name)
-			
+
 	def keyDel(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
 			return
-		
+
 		selectedName = self['streamlist'].getCurrent()[0][0]
 
 		writeTmp = open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist.tmp","w")
@@ -349,12 +349,12 @@ class m4kWatchlist(Screen):
 			writeTmp.close()
 			shutil.move(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist.tmp", config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
 			self.loadPlaylist()
-				
+
 	def keyCancel(self):
 		self.close()
-		
+
 class m4kSucheAlleFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, searchUrl, searchData):
 		self.session = session
 		self.searchUrl = searchUrl
@@ -366,9 +366,9 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -419,14 +419,14 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 	def loadPic(self):
 		url = self['filmList'].getCurrent()[0][1]
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPicData).addErrback(self.dataError)
-		
+
 	def loadPicData(self, data):
 		filmdaten = re.findall('<div style="float:left">.*?<img src="(.*?)".*?<div class="moviedescription">(.*?)</div>', data, re.S)
 		if filmdaten:
 			streamPic, handlung = filmdaten[0]
 			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 			self['handlung'].setText(decodeHtml(handlung))
-		
+
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -434,7 +434,7 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -474,13 +474,13 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 			return
 		self['filmList'].pageUp()
 
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -498,19 +498,19 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 		if not self.page < 1:
 			self.page -= 1
 			self.loadPage()
-			
+
 	def keyPageUp(self):
 		print "PageUp"
 		if self.keyLocked:
 			return
-		self.page += 1 
+		self.page += 1
 		self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kKinoAlleFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -521,9 +521,9 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -595,14 +595,14 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 	def loadPic(self):
 		url = self['filmList'].getCurrent()[0][1]
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPicData).addErrback(self.dataError)
-		
+
 	def loadPicData(self, data):
 		filmdaten = re.findall('<div style="float:left">.*?<img src="(.*?)".*?<div class="moviedescription">(.*?)</div>', data, re.S)
 		if filmdaten:
 			streamPic, handlung = filmdaten[0]
 			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 			self['handlung'].setText(decodeHtml(handlung))
-		
+
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -610,7 +610,7 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -656,14 +656,14 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 		self['filmList'].pageUp()
 		if self.XXX == False:
 			self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		if self.XXX == False:
 			self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -685,19 +685,19 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 		if not self.page < 1:
 			self.page -= 1
 			self.loadPage()
-			
+
 	def keyPageUp(self):
 		print "PageUp"
 		if self.keyLocked:
 			return
-		self.page += 1 
+		self.page += 1
 		self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kKinoFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -708,9 +708,9 @@ class m4kKinoFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -725,23 +725,23 @@ class m4kKinoFilmeListeScreen(Screen):
 		self['name'] = Label("Filme Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.streamGenreLink
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		kino = re.findall('<div style="float:left">.*?<a href="(.*?)"><img src="(.*?)" border=0 style="width:105px;max-width:105px;max-height:160px;min-height:140px;" alt=".*?kostenlos" title="(.*?).kostenlos"></a>', data, re.S)
@@ -761,7 +761,7 @@ class m4kKinoFilmeListeScreen(Screen):
 		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-		
+
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -769,7 +769,7 @@ class m4kKinoFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -801,13 +801,13 @@ class m4kKinoFilmeListeScreen(Screen):
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -819,12 +819,12 @@ class m4kKinoFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kVideoFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -835,9 +835,9 @@ class m4kVideoFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -852,22 +852,22 @@ class m4kVideoFilmeListeScreen(Screen):
 		self['name'] = Label("Filme Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		video = re.findall('<div style="float: left;">.*?<a href="(.*?)"><img src="(.*?)" alt=".*?" title="(.*?)" border="0" style="width:105px;max-width:105px;max-height:160px;min-height:140px;"></a>', data, re.S)
@@ -887,7 +887,7 @@ class m4kVideoFilmeListeScreen(Screen):
 		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-		
+
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -895,7 +895,7 @@ class m4kVideoFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -927,13 +927,13 @@ class m4kVideoFilmeListeScreen(Screen):
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -945,12 +945,12 @@ class m4kVideoFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kupdateFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -961,9 +961,9 @@ class m4kupdateFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -978,22 +978,22 @@ class m4kupdateFilmeListeScreen(Screen):
 		self['name'] = Label("Filme Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		updates = re.findall('<td valign="top" height="100%"><a href="(.*?)" ><font color="#000000" size="-1"><strong>(.*?)</strong></font></a></td>', data, re.S)
@@ -1011,7 +1011,7 @@ class m4kupdateFilmeListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
 		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
-		
+
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
 		if image:
@@ -1023,7 +1023,7 @@ class m4kupdateFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -1055,13 +1055,13 @@ class m4kupdateFilmeListeScreen(Screen):
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -1073,12 +1073,12 @@ class m4kupdateFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kTopSerienFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -1089,9 +1089,9 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -1106,7 +1106,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		self['name'] = Label("Serien Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keckse = {}
 		self.keyLocked = True
 		self.filmliste = []
@@ -1114,13 +1114,13 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.m4kcookie)
 
 	def m4kcookie(self):
 		url = "http://www.movie4k.to/index.php?lang=de"
 		getPage(url, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getm4kcookie).addErrback(self.dataError)
-		
+
 	def getm4kcookie(self, data):
 		self.loadPage()
 
@@ -1149,7 +1149,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-		
+
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -1157,7 +1157,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -1188,7 +1188,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		self.mTitle = self['filmList'].getCurrent()[0][0]
 		self.mUrl = self['filmList'].getCurrent()[0][1]
 		self.mLang = self['filmList'].getCurrent()[0][3]
-		
+
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
@@ -1199,24 +1199,24 @@ class m4kTopSerienFilmeListeScreen(Screen):
 				Lang = "en"
 			else:
 				Lang = ""
-				
+
 			print self.mUrl, self.mTitle, Lang
 			writePlaylist.write('"%s" "%s" "%s" "0"\n' % (self.mTitle, self.mUrl, Lang))
 			writePlaylist.close()
 			message = self.session.open(MessageBox, _("Serie wurde zur watchlist hinzugefuegt."), MessageBox.TYPE_INFO, timeout=3)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -1228,12 +1228,12 @@ class m4kTopSerienFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kSerienUpdateFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -1244,9 +1244,9 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -1261,7 +1261,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		self['name'] = Label("Serien Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -1269,22 +1269,22 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.m4kcookie)
 
 	def m4kcookie(self):
 		url = "http://www.movie4k.to/index.php?lang=de"
 		getPage(url, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getm4kcookie).addErrback(self.dataError)
-		
+
 	def getm4kcookie(self, data):
 		self.loadPage()
 
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen2"
 		serien = re.findall('<td id="tdmovies"> <img style="vertical-align:top;".*?<a href="(.*?)">.*?<font color="#000000">(.*?)</font></a>', data, re.S)
@@ -1301,7 +1301,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
 		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
-		
+
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
 		if image:
@@ -1313,7 +1313,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -1335,7 +1335,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		streamLink = self['filmList'].getCurrent()[0][1]
 		print streamName, streamLink
-		
+
 		if re.match('.*?,.*?,.*?', streamName):
 			cname = re.findall('(.*?),.*?,.*?', streamName, re.S)
 			if cname:
@@ -1350,12 +1350,12 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 
 		mTitle = self['filmList'].getCurrent()[0][0]
 		mUrl = self['filmList'].getCurrent()[0][1]
-		
+
 		if re.match('.*?,.*?,.*?', mTitle):
 			cname = re.findall('(.*?),.*?,.*?', mTitle, re.S)
 			if cname:
 				mTitle = cname[0]
-				
+
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
@@ -1364,19 +1364,19 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 			writePlaylist.write('"%s" "%s" "%s" "0"\n' % (mTitle, mUrl, "de"))
 			writePlaylist.close()
 			message = self.session.open(MessageBox, _("Serie wurde zur watchlist hinzugefuegt."), MessageBox.TYPE_INFO, timeout=3)
-			
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -1388,12 +1388,12 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamName, which):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -1406,9 +1406,9 @@ class m4kStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -1418,7 +1418,7 @@ class m4kStreamListeScreen(Screen):
 		self['name'] = Label("Stream Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.base_url = 'http://www.movie4k.to/'
 		self.tw_agent_hlp = TwAgentHelper()
 		self.keyLocked = True
@@ -1428,20 +1428,20 @@ class m4kStreamListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		print "link:", self.streamGenreLink
 		#self.tw_agent_hlp.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
 		self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, self.streamGenreLink, True)
-			
+
 	def loadPage2(self, url):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		print "error:", error
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		if self.which == "movie":
@@ -1452,7 +1452,7 @@ class m4kStreamListeScreen(Screen):
 					print hostername, url
 					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, datum, hostername, quali.replace('Movie quality ','').replace('\\','')))
-						
+
 				if len(self.filmliste) == 0:
 					self.filmliste.append(("nix", "No supported streams found."))
 					self.chooseMenuList.setList(map(self.m4kStream2ListEntry, self.filmliste))
@@ -1465,11 +1465,11 @@ class m4kStreamListeScreen(Screen):
 			hoster = re.findall('"tablemoviesindex2.*?<a href.*?"(.*?.html).*?style.*?src.*?"http://img.movie4k.to/img/.*?.[gif|png].*?> \&nbsp;(.*?)</a></td></tr>', data, re.S)
 			if hoster:
 				for url,hostername in hoster:
-					url = "%s%s" % ("http://www.movie4k.to/", url)		
+					url = "%s%s" % ("http://www.movie4k.to/", url)
 					print hostername, url
 					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, hostername))
-						
+
 				if len(self.filmliste) == 0:
 					self.filmliste.append(("nix", "No supported streams found."))
 					self.chooseMenuList.setList(map(self.m4kStream2ListEntry, self.filmliste))
@@ -1478,14 +1478,14 @@ class m4kStreamListeScreen(Screen):
 					self.chooseMenuList.setList(map(self.m4kStream2ListEntry, self.filmliste))
 					self.keyLocked = False
 					self.loadPic()
-		
+
 	def m4kStreamListEntry(self, entry):
 		return [entry,
 			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 200, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1]),
 			(eListboxPythonMultiContent.TYPE_TEXT, 250, 0, 200, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[2]),
 			(eListboxPythonMultiContent.TYPE_TEXT, 450, 0, 430, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[3])
 			]
-			
+
 	def m4kStream2ListEntry(self, entry):
 		return [entry,
 			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 200, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1])
@@ -1498,12 +1498,12 @@ class m4kStreamListeScreen(Screen):
 
 	def loadPic2(self, url):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
-		
+
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
 		if image:
 			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -1525,11 +1525,11 @@ class m4kStreamListeScreen(Screen):
 		streamLink = self['filmList'].getCurrent()[0][0]
 		print self.streamName, streamLink
 		self.tw_agent_hlp.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
-		
+
 	def keyOK2(self, url):
 		self.tw_agent_hlp.getWebPage(self.get_streamlink, self.dataError, url, False, url)
 		#getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
-		
+
 	def get_streamlink(self, data, streamLink):
 		print "get_streamlink: ", len(data)
 		if re.match('.*?(http://img.movie4k.to/img/parts/teil1_aktiv.png|http://img.movie4k.to/img/parts/teil1_inaktiv.png|http://img.movie4k.to/img/parts/part1_active.png|http://img.movie4k.to/img/parts/part1_inactive.png)', data, re.S):
@@ -1538,19 +1538,19 @@ class m4kStreamListeScreen(Screen):
 		else:
 			print "Search streamlink..."
 			link_found = False
-			
+
 			link = re.findall('<a target="_blank" href="(.*?)"', data, re.S)
 			if link:
 				link_found = True
 				print link
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
-				
+
 			link = re.findall('<div id="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S)
 			if link:
 				link_found = True
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
-				
+
 			link = re.findall('<div id="emptydiv"><script type="text/javascript" src=["|\'](.*?)["|\']>', data, re.S)
 			if link:
 				link_found = True
@@ -1562,29 +1562,29 @@ class m4kStreamListeScreen(Screen):
 				link_found = True
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
-				
+
 			link = re.findall('<iframe width=".*?" height=".*?" frameborder=".*?" src="(.*?)" scrolling="no"></iframe>', data)
 			if link:
 				link_found = True
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
-			
+
 			link = re.findall('<iframe src="(.*?)" width=".*?" height=".*?" frameborder=".*?" scrolling="no"></iframe>', data)
 			if link:
 				link_found = True
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
-				
+
 			if not link_found:
 				message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
-			
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watched"):
 				os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watched")
-				
+
 			self.update_liste = []
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_m4k_watched")
 			if not leer == 0:
@@ -1595,7 +1595,7 @@ class m4kStreamListeScreen(Screen):
 						print line[0]
 						self.update_liste.append("%s" % (line[0]))
 				self.updates_read.close()
-				
+
 				updates_read2 = open(config.mediaportal.watchlistpath.value+"mp_m4k_watched" , "a")
 				check = ("%s" % self.streamName)
 				if not check in self.update_liste:
@@ -1609,7 +1609,7 @@ class m4kStreamListeScreen(Screen):
 				print "update add: %s" % (self.streamName)
 				updates_read3.write('"%s"\n' % (self.streamName))
 				updates_read3.close()
-				
+
 			sref = eServiceReference(0x1001, 0, stream_url)
 			sref.setName(self.streamName)
 			self.session.open(MoviePlayer, sref)
@@ -1618,7 +1618,7 @@ class m4kStreamListeScreen(Screen):
 		self.close()
 
 class m4kPartListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -1630,9 +1630,9 @@ class m4kPartListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -1642,14 +1642,14 @@ class m4kPartListeScreen(Screen):
 		self['name'] = Label("Part Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(41)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
@@ -1689,13 +1689,13 @@ class m4kPartListeScreen(Screen):
 			link_found = True
 			print link
 			get_stream_link(self.session).check_link(link[0], self.got_link, False)
-			
+
 		link = re.findall('<div id="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S)
 		if link:
 			link_found = True
 			print link[0]
 			get_stream_link(self.session).check_link(link[0], self.got_link, False)
-			
+
 		link = re.findall('<div id="emptydiv"><script type="text/javascript" src=["|\'](.*?)["|\']>', data, re.S)
 		if link:
 			link_found = True
@@ -1707,7 +1707,7 @@ class m4kPartListeScreen(Screen):
 			link_found = True
 			print link[0].replace('?embed','')
 			get_stream_link(self.session).check_link(link[0].replace('?embed',''), self.got_link, False)
-			
+
 		if not link_found:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
@@ -1721,12 +1721,12 @@ class m4kPartListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyCancel(self):
 		self.close()
 
 class m4kEpisodenListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink, streamName):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -1738,9 +1738,9 @@ class m4kEpisodenListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -1750,7 +1750,7 @@ class m4kEpisodenListeScreen(Screen):
 		self['name'] = Label("Episoden Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -1758,15 +1758,15 @@ class m4kEpisodenListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		self.watched_liste = []
 		self.mark_last_watched = []
@@ -1781,7 +1781,7 @@ class m4kEpisodenListeScreen(Screen):
 					if line:
 						self.watched_liste.append("%s" % (line[0]))
 				self.updates_read.close()
-				
+
 		print "daten bekommen"
 		folgen = re.findall('<FORM name="episodeform(.*?)">(.*?)</FORM>', data, re.S)
 		if folgen:
@@ -1794,7 +1794,7 @@ class m4kEpisodenListeScreen(Screen):
 							staffel3 = "S0"+str(staffel)
 						else:
 							staffel3 = "S"+str(staffel)
-							
+
 						if int(episode) < 10:
 							episode3 = "E0"+str(episode)
 						else:
@@ -1806,7 +1806,7 @@ class m4kEpisodenListeScreen(Screen):
 						else:
 							self.filmliste.append((staffel_episode,url_to_streams,False))
 			self.chooseMenuList.setList(map(self.m4kStreamListEntry, self.filmliste))
-			
+
 			# jump to last watched episode
 			if len(self.mark_last_watched) != 0:
 				counting_watched = 0
@@ -1827,7 +1827,7 @@ class m4kEpisodenListeScreen(Screen):
 
 			self.keyLocked = False
 			self.loadPic()
-			
+
 	def m4kStreamListEntry(self, entry):
 		if entry[2]:
 			png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/watched.png"
@@ -1843,12 +1843,12 @@ class m4kEpisodenListeScreen(Screen):
 
 	def loadPic(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
-		
+
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
 		if image:
 			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -1876,7 +1876,7 @@ class m4kEpisodenListeScreen(Screen):
 		self.close()
 
 class m4kXXXUpdateFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamXXXLink, genre):
 		self.session = session
 		self.streamXXXLink = streamXXXLink
@@ -1890,9 +1890,9 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -1909,7 +1909,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		self['name'] = Label("XXX Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -1932,10 +1932,10 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		else:
 			url = str(self.streamXXXLink)
 		getPage(url, agent=std_headers, headers={'Cookie': 'xxx2=ok', 'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		self.filmliste = []
@@ -1958,7 +1958,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
 		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
-		
+
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
 		if image:
@@ -1970,7 +1970,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -1992,7 +1992,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		if answer is not None:
 			self.page = int(answer)
 			self.loadPage()
-				
+
 	def keyOK(self):
 		exist = self['filmList'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -2000,7 +2000,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		streamLink = self['filmList'].getCurrent()[0][1]
 		self.session.open(m4kStreamListeScreen, streamLink, streamName, "movie")
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -2008,26 +2008,26 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadPage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -2039,12 +2039,12 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()
 
 class m4kSerienABCAuswahl(Screen):
-	
+
 	def __init__(self, session, m4kGotLink):
 		self.m4kGotLink = m4kGotLink
 		self.session = session
@@ -2055,32 +2055,32 @@ class m4kSerienABCAuswahl(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Movie4k.to")
 		if self.m4kGotLink == 'FilmeAZ':
 			self['leftContentTitle'] = Label("Filme A-Z")
 		else:
-			self['leftContentTitle'] = Label("Serien A-Z") 
+			self['leftContentTitle'] = Label("Serien A-Z")
 		self['stationIcon'] = Pixmap()
 		self['name'] = Label("")
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.streamList = []
 		abc = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","#"]
@@ -2088,7 +2088,7 @@ class m4kSerienABCAuswahl(Screen):
 			self.streamList.append((letter))
 		self.streamMenuList.setList(map(m4kLetterEntry, self.streamList))
 		self.keyLocked = False
-					
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -2103,12 +2103,12 @@ class m4kSerienABCAuswahl(Screen):
 		elif self.m4kGotLink == 'FilmeAZ':
 			streamGenreLink = 'http://www.movie4k.to/movies-all-%s-' % auswahl
 			self.session.open(m4kKinoAlleFilmeListeScreen, streamGenreLink)
-		
+
 	def keyCancel(self):
 		self.close()
 
 class m4kSerienABCListe(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -2119,9 +2119,9 @@ class m4kSerienABCListe(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -2207,7 +2207,7 @@ class m4kSerienABCListe(Screen):
 		print self.flag_stored
 
 		getPage(self.mUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_final).addErrback(self.dataError)
-		
+
 	def get_final(self, data):
 		print "final"
 		season_link = False
@@ -2219,14 +2219,14 @@ class m4kSerienABCListe(Screen):
 					season_link = "http://www.movie4k.to/%s" % link
 		else:
 			message = self.session.open(MessageBox, _("No Link FOUND."), MessageBox.TYPE_INFO, timeout=3)
-			
+
 		if season_link:
 			print season_link
 			getPage(season_link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_final2).addErrback(self.dataError)
 		else:
 			message = self.session.open(MessageBox, _("No Link FOUND."), MessageBox.TYPE_INFO, timeout=3)
 
-			
+
 	def get_final2(self, data):
 		print "final2"
 		series = re.findall('<TD id="tdmovies" width="538"><a href="(.*?)">(.*?)\t.*?<TD id="tdmovies"><img border=0 src="http://img.movie4k.to/img/(.*?)\..*?"', data, re.S)
@@ -2249,26 +2249,26 @@ class m4kSerienABCListe(Screen):
 					Lang = "en"
 				else:
 					Lang = ""
-					
+
 				print season_link, seriesname.replace('    ',''), Lang
 				writePlaylist.write('"%s" "%s" "%s" "0"\n' % (seriesname.replace('    ',''), season_link, Lang))
 				writePlaylist.close()
 				message = self.session.open(MessageBox, _("Serie wurde zur watchlist hinzugefuegt."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			message = self.session.open(MessageBox, _("No Link FOUND."), MessageBox.TYPE_INFO, timeout=3)
-			
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		#self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		#self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -2285,7 +2285,7 @@ class m4kSerienABCListe(Screen):
 		self.close()
 
 class m4kSerienABCListeStaffeln(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -2296,9 +2296,9 @@ class m4kSerienABCListeStaffeln(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -2355,12 +2355,12 @@ class m4kSerienABCListeStaffeln(Screen):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -2388,7 +2388,7 @@ class m4kSerienABCListeStaffelnFilme(Screen):
 			f.close()
 
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,

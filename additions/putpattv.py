@@ -5,15 +5,15 @@ from Plugins.Extensions.MediaPortal.resources.putpattvlink import PutpattvLink
 def putpattvGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 def putpattvFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class putpattvGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
@@ -23,9 +23,9 @@ class putpattvGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -40,15 +40,15 @@ class putpattvGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("--- Search ---", "callSuchen"))
 		self.genreliste.append(("Charts", "2"))
@@ -86,11 +86,11 @@ class putpattvGenreScreen(Screen):
 	def ShowCover(self, picData):
 		picPath = "/tmp/phIcon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverFile(self, picPath):
 		if fileExists(picPath):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -113,9 +113,9 @@ class putpattvGenreScreen(Screen):
 			self.suchen()
 
 		else:
-			streamGenreLink = self['genreList'].getCurrent()[0][1]		
+			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(putpattvFilmScreen, streamGenreLink, streamGenreName)
-			
+
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
 
@@ -131,19 +131,19 @@ class putpattvGenreScreen(Screen):
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
@@ -154,7 +154,7 @@ class putpattvGenreScreen(Screen):
 		self.close()
 
 class putpattvFilmScreen(Screen):
-	
+
 	def __init__(self, session, phCatLink, catName):
 		self.session = session
 		self.phCatLink = phCatLink
@@ -166,9 +166,9 @@ class putpattvFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -186,15 +186,15 @@ class putpattvFilmScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.page = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText(self.catName)
@@ -205,11 +205,11 @@ class putpattvFilmScreen(Screen):
 			url = "http://www.putpat.tv/ws.xml?method=Channel.clips&partnerId=1&client=putpatplayer&maxClips=500&channelId=%s&streamingId=tvrl&streamingMethod=http" % (self.phCatLink)
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		if self.catName == '--- Search ---':
 			phSearch = re.findall('<video-file-id\stype="integer">(.*?)</video-file-id>.*?<token>(.*?)</token>.*?<description>(.*?)</description>', data, re.S)
-			if phSearch:			
+			if phSearch:
 				for (phImage, phToken, phTitle) in phSearch:
 					if len(phImage) == 4:
 						phImage = '0' + phImage
@@ -245,11 +245,11 @@ class putpattvFilmScreen(Screen):
 	def ShowCover(self, picData):
 		picPath = "/tmp/phIcon.jpg"
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverNone(self):
 		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
 		self.ShowCoverFile(picPath)
-		
+
 	def ShowCoverFile(self, picPath):
 		if fileExists(picPath):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -269,25 +269,25 @@ class putpattvFilmScreen(Screen):
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -298,7 +298,7 @@ class putpattvFilmScreen(Screen):
 			playAll = True,
 			listTitle = self.catName
 			)
-			
+
 		"""
 		url = self['genreList'].getCurrent()[0][1]
 		if url != None:
@@ -309,7 +309,7 @@ class putpattvFilmScreen(Screen):
 			url = 'http://www.putpat.tv/ws.xml?client=putpatplayer&partnerId=1&token=%s=&streamingMethod=http&method=Asset.getClipForToken' % token
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getToken).addErrback(self.dataError)
 		"""
-	
+
 	"""
 	def getToken(self, data):
 		phClip = re.findall('<medium>(.*?)</medium>', data, re.S)
@@ -325,7 +325,7 @@ class putpattvFilmScreen(Screen):
 		sref.setName(xxxtitle)
 		self.session.open(MoviePlayer, sref)
 	"""
-	
+
 	def keyCancel(self):
 		self.close()
 
@@ -333,13 +333,13 @@ class PutpatTvPlayer(SimplePlayer):
 
 	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
 		print "PutpatTvPlayer:"
-		
+
 		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, ltype='putpattv')
-		
+
 	def getVideo(self):
 		url = self.playList[self.playIdx][1]
 		xxxtitle = self.playList[self.playIdx][0]
 		token = self.playList[self.playIdx][2]
 		phImage = self.playList[self.playIdx][3]
 		PutpattvLink(self.session).getLink(self.playStream, self.dataError, xxxtitle, url, token, phImage)
-			
+

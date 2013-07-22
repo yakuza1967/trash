@@ -3,15 +3,15 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 def xxxsaveFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 def xxxsaveHosterListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
-		
+		]
+
 class xxxsaveFilmScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +21,9 @@ class xxxsaveFilmScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
@@ -45,15 +45,15 @@ class xxxsaveFilmScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self.lastpage = 1
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadpage)
-		
+
 	def loadpage(self):
 		self.keyLocked = True
 		self['name'].setText('Bitte warten...')
@@ -61,7 +61,7 @@ class xxxsaveFilmScreen(Screen):
 		url = "http://xxxsave.com/page/%s/" % (str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
-	
+
 	def loadData(self, data):
 		lastp = re.search('.*?Page\s.*?of\s(.*?)<', data, re.S)
 		if lastp:
@@ -70,7 +70,7 @@ class xxxsaveFilmScreen(Screen):
 			self.lastpage = int(lastp)
 		else:
 			self.lastpage = 1
-		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))	
+		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
 		phMovies = re.findall('class="thumbnail"><a\shref="(.*?)".*?<img.*?src="(.*?)".*?title=".*?">(.*?)</a>', data, re.S)
 		if phMovies:
 			for (phUrl, phImage, phTitle) in phMovies:
@@ -91,8 +91,8 @@ class xxxsaveFilmScreen(Screen):
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
 		else:
-			self.ShowCoverNone()			
-		
+			self.ShowCoverNone()
+
 	def ShowCover(self, picData):
 		picPath = "/tmp/Icon.jpg"
 		self.ShowCoverFile(picPath)
@@ -138,7 +138,7 @@ class xxxsaveFilmScreen(Screen):
 		if not self.page < 2:
 			self.page -= 1
 			self.loadpage()
-		
+
 	def keyPageUp(self):
 		print "PageUP"
 		if self.keyLocked:
@@ -146,31 +146,31 @@ class xxxsaveFilmScreen(Screen):
 		if self.page < self.lastpage:
 			self.page += 1
 			self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageUp()
 		self.showInfos()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['genreList'].pageDown()
 		self.showInfos()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['genreList'].up()
 		self.showInfos()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['genreList'].down()
 		self.showInfos()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -182,7 +182,7 @@ class xxxsaveFilmScreen(Screen):
 		self.close()
 
 class xxxsaveStreamListeScreen(Screen):
-	
+
 	def __init__(self, session, streamFilmLink, streamName):
 		self.session = session
 		self.streamFilmLink = streamFilmLink
@@ -195,9 +195,9 @@ class xxxsaveStreamListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -206,22 +206,22 @@ class xxxsaveStreamListeScreen(Screen):
 		self['title'] = Label("XXXSaVe.com")
 		self['name'] = Label(self.streamName)
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		getPage(self.streamFilmLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		streams = re.findall('href="(http://(streamcloud.eu).*?)".*?', data, re.S)
@@ -253,7 +253,7 @@ class xxxsaveStreamListeScreen(Screen):
 		url = url.replace('&amp;','&')
 		url = url.replace('&#038;','&')
 		get_stream_link(self.session).check_link(url, self.got_link)
-		
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)

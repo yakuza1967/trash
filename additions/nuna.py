@@ -57,7 +57,7 @@ class nunaGenreScreen(Screen):
 
 		self.onLayoutFinish.append(self.loadPage)
 
-	def loadPage(self):	
+	def loadPage(self):
 		self.genreliste = [('Musikrichtung',"Musikrichtung"),
 							('Kuenstler',"nstler")]
 
@@ -203,7 +203,7 @@ class nunaMusicListeScreen(Screen):
 
 	def loadPage(self):
 		self.keyLocked = True
-		print self.genreLink			
+		print self.genreLink
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):

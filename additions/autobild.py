@@ -4,7 +4,7 @@ from Plugins.Extensions.MediaPortal.resources.decrypt import *
 def autoBildGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class autoBildGenreScreen(Screen):
 
 	def __init__(self, session):
@@ -16,26 +16,26 @@ class autoBildGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Autobild.de")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Alle Videos", "http://www.autobild.de/videos/?page="))
 		self.genreliste.append(("Erlkoenige", "http://www.autobild.de/videos/erlkoenige/?page="))
@@ -55,11 +55,11 @@ class autoBildGenreScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 def autoBildFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class autoBildFilmListeScreen(Screen):
 	def __init__(self, session, streamGenreLink):
 		self.session = session
@@ -70,10 +70,10 @@ class autoBildFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		self.streamGenreLink = streamGenreLink
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -90,7 +90,7 @@ class autoBildFilmListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['page'] = Label("0")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -99,9 +99,9 @@ class autoBildFilmListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		url = "%s%s" % (self.streamGenreLink, str(self.page))
 		print url
@@ -109,7 +109,7 @@ class autoBildFilmListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		videos = re.findall('<div class="horizontal teaser clearfix">.*?<div class="pictureblock"><img src="(.*?)".*?<h2 class="kicker"><a href="(.*?)">(.*?)</a>.*?<p class="text">(.*?)</p>', data, re.S)
@@ -129,7 +129,7 @@ class autoBildFilmListeScreen(Screen):
 		self['page'].setText(str(self.page))
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/abIcon.jpg").addCallback(self.ShowCover)
-	
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/abIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -160,32 +160,32 @@ class autoBildFilmListeScreen(Screen):
 		if stream_url:
 			sref = eServiceReference(0x1001, 0, stream_url[0])
 			sref.setName(streamname)
-			self.session.open(MoviePlayer, sref)			
+			self.session.open(MoviePlayer, sref)
 
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['filmList'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['filmList'].down()
 		self.loadPic()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -193,13 +193,13 @@ class autoBildFilmListeScreen(Screen):
 		if not self.page < 1:
 			self.page -= 1
 			self.loadPage()
-			
+
 	def keyPageUp(self):
 		print "PageUp"
 		if self.keyLocked:
 			return
-		self.page += 1 
+		self.page += 1
 		self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()

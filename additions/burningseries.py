@@ -23,7 +23,7 @@ def mainListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 class bsMain(Screen, ConfigListScreen):
 	def __init__(self, session):
 		self.session = session
@@ -34,46 +34,46 @@ class bsMain(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("M e n u")
 		self['stationIcon'] = Pixmap()
 		self['stationInfo'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = False
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.keyLocked = True
 		self.streamList.append(("Serien von A-Z","serien"))
 		self.streamList.append(("Watchlist","watchlist"))
 		self.streamMenuList.setList(map(mainListEntry, self.streamList))
 		self.keyLocked = False
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
 			return
-			
+
 		auswahl = self['streamlist'].getCurrent()[0][1]
 		if auswahl == "serien":
 			self.session.open(bsSerien)
 		else:
 			self.session.open(bsWatchlist)
-			
+
 	def keyCancel(self):
 		self.close()
 
@@ -95,24 +95,24 @@ class bsSerien(Screen, ConfigListScreen):
 			"cancel": self.keyCancel,
 			"green" : self.keyAdd
 		}, -1)
-		
+
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("Serien A-Z")
 		self['stationIcon'] = Pixmap()
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		url = "http://www.burning-seri.es/serie-alphabet"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		serien_raw = re.findall('<ul id=\'serSeries\'>(.*?)</ul>', data, re.S)
 		if serien_raw:
@@ -126,7 +126,7 @@ class bsSerien(Screen, ConfigListScreen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -143,17 +143,17 @@ class bsSerien(Screen, ConfigListScreen):
 			return
 		muTitle = self['streamlist'].getCurrent()[0][0]
 		muID = self['streamlist'].getCurrent()[0][1]
-		
+
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			print "Erstelle Burning-Series Watchlist."
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watchlist")
-			
+
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","a")
 			writePlaylist.write('"%s" "%s"\n' % (muTitle, muID))
 			writePlaylist.close()
 			message = self.session.open(MessageBox, _("Serie wurde zur watchlist hinzugefuegt."), MessageBox.TYPE_INFO, timeout=3)
-			
+
 	def keyCancel(self):
 		self.close()
 
@@ -167,7 +167,7 @@ class bsWatchlist(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
@@ -175,28 +175,28 @@ class bsWatchlist(Screen, ConfigListScreen):
 			"cancel": self.keyCancel,
 			"red" : self.keyDel
 		}, -1)
-		
+
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("Watchlist")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPlaylist)
 
 	def loadPlaylist(self):
 		self.streamList = []
-		
+
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			print "Erstelle Burning-Series Watchlist."
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watchlist")
-			
+
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			readStations = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","r")
 			for rawData in readStations.readlines():
@@ -209,7 +209,7 @@ class bsWatchlist(Screen, ConfigListScreen):
 			self.streamMenuList.setList(map(bsListEntry, self.streamList))
 			readStations.close()
 			self.keyLocked = False
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -219,14 +219,14 @@ class bsWatchlist(Screen, ConfigListScreen):
 		auswahl = self['streamlist'].getCurrent()[0][1]
 		print serienTitle, auswahl
 		self.session.open(bsStaffeln, auswahl, serienTitle)
-			
+
 	def keyDel(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
 			return
-		
+
 		selectedName = self['streamlist'].getCurrent()[0][0]
-		writeTmp = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist.tmp","w")	
+		writeTmp = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist.tmp","w")
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			readStations = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","r")
 			for rawData in readStations.readlines():
@@ -239,7 +239,7 @@ class bsWatchlist(Screen, ConfigListScreen):
 			writeTmp.close()
 			shutil.move(config.mediaportal.watchlistpath.value+"mp_bs_watchlist.tmp", config.mediaportal.watchlistpath.value+"mp_bs_watchlist")
 			self.loadPlaylist()
-				
+
 	def keyCancel(self):
 		self.close()
 
@@ -253,7 +253,7 @@ class bsStaffeln(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		self.serienUrl = serienUrl
 		self.serienTitle = serienTitle
 		Screen.__init__(self, session)
@@ -262,30 +262,30 @@ class bsStaffeln(Screen, ConfigListScreen):
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("Staffel Auswahl")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.serienUrl
 		getPage(self.serienUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		details = re.findall('<strong>Beschreibung</strong>.*?<p>(.*?)</p>.*?<img\ssrc="(.*?)"\salt="Cover"\s{0,2}/>', data, re.S)
 		staffeln_raw = re.findall('<ul class="pages">(.*?)</ul>', data, re.S)
 		if staffeln_raw:
-			staffeln = re.findall('<li class=".*?"><a.*?href="(serie/.*?)">(.*?)</a></li>', staffeln_raw[0], re.S)		
+			staffeln = re.findall('<li class=".*?"><a.*?href="(serie/.*?)">(.*?)</a></li>', staffeln_raw[0], re.S)
 			if staffeln:
 				for (bsUrl,bsStaffel) in staffeln:
 					bsUrl = "http://www.burning-seri.es/" + bsUrl
@@ -300,7 +300,7 @@ class bsStaffeln(Screen, ConfigListScreen):
 				coverUrl = "http://www.burning-seri.es/" + cover
 				print coverUrl
 				downloadPage(coverUrl, "/tmp/bsIcon.jpg").addCallback(self.ShowCover)
-		
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/bsIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -317,7 +317,7 @@ class bsStaffeln(Screen, ConfigListScreen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -328,7 +328,7 @@ class bsStaffeln(Screen, ConfigListScreen):
 		auswahl = self['streamlist'].getCurrent()[0][1]
 		print auswahl, staffel
 		self.session.open(bsEpisoden, auswahl, staffel, self.serienTitle)
-		
+
 	def keyCancel(self):
 		self.close()
 
@@ -342,7 +342,7 @@ class bsEpisoden(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-		
+
 		self.serienUrl = serienUrl
 		self.bsStaffel = bsStaffel
 		self.serienTitle = serienTitle
@@ -352,27 +352,27 @@ class bsEpisoden(Screen, ConfigListScreen):
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("Episoden Auswahl")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-		
+
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.serienUrl
 		getPage(self.serienUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
-	
+
 		# Mark Watches episodes
 		self.watched_liste = []
 		self.mark_last_watched = []
@@ -387,7 +387,7 @@ class bsEpisoden(Screen, ConfigListScreen):
 					if line:
 						self.watched_liste.append("%s" % (line[0]))
 				self.updates_read.close()
-				
+
 		episoden = re.findall('<tr>.*?<td>(\d+)</td>.*?<td><a href="(serie/.*?)">', data, re.S)
 		details = re.findall('<strong>Beschreibung</strong>.*?<p>(.*?)</p>.*?<img\ssrc="(.*?)"\salt="Cover"\s{0,2}/>', data, re.S)
 		bsStaffel2 = self.bsStaffel
@@ -404,7 +404,7 @@ class bsEpisoden(Screen, ConfigListScreen):
 				else:
 					bsEpisode2 = "E"+str(bsEpisode)
 				bsEpisode = "%s%s - %s" % (bsStaffel3, bsEpisode2, decodeHtml(bsTitle[0].replace('_',' ').replace('-',' ')))
-				
+
 				checkname = self.serienTitle+" - "+bsEpisode
 				if checkname in self.watched_liste:
 					self.streamList.append((bsEpisode,bsUrl,True))
@@ -432,10 +432,10 @@ class bsEpisoden(Screen, ConfigListScreen):
 					self['stationIcon'].instance.setPixmap(ptr)
 					self['stationIcon'].show()
 					del self.picload
-					
+
 	def dataError(self, error):
 		printl(error,self,"E")
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -445,12 +445,12 @@ class bsEpisoden(Screen, ConfigListScreen):
 		title = self['streamlist'].getCurrent()[0][0]
 		print auswahl
 		self.session.open(bsStreams, auswahl, self.serienTitle+" - "+title)
-				
+
 	def keyCancel(self):
 		self.close()
-		
+
 class bsStreams(Screen, ConfigListScreen):
-	
+
 	def __init__(self, session, serienUrl, title):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/bsStreams.xml" % config.mediaportal.skin.value
@@ -460,7 +460,7 @@ class bsStreams(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		self.serienUrl = serienUrl
 		self.streamname = title
 		Screen.__init__(self, session)
@@ -469,12 +469,12 @@ class bsStreams(Screen, ConfigListScreen):
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("Stream Auswahl")
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
-		
+
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -482,11 +482,11 @@ class bsStreams(Screen, ConfigListScreen):
 		self['streamlist'] = self.streamMenuList
 		self.keyLocked = True
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		print self.serienUrl
 		getPage(self.serienUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
-		
+
 	def parseData(self, data):
 		raw =  re.findall('<h3>Hoster dieser Episode</h3>(.*?)</ul>', data, re.S)
 		if raw:
@@ -498,7 +498,7 @@ class bsStreams(Screen, ConfigListScreen):
 						self.streamList.append((bsStream,bsUrl))
 				self.streamMenuList.setList(map(bsListEntry, self.streamList))
 				self.keyLocked = False
-				
+
 		details = re.findall('id="desc_spoiler">\s{0,10}(.*?)</div>.*?<img\ssrc="(.*?)"\salt="Cover"\s{0,2}/>', data, re.S)
 		if details:
 			(handlung,cover) = details[0]
@@ -506,7 +506,7 @@ class bsStreams(Screen, ConfigListScreen):
 			coverUrl = "http://www.burning-seri.es/" + cover
 			print coverUrl
 			downloadPage(coverUrl, "/tmp/bsIcon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/bsIcon.jpg"):
 			self['stationIcon'].instance.setPixmap(gPixmapPtr())
@@ -523,7 +523,7 @@ class bsStreams(Screen, ConfigListScreen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-			
+
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()
 		if self.keyLocked or exist == None:
@@ -537,7 +537,7 @@ class bsStreams(Screen, ConfigListScreen):
 		print link
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watched"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watched")
-			
+
 		self.update_liste = []
 		leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_bs_watched")
 		if not leer == 0:
@@ -548,7 +548,7 @@ class bsStreams(Screen, ConfigListScreen):
 					print line[0]
 					self.update_liste.append("%s" % (line[0]))
 			self.updates_read.close()
-			
+
 			updates_read2 = open(config.mediaportal.watchlistpath.value+"mp_bs_watched" , "a")
 			check = ("%s" % self.streamname)
 			if not check in self.update_liste:
@@ -566,21 +566,21 @@ class bsStreams(Screen, ConfigListScreen):
 		sref = eServiceReference(0x1001, 0, link)
 		sref.setName(self.streamname)
 		self.session.open(MoviePlayer, sref)
-		
-	def findStream(self, data):	
+
+	def findStream(self, data):
 		if re.match(".*?<iframe.*?src=",data, re.S|re.I):
 			test = re.findall('<iframe.*?src=["|\'](http://.*?)["|\']', data, re.S|re.I)
 		else:
 			test = re.findall('<a target=["|\']_blank["|\'] href=["|\'](http://.*?)["|\']', data, re.S|re.I)
 		print test
-		
+
 		get_stream_link(self.session).check_link(test[0], self.got_link, False)
-		
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			self.playfile(stream_url.replace('&amp;','&'))
-	
+
 	def keyCancel(self):
 		self.close()

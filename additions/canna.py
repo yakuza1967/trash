@@ -9,27 +9,27 @@ def cannaGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def cannaListEntry(entry):
 	#TYPE_TEXT, x, y, width, height, fnt, flags, string [, color, backColor, backColorSelected, borderWidth, borderColor])
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def cannaYearListEntry(entry):
 	#TYPE_TEXT, x, y, width, height, fnt, flags, string [, color, backColor, backColorSelected, borderWidth, borderColor])
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		]	
+		]
 
 class cannaGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -37,18 +37,18 @@ class cannaGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 			"red": self.keyCancel
 		}, -1)
-		
+
 		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
 		self.playing = False
-		
+
 		self.keyLocked = True
 		self['title'] = Label("Canna.to")
 		self['ContentTitle'] = Label("Alben:")
@@ -68,7 +68,7 @@ class cannaGenreScreen(Screen):
 
 		self.onLayoutFinish.append(self.loadPage)
 
-	def loadPage(self):	
+	def loadPage(self):
 		self.genreliste = [('Playlist',"none","3"),
 							('TOP100 Single Charts',"http://ua.canna.to/canna/single.php","1"),
 							('Austria Single Charts',"http://ua.canna.to/canna/austria.php","1"),
@@ -88,7 +88,7 @@ class cannaGenreScreen(Screen):
 							('Dance Jahrescharts',"http://ua.canna.to/canna/dancejahrescharts.php","2"),
 							('Party Schlager Jahrescharts',"http://ua.canna.to/canna/partyjahrescharts.php","2"),
 							('Swiss Jahrescharts',"http://ua.canna.to/canna/swissjahrescharts.php","2")]
-							
+
 		self.chooseMenuList.setList(map(cannaGenreListEntry, self.genreliste))
 		self.keyLocked = False
 
@@ -97,7 +97,7 @@ class cannaGenreScreen(Screen):
 
 	def seekBack(self):
 		self['genreList'].pageUp()
-		
+
 	def keyOK(self):
 		if self.keyLocked or self['genreList'].getCurrent()[0][1] == "dump":
 			return
@@ -105,27 +105,27 @@ class cannaGenreScreen(Screen):
 		cannahdUrl = self['genreList'].getCurrent()[0][1]
 		cannahdID = self['genreList'].getCurrent()[0][2]
 		print cannahdGenre, cannahdUrl, cannahdID
-		
+
 		if cannahdID == "1":
 			self.session.open(cannaMusicListeScreen, cannahdGenre, cannahdUrl)
 		elif cannahdID == "2":
 			self.session.open(cannaJahreScreen, cannahdGenre, cannahdUrl)
 		elif cannahdID == "3":
 			self.session.open(cannaPlaylist)
-			
+
 	def keyCancel(self):
 		self.session.nav.stopService()
 		self.session.nav.playService(self.lastservice)
 		self.playing = False
 		self.close()
-		
+
 class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 
 	def __init__(self, session):
 		self.session = session
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/showSongstoAll.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/showSongstoAll.xml"
@@ -133,7 +133,7 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarSeek.__init__(self)
@@ -145,7 +145,7 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 			"red": self.keyDel,
 			"yellow": self.keyPlaymode
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.playmode = "Next"
 		self["title"] = Label("Canna.to - Playlist")
@@ -164,12 +164,12 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.chooseMenuList
 
-		self.onLayoutFinish.append(self.loadPlaylist)		
+		self.onLayoutFinish.append(self.loadPlaylist)
 
 	def loadPlaylist(self):
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
-			
+
 		leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_canna_playlist")
 		if not leer == 0:
 			self.filmliste = []
@@ -182,7 +182,7 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 					self.filmliste.append((decodeHtml(read_song),read_url))
 			self.chooseMenuList.setList(map(cannaListEntry, self.filmliste))
 			self.keyLocked = False
-			self.songs_read.close()	
+			self.songs_read.close()
 		else:
 			self.filmliste = []
 			self.filmliste.append(("No Songs added.","dump"))
@@ -190,7 +190,7 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 
 	def openMenu(self):
 		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')
-		
+
 	def cb_Menu(self, data):
 		print "cb_Menu:"
 		if data != []:
@@ -208,13 +208,13 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 					else:
 						scArtist = ''
 						scTitle = nm
-					
+
 				url = self['streamlist'].getCurrent()[0][1]
 				ltype = 'canna'
 				token = ''
 				album = ''
 				entry = [scTitle, url, scArtist, album, ltype, token, '']
-					
+
 				res = SimplePlaylistIO.addEntry(data[1], entry)
 				if res == 1:
 					self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
@@ -228,16 +228,16 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 			self.playmode = "Random"
 		elif self.playmode == "Random":
 			self.playmode = "Next"
-	
+
 		self["album"].setText("Playlist      -      Playmode      %s" % self.playmode)
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		cannaName = self['streamlist'].getCurrent()[0][0]
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 		print cannaName, cannaUrl
-		
+
 		if re.match('.*?-', cannaName):
 			playinfos = cannaName.split(' - ')
 			if playinfos:
@@ -252,7 +252,7 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 						self["songtitle"].setText(playinfos[1])
 		else:
 			self["artist"].setText(cannaName)
-			
+
 		#stream_url = self.getDLurl(cannaUrl)
 		stream_url = CannaLink(self.session).getDLurl(cannaUrl)
 		if stream_url:
@@ -267,9 +267,9 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 
 		cannaName = self['streamlist'].getCurrent()[0][0]
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
-		
+
 		print cannaName, cannaUrl
-		
+
 		writeTmp = open(config.mediaportal.watchlistpath.value+"mp_canna_playlist.tmp","w")
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 			readPlaylist = open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","r")
@@ -283,10 +283,10 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 			writeTmp.close()
 			shutil.move(config.mediaportal.watchlistpath.value+"mp_canna_playlist.tmp", config.mediaportal.watchlistpath.value+"mp_canna_playlist")
 			self.loadPlaylist()
-			
+
 	def doEofInternal(self, playing):
 		print "Play Next Song.."
-		
+
 		if self.playmode == "Next":
 			self['streamlist'].down()
 		else:
@@ -294,11 +294,11 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 			get_random = random.randint(0, int(count))
 			print "Got Random %s" % get_random
 			self['streamlist'].moveToIndex(get_random)
-		
+
 		cannaName = self['streamlist'].getCurrent()[0][0]
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 		print cannaName, cannaUrl
-		
+
 		if re.match('.*?-', cannaName):
 			playinfos = cannaName.split(' - ')
 			if playinfos:
@@ -324,13 +324,13 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 
 	def lockShow(self):
 		pass
-		
+
 	def unlockShow(self):
 		pass
-		
+
 	def keyCancel(self):
 		self.close()
-		
+
 	def seekFwd(self):
 		self['streamlist'].pageDown()
 
@@ -338,14 +338,14 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 		self['streamlist'].pageUp()
 
 class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
-	
+
 	def __init__(self, session, genreName, genreLink):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/showSongstoAll.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/showSongstoAll.xml"
@@ -353,11 +353,11 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarSeek.__init__(self)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "InfobarSeekActions"], {
 			"input_date_time" : self.openMenu,
 			"ok"    : self.keyOK,
@@ -365,7 +365,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			"green": self.keyAdd,
 			"yellow": self.keyPlaymode
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.playmode = "Random"
 		self["title"] = Label("Canna.to - %s" % self.genreName)
@@ -385,12 +385,12 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 		self['streamlist'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-			
+
 	def loadPage(self):
 		self.keyLocked = True
 		print self.genreLink
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
 		match = re.findall('<tr>.*?<font>(.*?)</font>.*?class="obutton" onClick="window.open..(.*?)...CannaPowerChartsPlayer.*?</tr>', data, re.S)
@@ -406,7 +406,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 
 	def openMenu(self):
 		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')
-		
+
 	def cb_Menu(self, data):
 		print "cb_Menu:"
 		if data != []:
@@ -419,13 +419,13 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 				else:
 					scArtist = ''
 					scTitle = nm
-					
+
 				url = self['streamlist'].getCurrent()[0][1]
 				ltype = 'canna'
 				token = ''
 				album = ''
 				entry = [scTitle, url, scArtist, album, ltype, token, '']
-					
+
 				res = SimplePlaylistIO.addEntry(data[1], entry)
 				if res == 1:
 					self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
@@ -439,20 +439,20 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			return
 
 		cannaName = self['streamlist'].getCurrent()[0][0]
-		cannaUrl = self['streamlist'].getCurrent()[0][1]		
+		cannaUrl = self['streamlist'].getCurrent()[0][1]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
-			
+
 		if not self.checkPlaylist(cannaName):
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 				writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","a")
 				writePlaylist.write('"%s" "%s"\n' % (cannaName, cannaUrl))
 				writePlaylist.close()
-				message = self.session.open(MessageBox, _("added"), MessageBox.TYPE_INFO, timeout=2)			
+				message = self.session.open(MessageBox, _("added"), MessageBox.TYPE_INFO, timeout=2)
 		else:
 			message = self.session.open(MessageBox, _("Song ist bereits vorhanden."), MessageBox.TYPE_INFO, timeout=2)
-			
+
 	def checkPlaylist(self, song):
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
@@ -468,7 +468,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 						(read_song, read_url) = line[0]
 						self.dupelist.append((read_song))
 				self.songs_read.close()
-				
+
 				if song in self.dupelist:
 					return True
 				else:
@@ -481,16 +481,16 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			self.playmode = "Random"
 		elif self.playmode == "Random":
 			self.playmode = "Next"
-	
+
 		self["album"].setText("Playlist      -      Playmode      %s" % self.playmode)
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		cannaName = self['streamlist'].getCurrent()[0][0]
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 		print cannaName, cannaUrl
-		
+
 		if re.match('.*?-', cannaName):
 			playinfos = cannaName.split(' - ')
 			if playinfos:
@@ -522,7 +522,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 
 	def doEofInternal(self, playing):
 		print "Play Next Song.."
-		
+
 		if self.playmode == "Next":
 			self['streamlist'].down()
 		else:
@@ -530,7 +530,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 			get_random = random.randint(0, int(count))
 			print "Got Random %s" % get_random
 			self['streamlist'].moveToIndex(get_random)
-		
+
 		cannaName = self['streamlist'].getCurrent()[0][0]
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 		print cannaName, cannaUrl
@@ -560,24 +560,24 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 
 	def lockShow(self):
 		pass
-		
+
 	def unlockShow(self):
 		pass
-		
+
 	def keyCancel(self):
 		self.close()
-		
-		
+
+
 class cannaJahreScreen(Screen):
-	
+
 	def __init__(self, session, genreName, genreLink):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultGenreScreen.xml"
@@ -585,15 +585,15 @@ class cannaJahreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 			"red": self.keyCancel
 		}, -1)
-			
+
 		self.keyLocked = True
 		self['title'] = Label("Canna.to")
 		self['ContentTitle'] = Label("Jahre:")
@@ -610,14 +610,14 @@ class cannaJahreScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		self.keyLocked = True
 		print self.genreLink
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
 		match = re.compile('<b><font face="Arial" size="5" color="#FFCC00"><a href="(.*?)">(.*?)</a></font></b>').findall(data, re.S)
@@ -637,27 +637,27 @@ class cannaJahreScreen(Screen):
 
 	def seekBack(self):
 		self['genreList'].pageUp()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		cannahdGenre = self['genreList'].getCurrent()[0][0]
 		cannahdUrl = self['genreList'].getCurrent()[0][1]
 		self.session.open(cannaMusicListeScreen2, cannahdGenre, cannahdUrl)
-		
+
 	def keyCancel(self):
 		self.playing = False
 		self.close()
-		
+
 class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
-	
+
 	def __init__(self, session, genreName, genreLink):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/showSongstoAll.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/showSongstoAll.xml"
@@ -665,11 +665,11 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
 		InfoBarSeek.__init__(self)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "InfobarSeekActions"], {
 			"input_date_time" : self.openMenu,
 			"ok"    : self.keyOK,
@@ -677,7 +677,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 			"green": self.keyAdd,
 			"yellow": self.keyPlaymode
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.playmode = "Next"
 		self["title"] = Label("Canna.to - %s" % self.genreName)
@@ -697,12 +697,12 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 		self['streamlist'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-			
+
 	def loadPage(self):
 		self.keyLocked = True
 		print self.genreLink
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		print "drin"
 		raw = re.findall('<td align="left" style="border-style:solid; border-width:1px;">(.*?)>>  Player  <<', data, re.S)
@@ -722,7 +722,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 
 	def openMenu(self):
 		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')
-		
+
 	def cb_Menu(self, data):
 		print "cb_Menu:"
 		if data != []:
@@ -735,13 +735,13 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 				else:
 					scArtist = ''
 					scTitle = nm
-					
+
 				url = self['streamlist'].getCurrent()[0][1]
 				ltype = 'canna'
 				token = ''
 				album = ''
 				entry = [scTitle, url, scArtist, album, ltype, token, '']
-					
+
 				res = SimplePlaylistIO.addEntry(data[1], entry)
 				if res == 1:
 					self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
@@ -755,20 +755,20 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 			return
 
 		cannaName = self['streamlist'].getCurrent()[0][0]
-		cannaUrl = self['streamlist'].getCurrent()[0][1]		
+		cannaUrl = self['streamlist'].getCurrent()[0][1]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
-			
+
 		if not self.checkPlaylist(cannaName):
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 				writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","a")
 				writePlaylist.write('"%s" "%s"\n' % (cannaName, cannaUrl))
 				writePlaylist.close()
-				message = self.session.open(MessageBox, _("added"), MessageBox.TYPE_INFO, timeout=2)			
+				message = self.session.open(MessageBox, _("added"), MessageBox.TYPE_INFO, timeout=2)
 		else:
 			message = self.session.open(MessageBox, _("Song ist bereits vorhanden."), MessageBox.TYPE_INFO, timeout=2)
-			
+
 	def checkPlaylist(self, song):
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
 			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
@@ -784,7 +784,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 						(read_song, read_url) = line[0]
 						self.dupelist.append((read_song))
 				self.songs_read.close()
-				
+
 				if song in self.dupelist:
 					return True
 				else:
@@ -797,9 +797,9 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 			self.playmode = "Random"
 		elif self.playmode == "Random":
 			self.playmode = "Next"
-	
+
 		self["album"].setText("Playlist      -      Playmode      %s" % self.playmode)
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -835,10 +835,10 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 
 	def seekBack(self):
 		self['streamlist'].pageUp()
-		
+
 	def doEofInternal(self, playing):
 		print "Play Next Song.."
-		
+
 		if self.playmode == "Next":
 			self['streamlist'].down()
 		else:
@@ -846,7 +846,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 			get_random = random.randint(0, int(count))
 			print "Got Random %s" % get_random
 			self['streamlist'].moveToIndex(get_random)
-		
+
 		cannaName = self['streamlist'].getCurrent()[0][0]
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 		print cannaName, cannaUrl
@@ -876,9 +876,9 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 
 	def lockShow(self):
 		pass
-		
+
 	def unlockShow(self):
 		pass
-		
+
 	def keyCancel(self):
 		self.close()

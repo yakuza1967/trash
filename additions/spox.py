@@ -4,9 +4,9 @@ from Plugins.Extensions.MediaPortal.resources.decrypt import *
 def spoboxGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class spoboxGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/spoboxGenreScreen.xml" % config.mediaportal.skin.value
@@ -16,26 +16,26 @@ class spoboxGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Spobox.tv")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Tischtennis", "http://www.spobox.tv/tischtennis"))
 		self.genreliste.append(("Volleyball", "http://www.spobox.tv/volleyball"))
@@ -57,7 +57,7 @@ class spoboxGenreScreen(Screen):
 		self.close()
 
 class spoboxSubGenreScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreName, streamGenreLink):
 		self.session = session
 		self.streamGenreName = streamGenreName
@@ -69,26 +69,26 @@ class spoboxSubGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Spobox.tv")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
@@ -110,13 +110,13 @@ class spoboxSubGenreScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 def spoboxFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class spoboxFilmListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -127,9 +127,9 @@ class spoboxFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -143,7 +143,7 @@ class spoboxFilmListeScreen(Screen):
 		self['name'] = Label("Spot Auswahl")
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -152,15 +152,15 @@ class spoboxFilmListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		videos = re.findall('<a href="(.*?)" title="(.*?)"><span class="thumb mini">.*?src="(.*?)"', data)
@@ -178,7 +178,7 @@ class spoboxFilmListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/spoIcon.jpg").addCallback(self.ShowCover)
-	
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/spoIcon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -205,31 +205,31 @@ class spoboxFilmListeScreen(Screen):
 			streamname = self['filmList'].getCurrent()[0][0]
 			sref = eServiceReference(0x1001, 0, stream[0])
 			sref.setName(streamname)
-			self.session.open(MoviePlayer, sref)			
+			self.session.open(MoviePlayer, sref)
 
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['filmList'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['filmList'].down()
 		self.loadPic()
-			
+
 	def keyCancel(self):
 		self.close()

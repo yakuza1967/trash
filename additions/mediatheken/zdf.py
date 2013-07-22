@@ -9,10 +9,10 @@ def ZDFGenreListEntry(entry):
 def ZDFFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 
 class ZDFGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,9 +21,9 @@ class ZDFGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -32,21 +32,21 @@ class ZDFGenreScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("ZDF Mediathek")
 		self['name'] = Label("Auswahl der Sendung")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.keyLocked = True
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.genreliste = []
 		for c in xrange(26):
@@ -63,13 +63,13 @@ class ZDFGenreScreen(Screen):
 			return
 		streamGenreLink = self['List'].getCurrent()[0][0]
 		self.session.open(ZDFSubGenreScreen, streamGenreLink)
-		
+
 	def keyLeft(self):
 		self['List'].pageUp()
-		
+
 	def keyRight(self):
 		self['List'].pageDown()
-		
+
 	def keyUp(self):
 		self['List'].up()
 
@@ -78,9 +78,9 @@ class ZDFGenreScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class ZDFSubGenreScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -90,9 +90,9 @@ class ZDFSubGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -101,26 +101,26 @@ class ZDFSubGenreScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
-		
+
 		self['title'] = Label("ZDF Mediathek")
 		self['name'] = Label("Auswahl der Sendung")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.keyLocked = True
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.zdf.de/ZDFmediathek/xmlservice/web/sendungenAbisZ?detailLevel=2&characterRangeStart=%s&characterRangeEnd=%s" % (self.streamGenreLink, self.streamGenreLink)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		sendungen = re.findall('<teaserimage alt=".*?" key="298x168">(.*?)</teaserimage>.*?<title>(.*?)</title>.*?<detail>(.*?)</detail>.*?<assetId>(.*?)</assetId>', data, re.S)
 		if sendungen:
@@ -144,7 +144,7 @@ class ZDFSubGenreScreen(Screen):
 		streamHandlung = self['List'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(streamHandlung))
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['Pic'].instance.setPixmap(gPixmapPtr())
@@ -166,19 +166,19 @@ class ZDFSubGenreScreen(Screen):
 		if streamGenreLink == None:
 			return
 		self.session.open(ZDFFilmeListeScreen, streamGenreLink)
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
 		self['List'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['List'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -195,7 +195,7 @@ class ZDFSubGenreScreen(Screen):
 		self.close()
 
 class ZDFFilmeListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -206,9 +206,9 @@ class ZDFFilmeListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -222,16 +222,16 @@ class ZDFFilmeListeScreen(Screen):
 		self['name'] = Label("Folgen Auswahl")
 		self['handlung'] = Label("")
 		self['Pic'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['List'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		url = "http://www.zdf.de/ZDFmediathek/xmlservice/web/aktuellste?maxLength=50&id="+self.streamGenreLink+"&ak=web&ganzeSendungen=false&offset=0"
 		print url
@@ -239,7 +239,7 @@ class ZDFFilmeListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		self.filmliste = []
 		folgen = re.findall('<type>video</type>.*?<teaserimage alt=".*?" key="298x168">(.*?)</teaserimage>.*?<title>(.*?)</title>.*?<detail>(.*?)</detail>.*?<assetId>(.*?)</assetId>', data, re.S)
@@ -261,7 +261,7 @@ class ZDFFilmeListeScreen(Screen):
 		streamHandlung = self['List'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(streamHandlung))
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['Pic'].instance.setPixmap(gPixmapPtr())
@@ -300,13 +300,13 @@ class ZDFFilmeListeScreen(Screen):
 			return
 		self['List'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['List'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return

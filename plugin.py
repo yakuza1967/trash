@@ -3,7 +3,7 @@
 # General imports
 from resources.imports import *
 from resources.update import *
-	
+
 # Stream-Sites import
 from additions.forplayers import *
 from additions.dokume import *
@@ -240,7 +240,7 @@ config.mediaportal.showIStream = ConfigYesNo(default = False)
 config.mediaportal.showM4k = ConfigYesNo(default = False)
 config.mediaportal.showM4kWatchlist = ConfigYesNo(default = False)
 config.mediaportal.showKinoxWatchlist = ConfigYesNo(default = False)
-	
+
 # mediatheken
 config.mediaportal.showVoxnow = ConfigYesNo(default = True)
 config.mediaportal.showRTLnow = ConfigYesNo(default = True)
@@ -306,9 +306,9 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self.configlist = []
 		ConfigListScreen.__init__(self, self.configlist)
 
@@ -328,7 +328,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("YouTube Video Quality Priority:", config.mediaportal.youtubeprio))
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
-		
+
 		### Grauzone
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("----- Grauzone -----", config.mediaportal.fake_entry))
@@ -348,24 +348,24 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.configlist.append(getConfigListEntry("Zeige movie25:", config.mediaportal.showMovie25))
 			self.configlist.append(getConfigListEntry("Zeige watchseries:", config.mediaportal.showWatchseries))
 			self.configlist.append(getConfigListEntry("Zeige Vibeo:", config.mediaportal.showVibeo))
-			
+
 			self.configlist.append(getConfigListEntry("----- Watchlist -----", config.mediaportal.fake_entry))
 			self.configlist.append(getConfigListEntry("Zeige Kinox Watchlist:", config.mediaportal.showKinoxWatchlist))
 			self.configlist.append(getConfigListEntry("Zeige Movie4k Watchlist:", config.mediaportal.showM4kWatchlist))
-		
+
 		### Sport
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Zeige NHL:", config.mediaportal.showNhl))		
+		self.configlist.append(getConfigListEntry("Zeige NHL:", config.mediaportal.showNhl))
 		self.configlist.append(getConfigListEntry("Zeige Spobox:", config.mediaportal.showSpobox))
 		self.configlist.append(getConfigListEntry("Zeige Laola1:", config.mediaportal.showLaola1))
 		self.configlist.append(getConfigListEntry("Zeige Ran.de:", config.mediaportal.showRan))
-		
+
 		### Fun
 		self.configlist.append(getConfigListEntry("----- Fun -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Zeige Rofl.to:", config.mediaportal.showRofl))
 		self.configlist.append(getConfigListEntry("Zeige Fail.to:", config.mediaportal.showFail))
 		self.configlist.append(getConfigListEntry("Zeige LiveLeak:", config.mediaportal.showLiveLeak))
-		self.configlist.append(getConfigListEntry("Zeige Radio.de:", config.mediaportal.showRadio))		
+		self.configlist.append(getConfigListEntry("Zeige Radio.de:", config.mediaportal.showRadio))
 		self.configlist.append(getConfigListEntry("Zeige TvKino:", config.mediaportal.showTvkino))
 		self.configlist.append(getConfigListEntry("Zeige FilmOn:", config.mediaportal.showFilmOn))
 		self.configlist.append(getConfigListEntry("Zeige Focus:", config.mediaportal.showFocus))
@@ -429,7 +429,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige Moovizon:", config.mediaportal.showMoovizon))
 			#self.configlist.append(getConfigListEntry("Zeige Viewster:", config.mediaportal.showViewster))
-		
+
 		# Kinder
 		self.configlist.append(getConfigListEntry("Zeige Tivi:", config.mediaportal.showtivi))
 		self.configlist.append(getConfigListEntry("Zeige KinderKino:", config.mediaportal.showKinderKino))
@@ -475,7 +475,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige XXXSaVe:", config.mediaportal.showxxxsave))
 		self.configlist.append(getConfigListEntry("Zeige YouPorn:", config.mediaportal.showyouporn))
-		
+
 		self.configlist.append(getConfigListEntry("----- Debug -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Grauzonen-Erweiterungen sichtbar:", config.mediaportal.showgrauzone))
 		self.configlist.append(getConfigListEntry("Debug-Mode:", config.mediaportal.debugMode))
@@ -485,7 +485,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self['title'] = Label("MediaPortal - Setup - (Version %s)" % config.mediaportal.versiontext.value)
 		self['name'] = Label("Setup")
 		self['coverArt'] = Pixmap()
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -500,14 +500,14 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			config.mediaportal.filter.value = 'ALL'
 		if (config.mediaportal.showgrauzone.value == False and config.mediaportal.filter.value == 'Grauzone'):
 			config.mediaportal.filter.value = 'ALL'
-		
+
 		if (config.mediaportal.showgrauzone.value and not config.mediaportal.pingrauzone.value):
 			self.a = str(random.randint(1,9))
 			self.b = str(random.randint(0,9))
 			self.c = str(random.randint(0,9))
 			self.d = str(random.randint(0,9))
 			message = "Some of the plugins may not be legally used in your country!\n\nIf you accept this then enter the following code now:\n\n%s %s %s %s" % (self.a,self.b,self.c,self.d)
-			self.session.openWithCallback(self.keyOK2,MessageBox,_(message), MessageBox.TYPE_YESNO) 
+			self.session.openWithCallback(self.keyOK2,MessageBox,_(message), MessageBox.TYPE_YESNO)
 		else:
 			if not config.mediaportal.showgrauzone.value:
 				config.mediaportal.pingrauzone.value = False
@@ -553,9 +553,9 @@ class HelpScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -563,10 +563,10 @@ class HelpScreen(Screen):
 
 	def keyOK(self):
 		self.close()
-	
+
 	def keyCancel(self):
 		self.close()
-		
+
 class chooseMenuList(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, True, eListboxPythonMultiContent)
@@ -584,11 +584,11 @@ class haupt_Screen(Screen, ConfigListScreen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
 		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal.ttf", "mediaportal", 100, False)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions"], {
 			"ok"    : self.keyOK,
 			"up"    : self.keyUp,
@@ -602,33 +602,33 @@ class haupt_Screen(Screen, ConfigListScreen):
 		}, -1)
 
 		self['title'] = Label("MediaPortal v%s" % config.mediaportal.versiontext.value)
-		
+
 		self['name'] = Label("Plugin Auswahl")
-		
+
 		self['funsport'] = chooseMenuList([])
 		self['Funsport'] = Label("Fun/Sport")
-		
+
 		self['grauzone'] = chooseMenuList([])
 		self['Grauzone'] = Label("")
-		
+
 		self['mediatheken'] = chooseMenuList([])
 		self['Mediatheken'] = Label("Mediatheken")
-	
+
 		self['porn'] = chooseMenuList([])
 		self['Porn'] = Label("")
 
 		self.currentlist = "porn"
 
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		if config.mediaportal.autoupdate.value:
 			checkupdate(self.session).checkforupdate()
 
 		self.mediatheken = []
 		self.grauzone = []
-		self.funsport = []	
-		self.porn = []	
+		self.funsport = []
+		self.porn = []
 
 		# Mediatheken
 		if config.mediaportal.showMyvideo.value:
@@ -676,7 +676,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		if config.mediaportal.showCczwei.value:
 			self.mediatheken.append(self.hauptListEntry("CCZwei", "cczwei"))
 		if config.mediaportal.showDoku.value:
-			self.mediatheken.append(self.hauptListEntry("Doku.me", "doku"))		
+			self.mediatheken.append(self.hauptListEntry("Doku.me", "doku"))
 		if config.mediaportal.showDOKUh.value:
 			self.mediatheken.append(self.hauptListEntry("DOKUh", "dokuh"))
 		if config.mediaportal.showDokuHouse.value:
@@ -808,7 +808,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.funsport.append(self.hauptListEntry("Canna-Power", "canna"))
 			if config.mediaportal.showSongsto.value:
 				self.funsport.append(self.hauptListEntry("Songs.to", "songsto"))
-		
+
 		# porn
 		if config.mediaportal.showporn.value:
 			if config.mediaportal.show4tube.value:
@@ -882,7 +882,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 					self.porn.append(self.hauptListEntry("XXXSaVe", "xxxsave"))
 			if config.mediaportal.showyouporn.value:
 				self.porn.append(self.hauptListEntry("YouPorn", "youporn"))
-		
+
 		if len(self.porn) < 1:
 			self['Porn'].hide()
 		else:
@@ -892,11 +892,11 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self['Grauzone'].hide()
 		else:
 			self['Grauzone'].setText("Grauzone")
-			
+
 		self.mediatheken.sort(key=lambda t : tuple(t[0][0].lower()))
 		self.grauzone.sort(key=lambda t : tuple(t[0][0].lower()))
-		self.funsport.sort(key=lambda t : tuple(t[0][0].lower()))		
-		self.porn.sort(key=lambda t : tuple(t[0][0].lower()))		
+		self.funsport.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.porn.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		self["mediatheken"].setList(self.mediatheken)
 		self["mediatheken"].l.setItemHeight(44)
@@ -913,10 +913,10 @@ class haupt_Screen(Screen, ConfigListScreen):
 		icon = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons/%s.png" % jpg
 		if not fileExists(icon):
 			icon = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons/no_icon.png"
-		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 1), size=(75, 40), png=loadPNG(icon)))	
+		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 1), size=(75, 40), png=loadPNG(icon)))
 		res.append(MultiContentEntryText(pos=(80, 10), size=(160, 40), font=0, text=name, flags=RT_HALIGN_LEFT))
 		return res
-	
+
 	def showPorn(self):
 		if config.mediaportal.showporn.value:
 			config.mediaportal.showporn.value = False
@@ -935,13 +935,13 @@ class haupt_Screen(Screen, ConfigListScreen):
 
 	def keySetup(self):
 		self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
-	
+
 	def keyHelp(self):
 		self.session.open(HelpScreen)
 
 	def getTriesEntry(self):
 		return config.ParentalControl.retries.setuppin
-		
+
 	def pinok(self, pincode):
 		if pincode:
 			self.session.openWithCallback(self.restart, hauptScreenSetup)
@@ -954,7 +954,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		auswahl = self[self.currentlist].getCurrent()[0][0]
 		self.title = auswahl
 		self['name'].setText(auswahl)
-		
+
 	def keyDown(self):
 		exist = self[self.currentlist].getCurrent()
 		if exist == None:
@@ -1038,19 +1038,19 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self["porn"].selectionEnabled(1)
 				self.currentlist = "porn"
 				cnt_tmp_ls = len(self.porn)
-			
+
 		cnt_tmp_ls = int(cnt_tmp_ls)
 		if int(self.cur_idx) < int(cnt_tmp_ls):
 			self[self.currentlist].moveToIndex(int(self.cur_idx))
 		else:
 			idx = int(cnt_tmp_ls) -1
 			self[self.currentlist].moveToIndex(int(idx))
-			
+
 		if cnt_tmp_ls > 0:
 			auswahl = self[self.currentlist].getCurrent()[0][0]
 			self.title = auswahl
 			self['name'].setText(auswahl)
-		
+
 	def keyLeft(self):
 		self.cur_idx = self[self.currentlist].getSelectedIndex()
 		self["mediatheken"].selectionEnabled(0)
@@ -1125,7 +1125,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self["mediatheken"].selectionEnabled(1)
 				self.currentlist = "mediatheken"
 				cnt_tmp_ls = len(self.mediatheken)
-	
+
 		cnt_tmp_ls = int(cnt_tmp_ls)
 		print self.cur_idx, cnt_tmp_ls
 		if int(self.cur_idx) < int(cnt_tmp_ls):
@@ -1138,7 +1138,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			auswahl = self[self.currentlist].getCurrent()[0][0]
 			self.title = auswahl
 			self['name'].setText(auswahl)
-		
+
 	def keyOK(self):
 		exist = self[self.currentlist].getCurrent()
 		if exist == None:
@@ -1187,7 +1187,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "Baskino":
 			self.session.open(baskino)
 		elif auswahl == "Kinox":
-			self.session.open(kxMain) 
+			self.session.open(kxMain)
 		elif auswahl == "Kinox Watchlist":
 			self.session.open(kxWatchlist)
 		elif auswahl == "Dreamscreencast":
@@ -1292,7 +1292,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(vibeoFilmListeScreen)
 		elif auswahl == "heiseVIDEO":
 			self.session.open(HeiseTvGenreScreen)
-			
+
 		# mediatheken
 		elif auswahl == "VOXNOW":
 			self.session.open(VOXnowGenreScreen)
@@ -1322,7 +1322,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
-			
+
 		# porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
@@ -1441,7 +1441,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.session.open(self.pornscreen)
 			else:
 				self.session.open(self.pornscreen, self.cat)
-			
+
 	def keyCancel(self):
 		self.close(self.session, True)
 
@@ -1452,7 +1452,7 @@ class pluginSort(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		
+
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/pluginSortScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/pluginSortScreen.xml"
@@ -1460,10 +1460,10 @@ class pluginSort(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
 
-		self.list = [] 
+		self.list = []
 		self["config2"] = chooseMenuList([])
 		self.plugin_path = ""
 		self.selected = False
@@ -1473,9 +1473,9 @@ class pluginSort(Screen):
 			"ok":	self.select,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self.readconfig()
-		
+
 	def select(self):
 		if not self.selected:
 			self.last_newidx = self["config2"].getSelectedIndex()
@@ -1508,12 +1508,12 @@ class pluginSort(Screen):
 				config_tmp.write('"%s" "%s" "%s" "%s" "%s"\n' % (name, pic, genre, hits, count_move))
 
 			print "change:", self.last_newidx+1, "with", self.now_newidx+1, "total:", len(self.config_list_select)
-				
+
 			config_tmp.close()
-			shutil.move("/etc/enigma2/mp_pluginliste.tmp", "/etc/enigma2/mp_pluginliste")			
+			shutil.move("/etc/enigma2/mp_pluginliste.tmp", "/etc/enigma2/mp_pluginliste")
 			self.selected = False
 			self.readconfig()
-				
+
 	def readconfig(self):
 		config_read = open("/etc/enigma2/mp_pluginliste","r")
 		self.config_list = []
@@ -1526,17 +1526,17 @@ class pluginSort(Screen):
 				if config.mediaportal.filter.value != "ALL":
 					if genre == config.mediaportal.filter.value:
 						self.config_list_select.append((name, pic, genre, hits, msort))
-						self.config_list.append(self.show_menu(name, pic, genre, hits, msort))	
+						self.config_list.append(self.show_menu(name, pic, genre, hits, msort))
 				else:
 					self.config_list_select.append((name, pic, genre, hits, msort))
 					self.config_list.append(self.show_menu(name, pic, genre, hits, msort))
-		
+
 		self.config_list.sort(key=lambda x: int(x[0][4]))
 		self.config_list_select.sort(key=lambda x: int(x[4]))
 		self["config2"].l.setList(self.config_list)
-		self["config2"].l.setItemHeight(25)				
+		self["config2"].l.setItemHeight(25)
 		config_read.close()
-		
+
 	def show_menu(self, name, pic, genre, hits, msort):
 		res = [(name, pic, genre, hits, msort)]
 		res.append(MultiContentEntryText(pos=(100, 0), size=(390, 22), font=0, text=name, flags=RT_HALIGN_LEFT))
@@ -1618,7 +1618,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showDoku.value:
 			self.plugin_liste.append(("Doku.me", "doku", "Mediathek"))
 		if config.mediaportal.showMoovizon.value:
-			self.plugin_liste.append(("Moovizon", "moovizon", "Mediathek"))	
+			self.plugin_liste.append(("Moovizon", "moovizon", "Mediathek"))
 		if config.mediaportal.showSportBild.value:
 			self.plugin_liste.append(("SportBild", "sportbild", "Mediathek"))
 		if config.mediaportal.showAutoBild.value:
@@ -1709,7 +1709,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
 
-		### mediatheken	
+		### mediatheken
 		if config.mediaportal.showMyvideo.value:
 			self.plugin_liste.append(("MyVideo", "myvideo", "Mediathek"))
 		if config.mediaportal.showNetzKino.value:
@@ -1813,7 +1813,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showyouporn.value:
 				self.plugin_liste.append(("YouPorn", "youporn", "Porn"))
 
-		# Plugin Sortierung		
+		# Plugin Sortierung
 		if config.mediaportal.sortplugins != "default":
 
 			# Erstelle Pluginliste falls keine vorhanden ist.
@@ -1821,7 +1821,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if not fileExists(self.sort_plugins_file):
 				print "Erstelle Wall-Pluginliste."
 				os.system("touch "+self.sort_plugins_file)
-					
+
 			pluginliste_leer = os.path.getsize(self.sort_plugins_file)
 			if pluginliste_leer == 0:
 				print "1st time - Schreibe Wall-Pluginliste."
@@ -1833,24 +1833,24 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 					first_count += 1
 				read_pluginliste.close()
 				print "Wall-Pluginliste wurde erstellt."
-				
+
 			# Lese Pluginliste ein.
 			if fileExists(self.sort_plugins_file):
-			
+
 				count_sort_plugins_file = len(open(self.sort_plugins_file).readlines())
 				count_plugin_liste = len(self.plugin_liste)
-				
+
 				print count_plugin_liste, count_sort_plugins_file
 				if int(count_plugin_liste) != int(count_sort_plugins_file):
 					print "Ein Plugin wurde aktiviert oder deaktiviert.. erstelle neue pluginliste."
-					
+
 					read_pluginliste_tmp = open(self.sort_plugins_file+".tmp","w")
 					read_pluginliste = open(self.sort_plugins_file,"r")
 					p_dupeliste = []
-					
+
 					for rawData in read_pluginliste.readlines():
 						data = re.findall('"(.*?)" "(.*?)" "(.*?)" "(.*?)" "(.*?)"', rawData, re.S)
-						
+
 						if data:
 							(p_name, p_picname, p_genre, p_hits, p_sort) = data[0]
 							pop_count = 0
@@ -1861,13 +1861,13 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 										p_dupeliste.append((p_name))
 										print pop_count
 										self.plugin_liste.pop(int(pop_count))
-										
+
 									pop_count += 1
-							
+
 					if len(self.plugin_liste) != 0:
 						for pname, ppic, pgenre in self.plugin_liste:
 							read_pluginliste_tmp.write('"%s" "%s" "%s" "%s" "%s"\n' % (pname, ppic, pgenre, "0", "99"))
-					
+
 					read_pluginliste.close()
 					read_pluginliste_tmp.close()
 					shutil.move(self.sort_plugins_file+".tmp", self.sort_plugins_file)
@@ -1880,7 +1880,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 						(p_name, p_picname, p_genre, p_hits, p_sort) = data[0]
 						self.new_pluginliste.append((p_name, p_picname, p_genre, p_hits, p_sort))
 				read_pluginliste.close()
-	
+
 			# Sortieren nach hits
 			if config.mediaportal.sortplugins.value == "hits":
 				self.new_pluginliste.sort(key=lambda x: int(x[3]))
@@ -1894,9 +1894,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.new_pluginliste.sort(key=lambda x: int(x[4]))
 
 			self.plugin_liste = self.new_pluginliste
-			
+
 		skincontent = ""
-		
+
 		posx = 20
 		posy = 210
 		for x in range(1,len(self.plugin_liste)+1):
@@ -1908,12 +1908,12 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			elif x == 40 or x == 80 or x == 120 or x == 160 or x == 200:
 				posx = 20
 				posy = 210
-				
+
 		self.skin_dump = ""
 		self.skin_dump += "<widget name=\"frame\" position=\"20,210\" size=\"150,80\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/Selektor_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
 		self.skin_dump += skincontent
 		self.skin_dump += "</screen>"
-		
+
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/hauptScreenWall.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/hauptScreenWall.xml"
@@ -1922,11 +1922,11 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.skin_dump2 += self.skin_dump
 			self.skin = self.skin_dump2
 			f.close()
-		
+
 		Screen.__init__(self, session)
 
 		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal.ttf", "mediaportal", 100, False)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions"], {
 			"ok"    : self.keyOK,
 			"up"    : self.keyUp,
@@ -1943,7 +1943,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			"green" : self.chSort,
 			"yellow": self.manuelleSortierung
 		}, -1)
-		
+
 		self['name'] = Label("Plugin Auswahl")
 		self['blue'] = Label("")
 		self['green'] = Label("")
@@ -1952,12 +1952,12 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		for x in range(1,len(self.plugin_liste)+1):
 			self["zeile"+str(x)] = Pixmap()
 			self["zeile"+str(x)].show()
-		
+
 		self.selektor_index = 1
 		self.select_list = 0
 
 		self.onFirstExecBegin.append(self._onFirstExecBegin)
-		
+
 	def manuelleSortierung(self):
 		self.session.openWithCallback(self.restart, pluginSort)
 
@@ -1981,7 +1981,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 	def _onFirstExecBegin(self):
 		if config.mediaportal.autoupdate.value:
 			checkupdate(self.session).checkforupdate()
-			
+
 		# load plugin icons
 		print "Set Filter:", config.mediaportal.filter.value
 		self['blue'].setText(config.mediaportal.filter.value)
@@ -2005,7 +2005,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		# Sortieren nach abcde..
 		elif config.mediaportal.sortplugins.value == "abc":
 			self.plugin_liste.sort(key=lambda t : tuple(t[0].lower()))
-			
+
 		elif config.mediaportal.sortplugins.value == "user":
 			self.plugin_liste.sort(key=lambda x: int(x[4]))
 
@@ -2024,17 +2024,17 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self["zeile"+str(x)].instance.setPixmap(pic)
 				if x <= 40:
 					self["zeile"+str(x)].show()
-					
+
 		# erstelle mainlist
 		self.widget_list()
-				
+
 	def widget_list(self):
 		count = 1
 		counting = 1
 		self.mainlist = []
 		list_dummy = []
 		self.plugin_counting = len(self.plugin_liste)
-		
+
 		for x in range(1,int(self.plugin_counting)+1):
 			if count == 40:
 				count += 1
@@ -2049,17 +2049,17 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				list_dummy.append(x)
 				if int(counting) == int(self.plugin_counting)+1:
 					self.mainlist.append(list_dummy)
-					
+
 		print self.mainlist
 		pageinfo = "%s / %s" % (self.select_list+1, len(self.mainlist))
 		self['page'].setText(pageinfo)
 		select_nr = self.mainlist[int(self.select_list)][int(self.selektor_index)-1]
 		plugin_name = self.plugin_liste[int(select_nr)-1][0]
-		self['name'].setText(plugin_name)		
-				
+		self['name'].setText(plugin_name)
+
 	def move_selector(self):
 		#print "mainlist:", self.mainlist[int(self.select_list)]
-		#print "selektor", self.selektor_index	
+		#print "selektor", self.selektor_index
 		#print "gucken", self.selektor_index, len(self.mainlist[int(self.select_list)])
 		select_nr = self.mainlist[int(self.select_list)][int(self.selektor_index)-1]
 		plugin_name = self.plugin_liste[int(select_nr)-1][0]
@@ -2068,11 +2068,11 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self["frame"].moveTo(position.x(), position.y(), 1)
 		self["frame"].show()
 		self["frame"].startMoving()
-		
+
 	def keyOK(self):
 		if self.check_empty_list():
 			return
-		
+
 		select_nr = self.mainlist[int(self.select_list)][int(self.selektor_index)-1]
 		auswahl = self.plugin_liste[int(select_nr)-1][0]
 		icon = self.plugin_liste[int(select_nr)-1][1]
@@ -2254,7 +2254,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
-			
+
 		# porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
@@ -2377,7 +2377,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 	def	keyLeft(self):
 		if self.check_empty_list():
 			return
-		if self.selektor_index > 1: 
+		if self.selektor_index > 1:
 			self.selektor_index -= 1
 			self.move_selector()
 		else:
@@ -2391,7 +2391,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.move_selector()
 		else:
 			self.page_next()
-			
+
 	def keyUp(self):
 		if self.check_empty_list():
 			return
@@ -2411,7 +2411,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		else:
 			self.selektor_index = len(self.mainlist[int(self.select_list)])
 			self.move_selector()
-			
+
 	def page_next(self):
 		if self.check_empty_list():
 			return
@@ -2419,7 +2419,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.paint_hide()
 			self.select_list += 1
 			self.paint_new()
-	
+
 	def page_back(self):
 		if self.check_empty_list():
 			return
@@ -2435,11 +2435,11 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			return True
 		else:
 			return False
-			
+
 	def paint_hide(self):
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].hide()
-	
+
 	def paint_new_last(self):
 		pageinfo = "%s / %s" % (self.select_list+1, len(self.mainlist))
 		self['page'].setText(pageinfo)
@@ -2449,7 +2449,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.move_selector()
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
-			
+
 	def paint_new(self):
 		pageinfo = "%s / %s" % (self.select_list+1, len(self.mainlist))
 		self['page'].setText(pageinfo)
@@ -2457,37 +2457,37 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.move_selector()
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
-	
+
 	def keySetup(self):
 		print config.mediaportal.pincode.value
 		self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
-	
+
 	def keyHelp(self):
 		self.session.open(HelpScreen)
 
 	def getTriesEntry(self):
 		return config.ParentalControl.retries.setuppin
-		
+
 	def pinok(self, pincode):
 		if pincode:
 			self.session.openWithCallback(self.restart, hauptScreenSetup)
 
 	def chSort(self):
 		print "Sort: %s" % config.mediaportal.sortplugins.value
-		
+
 		if config.mediaportal.sortplugins.value == "hits":
 			config.mediaportal.sortplugins.value = "abc"
 		elif config.mediaportal.sortplugins.value == "abc":
 			config.mediaportal.sortplugins.value = "user"
 		elif config.mediaportal.sortplugins.value == "user":
 			config.mediaportal.sortplugins.value = "hits"
-			
+
 		print "Sort changed:", config.mediaportal.sortplugins.value
 		self.restart()
-	
+
 	def chFilter(self):
 		print "Filter:", config.mediaportal.filter.value
-		
+
 		if config.mediaportal.filter.value == "ALL":
 			config.mediaportal.filter.value = "Mediathek"
 		elif config.mediaportal.filter.value == "Mediathek":
@@ -2503,7 +2503,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		print "Filter changed:", config.mediaportal.filter.value
 		self.restartAndCheck()
-		
+
 	def restartAndCheck(self):
 		if config.mediaportal.filter.value != "ALL":
 			dump_liste2 = self.dump_liste
@@ -2521,8 +2521,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			print "Mediaportal restart."
 			config.mediaportal.filter.save()
 			configfile.save()
-			self.close(self.session, False)			
-		
+			self.close(self.session, False)
+
 	def showPorn(self):
 		if config.mediaportal.showporn.value:
 			config.mediaportal.showporn.value = False
@@ -2559,14 +2559,14 @@ def exit(session, result):
 		if config.mediaportal.ansicht.value == "liste":
 			session.openWithCallback(exit, haupt_Screen)
 		else:
-			session.openWithCallback(exit, haupt_Screen_Wall, config.mediaportal.filter.value)		
-	
+			session.openWithCallback(exit, haupt_Screen_Wall, config.mediaportal.filter.value)
+
 def main(session, **kwargs):
 	if config.mediaportal.ansicht.value == "liste":
 		session.openWithCallback(exit, haupt_Screen)
 	else:
 		session.openWithCallback(exit, haupt_Screen_Wall, config.mediaportal.filter.value)
-	
+
 def Plugins(path, **kwargs):
 	mp_globals.pluginPath = path
 

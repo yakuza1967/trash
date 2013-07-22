@@ -15,7 +15,7 @@ class Flashx(object):
 		('Accept-Language', 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4'),
 		('Referer', 'http://play.flashx.tv')
 	]
-	
+
 	def __init__(self):
 		self.cookie = None
 
@@ -59,16 +59,16 @@ class Flashx(object):
 			return t
 		else:
 			return []
-			
+
 	def __decodeX(self, c, x):
 		d = self.__c(c)
 		t = self.__t(d)
 		html = self.__x(x, t)
 		return html
-		
+
 	def __getData(self, url, decode=False, referer=None):
 		data = None
-		
+
 		request = Request(url)
 		for header in self.headers:
 			request.add_header(*header)
@@ -85,7 +85,7 @@ class Flashx(object):
 			print 'HTTPError: %s' % error
 		except URLError, error:
 			print 'URLError: %s' % error
-		
+
 		if not decode:
 			return data
 		if data != None:
@@ -96,9 +96,9 @@ class Flashx(object):
 				html = self.__decodeX(c,x)
 				newurl=resp.geturl()
 				return html
-					
+
 		return data
-		
+
 	def getVidUrl(self, url):
 		html = self.__getData(url, False)
 		vidUrl = None
@@ -116,5 +116,5 @@ class Flashx(object):
 							js = re.findall('<file>(.*?)</file>', html)
 							if js:
 								vidUrl = js[0]
-					
+
 		return vidUrl

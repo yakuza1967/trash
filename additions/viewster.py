@@ -5,7 +5,7 @@ def viewsterGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 850, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 def viewsterListEntry(entry):
 	#TYPE_TEXT, x, y, width, height, fnt, flags, string [, color, backColor, backColorSelected, borderWidth, borderColor])
 	png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/%s.png" % entry[3]
@@ -18,16 +18,16 @@ def viewsterListEntry(entry):
 	else:
 		return [entry,
 			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 600, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-			]		
+			]
 
 class viewsterGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
-		
+
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
-		
+
 		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
 			path = self.skin_path + "/original/defaultListScreen.xml"
@@ -35,9 +35,9 @@ class viewsterGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -49,7 +49,7 @@ class viewsterGenreScreen(Screen):
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
-		
+
 		self.keyLocked = True
 		self.language = "de"
 		self['title'] = Label("viewster.com")
@@ -81,7 +81,7 @@ class viewsterGenreScreen(Screen):
 		url = "http://www.de.viewster.com/MovieList/Movies?page=%s&genreid=&language=%s&filter=NotSorted&avfilter=Free" % (str(self.page), self.language)
 		print url, self.language
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		self['Page'].setText(str(self.page))
 		movies = re.findall('<a href="(.*?)">.*?<img alt="(.*?)".*?src="(.*?)"', data, re.S)
@@ -106,11 +106,11 @@ class viewsterGenreScreen(Screen):
 			self.language = "fr"
 		elif self.language == "fr":
 			self.language = "de"
-			
+
 		self['F2'].setText(self.language)
 		print "Sprache:", self.language
 		self.loadPage()
-			
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -118,14 +118,14 @@ class viewsterGenreScreen(Screen):
 		viewsterUrl = self['liste'].getCurrent()[0][1]
 		viewsterImage = self['liste'].getCurrent()[0][2]
 		idx = self['liste'].getSelectedIndex()
-		
+
 		print idx, viewsterGenre, viewsterUrl
 		self.session.open(viewsterPlayer, self.genreliste, int(idx))
-		
+
 	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-			
+
 	def ShowCover(self, picData):
 		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
@@ -160,13 +160,13 @@ class viewsterGenreScreen(Screen):
 			return
 		self['liste'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['liste'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
@@ -178,7 +178,7 @@ class viewsterGenreScreen(Screen):
 			return
 		self['liste'].down()
 		self.loadPic()
-		
+
 	def keyCancel(self):
 		self.close()
 
@@ -186,7 +186,7 @@ class viewsterPlayer(SimplePlayer):
 
 	def __init__(self, session, playList, playIdx=0, playAll=True, listTitle=None, cover=True):
 		print "viewsterPlayer:"
-		
+
 		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle, 'local', 0, cover)
 
 		self.onLayoutFinish.append(self.getVideo)
@@ -195,7 +195,7 @@ class viewsterPlayer(SimplePlayer):
 		self.viewsterName = self.playList[self.playIdx][0]
 		viewsterUrl = self.playList[self.playIdx][1]
 		print self.viewsterName, viewsterUrl
-		
+
 		getPage(viewsterUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
 
 	def getStream(self, data):
@@ -204,4 +204,3 @@ class viewsterPlayer(SimplePlayer):
 			print stream_url[0]
 			img = self.playList[self.playIdx][2]
 			self.playStream(self.viewsterName, stream_url[0], imgurl=img)
-			
