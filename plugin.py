@@ -71,6 +71,7 @@ from additions.wrestlingnetwork import *
 #from additions.viewster import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
+from additions.retrotv import *
 
 try:
 	import ast
@@ -214,6 +215,7 @@ config.mediaportal.showNuna = ConfigYesNo(default = True)
 config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
 config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
+config.mediaportal.showretrotv = ConfigYesNo(default = True)
 if astModule:
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
 
@@ -390,6 +392,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Myvideo Top 100:", config.mediaportal.showMyvideoTop100))
 		self.configlist.append(getConfigListEntry("Zeige MTV.de Charts:", config.mediaportal.showMTVdeCharts))
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
+		self.configlist.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
@@ -707,6 +710,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("SportBild", "sportbild"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.mediatheken.append(self.hauptListEntry("Wrestlingnetwork", "wrestlingnetwork"))
+		if config.mediaportal.showretrotv.value:
+			self.mediatheken.append(self.hauptListEntry("retro-tv", "retrotv"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -1331,6 +1336,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(moovizonGenreScreen)
 		elif auswahl == "Wrestlingnetwork":
 			self.session.open(wrestlingnetworkGenreScreen)
+		elif auswahl == "retro-tv":
+			self.session.open(retrotvFilmListeScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
@@ -1750,6 +1757,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("SRF Player", "srf", "Mediathek"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.plugin_liste.append(("Wrestlingnetwork", "wrestlingnetwork", "Mediathek"))
+		if config.mediaportal.showretrotv.value:
+			self.plugin_liste.append(("retro-tv", "retrotv", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
 
@@ -2271,6 +2280,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(kikaGenreScreen)
 		elif auswahl == "Wrestlingnetwork":
 			self.session.open(wrestlingnetworkGenreScreen)
+		elif auswahl == "retro-tv":
+			self.session.open(retrotvFilmListeScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
