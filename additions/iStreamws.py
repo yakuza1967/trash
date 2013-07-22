@@ -19,7 +19,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-IS_Version = "iStream.ws v1.12"
+IS_Version = "iStream.ws v1.13"
 
 IS_siteEncoding = 'utf-8'
 
@@ -130,7 +130,8 @@ class showIStreamGenre(Screen):
 					
 		for (Name,Url) in Genre:
 			self.genreListe.append((Name,Url))
-			self.chooseMenuList.setList(map(IStreamGenreListEntry, self.genreListe))
+			
+		self.chooseMenuList.setList(map(IStreamGenreListEntry, self.genreListe))
 		self.keyLocked = False
 
 	
@@ -301,11 +302,19 @@ class IStreamFilmListeScreen(Screen):
 		if not self.eventL.is_set():
 			self.eventL.set()
 			self.loadPageQueued()
+		else:
+			self['name'].setText('Bitte warten...')
+			self['handlung'].setText("")
+			self['coverArt'].hide()
+		
 		print "eventL ",self.eventL.is_set()
 		
 	def loadPageQueued(self):
 		print "loadPageQueued:"
 		self['name'].setText('Bitte warten...')
+		self['handlung'].setText("")
+		self['coverArt'].hide()
+		
 		while not self.filmQ.empty():
 			url = self.filmQ.get_nowait()
 		#self.eventL.clear()
@@ -323,6 +332,7 @@ class IStreamFilmListeScreen(Screen):
 	def loadPageData(self, data):
 		print "loadPageData:",len(data)
 			
+		self.filmListe = []
 		if not self.neueFilme:
 			filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)">.*?data-original="(.*?)"', data, re.S)
 		else:
@@ -342,12 +352,12 @@ class IStreamFilmListeScreen(Screen):
 				print "Page: %d / %d" % (self.page,self.pages)
 				self['page'].setText("%d / %d" % (self.page,self.pages))
 				
-			self.filmListe = []
 			for	(url,name,imageurl) in filme:
 				#print	"Url: ", url, "Name: ", name, "ImgUrl: ", imageurl
 				self.filmListe.append((decodeHtml(name), url, imageurl))
 				
 			self.chooseMenuList.setList(map(IStreamFilmListEntry,	self.filmListe))
+			self.keyLocked = False
 			self.loadPicQueued()
 		else:
 			print "No movies found !"
@@ -420,7 +430,6 @@ class IStreamFilmListeScreen(Screen):
 		while not self.hanQ.empty():
 			url = self.hanQ.get_nowait()
 		#print url
-		#getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.setHandlung).addErrback(self.dataErrorH)
 		self.tw_agent_hlp.getWebPage(self.setHandlung, self.dataErrorH, url, False)
 		
 	def dataErrorH(self, error):
@@ -472,7 +481,6 @@ class IStreamFilmListeScreen(Screen):
 					del self.picload
 				
 		self.updateP = 0;
-		self.keyLocked	= False
 		if not self.filmQ.empty():
 			self.loadPageQueued()
 		else:
@@ -480,7 +488,7 @@ class IStreamFilmListeScreen(Screen):
 			self.loadPic()
 	
 	def keyOK(self):
-		if (self.keyLocked|self.eventL.is_set()|self.eventH.is_set()):
+		if self.keyLocked or self.eventL.is_set():
 			return
 
 		streamLink = self['liste'].getCurrent()[0][1]
@@ -502,12 +510,14 @@ class IStreamFilmListeScreen(Screen):
 		#print "keyUpRepeated"
 		if self.keyLocked:
 			return
+		self['coverArt'].hide()
 		self['liste'].up()
 		
 	def keyDownRepeated(self):
 		#print "keyDownRepeated"
 		if self.keyLocked:
 			return
+		self['coverArt'].hide()
 		self['liste'].down()
 		
 	def key_repeatedUp(self):
@@ -529,11 +539,13 @@ class IStreamFilmListeScreen(Screen):
 	def keyLeftRepeated(self):
 		if self.keyLocked:
 			return
+		self['coverArt'].hide()
 		self['liste'].pageUp()
 		
 	def keyRightRepeated(self):
 		if self.keyLocked:
 			return
+		self['coverArt'].hide()
 		self['liste'].pageDown()
 			
 	def keyPageDown(self):
@@ -574,22 +586,6 @@ class IStreamFilmListeScreen(Screen):
 		if oldpage != self.page:
 			self.loadPage()
 
-	#def keyPageDownMan(self):
-	#	self.keyPageDownUp = 0;
-	#	self.seekTimerRun = True
-
-	#def keyPageUpMan(self):
-	#	self.keyPageDownUp = 1;
-	#	self.seekTimerRun = True
-
-	#def seekTimer(self):
-	#	print "seekTimer:"
-	#	if self.seekTimerRun:
-	#		if not self.keyPageDownUp:
-	#			self.keyPageDown()
-	#		else:
-	#			self.keyPageUp()
-		
 	def key_1(self):
 		#print "keyPageDownFast(2)"
 		self.keyPageDownFast(2)
@@ -678,6 +674,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 			"red" 		: self.keyTxtPageUp,
 			"blue" 		: self.keyTxtPageDown,
 			"ok"    	: self.keyOK,
+			"info" 		: self.keyTMDbInfo,
 			"cancel"	: self.keyCancel
 		}, -1)
 		
@@ -707,7 +704,6 @@ class IStreamStreams(Screen, ConfigListScreen):
 		streamUrl = self.filmUrl
 		#print "FilmUrl: %s" % self.filmUrl
 		#print "FilmName: %s" % self.filmName
-		#getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 		self.tw_agent_hlp.getWebPage(self.parseData, self.dataError, streamUrl, False)
 		
 	def parseData(self, data):
@@ -776,6 +772,12 @@ class IStreamStreams(Screen, ConfigListScreen):
 			else:
 				self.session.open(iStreamPlayer, [(title, stream_url, self.imageUrl)], showCover=True)
 				
+	def keyTMDbInfo(self):
+		if TMDbPresent:
+			self.session.open(TMDbMain, self.filmName)
+		elif IMDbPresent:
+			self.session.open(IMDB, self.filmName)
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
