@@ -338,17 +338,16 @@ class paradisehillFilmAuswahlScreen(Screen):
 
 	def loadPageData(self, data):
 		parse = re.search('playlist:\s\[(.*?)\]', data, re.S)
-		streams = re.findall('\'(http://.*?(streamcloud.eu|flashx|userporn|adspaces|paradisehill).*?)\'', parse.group(1) , re.S)
+		streams = re.findall('(http://.*?.mp4)', parse.group(1) , re.S)
 		if streams:
-			for (stream, hostername) in streams:
-				if re.match('.*?(streamcloud.eu|flashx|userporn|paradisehill)', hostername, re.S|re.I):
-					hostername = hostername.replace('.eu','')
-					hostername = hostername.title()
-					disc = re.search('.*?cd(\d+).*?', stream, re.S|re.I)
-					if disc:
-						discno = disc.group(1)
-						hostername = hostername + ' (Teil ' + discno + ')'
-					self.filmliste.append((hostername, stream))
+			for stream in streams:
+				disc = re.search('.*?cd(\d+).*?', stream, re.S|re.I)
+				if disc:
+					discno = disc.group(1)
+					videoname = self.genreName + ' (Part ' + discno + ')'
+				else:
+					videoname = self.genreName
+				self.filmliste.append((videoname, stream))
 		else:
 			self.filmliste.append(("No streams found!","",""))
 		self.chooseMenuList.setList(map(paradisehillGenreListEntry, self.filmliste))
