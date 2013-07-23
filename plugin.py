@@ -496,7 +496,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
-			"cancel": self.keyCancel
+			"cancel": self.keyOK
 		}, -1)
 
 	def keyOK(self):
@@ -549,9 +549,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			x[1].save()
 		configfile.save()
 		self.close()
-
-	def keyCancel(self):
-		self.keyOK()
 
 class HelpScreen(Screen):
 
