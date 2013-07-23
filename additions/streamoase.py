@@ -162,9 +162,9 @@ class oasetvFilmListeScreen(Screen):
 			if handlung:
 				self['handlung'].setText(decodeHtml(handlung[0]))
 			else:
-				self['handlung'].setText("keine infos")
+				self['handlung'].setText("Keine Infos gefunden.")
 		else:
-			self['handlung'].setText("keine infos")
+			self['handlung'].setText("Keine Infos gefunden.")
 
 	def ShowCover(self, picData):
 		if fileExists("/tmp/oatvIcon.jpg"):
