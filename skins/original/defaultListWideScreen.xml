@@ -1,0 +1,28 @@
+<!-- defaultListScreen -->
+ <screen name="defaultList" position="center,center" size="900,655" backgroundColor="#00060606" flags="wfNoBorder">
+    <widget name="title" position="20,10" size="500,40" backgroundColor="#00101214" transparent="1" zPosition="10" font="mediaportal; 26" valign="center" halign="left" />
+    <widget source="global.CurrentTime" render="Label" position="730,8" size="150,30" backgroundColor="#00101214" transparent="1" zPosition="1" font="mediaportal; 26" valign="center" halign="right" foregroundColor="#00dcdcdc">
+      <convert type="ClockToText">Format:%-H:%M</convert>
+    </widget>
+    <widget source="global.CurrentTime" render="Label" position="580,39" size="300,20" backgroundColor="#00101214" transparent="1" zPosition="1" font="mediaportal;18" valign="center" halign="right" foregroundColor="#00dcdcdc">
+      <convert type="ClockToText">Format:%A, %d.%m.%Y</convert>
+    </widget>
+    <widget name="ContentTitle" position="0,60" size="900,25" backgroundColor="#00aaaaaa" zPosition="0" foregroundColor="#00000000" font="mediaportal;22" halign="center" />
+    <widget name="liste" position="0,86" size="900,303" backgroundColor="#00101214" scrollbarMode="showOnDemand" transparent="0" />
+    <eLabel position="20,390" size="860,2" backgroundColor="#00555556" />
+    <widget name="coverArt" pixmap="~/original/images/no_coverArt.png" position="20,396" size="270,200" transparent="1" alphatest="blend" borderWidth="2" borderColor="#00555556" />
+    <widget name="name" position="300,395" size="580,30" foregroundColor="#00e5b243" backgroundColor="#00101214" transparent="1" font="mediaportal;26" valign="top" zPosition="0" />
+    <widget name="handlung" position="300,425" size="580,170" backgroundColor="#00101214" transparent="1" font="mediaportal;20" valign="top" zPosition="0" /> 
+    <widget name="Page" position="740,605" size="55,25" backgroundColor="#00101214" transparent="1" foregroundColor="#00555556" font="mediaportal;20" valign="center" halign="right" zPosition="0" />
+    <widget name="page" position="795,605" size="95,25" backgroundColor="#00101214" transparent="1" font="mediaportal;20" valign="center" halign="right" zPosition="0" />
+    <ePixmap pixmap="~/original/images/buttongrey.png" position="637,630" size="100,2" alphatest="blend" /> 
+    <eLabel text="Info/EPG" position="637,605" size="100,30" font="mediaportal; 20" halign="center" transparent="1" backgroundColor="#00060606" foregroundColor="#00ffffff" />   
+	 <ePixmap pixmap="~/original/images/buttonred.png" position="60,630" size="100,2" alphatest="blend" />
+    <ePixmap pixmap="~/original/images/buttongreen.png" position="205,630" size="100,2" alphatest="blend" />
+    <ePixmap pixmap="~/original/images/buttonyellow.png" position="350,630" size="100,2" alphatest="blend" />
+    <ePixmap pixmap="~/original/images/buttonblue.png" position="492,630" size="100,2" alphatest="blend" />
+    <widget name="F1" position="60,605" size="100,30" transparent="1" font="mediaportal; 20" backgroundColor="#00101214" valign="bottom" halign="center" />
+    <widget name="F2" position="205,605" size="100,30" transparent="1" backgroundColor="#00101214" font="mediaportal; 20" valign="bottom" halign="center" />
+    <widget name="F3" position="350,605" size="100,30" transparent="1" font="mediaportal; 20" backgroundColor="#00101214" valign="bottom" halign="center" />
+    <widget name="F4" position="492,605" size="100,30" transparent="1" font="mediaportal; 20" backgroundColor="#00101214" valign="bottom" halign="center" />
+  </screen>

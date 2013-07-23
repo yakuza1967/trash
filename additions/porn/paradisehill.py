@@ -111,9 +111,9 @@ class paradisehillFilmListeScreen(Screen):
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		path = "%s/%s/defaultListWideScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = self.skin_path + "/original/defaultListScreen.xml"
+			path = self.skin_path + "/original/defaultListWideScreen.xml"
 
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -293,9 +293,9 @@ class paradisehillFilmAuswahlScreen(Screen):
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		path = "%s/%s/defaultListWideScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = self.skin_path + "/original/defaultListScreen.xml"
+			path = self.skin_path + "/original/defaultListWideScreen.xml"
 
 		with open(path, "r") as f:
 			self.skin = f.read()
