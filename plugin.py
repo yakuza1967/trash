@@ -551,7 +551,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.close()
 
 	def keyCancel(self):
-		pass
+		self.keyOK()
 
 class HelpScreen(Screen):
 
