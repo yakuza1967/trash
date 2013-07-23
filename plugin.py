@@ -1346,117 +1346,83 @@ class haupt_Screen(Screen, ConfigListScreen):
 		# porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
-			self.pincheck()
 		elif auswahl == "Ah-Me":
 			self.pornscreen = ahmeGenreScreen
-			self.pincheck()
 		elif auswahl == "AmateurPorn":
 			self.pornscreen = amateurpornGenreScreen
-			self.pincheck()
 		elif auswahl == "beeg":
 			self.pornscreen = beegGenreScreen
-			self.pincheck()
 		elif auswahl == "DrTuber":
 			self.pornscreen = drtuberGenreScreen
-			self.pincheck()
 		elif auswahl == "El-Ladies":
 			self.pornscreen = elladiesGenreScreen
-			self.pincheck()
 		elif auswahl == "Eporner":
 			self.pornscreen = epornerGenreScreen
-			self.pincheck()
 		elif auswahl == "EroProfile":
 			self.pornscreen = eroprofileGenreScreen
-			self.pincheck()
 		elif auswahl == "ExtremeTube":
 			self.pornscreen = extremetubeGenreScreen
-			self.pincheck()
 		elif auswahl == "Free Online Movies":
 			self.pornscreen = freeomovieGenreScreen
-			self.pincheck()
 		elif auswahl == "G-Stream-XXX":
 			self.pornscreen = gstreaminxxxGenreScreen
-			self.pincheck()
 		elif auswahl == "HDPorn":
 			self.pornscreen = hdpornGenreScreen
-			self.pincheck()
 		elif auswahl == "hotshame":
 			self.pornscreen = hotshameGenreScreen
-			self.pincheck()
 		elif auswahl == "MegaSkanks":
 			self.pornscreen = megaskanksGenreScreen
-			self.pincheck()
 		elif auswahl == "IStream-XXX":
 			self.pornscreen = showIStreamGenre
 			self.cat = "porn"
-			self.pincheck()
 		elif auswahl == "Movie4k-XXX":
 			self.pornscreen = m4kGenreScreen
 			self.cat = "porn"
-			self.pincheck()
 		elif auswahl == "ParadiseHill":
 			self.pornscreen = paradisehillGenreScreen
-			self.pincheck()
 		elif auswahl == "Pinkrod":
 			self.pornscreen = pinkrodGenreScreen
-			self.pincheck()
 		elif auswahl == "PlayPorn":
 			self.pornscreen = playpornGenreScreen
-			self.pincheck()
 		elif auswahl == "PornerBros":
 			self.pornscreen = pornerbrosGenreScreen
-			self.pincheck()
 		elif auswahl == "Pornhub":
 			self.pornscreen = pornhubGenreScreen
-			self.pincheck()
 		elif auswahl == "PORNMVZ":
 			self.pornscreen = pornmvzGenreScreen
-			self.pincheck()
 		elif auswahl == "PornoStreams":
 			self.pornscreen = pornostreamsGenreScreen
-			self.pincheck()
 		elif auswahl == "PornRabbit":
 			self.pornscreen = pornrabbitGenreScreen
-			self.pincheck()
 		elif auswahl == "RealGFPorn":
 			self.pornscreen = realgfpornGenreScreen
-			self.pincheck()
 		elif auswahl == "RedTube":
 			self.pornscreen = redtubeGenreScreen
-			self.pincheck()
 		elif auswahl == "SeXXX-HD":
 			self.pornscreen = sexxxhdGenreScreen
-			self.pincheck()
 		elif auswahl == "SunPorno":
 			self.pornscreen = sunpornoGenreScreen
-			self.pincheck()
 		elif auswahl == "TheNewPorn":
 			self.pornscreen = thenewpornGenreScreen
-			self.pincheck()
 		elif auswahl == "UpdateTube":
 			self.pornscreen = updatetubeGenreScreen
-			self.pincheck()
 		elif auswahl == "WetPlace":
 			self.pornscreen = wetplaceGenreScreen
-			self.pincheck()
 		elif auswahl == "xHamster":
 			self.pornscreen = xhamsterGenreScreen
-			self.pincheck()
 		elif auswahl == "XXXSaVe":
 			self.pornscreen = xxxsaveFilmScreen
-			self.pincheck()
 		elif auswahl == "YouPorn":
 			self.pornscreen = youpornGenreScreen
-			self.pincheck()
 
-	def pincheck(self):
-		if config.mediaportal.pornpin.value:
-			self.session.openWithCallback(self.pincheckok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
-		else:
-			if self.cat == "":
-				self.session.open(self.pornscreen)
+		if self.pornscreen:
+			if config.mediaportal.pornpin.value:
+				self.session.openWithCallback(self.pincheckok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.session.open(self.pornscreen, self.cat)
+				if self.cat == "":
+					self.session.open(self.pornscreen)
+				else:
+					self.session.open(self.pornscreen, self.cat)
 
 	def pincheckok(self, pincode):
 		if pincode:
@@ -2290,117 +2256,83 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		# porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
-			self.pincheck()
 		elif auswahl == "Ah-Me":
 			self.pornscreen = ahmeGenreScreen
-			self.pincheck()
 		elif auswahl == "AmateurPorn":
 			self.pornscreen = amateurpornGenreScreen
-			self.pincheck()
 		elif auswahl == "beeg":
 			self.pornscreen = beegGenreScreen
-			self.pincheck()
 		elif auswahl == "DrTuber":
 			self.pornscreen = drtuberGenreScreen
-			self.pincheck()
 		elif auswahl == "El-Ladies":
 			self.pornscreen = elladiesGenreScreen
-			self.pincheck()
 		elif auswahl == "Eporner":
 			self.pornscreen = epornerGenreScreen
-			self.pincheck()
 		elif auswahl == "EroProfile":
 			self.pornscreen = eroprofileGenreScreen
-			self.pincheck()
 		elif auswahl == "ExtremeTube":
 			self.pornscreen = extremetubeGenreScreen
-			self.pincheck()
 		elif auswahl == "Free Online Movies":
 			self.pornscreen = freeomovieGenreScreen
-			self.pincheck()
 		elif auswahl == "G-Stream-XXX":
 			self.pornscreen = gstreaminxxxGenreScreen
-			self.pincheck()
 		elif auswahl == "HDPorn":
 			self.pornscreen = hdpornGenreScreen
-			self.pincheck()
 		elif auswahl == "hotshame":
 			self.pornscreen = hotshameGenreScreen
-			self.pincheck()
 		elif auswahl == "MegaSkanks":
 			self.pornscreen = megaskanksGenreScreen
-			self.pincheck()
 		elif auswahl == "IStream-XXX":
 			self.pornscreen = showIStreamGenre
 			self.cat = "porn"
-			self.pincheck()
 		elif auswahl == "Movie4k-XXX":
 			self.pornscreen = m4kGenreScreen
 			self.cat = "porn"
-			self.pincheck()
 		elif auswahl == "ParadiseHill":
 			self.pornscreen = paradisehillGenreScreen
-			self.pincheck()
 		elif auswahl == "Pinkrod":
 			self.pornscreen = pinkrodGenreScreen
-			self.pincheck()
 		elif auswahl == "PlayPorn":
 			self.pornscreen = playpornGenreScreen
-			self.pincheck()
 		elif auswahl == "PornerBros":
 			self.pornscreen = pornerbrosGenreScreen
-			self.pincheck()
 		elif auswahl == "Pornhub":
 			self.pornscreen = pornhubGenreScreen
-			self.pincheck()
 		elif auswahl == "PORNMVZ":
 			self.pornscreen = pornmvzGenreScreen
-			self.pincheck()
 		elif auswahl == "PornoStreams":
 			self.pornscreen = pornostreamsGenreScreen
-			self.pincheck()
 		elif auswahl == "PornRabbit":
 			self.pornscreen = pornrabbitGenreScreen
-			self.pincheck()
 		elif auswahl == "RealGFPorn":
 			self.pornscreen = realgfpornGenreScreen
-			self.pincheck()
 		elif auswahl == "RedTube":
 			self.pornscreen = redtubeGenreScreen
-			self.pincheck()
 		elif auswahl == "SeXXX-HD":
 			self.pornscreen = sexxxhdGenreScreen
-			self.pincheck()
 		elif auswahl == "SunPorno":
 			self.pornscreen = sunpornoGenreScreen
-			self.pincheck()
 		elif auswahl == "TheNewPorn":
 			self.pornscreen = thenewpornGenreScreen
-			self.pincheck()
 		elif auswahl == "UpdateTube":
 			self.pornscreen = updatetubeGenreScreen
-			self.pincheck()
 		elif auswahl == "WetPlace":
 			self.pornscreen = wetplaceGenreScreen
-			self.pincheck()
 		elif auswahl == "xHamster":
 			self.pornscreen = xhamsterGenreScreen
-			self.pincheck()
 		elif auswahl == "XXXSaVe":
 			self.pornscreen = xxxsaveFilmScreen
-			self.pincheck()
 		elif auswahl == "YouPorn":
 			self.pornscreen = youpornGenreScreen
-			self.pincheck()
 
-	def pincheck(self):
-		if config.mediaportal.pornpin.value:
-			self.session.openWithCallback(self.pincheckok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
-		else:
-			if self.cat == "":
-				self.session.open(self.pornscreen)
+		if self.pornscreen:
+			if config.mediaportal.pornpin.value:
+				self.session.openWithCallback(self.pincheckok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
 			else:
-				self.session.open(self.pornscreen, self.cat)
+				if self.cat == "":
+					self.session.open(self.pornscreen)
+				else:
+					self.session.open(self.pornscreen, self.cat)
 
 	def pincheckok(self, pincode):
 		if pincode:
