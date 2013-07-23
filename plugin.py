@@ -72,6 +72,7 @@ from additions.wrestlingnetwork import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
 from additions.retrotv import *
+from additions.galileovl import *
 
 try:
 	import ast
@@ -216,6 +217,7 @@ config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
 config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 config.mediaportal.showretrotv = ConfigYesNo(default = True)
+config.mediaportal.showgalileovl = ConfigYesNo(default = True)
 if astModule:
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
 
@@ -393,6 +395,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige MTV.de Charts:", config.mediaportal.showMTVdeCharts))
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
 		self.configlist.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
+		self.configlist.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
@@ -1724,6 +1727,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("retro-tv", "retrotv", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
+		if config.mediaportal.showgalileovl.value:
+			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Mediathek"))
 
 		### porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2249,6 +2254,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
+		elif auswahl == "Galileo-Videolexikon":
+			self.session.open(galileovlGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
