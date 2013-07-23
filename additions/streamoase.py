@@ -1,17 +1,15 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 from Plugins.Extensions.MediaPortal.resources.captcha import *
 import time
-#import HTMLParser
 
 ck = {}
 
 def oasetvGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class oasetvGenreScreen(Screen):
-	
+
 	def __init__(self, session):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/oasetvGenreScreen.xml" % config.mediaportal.skin.value
@@ -21,26 +19,26 @@ class oasetvGenreScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
 		}, -1)
-		
+
 		self['title'] = Label("Stream-Oase.tv")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Neuesten", "http://stream-oase.tv/index.php/hd-oase/video/latest?start="))
 		self.genreliste.append(("Action", "http://stream-oase.tv/index.php/hd-oase/category/action?start="))
@@ -66,9 +64,9 @@ class oasetvGenreScreen(Screen):
 def oaseFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class oasetvFilmListeScreen(Screen):
-	
+
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
@@ -79,9 +77,9 @@ class oasetvFilmListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
@@ -98,7 +96,7 @@ class oasetvFilmListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['page'] = Label("")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = True
 		self.filmliste = []
 		self.keckse = {}
@@ -107,9 +105,9 @@ class oasetvFilmListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def loadPage(self):
 		url = "%s%s" % (self.streamGenreLink, str(self.page))
 		print url
@@ -117,7 +115,7 @@ class oasetvFilmListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def loadPageData(self, data):
 		print "daten bekommen"
 		raw = re.findall('<div id="system-message-container">(.*?)<div style="clear:both"></div>', data, re.S)
@@ -131,7 +129,7 @@ class oasetvFilmListeScreen(Screen):
 				self.chooseMenuList.setList(map(oaseFilmListEntry, self.filmliste))
 				self.keyLocked = False
 				self.loadPic()
-				
+
 		if re.match('.*?title="Ende">Ende<', data, re.S):
 			totalpages = re.findall('\?start=(.*?\d)"', data, re.S)
 			if totalpages:
@@ -157,7 +155,7 @@ class oasetvFilmListeScreen(Screen):
 		streamPic = self['filmList'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/oatvIcon.jpg").addCallback(self.ShowCover)
 		getPage(streamFilmLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageInfos).addErrback(self.dataError)
-		
+
 	def loadPageInfos(self, data):
 		if re.match('.*?<strong>Inhalt:</strong></p>\r\n<p>', data, re.S):
 			handlung = re.findall('<strong>Inhalt:</strong></p>\r\n<p>(.*?)</p>', data, re.S|re.I)
@@ -197,13 +195,13 @@ class oasetvFilmListeScreen(Screen):
 		if mighty:
 			print mighty[0]
 			stream_list.append(("MightyUpload", mighty[0]))
-			
+
 		get_vidplay = re.findall('(http://vidplay.net/embed.*?)"', data, re.S)
 		if get_vidplay:
 			url = get_vidplay[0]
 			print url
 			stream_list.append(("vidplay", url))
-			
+
 		get_wupfile = re.findall('(http://wupfile.com.*?)"', data, re.S)
 		if get_wupfile:
 			print get_wupfile[0]
@@ -217,25 +215,25 @@ class oasetvFilmListeScreen(Screen):
 			return
 		self['filmList'].pageUp()
 		self.loadPic()
-		
+
 	def keyRight(self):
 		if self.keyLocked:
 			return
 		self['filmList'].pageDown()
 		self.loadPic()
-		
+
 	def keyUp(self):
 		if self.keyLocked:
 			return
 		self['filmList'].up()
 		self.loadPic()
-		
+
 	def keyDown(self):
 		if self.keyLocked:
 			return
 		self['filmList'].down()
 		self.loadPic()
-		
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -243,23 +241,23 @@ class oasetvFilmListeScreen(Screen):
 		if not self.page < 56:
 			self.page -= 56
 			self.loadPage()
-			
+
 	def keyPageUp(self):
 		print "PageUp"
 		if self.keyLocked:
 			return
-		self.page += 56 
+		self.page += 56
 		self.loadPage()
-			
+
 	def keyCancel(self):
 		self.close()
 
 def oasetvCDListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		] 
+		]
 class oasetvCDListeScreen(Screen):
-	
+
 	def __init__(self, session, parts, stream_name):
 		self.session = session
 		self.streamParts = parts
@@ -271,9 +269,9 @@ class oasetvCDListeScreen(Screen):
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
-			
+
 		Screen.__init__(self, session)
-		
+
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel
@@ -282,7 +280,7 @@ class oasetvCDListeScreen(Screen):
 		self['title'] = Label("Stream-Oase.tv")
 		self['name'] = Label("Part Auswahl")
 		self['coverArt'] = Pixmap()
-		
+
 		self.keyLocked = False
 		self.keckse = {}
 		self.filmliste = []
@@ -290,19 +288,19 @@ class oasetvCDListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		for (name,url) in self.streamParts:
 			print name, url
 			self.filmliste.append((name, url))
-		self.chooseMenuList.setList(map(oasetvCDListEntry, self.filmliste))		
-		
+		self.chooseMenuList.setList(map(oasetvCDListEntry, self.filmliste))
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
+
 		name = self['filmList'].getCurrent()[0][0]
 		streamLink = self['filmList'].getCurrent()[0][1]
 		self.keyLocked = True
@@ -315,7 +313,7 @@ class oasetvCDListeScreen(Screen):
 		else:
 			message = self.session.open(MessageBox, _("No Supported Streamhoster."), MessageBox.TYPE_INFO, timeout=3)
 			self.keyLocked = False
-		
+
 	def readPostData(self, data, url):
 		self.vidplay_url = url
 		solvemedia = re.search('<iframe src="(http://api.solvemedia.com.+?)"', data)
@@ -336,7 +334,7 @@ class oasetvCDListeScreen(Screen):
 
 		print self.data_p
 		self.session.openWithCallback(self.captchaCallback, VirtualKeyBoardmod, title = (_("Captcha Eingabe:")), text = "")
-		
+
 	def captchaCallback(self, callback = None, entry = None):
 		if callback != None or callback != "":
 			print callback
@@ -344,9 +342,9 @@ class oasetvCDListeScreen(Screen):
 			print self.data_p
 			print self.vidplay_url
 			getPage(self.vidplay_url, method='POST', postdata=urlencode(self.data_p), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.got_vidplay).addErrback(self.dataError)
-			
+
 		self.keyLocked = False
-		
+
 	def got_vidplay(self, data):
 		print "data empfangen.."
 		print data
@@ -356,13 +354,13 @@ class oasetvCDListeScreen(Screen):
 			sref = eServiceReference(0x1001, 0, stream_url[0])
 			sref.setName(self.stream_name)
 			self.session.open(MoviePlayer, sref)
-		
+
 	def readPostData3(self, data, url):
 		dataPost = {}
 		r = re.findall('input type="hidden".*?name="(.*?)".*?value="(.*?)"', data, re.S)
 		for name, value in r:
 			dataPost[name] = value
-		
+
 		print urlencode(dataPost)
 		getPage(url, method='POST', agent=std_headers, postdata=urlencode(dataPost), headers={'Content-Type':'application/x-www-form-urlencoded', 'referer':url}).addCallback(self.postData).addErrback(self.dataError)
 
@@ -384,7 +382,7 @@ class oasetvCDListeScreen(Screen):
 				message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
-			
+
 	def postData2(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
@@ -405,6 +403,6 @@ class oasetvCDListeScreen(Screen):
 	def dataError(self, error):
 		self.keyLocked = False
 		printl(error,self,"E")
-		
+
 	def keyCancel(self):
 		self.close()
