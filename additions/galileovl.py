@@ -80,14 +80,6 @@ class galileovlGenreScreen(Screen):
 			print url
 			self.session.open(galileovlListeScreen, self.galileovlName, url)
 
-	def loadPageData(self, data):
-		url = re.findall('file: "(.*?)"', data, re.S)
-		if url:
-			getPage(url[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
-
-	def dataError(self, error):
-		printl(error,self,"E")
-
 	def keyCancel(self):
 		self.close()
 
@@ -211,9 +203,10 @@ class galileovlListeScreen(Screen):
 			return
 		self.galileovltitle = self['liste'].getCurrent()[0][0]
 		self.galileovlid = self['liste'].getCurrent()[0][1]
+		self.idx = self['liste'].getSelectedIndex()
 		print self.galileovltitle, self.galileovlid
 
-		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
+		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?method=1&type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
 
@@ -222,7 +215,7 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			self.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False, ltype='galileovl')
+			self.session.open(galileovlPlayer, self.videoliste, int(self.idx), True, None, None)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -230,15 +223,30 @@ class galileovlListeScreen(Screen):
 	def keyCancel(self):
 		self.close()
 
-
 class galileovlPlayer(SimplePlayer):
 
-	def __init__(self, session, playList):
+	def __init__(self, session, playList, playIdx=0, playAll=True, listTitle=None, cover=None):
 		print "galileovlPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
+		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle, 'local', 0, cover)
 
 	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
+		self.galileovlname = self.playList[self.playIdx][0]
+		self.galileovlid = self.playList[self.playIdx][1]
+		print self.galileovlname, self.galileovlid
+		
+		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?method=1&type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
+		print url
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
+		
+	def get_link(self, data):
+		stream_url = re.findall('"VideoURL":"(.*?)"', data, re.S)
+		if stream_url:
+			stream_url = stream_url[0].replace('\\','')
+			print stream_url
+			self.playStream(self.galileovlname, stream_url)
+			
+	def dataError(self, error):
+		printl(error,self,"E")
+		
+		
