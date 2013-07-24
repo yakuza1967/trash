@@ -168,26 +168,10 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			#sref = eServiceReference(0x1001, 0, stream_url)
-			#sref.setName(self.galileovltitle)
-			#self.session.open(MoviePlayer, sref)
-			self.session.open(galileovlPlayer, [(self.galileovltitle, stream_url)])
+			self.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False)
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def keyCancel(self):
 		self.close()
-
-
-class galileovlPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "galileovlPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

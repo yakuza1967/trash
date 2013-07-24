@@ -194,7 +194,9 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def getVideo(self):
 		print "getVideo:"
-		self.close()
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
 
 	def getVideo2(self):
 		print "getVideo2:"
