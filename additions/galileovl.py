@@ -1,4 +1,4 @@
-from Plugins.Extensions.MediaPortal.resources.imports import *
+﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def galileovlGenreListEntry(entry):
@@ -67,12 +67,12 @@ class galileovlGenreScreen(Screen):
 		self.galileovlName = self['genreList'].getCurrent()[0][0]
 		galileovlUrl = self['genreList'].getCurrent()[0][1]
 		print self.galileovlName, galileovlUrl
-		
+
 		if self.galileovlName == "Neueste Videos":
 			self.session.open(galileovlListeScreen, self.galileovlName, galileovlUrl)
 		else:
 			self.session.openWithCallback(self.captchaCallback, VirtualKeyBoard, title = (_("Suche:")), text = "")
-		
+
 	def captchaCallback(self, callback = None, entry = None):
 		if callback != None or callback != "":
 			print callback
@@ -139,7 +139,7 @@ class galileovlListeScreen(Screen):
 	def loadPage(self):
 		print "hole daten"
 		getPage(self.galileovlUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
-		
+
 	def loadPageData(self, data):
 		self.videoliste = []
 		videos = re.findall('"id":"(.*?)".*?"assestid":"(.*?)".*?"title":"(.*?)".*?"serie":"(.*?)".*?"description":"(.*?)".*?"duration":"(.*?)"', data, re.S )
@@ -148,7 +148,7 @@ class galileovlListeScreen(Screen):
 				print id, videoid, title, date, desc, dur
 				title = "%s - %s" % (date, title)
 				self.videoliste.append((decodeHtml(title), videoid, desc))
-				
+
 			self.chooseMenuList.setList(map(galileovlListEntry, self.videoliste))
 			self.keyLocked = False
 
@@ -158,35 +158,36 @@ class galileovlListeScreen(Screen):
 		self.galileovltitle = self['genreList'].getCurrent()[0][0]
 		self.galileovlid = self['genreList'].getCurrent()[0][1]
 		print self.galileovltitle, self.galileovlid
-		
+
 		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
-		
+
 	def get_link(self, data):
 		stream_url = re.findall('"VideoURL":"(.*?)"', data, re.S)
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.galileovltitle)
-			self.session.open(MoviePlayer, sref)
-		
+			#sref = eServiceReference(0x1001, 0, stream_url)
+			#sref.setName(self.galileovltitle)
+			#self.session.open(MoviePlayer, sref)
+			self.session.open(galileovlPlayer, [(self.galileovltitle, stream_url)])
+
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def keyCancel(self):
 		self.close()
-		
 
-#class galileovlPlayer(SimplePlayer):
-#
-#	def __init__(self, session, playList):
-#		print "galileovlPlayer:"
-#
-#		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-#
-#	def getVideo(self):
-#		title = self.playList[self.playIdx][0]
-#		url = self.playList[self.playIdx][1]
-#		self.playStream(title, url)
+
+class galileovlPlayer(SimplePlayer):
+
+	def __init__(self, session, playList):
+		print "galileovlPlayer:"
+
+		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
+
+	def getVideo(self):
+		title = self.playList[self.playIdx][0]
+		url = self.playList[self.playIdx][1]
+		self.playStream(title, url)
