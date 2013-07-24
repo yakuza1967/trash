@@ -770,7 +770,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
-				self.session.open(iStreamPlayer, [(title, stream_url, self.imageUrl)], showCover=True)
+				self.session.open(SimplePlayer, [(title, stream_url, self.imageUrl)], cover=True, showPlaylist=False, ltype='istream.ws')
 
 	def keyTMDbInfo(self):
 		if TMDbPresent:
@@ -804,16 +804,3 @@ class IStreamStreams(Screen, ConfigListScreen):
 
 	def keyCancel(self):
 		self.close()
-
-class iStreamPlayer(SimplePlayer):
-
-	def __init__(self, session, playList, showCover=False):
-		print "iStreamPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='istream.ws', cover=showCover)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		iurl = self.playList[self.playIdx][2]
-		self.playStream(title, url, imgurl=iurl)

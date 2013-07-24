@@ -196,7 +196,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "getVideo:"
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
+		if len(self.playList[0]) == 3:
+			iurl = self.playList[self.playIdx][2]
+		else:
+			iurl = ''
+		self.playStream(title, url, imgurl=iurl)
 
 	def getVideo2(self):
 		print "getVideo2:"
