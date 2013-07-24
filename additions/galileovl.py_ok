@@ -80,6 +80,14 @@ class galileovlGenreScreen(Screen):
 			print url
 			self.session.open(galileovlListeScreen, self.galileovlName, url)
 
+	def loadPageData(self, data):
+		url = re.findall('file: "(.*?)"', data, re.S)
+		if url:
+			getPage(url[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
 	def keyCancel(self):
 		self.close()
 
@@ -173,7 +181,7 @@ class galileovlListeScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-
+					
 	def keyLeft(self):
 		if self.keyLocked:
 			return
@@ -197,14 +205,12 @@ class galileovlListeScreen(Screen):
 			return
 		self['liste'].down()
 		self.loadPic()
-
+		
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		self.galileovltitle = self['liste'].getCurrent()[0][0]
 		self.galileovlid = self['liste'].getCurrent()[0][1]
-		self.idx = self['liste'].getSelectedIndex()
-		self.imageurl = self['liste'].getCurrent()[0][3]
 		print self.galileovltitle, self.galileovlid
 
 		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?method=1&type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
@@ -216,13 +222,18 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			self.session.open(galileovlPlayer, [(self.galileovltitle, stream_url, self.imageurl)])
+			#sref = eServiceReference(0x1001, 0, stream_url)
+			#sref.setName(self.galileovltitle)
+			#self.session.open(MoviePlayer, sref)
+			self.session.open(galileovlPlayer, [(self.galileovltitle, stream_url)])
+			#self.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False, ltype='galileovl')
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def keyCancel(self):
 		self.close()
+
 
 class galileovlPlayer(SimplePlayer):
 
@@ -233,5 +244,4 @@ class galileovlPlayer(SimplePlayer):
 	def getVideo(self):
 		title = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
-		image = self.playList[self.playIdx][2]
-		self.playStream(title, url, imgurl=image)
+		self.playStream(title, url)
