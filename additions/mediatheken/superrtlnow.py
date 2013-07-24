@@ -256,11 +256,6 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 				playlist.append((self.streamName, final))
 				self.session.open(SUPERRTLnowPlayer, playlist)
 
-	def keyTMDbInfo(self):
-		if TMDbPresent:
-			title = self['List'].getCurrent()[0][0]
-			self.session.open(TMDbMain, title)
-
 	def keyCancel(self):
 		self.close()
 

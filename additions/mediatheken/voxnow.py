@@ -286,11 +286,6 @@ class VOXnowFilmeListeScreen(Screen):
 				playlist.append((self.streamName, final))
 				self.session.open(VOXnowPlayer, playlist)
 
-	def keyTMDbInfo(self):
-		if TMDbPresent:
-			title = self['List'].getCurrent()[0][0]
-			self.session.open(TMDbMain, title)
-
 	def keyCancel(self):
 		self.close()
 
