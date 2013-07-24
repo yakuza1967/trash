@@ -168,7 +168,7 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			self.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False)
+			self.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False, ltype='galileovl')
 
 	def dataError(self, error):
 		printl(error,self,"E")
