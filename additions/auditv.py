@@ -1,5 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Components.config import config
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 
 def auditvGenreListEntry(entry):

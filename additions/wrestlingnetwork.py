@@ -1,6 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
-import urllib2
 
 def wrestlingnetworkGenreListEntry(entry):
 	return [entry,

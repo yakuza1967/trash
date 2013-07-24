@@ -1,7 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
-
-ck = {}
 
 def bsListEntry(entry):
 	return [entry,

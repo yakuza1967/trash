@@ -1,5 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 
 def tiviGenreListEntry(entry):
 	return [entry,

@@ -1,5 +1,4 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 
 def laolaLiveListEntry(entry):
 	date_time = re.findall('(.*?,.*?),(.*?)$', entry[3], re.S)

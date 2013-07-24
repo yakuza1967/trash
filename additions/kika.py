@@ -1,5 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-#from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 
 def kikaListEntry(entry):
 	return [entry,
