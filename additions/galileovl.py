@@ -173,7 +173,7 @@ class galileovlListeScreen(Screen):
 					self['coverArt'].instance.setPixmap(ptr)
 					self['coverArt'].show()
 					del self.picload
-					
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
@@ -197,7 +197,7 @@ class galileovlListeScreen(Screen):
 			return
 		self['liste'].down()
 		self.loadPic()
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -215,38 +215,10 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			self.session.open(galileovlPlayer, self.videoliste, int(self.idx), True, None, None)
+			sself.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False, ltype='galileovl')
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def keyCancel(self):
 		self.close()
-
-class galileovlPlayer(SimplePlayer):
-
-	def __init__(self, session, playList, playIdx=0, playAll=True, listTitle=None, cover=None):
-		print "galileovlPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle, 'local', 0, cover)
-
-	def getVideo(self):
-		self.galileovlname = self.playList[self.playIdx][0]
-		self.galileovlid = self.playList[self.playIdx][1]
-		print self.galileovlname, self.galileovlid
-		
-		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?method=1&type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
-		print url
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
-		
-	def get_link(self, data):
-		stream_url = re.findall('"VideoURL":"(.*?)"', data, re.S)
-		if stream_url:
-			stream_url = stream_url[0].replace('\\','')
-			print stream_url
-			self.playStream(self.galileovlname, stream_url)
-			
-	def dataError(self, error):
-		printl(error,self,"E")
-		
-		
