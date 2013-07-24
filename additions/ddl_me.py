@@ -1045,7 +1045,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
-				self.session.open(DDLmePlayer, [(title, stream_url)])
+				self.session.open(SimplePlayer, [(title, stream_url, self.imageUrl)], showPlaylist=False, ltype='ddl.me', cover=True)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -1062,15 +1062,3 @@ class DDLMEStreams(Screen, ConfigListScreen):
 
 	def keyCancel(self):
 		self.close()
-
-class DDLmePlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "DDLmePlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='ddl.me')
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
