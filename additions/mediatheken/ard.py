@@ -399,11 +399,11 @@ class ARDFilmeListeScreen(Screen):
 				final = "%s playpath=%s" % (host, playpath)
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(ARDMediathekPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='ard')
 			else:
 				playlist = []
 				playlist.append((self.streamName, playpath))
-				self.session.open(ARDMediathekPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='ard')
 
 
 	def keyLeft(self):
@@ -447,15 +447,3 @@ class ARDFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-
-class ARDMediathekPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "ARDMediathekPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='ard')
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

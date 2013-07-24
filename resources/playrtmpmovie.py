@@ -208,12 +208,7 @@ class PlayRtmpMovie(Screen):
 		if self.lastlocalsize > 0:
 			self.isplaying = True
 			self.StatusTimer.stop()
-			"""
-			sref = eServiceReference(0x1001, 0, self.moviepath)
-			sref.setName(self.movietitle)
-			self.session.openWithCallback(self.MoviePlayerCallback, MoviePlayer, sref)
-			"""
-			self.session.openWithCallback(self.MoviePlayerCallback, PlayRtmpPlayer, [(self.movietitle, self.moviepath)])
+			self.session.openWithCallback(self.MoviePlayerCallback, SimplePlayer, [(self.movietitle, self.moviepath)], showPlaylist=False, ltype='playrtmp')
 		else:
 			self.session.openWithCallback(self.exit, MessageBox, _("Error downloading file:\n%s") % self.lastcmddata, MessageBox.TYPE_ERROR)
 
@@ -243,15 +238,3 @@ class PlayRtmpMovie(Screen):
 		self.StatusTimer.stop()
 		self.session.nav.playService(self.oldService)
 		self.close()
-
-class PlayRtmpPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "PlayRtmpPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
