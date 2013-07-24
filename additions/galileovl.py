@@ -222,10 +222,7 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			#sref = eServiceReference(0x1001, 0, stream_url)
-			#sref.setName(self.galileovltitle)
-			#self.session.open(MoviePlayer, sref)
-			self.session.open(galileovlPlayer, [(self.galileovltitle, stream_url)])
+			self.session.open(SimplePlayer, [(self.galileovltitle, stream_url)], showPlaylist=False, ltype='galileovl')
 
 	def dataError(self, error):
 		printl(error,self,"E")
