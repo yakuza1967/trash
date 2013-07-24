@@ -100,13 +100,10 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def playVideo(self):
 		print "playVideo:"
-		if not self.playAll:
-			self.close()
+		if self.plType == 'global':
+			self.getVideo2()
 		else:
-			if self.plType == 'global':
-				self.getVideo2()
-			else:
-				self.getVideo()
+			self.getVideo()
 
 	def dataError(self, error):
 		print "dataError:"
@@ -144,31 +141,33 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def playPrevStream(self):
 		print "_prevStream:"
-		if not self.playAll:
-			return
-
-		if self.playIdx > 0:
-			self.playIdx -= 1
+		if not self.playAll or self.playLen <= 1:
+			self.handleLeave(config.usage.on_movie_eof.value)
 		else:
-			self.playIdx = self.playLen - 1
-		self.playVideo()
+			if self.playIdx > 0:
+				self.playIdx -= 1
+			else:
+				self.playIdx = self.playLen - 1
+			self.playVideo()
 
 	def playNextStream(self):
 		print "playNextStream:"
-		if not self.playAll:
-			return
-
-		if self.playIdx in range(0, self.playLen-1):
-			self.playIdx += 1
+		if not self.playAll or self.playLen <= 1:
+			self.handleLeave(config.usage.on_movie_eof.value)
 		else:
-			self.playIdx = 0
-		self.playVideo()
+			if self.playIdx in range(0, self.playLen-1):
+				self.playIdx += 1
+			else:
+				self.playIdx = 0
+			self.playVideo()
 
 	def playRandom(self):
 		print 'playRandom:'
-		if self.playLen > 1:
+		if self.playLen > 1 and self.playAll:
 			self.playIdx = random.randint(0, self.playLen-1)
 			self.playVideo()
+		else:
+			self.handleLeave(config.usage.on_movie_eof.value)
 
 	def seekFwd(self):
 		self.playNextStream()
@@ -176,13 +175,50 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def seekBack(self):
 		self.playPrevStream()
 
+	def handleLeave(self, how):
+		print "handleLeave:"
+		self.is_closing = True
+		if how == "ask":
+			if config.usage.setup_level.index < 2: # -expert
+				list = (
+					(_("Yes"), "quit"),
+					(_("No"), "continue")
+				)
+			else:
+				list = (
+					(_("Yes"), "quit"),
+					(_("No"), "continue"),
+					(_("No, but restart from begin"), "restart")
+				)
+
+			from Screens.ChoiceBox import ChoiceBox
+			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Stop playing this movie?"), list = list)
+		else:
+			self.leavePlayerConfirmed([True, how])
+
+	def leavePlayerConfirmed(self, answer):
+		print "leavePlayerConfirmed:"
+		answer = answer and answer[1]
+		print answer
+		
+		if answer in ("quit", "movielist"):
+			self.close()
+		elif answer == "restart":
+			print "restart"
+			self.doSeek(0)
+			self.setSeekState(self.SEEK_STATE_PLAY)
+		else:
+			print "continue"
+
 	def leavePlayer(self):
-		print "exitPlayer:"
-		self.close()
+		print "leavePlayer:"
+		self.handleLeave(config.usage.on_movie_stop.value)
 
 	def doEofInternal(self, playing):
 		print "doEofInt:"
-		if playing == True:
+		if not self.execing:
+			return
+		if playing:
 			if self.randomPlay:
 				self.playRandom()
 			else:
