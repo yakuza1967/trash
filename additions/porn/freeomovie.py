@@ -278,20 +278,21 @@ class freeomovieFilmListeScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		self.freeomovieName = self['liste'].getCurrent()[0][0]
-		freeomovieurl = self['liste'].getCurrent()[0][1]
-		print self.freeomovieName, freeomovieurl
-		self.session.open(freeomovieFilmAuswahlScreen, self.freeomovieName, freeomovieurl)
+		title = self['liste'].getCurrent()[0][0]
+		url = self['liste'].getCurrent()[0][1]
+		image = self['liste'].getCurrent()[0][2]
+		self.session.open(freeomovieFilmAuswahlScreen, title, url, image)
 
 	def keyCancel(self):
 		self.close()
 
 class freeomovieFilmAuswahlScreen(Screen):
 
-	def __init__(self, session, genreName, genreLink):
+	def __init__(self, session, genreName, genreLink, cover):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
+		self.cover = cover
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
@@ -375,7 +376,7 @@ class freeomovieFilmAuswahlScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			title = self.genreName
-			self.session.open(freeomoviePlayer, [(title, stream_url)])
+			self.session.open(SimplePlayer, [(title, stream_url, self.cover)], showPlaylist=False, ltype='freeomovie', cover=True)
 
 	def dataError(self, error):
 		print "dataError:"
@@ -383,14 +384,3 @@ class freeomovieFilmAuswahlScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-
-class freeomoviePlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "freeomoviePlayer:"
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

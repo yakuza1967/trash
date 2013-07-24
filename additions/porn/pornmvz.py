@@ -281,20 +281,21 @@ class pornmvzFilmListeScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		self.pornmvzName = self['liste'].getCurrent()[0][0]
-		pornmvzurl = self['liste'].getCurrent()[0][1]
-		print self.pornmvzName, pornmvzurl
-		self.session.open(pornmvzFilmAuswahlScreen, self.pornmvzName, pornmvzurl)
+		title = self['liste'].getCurrent()[0][0]
+		url = self['liste'].getCurrent()[0][1]
+		image = self['liste'].getCurrent()[0][2]
+		self.session.open(pornmvzFilmAuswahlScreen, title, url, image)
 
 	def keyCancel(self):
 		self.close()
 
 class pornmvzFilmAuswahlScreen(Screen):
 
-	def __init__(self, session, genreName, genreLink):
+	def __init__(self, session, genreName, genreLink, cover):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
+		self.cover = cover
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
@@ -378,7 +379,7 @@ class pornmvzFilmAuswahlScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			title = self.genreName
-			self.session.open(pornmvzPlayer, [(title, stream_url)])
+			self.session.open(SimplePlayer, [(title, stream_url, self.cover)], showPlaylist=False, ltype='pornmvz', cover=True)
 
 	def dataError(self, error):
 		print "dataError:"
@@ -386,14 +387,3 @@ class pornmvzFilmAuswahlScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-
-class pornmvzPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "pornmvzPlayer:"
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
