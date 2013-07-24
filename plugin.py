@@ -72,7 +72,7 @@ from additions.wrestlingnetwork import *
 from additions.musicstreamcc import *
 from additions.vibeo import *
 from additions.retrotv import *
-#from additions.galileovl import *
+from additions.galileovl import *
 
 try:
 	import ast
@@ -217,7 +217,7 @@ config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
 config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 config.mediaportal.showretrotv = ConfigYesNo(default = True)
-#config.mediaportal.showgalileovl = ConfigYesNo(default = True)
+config.mediaportal.showgalileovl = ConfigYesNo(default = True)
 if astModule:
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
 
@@ -395,7 +395,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige MTV.de Charts:", config.mediaportal.showMTVdeCharts))
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
 		self.configlist.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
-		#self.configlist.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
+		self.configlist.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
@@ -712,6 +712,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("Wrestlingnetwork", "wrestlingnetwork"))
 		if config.mediaportal.showretrotv.value:
 			self.mediatheken.append(self.hauptListEntry("retro-tv", "retrotv"))
+		if config.mediaportal.showgalileovl.value:
+			self.mediatheken.append(("Galileo-Videolexikon", "galileovl"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -1338,6 +1340,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(wrestlingnetworkGenreScreen)
 		elif auswahl == "retro-tv":
 			self.session.open(retrotvFilmListeScreen)
+		elif auswahl == "Galileo-Videolexikon":
+			self.session.open(galileovlGenreScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
@@ -1694,6 +1698,12 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Fun"))
 		if config.mediaportal.showMTVdeCharts.value:
 			self.plugin_liste.append(("MTV.de Charts", "mtvdecharts", "Fun"))
+		if config.mediaportal.showWrestlingnetwork.value:
+			self.plugin_liste.append(("Wrestlingnetwork", "wrestlingnetwork", "Mediathek"))
+		if config.mediaportal.showretrotv.value:
+			self.plugin_liste.append(("retro-tv", "retrotv", "Mediathek"))
+		if config.mediaportal.showgalileovl.value:
+			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Mediathek"))
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
@@ -1721,14 +1731,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("ORF TVthek", "orf", "Mediathek"))
 		if config.mediaportal.showSRF.value:
 			self.plugin_liste.append(("SRF Player", "srf", "Mediathek"))
-		if config.mediaportal.showWrestlingnetwork.value:
-			self.plugin_liste.append(("Wrestlingnetwork", "wrestlingnetwork", "Mediathek"))
-		if config.mediaportal.showretrotv.value:
-			self.plugin_liste.append(("retro-tv", "retrotv", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
-		#if config.mediaportal.showgalileovl.value:
-		#	self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Mediathek"))
 
 		### porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2254,8 +2258,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
-		#elif auswahl == "Galileo-Videolexikon":
-		#	self.session.open(galileovlGenreScreen)
+		elif auswahl == "Galileo-Videolexikon":
+			self.session.open(galileovlGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
