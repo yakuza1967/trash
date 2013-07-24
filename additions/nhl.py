@@ -1,5 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 
 def nhlGenreListEntry(entry):
 	return [entry,
@@ -41,7 +40,7 @@ class nhlGenreScreen(Screen):
 		month = strftime("%m", lt)
 		if month[:1] == "0":
 			month = month[1:]
-		url = "http://video.nhl.com/videocenter/highlights?xml=0&month=%s&year=2013" % str(month)
+		url = "http://video.nhl.com/videocenter/highlights?xml=0" #% str(month)
 		self.genreliste.append(("Last Highlights", url))
 		self.chooseMenuList.setList(map(nhlGenreListEntry, self.genreliste))
 
