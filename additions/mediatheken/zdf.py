@@ -293,7 +293,7 @@ class ZDFFilmeListeScreen(Screen):
 		if stream:
 			playlist = []
 			playlist.append((self.streamName, stream[0]))
-			self.session.open(ZDFMediathekPlayer, playlist)
+			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='zdf')
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -321,15 +321,3 @@ class ZDFFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-
-class ZDFMediathekPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "ZDFMediathekPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

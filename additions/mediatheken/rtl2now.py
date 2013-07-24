@@ -254,19 +254,7 @@ class RTL2nowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(RTL2nowPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='rtl2')
 
 	def keyCancel(self):
 		self.close()
-
-class RTL2nowPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "RTL2nowPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

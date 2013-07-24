@@ -304,19 +304,7 @@ class RTLnowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(RTLnowPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='rtl')
 
 	def keyCancel(self):
 		self.close()
-
-class RTLnowPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "RTLnowPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

@@ -193,19 +193,7 @@ class SRFFilmeListeScreen(Screen):
 			print final
 			playlist = []
 			playlist.append((title, final))
-			self.session.open(SRFPlayer, playlist)
+			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='srf')
 
 	def keyCancel(self):
 		self.close()
-
-class SRFPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "SRFPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

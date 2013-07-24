@@ -284,19 +284,7 @@ class VOXnowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(VOXnowPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='vox')
 
 	def keyCancel(self):
 		self.close()
-
-class VOXnowPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "VOXnowPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

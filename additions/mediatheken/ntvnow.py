@@ -282,19 +282,7 @@ class NTVnowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(NTVnowPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='ntv')
 
 	def keyCancel(self):
 		self.close()
-
-class NTVnowPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "NTVnowPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

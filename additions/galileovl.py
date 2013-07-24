@@ -203,8 +203,8 @@ class galileovlListeScreen(Screen):
 			return
 		self.galileovltitle = self['liste'].getCurrent()[0][0]
 		self.galileovlid = self['liste'].getCurrent()[0][1]
-		self.idx = self['liste'].getSelectedIndex()
 		self.imageurl = self['liste'].getCurrent()[0][3]
+		self.idx = self['liste'].getSelectedIndex()
 		print self.galileovltitle, self.galileovlid
 
 		url = "http://ws.vtc.sim-technik.de/video/video.jsonp?method=1&type=1&app=GalVidLex_web&clipid=%s" % self.galileovlid
@@ -216,22 +216,10 @@ class galileovlListeScreen(Screen):
 		if stream_url:
 			stream_url = stream_url[0].replace('\\','')
 			print stream_url
-			self.session.open(galileovlPlayer, [(self.galileovltitle, stream_url, self.imageurl)])
+			self.session.open(SimplePlayer, [(self.galileovltitle, stream_url, self.imageurl)], showPlaylist=False, ltype='galileovl', cover=True)
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def keyCancel(self):
 		self.close()
-
-class galileovlPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "galileovlPlayer:"
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		image = self.playList[self.playIdx][2]
-		self.playStream(title, url, imgurl=image)

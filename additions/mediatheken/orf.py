@@ -228,19 +228,7 @@ class ORFStreamListeScreen(Screen):
 			print final
 			playlist = []
 			playlist.append((title, final))
-			self.session.open(ORFPlayer, playlist)
+			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='orf')
 
 	def keyCancel(self):
 		self.close()
-
-class ORFPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "ORFPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)

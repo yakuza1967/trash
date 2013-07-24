@@ -254,19 +254,7 @@ class SUPERRTLnowFilmeListeScreen(Screen):
 				print final
 				playlist = []
 				playlist.append((self.streamName, final))
-				self.session.open(SUPERRTLnowPlayer, playlist)
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='superrtl')
 
 	def keyCancel(self):
 		self.close()
-
-class SUPERRTLnowPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "SUPERRTLnowPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
