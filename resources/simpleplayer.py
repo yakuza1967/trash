@@ -112,7 +112,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")
-		self.playNextStream(config.usage.on_movie_eof.value)
+		self.playNextStream(config.mediaportal.sp_on_movie_eof.value)
 
 	def playStream(self, title, url=None, album='', artist='', imgurl=''):
 		print "playStream: ",title,url
@@ -146,7 +146,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def playPrevStream(self):
 		print "_prevStream:"
 		if not self.playAll or self.playLen <= 1:
-			self.handleLeave(config.usage.on_movie_stop.value)
+			self.handleLeave(config.mediaportal.sp_on_movie_stop.value)
 			#return
 		else:
 			if self.playIdx > 0:
@@ -178,11 +178,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def randomNow(self):
 		if self.playAll:
-			self.playRandom(config.usage.on_movie_stop.value)
+			self.playRandom(config.mediaportal.sp_on_movie_stop.value)
 	
 	def seekFwd(self):
 		if self.playAll:
-			self.playNextStream(config.usage.on_movie_stop.value)
+			self.playNextStream(config.mediaportal.sp_on_movie_stop.value)
 
 	def seekBack(self):
 		if self.playAll:
@@ -225,15 +225,15 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def leavePlayer(self):
 		print "leavePlayer:"
-		self.handleLeave(config.usage.on_movie_stop.value)
+		self.handleLeave(config.mediaportal.sp_on_movie_stop.value)
 
 	def doEofInternal(self, playing):
 		print "doEofInt:"
 		if playing:
 			if self.randomPlay:
-				self.playRandom(config.usage.on_movie_eof.value)
+				self.playRandom(config.mediaportal.sp_on_movie_eof.value)
 			else:
-				self.playNextStream(config.usage.on_movie_eof.value)
+				self.playNextStream(config.mediaportal.sp_on_movie_eof.value)
 
 	def playExit(self):
 		print "playExit:"
@@ -563,7 +563,7 @@ class SimplePlaylist(Screen):
 			self.event.reset()
 
 class SimpleConfig(ConfigListScreen, Screen):
-	skin = '\n\t\t<screen position="center,center" size="300,200" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="290,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+	skin = '\n\t\t<screen position="center,center" size="460,200" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="440,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -572,6 +572,8 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Random Play', config.mediaportal.sp_randomplay))
 		self.list.append(getConfigListEntry('Screensaver', config.mediaportal.sp_scrsaver))
 		self.list.append(getConfigListEntry('Youtube VideoPrio', config.mediaportal.youtubeprio))
+		self.list.append(getConfigListEntry('Behavior in stop movie', config.mediaportal.sp_on_movie_stop))
+		self.list.append(getConfigListEntry('Behavior on movie end', config.mediaportal.sp_on_movie_eof))
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{
