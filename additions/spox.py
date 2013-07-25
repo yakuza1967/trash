@@ -1,5 +1,4 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
 
 def spoboxGenreListEntry(entry):
 	return [entry,
@@ -62,9 +61,9 @@ class spoboxSubGenreScreen(Screen):
 		self.session = session
 		self.streamGenreName = streamGenreName
 		self.streamGenreLink = streamGenreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/spoboxSubGenreScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/spoboxGenreScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/spoboxSubGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/spoboxGenreScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
