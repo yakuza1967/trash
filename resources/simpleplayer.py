@@ -192,17 +192,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "handleLeave:"
 		self.is_closing = True
 		if how == "ask":
-			if config.usage.setup_level.index < 2: # -expert
-				list = (
-					(_("Yes"), "quit"),
-					(_("No"), "continue")
-				)
-			else:
-				list = (
-					(_("Yes"), "quit"),
-					(_("No"), "continue"),
-					(_("No, but restart from begin"), "restart")
-				)
+			list = (
+				(_("Yes"), "quit"),
+				(_("No"), "continue"),
+				(_("No, but restart from begin"), "restart")
+			)
 
 			from Screens.ChoiceBox import ChoiceBox
 			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Stop playing this movie?"), list = list)
