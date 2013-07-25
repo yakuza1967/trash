@@ -11,6 +11,8 @@ from songstolink import SongstoLink
 from cannalink import CannaLink
 from eightieslink import EightiesLink
 from mtvdelink import MTVdeLink
+from coverhelper import CoverHelper
+
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
 	MediainfoPresent = True
@@ -85,9 +87,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.pl_status = (0, '', '', '', '')
 		self.pl_event = SimpleEvent()
 		self['Icon'] = Pixmap()
+		self._Icon = CoverHelper(self['Icon'], self.skin_path)
 
 		# load default cover
 		self['Cover'] = Pixmap()
+		self._Cover = CoverHelper(self['Cover'], self.skin_path)
 
 		self.SaverTimer = eTimer()
 		self.SaverTimer.callback.append(self.openSaver)
@@ -200,7 +204,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "leavePlayerConfirmed:"
 		answer = answer and answer[1]
 		print answer
-		
+
 		if answer in ("quit", "movielist"):
 			self.close()
 		elif answer == "restart":
@@ -216,8 +220,6 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def doEofInternal(self, playing):
 		print "doEofInt:"
-		if not self.execing:
-			return
 		if playing:
 			if self.randomPlay:
 				self.playRandom()
@@ -377,31 +379,12 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def showCover(self, cover):
 		print "showCover:", cover
-		pm_file = "/tmp/Icon.jpg"
-		if cover:
-			downloadPage(cover, pm_file).addCallback(self.showPixmap, pm_file, 'Cover')
+		self._Cover.getCover(cover)
 
 	def showIcon(self):
 		print "showIcon:"
 		pm_file = self.wallicon_path + mp_globals.activeIcon + ".png"
-		self.showPixmap(None, pm_file, 'Icon')
-
-	def showPixmap(self, dummy, pm_file, pm_name):
-		print "showPixmap: ", pm_file
-		if fileExists(pm_file):
-			self[pm_name].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self[pm_name].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(pm_file, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self[pm_name].instance.setPixmap(ptr)
-					self[pm_name].show()
-					del self.picload
-		else:
-			print "No pixmap to load: ", pm_file
+		self._Icon.showCoverFile(pm_file)
 
 	#def lockShow(self):
 	#	pass
@@ -474,6 +457,7 @@ class SimplePlaylist(Screen):
 
 		self["title"] = Label("")
 		self["coverArt"] = Pixmap()
+		self._Cover = CoverHelper(self['coverArt'], self.skin_path)
 		self["songtitle"] = Label ("")
 		self["artist"] = Label ("")
 		self["album"] = Label ("")
@@ -537,37 +521,7 @@ class SimplePlaylist(Screen):
 
 	def getCover(self, url):
 		print "getCover:", url
-		if url:
-			downloadPage(url, "/tmp/Icon.jpg").addCallback(self.showCover)
-		else:
-			self.showCoverNone()
-
-	def showCover(self, picData):
-		print "showCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.showCoverFile(picPath)
-
-	def showCoverNone(self):
-		print "showCoverNone:"
-		picPath = self.skin_path+"/original/images/m_no_coverArt.png"
-		self.showCoverFile(picPath)
-
-	def showCoverFile(self, picPath):
-		print "showCoverFile:"
-		if fileExists(picPath):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-		else:
-			print "coverfile not found: ", picPath
+		self._Cover.getCover(url)
 
 	def red(self):
 		if self.plType == 'global':
