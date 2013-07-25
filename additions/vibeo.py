@@ -46,7 +46,7 @@ class vibeoFilmListeScreen(Screen):
 		self['F3'].hide()
 		self['F4'].hide()
 		self['coverArt'] = Pixmap()
-		self['Page'] = Label("Page")
+		self['Page'] = Label("")
 		self['page'] = Label("")
 		self['handlung'] = Label("")
 
@@ -64,7 +64,7 @@ class vibeoFilmListeScreen(Screen):
 		# types:  movies,cinema,series,updates
 		self.filmliste =  [("Cinema", "cinema"), ("Movies", "movies"), ("Series", "series"), ("Updates", "updates")]
 
-		self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
+		self.chooseMenuList.setList(map(vibeoStreamsListEntry, self.filmliste))
 		self.keyLocked = False
 
 	def keyOK(self):
@@ -99,7 +99,11 @@ class vibeoTypeListeScreen(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
-			"cancel": self.keyCancel
+			"cancel": self.keyCancel,
+			"up": self.keyUp,
+			"down": self.keyDown,
+			"right": self.keyRight,
+			"left": self.keyLeft
 		}, -1)
 
 		self.keyLocked = True
@@ -124,12 +128,19 @@ class vibeoTypeListeScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
+		self.keckse = {}
 
 		self.onLayoutFinish.append(self.loadPage)
 
+	#def get_keckse(self):
+	#	url = "http://vibeo.tv"
+	#	getPage(url, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPage).addErrback(self.dataError)
+		
 	def loadPage(self):
 		print "starte aufruf"
 		self.keyLocked = True
+		print "keckse:", self.keckse
+		
 		values = {'bRegex': 'false',
 				'bRegex_0': 'false',
 				'bRegex_1': 'false',
@@ -172,20 +183,85 @@ class vibeoTypeListeScreen(Screen):
 
 	def loadPageData(self, data):
 		print "daten bekommen"
-		infos = re.findall('alt=."(Movie|Cinema|Series).".*?/>"."<span rel=.*?"#tt(.*?).">(.*?)<.*?/de.png." style=."opacity: (.*?);', data, re.S|re.I)
-		if infos:
-			self.filmliste = []
-			for (type,linkid,title,lang) in infos:
-				if lang == "1":
+		
+		if self.filmlink == "updates":
+			infos = re.findall('alt=."(Movie|Cinema|Series).".*?=.*?"#tt(.*?).">(.*?)<', data, re.I)
+			if infos:
+				self.filmliste = []
+				for (type,linkid,title) in infos:
 					title = "(%s) - %s" % (type, title)
 					self.filmliste.append((title,linkid))
-					self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
-
-			self.keyLocked = False
+				self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
+				self.loadPic()
+				self.keyLocked = False			
+		else:
+			infos = re.findall('alt=."(Movie|Cinema|Series).".*?/>".*?rel=.*?"#tt(.*?).">(.*?)<.*?/de.png." style=."opacity: (.*?);', data, re.S|re.I)
+			if infos:
+				self.filmliste = []
+				for (type,linkid,title,lang) in infos:
+					if lang == "1":
+						title = "(%s) - %s" % (type, title)
+						self.filmliste.append((title,linkid))
+				self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
+				self.loadPic()
+				self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
+	def loadPic(self):
+		streamID = self['liste'].getCurrent()[0][1]
+		values = {'mID': streamID}
+		url = "http://vibeo.tv/request"
+		getPage(url, method='POST', postdata=urlencode(values), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.load_info).addErrback(self.dataError)
+		
+	def load_info(self, data):
+		infos = re.findall('"cover":".*?covers..(.*?)".*?"plot":"(.*?)"', data, re.S)
+		if infos:
+			print infos
+			(coverID, handlung) = infos[0]
+			streamPic = "http://static.vibeo.tv/covers/%s" % coverID
+			self['handlung'].setText(decodeHtml(handlung))
+			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+
+	def ShowCover(self, picData):
+		if fileExists("/tmp/Icon.jpg"):
+			self['coverArt'].instance.setPixmap(gPixmapPtr())
+			self.scale = AVSwitch().getFramebufferScale()
+			self.picload = ePicLoad()
+			size = self['coverArt'].instance.size()
+			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
+			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
+				ptr = self.picload.getData()
+				if ptr != None:
+					self['coverArt'].instance.setPixmap(ptr)
+					self['coverArt'].show()
+					del self.picload
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['liste'].pageUp()
+		self.loadPic()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['liste'].pageDown()
+		self.loadPic()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['liste'].up()
+		self.loadPic()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['liste'].down()
+		self.loadPic()
+		
 	def keyOK(self):
 		if self.keyLocked:
 			return
