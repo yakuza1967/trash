@@ -170,7 +170,7 @@ class tiviFilmListeScreen(Screen):
 
 	def loadPageData(self, data):
 		print "daten bekommen"
-		videos_xml = re.findall(' <ns3:video-teaser>.*?<ns3:headline>(.*?)</ns3:headline>.*?<ns3:image>(.*?)</ns3:image>.*?<ns3:page>(.*?)</ns3:page>.*?<ns3:text>(.*?)</ns3:text>', data, re.S)
+		videos_xml = re.findall('<ns3:video-teaser>.*?<ns3:headline>(.*?)</ns3:headline>.*?<ns3:image>(.*?)</ns3:image>.*?<ns3:page>(.*?)</ns3:page>.*?<ns3:text>(.*?)</ns3:text>', data, re.S)
 		if videos_xml:
 			self.filmliste = []
 			for (name,image,url,handlung) in videos_xml:
@@ -213,17 +213,14 @@ class tiviFilmListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		streamLink_ls = self['filmList'].getCurrent()[0][1]
 		print streamLink_ls
-		#if re.match('.*?(/beitrag/|/kanal/)', streamLink_ls):
-		#	self.session.open(tiviFilmListeScreen, streamLink_ls, streamName)
-		#else:
 		getPage(streamLink_ls, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
 
 	def getStream(self, data):
-		stream = re.findall('<ns4:quality>veryhigh</ns4:quality>.*?<ns4:url>(http://[nrodl|rodl].*?zdf.de.*?.mp4)</ns4:url>', data, re.S)
+		stream = re.search('<ns4:formitaet\sbasetype="h264_aac_mp4.*?[high|veryhigh].*<ns4:url>(http://[nrodl|rodl].*?zdf.de.*?.mp4)</ns4:url>.*?</ns4:formitaet>', data, re.S)
 		if stream:
 			print stream
 			streamfolgename = self['filmList'].getCurrent()[0][0]
-			sref = eServiceReference(0x1001, 0, stream[0])
+			sref = eServiceReference(0x1001, 0, stream.group(1))
 			name = "%s - %s" % (self.streamName, streamfolgename)
 			sref.setName(name)
 			self.session.open(MoviePlayer, sref)
