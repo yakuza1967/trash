@@ -301,6 +301,8 @@ config.mediaportal.fake_entry = NoSave(ConfigNothing())
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
 config.mediaportal.sp_scrsaver = ConfigSelection(default = "off", choices = [("on", _("On")),("off", _("Off")),("automatic", _("Automatic"))])
+config.mediaportal.sp_on_movie_stop = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")) ])
+config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end"))
 
 class hauptScreenSetup(Screen, ConfigListScreen):
 
