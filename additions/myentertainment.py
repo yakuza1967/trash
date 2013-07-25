@@ -323,9 +323,9 @@ class enterColListScreen(Screen):
 		self.session = session
 		self.pageCol = pageCol
 		self.pageTitle = pageTitle
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/enterColListScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/focus.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/enterColListScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/focus.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -348,11 +348,11 @@ class enterColListScreen(Screen):
 		self['coverArt'] = Pixmap()
 
 		self.keyLocked = True
-		self.auswahlColListe = []
+		self.streamliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['auswahlColList'] = self.chooseMenuList
+		self['streamlist'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.showColData)
 
 
@@ -360,17 +360,17 @@ class enterColListScreen(Screen):
 		i=0
 		if self.pageCol:
 			for enterPic,enterUrl in self.pageCol:
-				self.auswahlColListe.append((self.pageTitle[i], enterUrl, enterPic))
+				self.streamliste.append((self.pageTitle[i], enterUrl, enterPic))
 				i=i+1
-			self.chooseMenuList.setList(map(enterColListEntry, self.auswahlColListe))
+			self.chooseMenuList.setList(map(enterColListEntry, self.streamliste))
 			self.keyLocked = False
 			self.loadPic()
 
 	def loadPic(self):
-		streamName = self['auswahlColList'].getCurrent()[0][0]
-		streamFilmLink = self['auswahlColList'].getCurrent()[0][1]
+		streamName = self['streamlist'].getCurrent()[0][0]
+		streamFilmLink = self['streamlist'].getCurrent()[0][1]
 		self['name'].setText(streamName)
-		streamPic = self['auswahlColList'].getCurrent()[0][2]
+		streamPic = self['streamlist'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/spIcon.jpg").addCallback(self.ShowCover)
 
 
@@ -407,8 +407,8 @@ class enterColListScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		streamLink = self['auswahlColList'].getCurrent()[0][1]
-		self.streamName = self['auswahlColList'].getCurrent()[0][0]
+		streamLink = self['streamlist'].getCurrent()[0][1]
+		self.streamName = self['streamlist'].getCurrent()[0][0]
 		print 'RealStreamLink...', streamLink
 		getPage(streamLink, cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getRealLink).addErrback(self.dataError)
 
@@ -418,25 +418,25 @@ class enterColListScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].pageUp()
+		self['streamlist'].pageUp()
 		self.loadPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].pageDown()
+		self['streamlist'].pageDown()
 		self.loadPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].up()
+		self['streamlist'].up()
 		self.loadPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].down()
+		self['streamlist'].down()
 		self.loadPic()
 
 	def keyCancel(self):
@@ -453,9 +453,9 @@ class enterSerienListScreen(Screen):
 		self.session = session
 		self.folgenCol = folgenCol
 		self.folgenPic = folgenPic
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/enterColListScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/focus.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/enterColListScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/focus.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -478,11 +478,11 @@ class enterSerienListScreen(Screen):
 		self['coverArt'] = Pixmap()
 
 		self.keyLocked = True
-		self.auswahlColListe = []
+		self.streamliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['auswahlColList'] = self.chooseMenuList
+		self['streamlist'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.showColData)
 
 
@@ -497,10 +497,10 @@ class enterSerienListScreen(Screen):
 			self.loadPic
 
 	def loadPic(self):
-		streamName = self['auswahlColList'].getCurrent()[0][0]
-		streamFilmLink = self['auswahlColList'].getCurrent()[0][1]
+		streamName = self['streamlist'].getCurrent()[0][0]
+		streamFilmLink = self['streamlist'].getCurrent()[0][1]
 		self['name'].setText(streamName)
-		streamPic = self['auswahlColList'].getCurrent()[0][2]
+		streamPic = self['streamlist'].getCurrent()[0][2]
 		downloadPage(streamPic, "/tmp/spIcon.jpg").addCallback(self.ShowCover)
 
 
@@ -522,8 +522,8 @@ class enterSerienListScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		link = self['auswahlColList'].getCurrent()[0][1]
-		self.streamName = self['auswahlColList'].getCurrent()[0][0]
+		link = self['streamlist'].getCurrent()[0][1]
+		self.streamName = self['streamlist'].getCurrent()[0][0]
 		link_found = False
 		if link:
 			link_found = True
@@ -546,25 +546,25 @@ class enterSerienListScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].pageUp()
+		self['streamlist'].pageUp()
 		self.loadPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].pageDown()
+		self['streamlist'].pageDown()
 		self.loadPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].up()
+		self['streamlist'].up()
 		self.loadPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['auswahlColList'].down()
+		self['streamlist'].down()
 		self.loadPic()
 
 	def keyCancel(self):
