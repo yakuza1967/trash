@@ -172,7 +172,7 @@ class paradisehillFilmListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		lastpparse = re.search('<div class="pagi">(.*?)</div>', data, re.S)
+		lastpparse = re.search('class="pagi">(.*?)</div>', data, re.S)
 		lastp = re.findall('.*[\/|>](\d+)[\/|<]', lastpparse.group(1), re.S)
 		if lastp:
 			self.lastpage = int(lastp[-1])
@@ -350,7 +350,7 @@ class paradisehillFilmAuswahlScreen(Screen):
 					videoname = self.genreName
 				self.filmliste.append((videoname, stream))
 		else:
-			self.filmliste.append(("No streams found!","",""))
+			self.filmliste.append(("No streams found!",None))
 		self.chooseMenuList.setList(map(paradisehillGenreListEntry, self.filmliste))
 		self.keyLocked = False
 

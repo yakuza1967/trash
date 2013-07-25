@@ -358,7 +358,7 @@ class pornmvzFilmAuswahlScreen(Screen):
 						hostername = hostername + ' (' + discno + ')'
 					self.filmliste.append((hostername, stream))
 		else:
-			self.filmliste.append(("No streams found!","",""))
+			self.filmliste.append(("No streams found!",None))
 		self.chooseMenuList.setList(map(pornmvzGenreListEntry, self.filmliste))
 		self.keyLocked = False
 
