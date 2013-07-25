@@ -189,7 +189,7 @@ class show_DDLME_Genre(Screen):
 		self['name'].setText("Genre: "+self.genreTitle)
 
 	def loadMenu(self):
-		print "Clipfish.de:"
+		print "ddl.me:"
 		self.setMenu(0, True)
 		self.keyLocked = False
 
@@ -533,7 +533,7 @@ class DDLME_FilmListeScreen(Screen):
 					self.pages = 1
 					print "movies found"
 					for (t, h, i) in m:
-						print "tit.: ",t
+						#print "tit.: ",t
 						self.filmListe.append((decodeHtml(t), "%s%s" % (self.baseUrl, h), i, ''))
 		else:
 			if self.genreSearch:
@@ -551,12 +551,12 @@ class DDLME_FilmListeScreen(Screen):
 					print "movies found"
 					if self.genreSearch:
 						for (t, h, i, sm) in m:
-							print "tit.: ",t
-							print "sm: ",sm
+							#print "tit.: ",t
+							#print "sm: ",sm
 							self.filmListe.append((decodeHtml(t), "%s%s" % (self.baseUrl, h), i, sm))
 					else:
 						for (t, h, i) in m:
-							print "tit.: ",t
+							#print "tit.: ",t
 							self.filmListe.append((decodeHtml(t), "%s%s" % (self.baseUrl, h), i, ''))
 
 				if not self.pages:
@@ -919,11 +919,10 @@ class DDLMEStreams(Screen, ConfigListScreen):
 
 											for h in streams:
 												url = h.replace('\\', '')
-												print url
+												#print url
 												self.streamListe.append((s,url,'',''))
 										else:
-											print "No supported hoster:"
-											print s
+											print "No supported hoster:",s
 								else:
 									a2 = l2
 							a = l
@@ -987,12 +986,11 @@ class DDLMEStreams(Screen, ConfigListScreen):
 									#if re.match('apitel (\d)',kap):
 									#	kap = self._insert(kap, 'K', 0)
 
-									print url
-									print part
+									#print url
+									#print part
 									self.streamListe.append((s,url,part,kap))
 							else:
-								print "No supported hoster:"
-								print s
+								print "No supported hoster:",s
 					else:
 						a = l
 
