@@ -87,11 +87,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.pl_status = (0, '', '', '', '')
 		self.pl_event = SimpleEvent()
 		self['Icon'] = Pixmap()
-		self._Icon = CoverHelper(self['Icon'], self.plugin_path)
+		self._Icon = CoverHelper(self['Icon'])
 
 		# load default cover
 		self['Cover'] = Pixmap()
-		self._Cover = CoverHelper(self['Cover'], self.plugin_path)
+		self._Cover = CoverHelper(self['Cover'])
 
 		self.SaverTimer = eTimer()
 		self.SaverTimer.callback.append(self.openSaver)
@@ -466,7 +466,7 @@ class SimplePlaylist(Screen):
 
 		self["title"] = Label("")
 		self["coverArt"] = Pixmap()
-		self._Cover = CoverHelper(self['coverArt'], self.plugin_path)
+		self._Cover = CoverHelper(self['coverArt'])
 		self["songtitle"] = Label ("")
 		self["artist"] = Label ("")
 		self["album"] = Label ("")

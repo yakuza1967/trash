@@ -387,7 +387,7 @@ class IStreamFilmListeScreen(Screen):
 		streamUrl = self['liste'].getCurrent()[0][1]
 		self.getHandlung(streamUrl)
 		self.updateP = 1
-		CoverHelper(self['coverArt'], self.plugin_path, self.showCoverExit).getCover(streamPic)
+		CoverHelper(self['coverArt'], self.showCoverExit).getCover(streamPic)
 
 	def dataErrorP(self, error):
 		print "dataError:"
@@ -688,7 +688,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self['handlung'].setText(decodeHtml(desc))
 		self.keyLocked = False
 		print "imageUrl: ",self.imageUrl
-		CoverHelper(self['coverArt'], self.plugin_path).getCover(self.imageUrl)
+		CoverHelper(self['coverArt']).getCover(self.imageUrl)
 
 	def dataError(self, error):
 		print "dataError:"

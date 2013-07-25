@@ -5,17 +5,18 @@ from enigma import gPixmapPtr, ePicLoad
 from Components.AVSwitch import AVSwitch
 from Components.Pixmap import Pixmap
 from Tools.Directories import fileExists
+from Components.config import config
+import mp_globals
 
 class CoverHelper:
 
 	COVER_PIC_PATH = "/tmp/Icon.jpg"
-	#NO_COVER_PIC_PATH = "/original/images/m_no_coverArt.png"
 	NO_COVER_PIC_PATH = "/images/no_coverArt.png"
 	
-	def __init__(self, cover, cover_path, callback=None):
+	def __init__(self, cover, callback=None):
 		self._cover = cover
 		self.picload = ePicLoad()
-		self._no_picPath = cover_path+self.NO_COVER_PIC_PATH
+		self._no_picPath = "%s/skins/%s%s" % (mp_globals.pluginPath, config.mediaportal.skin.value, self.NO_COVER_PIC_PATH)
 		self._callback = callback
 
 	def getCover(self, url):

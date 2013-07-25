@@ -605,7 +605,7 @@ class DDLME_FilmListeScreen(Screen):
 		self.keyLocked	= False
 
 		url = self['liste'].getCurrent()[0][2]
-		CoverHelper(self['coverArt'], self.plugin_path).getCover(url)
+		CoverHelper(self['coverArt']).getCover(url)
 		
 	def getHandlung(self, desc):
 		print "getHandlung:"
@@ -973,7 +973,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 		self['handlung'].setText(decodeHtml(desc))
 		self.keyLocked = False
 		print "imageUrl: ",self.imageUrl
-		CoverHelper(self['coverArt'], self.plugin_path).getCover(self.imageUrl)
+		CoverHelper(self['coverArt']).getCover(self.imageUrl)
 
 	def _insert(self, ori, ins, pos):
 		return ori[:pos] + ins + ori[pos:]
