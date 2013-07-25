@@ -43,10 +43,10 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 			"info":		self.openMediainfo,
 			"input_date_time": self.openMenu,
 			"up": 		self.openPlaylist,
-			"down":		self.playRandom,
+			"down":		self.randomNow,
 			"back":		self.leavePlayer,
-			"left":		self.playPrevStream,
-			"right":	self.playNextStream
+			"left":		self.seekBack,
+			"right":	self.seekFwd
 
 		}, -1)
 
@@ -87,11 +87,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.pl_status = (0, '', '', '', '')
 		self.pl_event = SimpleEvent()
 		self['Icon'] = Pixmap()
-		self._Icon = CoverHelper(self['Icon'], self.skin_path)
+		self._Icon = CoverHelper(self['Icon'], self.plugin_path)
 
 		# load default cover
 		self['Cover'] = Pixmap()
-		self._Cover = CoverHelper(self['Cover'], self.skin_path)
+		self._Cover = CoverHelper(self['Cover'], self.plugin_path)
 
 		self.SaverTimer = eTimer()
 		self.SaverTimer.callback.append(self.openSaver)
@@ -112,7 +112,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")
-		self.playNextStream()
+		self.playNextStream(config.usage.on_movie_eof.value)
 
 	def playStream(self, title, url=None, album='', artist='', imgurl=''):
 		print "playStream: ",title,url
@@ -146,7 +146,8 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def playPrevStream(self):
 		print "_prevStream:"
 		if not self.playAll or self.playLen <= 1:
-			self.handleLeave(config.usage.on_movie_eof.value)
+			self.handleLeave(config.usage.on_movie_stop.value)
+			#return
 		else:
 			if self.playIdx > 0:
 				self.playIdx -= 1
@@ -154,10 +155,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 				self.playIdx = self.playLen - 1
 			self.playVideo()
 
-	def playNextStream(self):
+	def playNextStream(self, value):
 		print "playNextStream:"
 		if not self.playAll or self.playLen <= 1:
-			self.handleLeave(config.usage.on_movie_eof.value)
+			self.handleLeave(value)
+			#return
 		else:
 			if self.playIdx in range(0, self.playLen-1):
 				self.playIdx += 1
@@ -165,19 +167,26 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 				self.playIdx = 0
 			self.playVideo()
 
-	def playRandom(self):
+	def playRandom(self, value):
 		print 'playRandom:'
 		if self.playLen > 1 and self.playAll:
 			self.playIdx = random.randint(0, self.playLen-1)
 			self.playVideo()
 		else:
-			self.handleLeave(config.usage.on_movie_eof.value)
+			self.handleLeave(value)
+			#return
 
+	def randomNow(self):
+		if self.playAll:
+			self.playRandom(config.usage.on_movie_stop.value)
+	
 	def seekFwd(self):
-		self.playNextStream()
+		if self.playAll:
+			self.playNextStream(config.usage.on_movie_stop.value)
 
 	def seekBack(self):
-		self.playPrevStream()
+		if self.playAll:
+			self.playPrevStream()
 
 	def handleLeave(self, how):
 		print "handleLeave:"
@@ -222,9 +231,9 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "doEofInt:"
 		if playing:
 			if self.randomPlay:
-				self.playRandom()
+				self.playRandom(config.usage.on_movie_eof.value)
 			else:
-				self.playNextStream()
+				self.playNextStream(config.usage.on_movie_eof.value)
 
 	def playExit(self):
 		print "playExit:"
@@ -457,7 +466,7 @@ class SimplePlaylist(Screen):
 
 		self["title"] = Label("")
 		self["coverArt"] = Pixmap()
-		self._Cover = CoverHelper(self['coverArt'], self.skin_path)
+		self._Cover = CoverHelper(self['coverArt'], self.plugin_path)
 		self["songtitle"] = Label ("")
 		self["artist"] = Label ("")
 		self["album"] = Label ("")

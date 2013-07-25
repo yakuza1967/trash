@@ -9,12 +9,13 @@ from Tools.Directories import fileExists
 class CoverHelper:
 
 	COVER_PIC_PATH = "/tmp/Icon.jpg"
-	NO_COVER_PIC_PATH = "/original/images/m_no_coverArt.png"
-
-	def __init__(self, cover, skin_path):
+	#NO_COVER_PIC_PATH = "/original/images/m_no_coverArt.png"
+	NO_COVER_PIC_PATH = "/images/no_coverArt.png"
+	
+	def __init__(self, cover, cover_path):
 		self._cover = cover
 		self.picload = ePicLoad()
-		self._no_picPath = skin_path+self.NO_COVER_PIC_PATH
+		self._no_picPath = cover_path+self.NO_COVER_PIC_PATH
 
 	def getCover(self, url):
 		print "getCover:", url

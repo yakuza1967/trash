@@ -5,6 +5,7 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
 	from Plugins.Extensions.TMDb.plugin import *
@@ -604,11 +605,8 @@ class DDLME_FilmListeScreen(Screen):
 		self.keyLocked	= False
 
 		url = self['liste'].getCurrent()[0][2]
-		if url != '':
-			downloadPage(url, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataError)
-		else:
-			self.ShowCoverNone()
-
+		CoverHelper(self['coverArt'], self.plugin_path).getCover(url)
+		
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -616,38 +614,11 @@ class DDLME_FilmListeScreen(Screen):
 			self['handlung'].setText("Keine weiteren Info's vorhanden.")
 			return
 		self.setHandlung(desc)
-
+	
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		print "ShowCoverNone:"
-		picPath = self.plugin_path + "/images/no_coverArt.png"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		print "showCoverFile:"
-		if fileExists(picPath):
-			print "picpath: ",picPath
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			#self['coverArt'].instance.setPixmap(enigma.gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-
+	
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
@@ -1002,27 +973,11 @@ class DDLMEStreams(Screen, ConfigListScreen):
 		self['handlung'].setText(decodeHtml(desc))
 		self.keyLocked = False
 		print "imageUrl: ",self.imageUrl
-		if self.imageUrl:
-			downloadPage(self.imageUrl, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt'], self.plugin_path).getCover(self.imageUrl)
 
 	def _insert(self, ori, ins, pos):
 		return ori[:pos] + ins + ori[pos:]
-
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-
+		
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")
