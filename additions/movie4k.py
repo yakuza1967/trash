@@ -85,9 +85,9 @@ class m4kGenreScreen(Screen):
 	def __init__(self, session, mode):
 		self.session = session
 		self.showM4kPorn = mode
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/m4kGenreScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/oldGenreScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/m4kGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/oldGenreScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
