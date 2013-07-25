@@ -149,7 +149,7 @@ config.mediaportal.showporn = ConfigYesNo(default = False)
 config.mediaportal.showgrauzone = ConfigYesNo(default = False)
 config.mediaportal.pingrauzone = ConfigYesNo(default = False)
 config.mediaportal.skin = ConfigSelection(default = "tec", choices = [("tec", _("tec")),("liquidblue", _("liquidblue")), ("original", _("original"))])
-config.mediaportal.ansicht = ConfigSelection(default = "liste", choices = [("liste", _("Liste")),("wall", _("Wall"))])
+config.mediaportal.ansicht = ConfigSelection(default = "wall", choices = [("liste", _("Liste")),("wall", _("Wall"))])
 config.mediaportal.selektor = ConfigSelection(default = "blue", choices = [("blue", _("blau")),("green", _(u"gr\xfcn")),("red", _("rot")),("turkis", _(u"t\xfcrkis"))])
 config.mediaportal.useRtmpDump = ConfigYesNo(default = False)
 config.mediaportal.useHttpDump = ConfigYesNo(default = False)
@@ -607,6 +607,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			"cancel": self.keyCancel,
 			"left"  : self.keyLeft,
 			"right" : self.keyRight,
+			"nextBouquet" :	self.keyPageDown,
+			"prevBouquet" :	self.keyPageUp,
 			"menu" : self.keySetup,
 			"info" : self.showPorn,
 			"displayHelp" : self.keyHelp
@@ -713,7 +715,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		if config.mediaportal.showretrotv.value:
 			self.mediatheken.append(self.hauptListEntry("retro-tv", "retrotv"))
 		if config.mediaportal.showgalileovl.value:
-			self.mediatheken.append(("Galileo-Videolexikon", "galileovl"))
+			self.mediatheken.append(self.hauptListEntry("Galileo-Videolexikon", "galileovl"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -757,7 +759,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.showWatchseries.value:
 				self.grauzone.append(self.hauptListEntry("Watchseries", "watchseries"))
 			#if config.mediaportal.showViewster.value:
-			#	self.mediatheken.append(self.hauptListEntry("Viewster", "viewster"))
+			#	self.grauzone.append(self.hauptListEntry("Viewster", "viewster"))
 			if config.mediaportal.showVibeo.value:
 				self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
 
@@ -931,7 +933,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		if not fileExists(icon):
 			icon = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons/no_icon.png"
 		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 1), size=(75, 40), png=loadPNG(icon)))
-		res.append(MultiContentEntryText(pos=(80, 10), size=(160, 40), font=0, text=name, flags=RT_HALIGN_LEFT))
+		res.append(MultiContentEntryText(pos=(80, 10), size=(200, 40), font=0, text=name, flags=RT_HALIGN_LEFT))
 		return res
 
 	def showPorn(self):
@@ -983,6 +985,12 @@ class haupt_Screen(Screen, ConfigListScreen):
 		auswahl = self[self.currentlist].getCurrent()[0][0]
 		self.title = auswahl
 		self['name'].setText(auswahl)
+
+	def keyPageUp(self):
+		self[self.currentlist].pageUp()
+
+	def keyPageDown(self):
+		self[self.currentlist].pageDown()
 
 	def keyRight(self):
 		self.cur_idx = self[self.currentlist].getSelectedIndex()
