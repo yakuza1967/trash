@@ -301,17 +301,21 @@ config.mediaportal.fake_entry = NoSave(ConfigNothing())
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
 config.mediaportal.sp_scrsaver = ConfigSelection(default = "off", choices = [("on", _("On")),("off", _("Off")),("automatic", _("Automatic"))])
-config.mediaportal.sp_on_movie_stop = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")) ])
-config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end"))
+config.mediaportal.sp_on_movie_stop = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service"))])
+config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end"))])
 
 class hauptScreenSetup(Screen, ConfigListScreen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/hauptScreenSetup.xml" % config.mediaportal.skin.value
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path = mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/hauptScreenSetup.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/hauptScreenSetup.xml"
-		print path
+			path = self.skin_path + "/original/hauptScreenSetup.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -559,10 +563,14 @@ class HelpScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/help.xml" % config.mediaportal.skin.value
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path = mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/help.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/help.xml"
-		print path
+			path = self.skin_path + "/original/help.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -590,10 +598,13 @@ class haupt_Screen(Screen, ConfigListScreen):
 	def __init__(self, session):
 		self.session = session
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/haupt_Screen.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path = mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/haupt_Screen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/haupt_Screen.xml"
-		print path
+			path = self.skin_path + "/original/haupt_Screen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -1456,10 +1467,13 @@ class pluginSort(Screen):
 	def __init__(self, session):
 		self.session = session
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/pluginSortScreen.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path = mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/pluginSortScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/pluginSortScreen.xml"
-		print path
+			path = self.skin_path + "/original/pluginSortScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -1923,9 +1937,13 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.skin_dump += skincontent
 		self.skin_dump += "</screen>"
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/hauptScreenWall.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path = mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/hauptScreenWall.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/hauptScreenWall.xml"
+			path = self.skin_path + "/original/hauptScreenWall.xml"
+
 		with open(path, "r") as f:
 			self.skin_dump2 = f.read()
 			self.skin_dump2 += self.skin_dump
