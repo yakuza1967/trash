@@ -6,8 +6,8 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-# teilweise von movie2k geliehen
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
 	from Plugins.Extensions.TMDb.plugin import *
 	TMDbPresent = True
@@ -19,7 +19,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-IS_Version = "iStream.ws v1.13"
+IS_Version = "iStream.ws v1.14"
 
 IS_siteEncoding = 'utf-8'
 
@@ -219,19 +219,16 @@ class IStreamFilmListeScreen(Screen):
 			"6" : self.key_6,
 			"7" : self.key_7,
 			"9" : self.key_9,
-			"green" : self.keySortAZ,
-			"yellow" : self.keySortIMDB,
+			"yellow" : self.keySort,
 			"red" :  self.keyTxtPageUp,
 			"blue" :  self.keyTxtPageDown,
 			"info" :  self.keyTMDbInfo
 		}, -1)
 
 		self.sortOrder = 0;
-		self.sortParIMDB = "?imdb_rating=desc"
-		self.sortParAZ = "?orderby=title&order=ASC"
+		self.sortParStr = ["", "?orderby=title&order=ASC", "?imdb_rating=desc"]
 		self.genreTitle = "Filme in Genre "
-		self.sortOrderStrAZ = " - Sortierung A-Z"
-		self.sortOrderStrIMDB = " - Sortierung IMDb"
+		self.sortOrderStr = [" - Sortierung neuste", " - Sortierung A-Z", " - Sortierung IMDb"]
 		self.sortOrderStrGenre = ""
 		self['title'] = Label(IS_Version)
 		self['ContentTitle'] = Label("")
@@ -241,8 +238,8 @@ class IStreamFilmListeScreen(Screen):
 		self['Page'] = Label("Page")
 		self['page'] = Label("")
 		self['F1'] = Label("Text-")
-		self['F2'] = Label("SortA-Z")
-		self['F3'] = Label("SortIMDb")
+		self['F2'] = Label("")
+		self['F3'] = Label("Sortierung")
 		self['F4'] = Label("Text+")
 
 		self.tw_agent_hlp = TwAgentHelper()
@@ -273,10 +270,7 @@ class IStreamFilmListeScreen(Screen):
 
 	def setGenreStrTitle(self):
 		if not self.neueFilme and not self.sucheFilme:
-			if not self.sortOrder:
-				self.sortOrderStrGenre = self.sortOrderStrAZ
-			else:
-				self.sortOrderStrGenre = self.sortOrderStrIMDB
+			self.sortOrderStrGenre = self.sortOrderStr[self.sortOrder]
 		else:
 			self.sortOrderStrGenre = ""
 		self['ContentTitle'].setText("%s%s%s" % (self.genreTitle,self.genreName,self.sortOrderStrGenre))
@@ -284,18 +278,12 @@ class IStreamFilmListeScreen(Screen):
 	def loadPage(self):
 		print "loadPage:"
 		if not self.sucheFilme:
-			if not self.sortOrder:
-				url = "%s%d%s" % (self.genreLink, self.page, self.sortParAZ)
-			else:
-				url = "%s%d%s" % (self.genreLink, self.page, self.sortParIMDB)
+			url = "%s%d%s" % (self.genreLink, self.page, self.sortParStr[self.sortOrder])
 		else:
 			url = self.genreLink
 
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
-
-		#if self.seekTimerRun:
-		#	return
 
 		self.filmQ.put(url)
 		print "eventL ",self.eventL.is_set()
@@ -317,9 +305,7 @@ class IStreamFilmListeScreen(Screen):
 
 		while not self.filmQ.empty():
 			url = self.filmQ.get_nowait()
-		#self.eventL.clear()
 		print url
-		#getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, url, False)
 
 	def dataError(self, error):
@@ -401,12 +387,7 @@ class IStreamFilmListeScreen(Screen):
 		streamUrl = self['liste'].getCurrent()[0][1]
 		self.getHandlung(streamUrl)
 		self.updateP = 1
-		if streamPic == None:
-			print "ImageUrl is None !"
-			self.ShowCoverNone()
-		else:
-			print "Download pict."
-			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataErrorP)
+		CoverHelper(self['coverArt'], self.plugin_path, self.showCoverExit).getCover(streamPic)
 
 	def dataErrorP(self, error):
 		print "dataError:"
@@ -456,30 +437,7 @@ class IStreamFilmListeScreen(Screen):
 		print "eventH: ",self.eventH.is_set()
 		print "eventL: ",self.eventL.is_set()
 
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		print "ShowCoverNone:"
-		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		if fileExists(picPath):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-
+	def showCoverExit(self):
 		self.updateP = 0;
 		if not self.filmQ.empty():
 			self.loadPageQueued()
@@ -610,23 +568,17 @@ class IStreamFilmListeScreen(Screen):
 		#print "keyPageUpFast(10)"
 		self.keyPageUpFast(10)
 
-	def keySortAZ(self):
+	def keySort(self):
 		if (self.keyLocked):
 			return
-		if self.sortOrder and not self.neueFilme:
-			self.sortOrder = 0
+		if not self.neueFilme:
+			if self.sortOrder < 2:
+				self.sortOrder += 1
+			else:
+				self.sortOrder = 0
 			self.setGenreStrTitle()
 			self.loadPage()
 
-	def keySortIMDB(self):
-		if (self.keyLocked):
-			return
-		if not (self.sortOrder or self.neueFilme):
-			self.sortOrder = 1
-			self.setGenreStrTitle()
-			self.loadPage()
-
-	# teilweise von movie2k geliehen
 	def keyTMDbInfo(self):
 		if not self.keyLocked and TMDbPresent:
 			title = self['liste'].getCurrent()[0][0]
@@ -736,23 +688,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self['handlung'].setText(decodeHtml(desc))
 		self.keyLocked = False
 		print "imageUrl: ",self.imageUrl
-		if self.imageUrl:
-			downloadPage(self.imageUrl, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt'], self.plugin_path).getCover(self.imageUrl)
 
 	def dataError(self, error):
 		print "dataError:"

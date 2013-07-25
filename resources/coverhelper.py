@@ -12,10 +12,11 @@ class CoverHelper:
 	#NO_COVER_PIC_PATH = "/original/images/m_no_coverArt.png"
 	NO_COVER_PIC_PATH = "/images/no_coverArt.png"
 	
-	def __init__(self, cover, cover_path):
+	def __init__(self, cover, cover_path, callback=None):
 		self._cover = cover
 		self.picload = ePicLoad()
 		self._no_picPath = cover_path+self.NO_COVER_PIC_PATH
+		self._callback = callback
 
 	def getCover(self, url):
 		print "getCover:", url
@@ -52,3 +53,5 @@ class CoverHelper:
 		else:
 			printl("Coverfile not found: %s" % picPath, self, "E")
 
+		if self._callback:
+			self._callback()
