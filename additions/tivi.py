@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def tiviGenreListEntry(entry):
 	return [entry,
@@ -220,10 +221,8 @@ class tiviFilmListeScreen(Screen):
 		if stream:
 			print stream
 			streamfolgename = self['filmList'].getCurrent()[0][0]
-			sref = eServiceReference(0x1001, 0, stream.group(1))
 			name = "%s - %s" % (self.streamName, streamfolgename)
-			sref.setName(name)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(name, stream.group(1))], showPlaylist=False, ltype='tivi')
 
 	def keyUp(self):
 		if self.keyLocked:

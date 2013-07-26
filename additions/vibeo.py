@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def vibeoListEntry(entry):
 	return [entry,
@@ -450,9 +451,7 @@ class vibeoStreamListeScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.filmtitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.filmtitle, stream_url)], showPlaylist=False, ltype='vibeo')
 
 	def keyCancel(self):
 		self.close()

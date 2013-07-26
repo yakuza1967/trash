@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def chListEntry(entry):
 	return [entry,
@@ -389,9 +390,7 @@ class PrimeWireStreamsScreen(Screen):
 
 	def got_link(self, stream_url):
 		print stream_url
-		sref = eServiceReference(0x1001, 0, stream_url)
-		sref.setName(self.titel)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(self.titel, stream_url)], showPlaylist=False, ltype='primewire')
 
 	def keyCancel(self):
 		self.close()

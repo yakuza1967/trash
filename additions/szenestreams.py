@@ -1,5 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def SzeneStreamsGenreListEntry(entry):
 	return [entry,
@@ -48,7 +48,6 @@ class SzeneStreamsGenreScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		#self.genreliste.append(("Last Updates", "http://szene-streams.com/"))
 		self.genreliste.append(("Kinofilme", "http://szene-streams.com/publ/aktuelle_kinofilme/1-"))
 		self.genreliste.append(("Alle Filme", "http://szene-streams.com/publ/0-"))
 		self.chooseMenuList.setList(map(SzeneStreamsGenreListEntry, self.genreliste))
@@ -275,9 +274,7 @@ class SzeneStreamsStreamListeScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.streamName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.streamName, stream_url)], showPlaylist=False, ltype='szenestreams')
 
 	def keyCancel(self):
 		self.close()

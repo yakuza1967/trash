@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.yt_url import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def moovizonGenreListEntry(entry):
 	return [entry,
@@ -280,10 +281,7 @@ class moovizonFilmListeScreen(Screen):
 			y.addErrback(self.youtubeErr)
 			stream = y.getVideoUrl(youtube_url[0], self.videoPrio)
 			if stream:
-				print stream
-				sref = eServiceReference(0x1001, 0, stream)
-				sref.setName(self.moovizonName)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(self.moovizonName, stream)], showPlaylist=False, ltype='moovizon')
 
 	def youtubeErr(self, error):
 		print "youtubeErr: ",error
