@@ -100,7 +100,7 @@ class dokuScreen(Screen):
 		getPage(dkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
 
 	def getVideoPage(self, data):
-		videoPage = re.findall('"http://www.youtube.com/(v|embed)/(.*?)\?.*?"', data, re.S)
+		videoPage = re.findall('"http://www.youtube.com/(v|embed)/(.*?)"', data, re.S)
 		if videoPage:
 			print videoPage
 			url = youtubeUrl(self.session).getVideoUrl(videoPage[0][1], self.videoPrio)
