@@ -1,6 +1,8 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.captcha import *
 import time
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 ck = {}
 
@@ -153,8 +155,8 @@ class oasetvFilmListeScreen(Screen):
 		streamFilmLink = self['filmList'].getCurrent()[0][1]
 		self['name'].setText(streamName)
 		streamPic = self['filmList'].getCurrent()[0][2]
-		downloadPage(streamPic, "/tmp/oatvIcon.jpg").addCallback(self.ShowCover)
 		getPage(streamFilmLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageInfos).addErrback(self.dataError)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def loadPageInfos(self, data):
 		if re.match('.*?<strong>Inhalt:</strong></p>\r\n<p>', data, re.S):
@@ -165,20 +167,6 @@ class oasetvFilmListeScreen(Screen):
 				self['handlung'].setText("Keine Infos gefunden.")
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/oatvIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/oatvIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -191,6 +179,7 @@ class oasetvFilmListeScreen(Screen):
 	def findStream(self, data):
 		stream_list = []
 		stream_name = self['filmList'].getCurrent()[0][0]
+		streamPic = self['filmList'].getCurrent()[0][2]
 		mighty = re.findall('(http://www.mightyupload.com/embed.*?)"', data, re.S)
 		if mighty:
 			print mighty[0]
@@ -208,7 +197,7 @@ class oasetvFilmListeScreen(Screen):
 			stream_list.append(("Wupfile", get_wupfile[0]))
 
 		self.keyLocked = False
-		self.session.open(oasetvCDListeScreen, stream_list, stream_name)
+		self.session.open(oasetvCDListeScreen, stream_list, stream_name, streamPic)
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -258,10 +247,11 @@ def oasetvCDListEntry(entry):
 		]
 class oasetvCDListeScreen(Screen):
 
-	def __init__(self, session, parts, stream_name):
+	def __init__(self, session, parts, stream_name, image_url):
 		self.session = session
 		self.streamParts = parts
 		self.stream_name = stream_name
+		self.imageUrl = image_url
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/oasetvCDListeScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/oasetvCDListeScreen.xml"
@@ -351,9 +341,7 @@ class oasetvCDListeScreen(Screen):
 		stream_url = re.findall("file: '(.*?)'", data, re.S)
 		if stream_url:
 			print stream_url
-			sref = eServiceReference(0x1001, 0, stream_url[0])
-			sref.setName(self.stream_name)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.stream_name, stream_url[0], self.imageUrl)], showPlaylist=False, ltype='streamoase', cover=True)
 
 	def readPostData3(self, data, url):
 		dataPost = {}
@@ -375,9 +363,7 @@ class oasetvCDListeScreen(Screen):
 			if stream_url:
 				print stream_url[0]
 				self.keyLocked = False
-				sref = eServiceReference(0x1001, 0, stream_url[0])
-				sref.setName(self.stream_name)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(self.stream_name, stream_url[0], self.imageUrl)], showPlaylist=False, ltype='streamoase', cover=True)
 			else:
 				message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
 		else:
@@ -392,9 +378,7 @@ class oasetvCDListeScreen(Screen):
 			if stream_url:
 				print stream_url[0]
 				self.keyLocked = False
-				sref = eServiceReference(0x1001, 0, stream_url[0])
-				sref.setName(self.stream_name)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(self.stream_name, stream_url[0], self.imageUrl)], showPlaylist=False, ltype='streamoase', cover=True)
 			else:
 				message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
 		else:
