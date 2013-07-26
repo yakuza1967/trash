@@ -66,13 +66,13 @@ class sport1fmGenreScreen(Screen):
 				print stream, start, end, teamA, teamB, status, running, score
 				match = "%s - %s" % (teamA, teamB)
 				status = "%s: %s" % (status, running)
-				self.genreliste.append((decodeHtml(match), stream, status, score))		
+				self.genreliste.append((decodeHtml(match), stream, status, score))
 			self.chooseMenuList.setList(map(sport1fmGenreListEntry, self.genreliste))
-			self.keyLocked = False		
+			self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -147,7 +147,7 @@ class sport1fmListeScreen(Screen):
 				stream = "http://%s/%sAAC" % (stream, self.sport1fmUrl)
 				print stream
 				self.streamliste.append((stream))
-				
+
 			self.chooseMenuList.setList(map(sport1fmListEntry, self.streamliste))
 			self.keyLocked = False
 
