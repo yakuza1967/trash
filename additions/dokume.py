@@ -103,7 +103,7 @@ class dokuScreen(Screen):
 		videoPage = re.findall('"http://www.youtube.com/(v|embed)/(.*?)"', data, re.S)
 		if videoPage:
 			print videoPage
-			url = youtubeUrl(self.session).getVideoUrl(videoPage[0][1], self.videoPrio)
+			url = youtubeUrl(self.session).getVideoUrl(videoPage[0][1].replace('?rel=0',''), self.videoPrio)
 			if url:
 				self.play(url)
 		else:
