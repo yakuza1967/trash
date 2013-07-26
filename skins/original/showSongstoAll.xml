@@ -14,7 +14,7 @@
 				<convert type="ServicePosition">Length</convert>
 			</widget>
 			<eLabel position="215,460" size="565,2" backgroundColor="#00555556" />
-			<widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/m_no_coverArt.png" position="20,420" size="180,180" transparent="1" alphatest="blend" />
+			<widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt.png" position="20,420" size="180,180" transparent="1" alphatest="blend" />
 			<eLabel text="Artist" position="230,470" size="100,25" backgroundColor="#00101214" transparent="1" foregroundColor="#00555556" font="mediaportal;20" valign="top" />
 			<widget name="artist" position="330,470" size="460,25" backgroundColor="#00101214" transparent="1" font="mediaportal;20" valign="top" />
 			<eLabel text="Album" position="230,500" size="100,25" backgroundColor="#00101214" transparent="1" foregroundColor="#00555556" font="mediaportal;20" valign="top" />
