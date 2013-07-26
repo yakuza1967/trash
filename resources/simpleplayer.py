@@ -86,6 +86,8 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.playlistQ = Queue.Queue(0)
 		self.pl_status = (0, '', '', '', '')
 		self.pl_event = SimpleEvent()
+		self['spcoverframe'] = Pixmap()
+		self['spcoverfg'] = Pixmap()
 		self['Icon'] = Pixmap()
 		self._Icon = CoverHelper(self['Icon'])
 
@@ -386,6 +388,9 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def showIcon(self):
 		print "showIcon:"
+		if not self.cover:
+			self['spcoverframe'].hide()
+			self['spcoverfg'].hide()
 		pm_file = self.wallicon_path + mp_globals.activeIcon + ".png"
 		self._Icon.showCoverFile(pm_file)
 

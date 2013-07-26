@@ -21,9 +21,9 @@
   <convert type="ServicePosition">Remaining,Negate</convert>
 </widget>
   <widget name="Cover" position="1082,341" size="146,193" zPosition="2" alphatest="blend" />
-<!--  <widget name="spcoverframe" render="Pixmap" position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
-  <widget name="spcoverfg" render="Pixmap" position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />
--->  <ePixmap position="90,599" size="120,50" pixmap="~/tec/images/mplogo.png" alphatest="blend" />
+  <widget name="spcoverframe" position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
+  <widget name="spcoverfg" position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />
+  <ePixmap position="90,599" size="120,50" pixmap="~/tec/images/mplogo.png" alphatest="blend" />
   <eLabel position="251,569" size="2,110" backgroundColor="#00808888" />
   <eLabel position="991,569" size="2,110" backgroundColor="#00808888" />
   <ePixmap pixmap="~/tec/images/ico_dolby_off.png" position="1013,655" size="57,20" zPosition="1" alphatest="blend" />
