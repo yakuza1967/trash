@@ -12,7 +12,7 @@ from debuglog import printlog as printl
 class CoverHelper:
 
 	COVER_PIC_PATH = "/tmp/Icon.jpg"
-	NO_COVER_PIC_PATH = "/images/no_coverArt.png"
+	NO_COVER_PIC_PATH = "/images/m_no_coverArt.png"
 	
 	def __init__(self, cover, callback=None):
 		self._cover = cover
