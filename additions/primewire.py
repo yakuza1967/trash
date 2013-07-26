@@ -215,9 +215,9 @@ class PrimeWireEpisodeScreen(Screen):
 	def __init__(self, session, chGotLink):
 		self.chGotLink = chGotLink
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/PrimeWireEpisodeScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/PrimeWireStreamsScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/PrimeWireEpisodeScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/PrimeWireStreamsScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
