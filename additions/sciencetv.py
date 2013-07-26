@@ -1,5 +1,6 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer, SimplePlaylist
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 STV_Version = "Science-Tv.com v0.94"
 
@@ -167,23 +168,6 @@ class scienceTvListScreen(Screen):
 		#stvTitle = self['genreList'].getCurrent()[0][1]
 		stvImage = self['genreList'].getCurrent()[0][3]
 		print stvImage
-		#self['name'].setText(stvTitle)
-		#if stvImage != '' and self.genreID == 3:
-		#	downloadPage(self.baseUrl+stvImage, "/tmp/stvIcon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/stvIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/stvIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyLeft(self):
 		if self.keyLocked:

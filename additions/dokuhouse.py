@@ -4,6 +4,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 DH_Version = "DokuHouse.de v0.98"
 
@@ -24,7 +25,6 @@ Doku Auswahl:
 
 Stream Auswahl:
 	Rot/Blau				: Die Beschreibung Seitenweise scrollen
-	Gelb					: Videopriorität 'L','M','H'
 """
 def DH_menuListentry(entry):
 	return [entry,
@@ -495,7 +495,7 @@ class DH_FilmListeScreen(Screen):
 		dokus = re.findall('class="article-image darken"><a href="(.*?)".*?data-lazy-src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
 		if dokus:
 			print "Dokus found !"
-			print dokus
+			#print dokus
 			if not self.pages:
 				m = re.findall('data-paginated="(.*?)"', data)
 				if m:
@@ -549,18 +549,7 @@ class DH_FilmListeScreen(Screen):
 		#print "streamUrl: ",streamUrl
 		self.getHandlung(desc)
 		self.updateP = 1
-		if streamPic == None:
-			print "ImageUrl is None !"
-			self.ShowCoverNone()
-		else:
-			print "Download pict."
-			#print "Url: ",streamPic
-			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataErrorP)
-
-	def dataErrorP(self, error):
-		print "dataError:"
-		printl(error,self,"E")
-		self.ShowCoverNone()
+		CoverHelper(self['coverArt'], self.ShowCoverFileExit).getCover(streamPic)
 
 	def getHandlung(self, desc):
 		print "getHandlung:"
@@ -574,31 +563,8 @@ class DH_FilmListeScreen(Screen):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
 
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		print "ShowCoverNone:"
-		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/no_coverArt.png"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		print "showCoverFile:"
-		if fileExists(picPath):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-
+	def ShowCoverFileExit(self):
+		print "showCoverFileExit:"
 		self.updateP = 0;
 		self.keyLocked	= False
 		if not self.filmQ.empty():
@@ -842,6 +808,7 @@ class DH_Streams(Screen, ConfigListScreen):
 			self.nParts = 0
 			pstr = self.dokuName
 			self.streamListe.append((pstr,m2.group(2),desc,imgurl))
+			self.keyLocked	= False
 		else:
 			print "No dokus found !"
 			desc = None
@@ -871,44 +838,7 @@ class DH_Streams(Screen, ConfigListScreen):
 		print "streamName: ",streamName
 		print "streamPic: ",streamPic
 		self.getHandlung(desc)
-		if streamPic == None:
-			print "ImageUrl is None !"
-			self.ShowCoverNone()
-		else:
-			print "Download pict."
-			print "Url: ",streamPic
-			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataErrorP)
-
-	def dataErrorP(self, error):
-		print "dataErrorP:"
-		printl(error,self,"E")
-		self.ShowCoverNone()
-
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		print "ShowCoverNone:"
-		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/no_coverArt.png"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		print "showCoverFile:"
-		if fileExists(picPath):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-		self.keyLocked	= False
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def dataError(self, error):
 		print "dataError:"
@@ -918,12 +848,6 @@ class DH_Streams(Screen, ConfigListScreen):
 
 	def setVideoPrio(self):
 		print "setVideoPrio:"
-		"""
-		if self.videoPrio+1 > 2:
-			self.videoPrio = 0
-		else:
-			self.videoPrio += 1
-		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
@@ -933,16 +857,6 @@ class DH_Streams(Screen, ConfigListScreen):
 			return
 		dhTitle = self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
-		"""
-		#print "Title: ",dhTitle
-		#print "VideoId: ",dhVideoId
-		dhLink = youtubeUrl(self.session).getVideoUrl(dhVideoId, self.videoPrio)
-		if dhLink:
-			#print dhLink
-			sref = eServiceReference(0x1001, 0, dhLink)
-			sref.setName(dhTitle)
-			self.session.open(MoviePlayer, sref)
-		"""
 		self.session.openWithCallback(
 			self.setVideoPrio,
 			YoutubePlayer,

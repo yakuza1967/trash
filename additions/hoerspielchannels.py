@@ -1,5 +1,6 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 HSC_Version = "HÖRSPIEL-Channels v0.94"
 
@@ -236,11 +237,6 @@ class show_HSC_ListScreen(Screen):
 	def dataError(self, error):
 		print "dataError: ",error
 
-	def dataErrorP(self, error):
-		print "dataError:"
-		printl(error,self,"E")
-		self.ShowCoverNone()
-
 	def showInfos(self):
 		self['page'].setText("%d / %d" % (self.page,self.pages))
 		stvTitle = self['liste'].getCurrent()[0][1]
@@ -249,50 +245,13 @@ class show_HSC_ListScreen(Screen):
 		print "Img: ",stvImage
 		self['name'].setText(stvTitle)
 		self['handlung'].setText(desc)
-		if stvImage != '':
-			url = stvImage
-			print "Img: ",url
-			downloadPage(url, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataErrorP)
-		else:
-			self.ShowCoverNone()
-
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		print "ShowCoverNone:"
-		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/no_coverArt.png"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		print "showCoverFile:"
-		if fileExists(picPath):
-			print "picpath: ",picPath
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(stvImage)
 
 	def youtubeErr(self, error):
 		print "youtubeErr: ",error
 		self['handlung'].setText("Das Video kann leider nicht abgespielt werden !\n"+str(error))
 
 	def setVideoPrio(self):
-		"""
-		if self.videoPrio+1 > 2:
-			self.videoPrio = 0
-		else:
-			self.videoPrio += 1
-		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
@@ -396,20 +355,6 @@ class show_HSC_ListScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		"""
-		dhTitle = self['liste'].getCurrent()[0][1]
-		dhVideoId = self['liste'].getCurrent()[0][2]
-		print "Title: ",dhTitle
-		#print "VideoId: ",dhVideoId
-		y = youtubeUrl(self.session)
-		y.addErrback(self.youtubeErr)
-		dhLink = y.getVideoUrl(dhVideoId, self.videoPrio)
-		if dhLink:
-			print dhLink
-			sref = eServiceReference(0x1001, 0, dhLink)
-			sref.setName(dhTitle)
-			self.session.open(MoviePlayer, sref)
-		"""
 		self.session.openWithCallback(
 			self.setVideoPrio,
 			YoutubePlayer,

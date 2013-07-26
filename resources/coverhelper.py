@@ -7,6 +7,7 @@ from Components.Pixmap import Pixmap
 from Tools.Directories import fileExists
 from Components.config import config
 import mp_globals
+from debuglog import printlog as printl
 
 class CoverHelper:
 
@@ -29,7 +30,7 @@ class CoverHelper:
 	def dataErrorP(self, error):
 		print "dataErrorP:"
 		printl(error,self,"E")
-		self.ShowCoverNone()
+		self.showCoverNone()
 
 	def showCover(self, picData):
 		print "_showCover:"

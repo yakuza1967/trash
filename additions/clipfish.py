@@ -5,6 +5,7 @@ import threading
 from Screens.InfoBarGenerics import *
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 CF_Version = "Clipfish.de v0.97 (experimental)"
 
@@ -592,10 +593,7 @@ class CF_FilmListeScreen(Screen):
 		self.keyLocked	= False
 
 		url = self['liste'].getCurrent()[0][2]
-		if url != '':
-			downloadPage(url, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataError)
-		else:
-			self.ShowCoverNone()
+		CoverHelper(self['coverArt']).getCover(url)
 
 	def getHandlung(self, desc):
 		print "getHandlung:"
@@ -608,32 +606,6 @@ class CF_FilmListeScreen(Screen):
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-
-	def ShowCover(self, picData):
-		print "ShowCover:"
-		picPath = "/tmp/Icon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		print "ShowCoverNone:"
-		picPath = self.plugin_path + "/images/no_coverArt.png"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		print "showCoverFile:"
-		if fileExists(picPath):
-			print "picpath: ",picPath
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):

@@ -4,6 +4,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 HSH_Version = "HörspielHouse.de v0.92"
 
@@ -24,7 +25,6 @@ Doku Auswahl:
 
 Stream Auswahl:
 	Rot/Blau			: Die Beschreibung Seitenweise scrollen
-	Gelb				: Videopriorität 'L','M','H'
 
 """
 def HSH_menuListentry(entry):
@@ -722,12 +722,6 @@ class HSH_Streams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(HSH_StreamListEntry, self.streamListe))
 
 	def setVideoPrio(self):
-		"""
-		if self.videoPrio+1 > 2:
-			self.videoPrio = 0
-		else:
-			self.videoPrio += 1
-		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
@@ -737,18 +731,6 @@ class HSH_Streams(Screen, ConfigListScreen):
 			return
 		dhTitle = self.dokuName + ' - ' + self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
-		"""
-		print "Title: ",dhTitle
-		#print "VideoId: ",dhVideoId
-		y = youtubeUrl(self.session)
-		y.addErrback(self.youtubeErr)
-		dhLink = y.getVideoUrl(dhVideoId, self.videoPrio)
-		if dhLink:
-			print dhLink
-			sref = eServiceReference(0x1001, 0, dhLink)
-			sref.setName(dhTitle)
-			self.session.open(MoviePlayer, sref)
-		"""
 		self.session.openWithCallback(
 			self.setVideoPrio,
 			YoutubePlayer,

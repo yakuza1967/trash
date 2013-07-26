@@ -4,6 +4,7 @@ import Queue
 import threading
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 AMH_Version = "AllMusicHouse.de v0.99"
 
@@ -24,7 +25,6 @@ Doku Auswahl:
 
 Stream Auswahl:
 	Rot/Blau			: Die Beschreibung Seitenweise scrollen
-	Gelb				: Videopriorität 'L','M','H'
 
 """
 def AMH_menuListentry(entry):

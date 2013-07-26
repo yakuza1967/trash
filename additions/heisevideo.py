@@ -3,6 +3,7 @@
 from ast import literal_eval
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 HTV_Version = "heiseVIDEO v0.92"
 
@@ -287,22 +288,7 @@ class HeiseTvListScreen(Screen):
 		print stvImage
 		self['name'].setText(stvTitle)
 		self['handlung'].setText(desc)
-		if stvImage:
-			downloadPage(stvImage, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(stvImage)
 
 	def getVid(self, data):
 		print "getVid:"
@@ -332,10 +318,7 @@ class HeiseTvListScreen(Screen):
 			self.session.open(MessageBox, _("Fehler in Video URL"), MessageBox.TYPE_INFO, timeout=5)
 		else:
 			title = self['liste'].getCurrent()[0][0]
-			#sref = eServiceReference(0x1001, 0, url)
-			#sref.setName(title)
-			#self.session.open(MoviePlayer, sref)
-			self.session.openWithCallback(self.setVideoPrio, HeiseTvPlayer, [(title, url, '')])
+			self.session.openWithCallback(self.setVideoPrio, SimplePlayer, [(title, url)], showPlaylist=False, ltype='heisetv')
 
 	def keyPageUp(self):
 		if self.keyLocked or self.genreID != 1:
@@ -380,12 +363,6 @@ class HeiseTvListScreen(Screen):
 		self.showInfos()
 
 	def setVideoPrio(self):
-		"""
-		if self.videoPrio+1 > 2:
-			self.videoPrio = 0
-		else:
-			self.videoPrio += 1
-		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
@@ -402,16 +379,3 @@ class HeiseTvListScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-
-class HeiseTvPlayer(SimplePlayer):
-
-	def __init__(self, session, playList, showCover=False):
-		print "HeiseTvPlayer:"
-
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='heisetv', cover=showCover)
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		iurl = self.playList[self.playIdx][2]
-		self.playStream(title, url, imgurl=iurl)
