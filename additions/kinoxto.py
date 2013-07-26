@@ -1,4 +1,8 @@
+﻿#	-*-	coding:	utf-8	-*-
+
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def kxListEntry(entry):
 	#png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/%s.png" % entry[4]
@@ -217,22 +221,7 @@ class kxKino(Screen):
 		coverUrl = self['streamlist'].getCurrent()[0][2]
 		handlung = self['streamlist'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(handlung))
-		if coverUrl:
-			downloadPage(coverUrl, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+		CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -340,7 +329,7 @@ class kxNeuesteKino(Screen):
 		url = self['streamlist'].getCurrent()[0][1]
 		image = self['streamlist'].getCurrent()[0][2]
 		print url
-		downloadPage(image, "/tmp/kxIcon.jpg").addCallback(self.showCover)
+		CoverHelper(self['stationIcon']).getCover(image)
 		#getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDetails).addErrback(self.dataError)
 
 	def getDetails(self, data):
@@ -349,21 +338,7 @@ class kxNeuesteKino(Screen):
 			for (image, handlung) in details:
 				print image
 				self['handlung'].setText(decodeHtml(handlung))
-				downloadPage(image, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+				CoverHelper(self['stationIcon']).getCover(image)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -477,21 +452,7 @@ class kxNeuesteOnline(Screen):
 			for (image, handlung) in details:
 				print image
 				self['handlung'].setText(decodeHtml(handlung))
-				downloadPage(image, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+				CoverHelper(self['stationIcon']).getCover(image)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -654,22 +615,7 @@ class kxABCpage(Screen):
 		coverUrl = self['streamlist'].getCurrent()[0][2]
 		handlung = self['streamlist'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(handlung))
-		if coverUrl:
-			downloadPage(coverUrl, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+		CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -798,22 +744,7 @@ class kxNeuesteSerien(Screen):
 		#coverUrl = self['streamlist'].getCurrent()[0][2]
 		#handlung = self['streamlist'].getCurrent()[0][3]
 		#self['handlung'].setText(decodeHtml(handlung))
-		#if coverUrl:
-		#	downloadPage(coverUrl, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+		#CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -996,22 +927,7 @@ class kxSerienABCpage(Screen):
 		coverUrl = self['streamlist'].getCurrent()[0][2]
 		handlung = self['streamlist'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(handlung))
-		if coverUrl:
-			downloadPage(coverUrl, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+		CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -1205,21 +1121,7 @@ class kxEpisoden(Screen):
 			for (image, handlung) in details:
 				print image
 				self['handlung'].setText(decodeHtml(handlung))
-				downloadPage(image, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+				CoverHelper(self['stationIcon']).getCover(image)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -1541,9 +1443,7 @@ class kxStreams(Screen):
 				updates_read3.write('"%s"\n' % (self.stream_name))
 				updates_read3.close()
 
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.stream_name)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.stream_name, stream_url)], showPlaylist=False, ltype='kinox.to', cover=False)
 
 	def keyCancel(self):
 		self.close()
@@ -1615,9 +1515,7 @@ class kxParts(Screen):
 			part = self['streamlist'].getCurrent()[0][0]
 			streamname = "%s - %s" % (self.stream_name ,part)
 			print stream_url, streamname
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(streamname)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(streamname, stream_url)], showPlaylist=False, ltype='kinox.to', cover=False)
 
 	def keyCancel(self):
 		self.close()
@@ -1701,21 +1599,7 @@ class kxSucheAlleFilmeListeScreen(Screen):
 			for (image, handlung) in details:
 				print image
 				self['handlung'].setText(decodeHtml(handlung))
-				downloadPage(image, "/tmp/kxIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/kxIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kxIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+				CoverHelper(self['stationIcon']).getCover(image)
 
 	def dataError(self, error):
 		printl(error,self,"E")

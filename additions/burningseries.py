@@ -1,4 +1,8 @@
+﻿#	-*-	coding:	utf-8	-*-
+
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def bsListEntry(entry):
 	return [entry,
@@ -296,21 +300,7 @@ class bsStaffeln(Screen, ConfigListScreen):
 				self['handlung'].setText(decodeHtml(handlung))
 				coverUrl = "http://www.burning-seri.es/" + cover
 				print coverUrl
-				downloadPage(coverUrl, "/tmp/bsIcon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/bsIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/bsIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+				CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -414,21 +404,7 @@ class bsEpisoden(Screen, ConfigListScreen):
 			self['handlung'].setText(decodeHtml(handlung))
 			coverUrl = "http://www.burning-seri.es/" + cover
 			print coverUrl
-			downloadPage(coverUrl, "/tmp/bsIcon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/bsIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/bsIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+			CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -472,6 +448,7 @@ class bsStreams(Screen, ConfigListScreen):
 		self['stationIcon'] = Pixmap()
 		self['handlung'] = Label("")
 
+		self.coverUrl = None
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -500,23 +477,9 @@ class bsStreams(Screen, ConfigListScreen):
 		if details:
 			(handlung,cover) = details[0]
 			self['handlung'].setText(decodeHtml(handlung))
-			coverUrl = "http://www.burning-seri.es/" + cover
-			print coverUrl
-			downloadPage(coverUrl, "/tmp/bsIcon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/bsIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/bsIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+			self.coverUrl = "http://www.burning-seri.es/" + cover
+			print self.coverUrl
+			CoverHelper(self['stationIcon']).getCover(self.coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -560,9 +523,7 @@ class bsStreams(Screen, ConfigListScreen):
 			updates_read3.write('"%s"\n' % (self.streamname))
 			updates_read3.close()
 
-		sref = eServiceReference(0x1001, 0, link)
-		sref.setName(self.streamname)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(self.streamname, link, self.coverUrl)], showPlaylist=False, ltype='burningseries', cover=True)
 
 	def findStream(self, data):
 		if re.match(".*?<iframe.*?src=",data, re.S|re.I):

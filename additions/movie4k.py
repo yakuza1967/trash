@@ -1,5 +1,8 @@
+#	-*-	coding:	utf-8	-*-
+
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
@@ -424,7 +427,7 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 		filmdaten = re.findall('<div style="float:left">.*?<img src="(.*?)".*?<div class="moviedescription">(.*?)</div>', data, re.S)
 		if filmdaten:
 			streamPic, handlung = filmdaten[0]
-			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+			CoverHelper(self['coverArt']).getCover(streamPic)
 			self['handlung'].setText(decodeHtml(handlung))
 
 	def showHandlung(self, data):
@@ -434,20 +437,6 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
@@ -600,7 +589,7 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 		filmdaten = re.findall('<div style="float:left">.*?<img src="(.*?)".*?<div class="moviedescription">(.*?)</div>', data, re.S)
 		if filmdaten:
 			streamPic, handlung = filmdaten[0]
-			downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+			CoverHelper(self['coverArt']).getCover(streamPic)
 			self['handlung'].setText(decodeHtml(handlung))
 
 	def showHandlung(self, data):
@@ -610,20 +599,6 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
@@ -760,7 +735,7 @@ class m4kKinoFilmeListeScreen(Screen):
 		streamUrl = self['filmList'].getCurrent()[0][1]
 		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
@@ -769,20 +744,6 @@ class m4kKinoFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -886,7 +847,7 @@ class m4kVideoFilmeListeScreen(Screen):
 		streamUrl = self['filmList'].getCurrent()[0][1]
 		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
@@ -895,20 +856,6 @@ class m4kVideoFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -1014,8 +961,7 @@ class m4kupdateFilmeListeScreen(Screen):
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
-		if image:
-			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt']).getCover(image[0])
 
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -1023,20 +969,6 @@ class m4kupdateFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -1148,7 +1080,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		streamUrl = self['filmList'].getCurrent()[0][1]
 		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def showHandlung(self, data):
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
@@ -1157,20 +1089,6 @@ class m4kTopSerienFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -1304,8 +1222,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
-		if image:
-			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt']).getCover(image[0])
 
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -1313,20 +1230,6 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyOK(self):
 		exist = self['filmList'].getCurrent()
@@ -1419,6 +1322,7 @@ class m4kStreamListeScreen(Screen):
 		self['handlung'] = Label("")
 		self['coverArt'] = Pixmap()
 
+		self.coverUrl = None
 		self.base_url = 'http://www.movie4k.to/'
 		self.tw_agent_hlp = TwAgentHelper()
 		self.keyLocked = True
@@ -1501,22 +1405,8 @@ class m4kStreamListeScreen(Screen):
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
-		if image:
-			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		self.coverUrl = image[0]
+		CoverHelper(self['coverArt']).getCover(image[0])
 
 	def keyOK(self):
 		exist = self['filmList'].getCurrent()
@@ -1610,9 +1500,7 @@ class m4kStreamListeScreen(Screen):
 				updates_read3.write('"%s"\n' % (self.streamName))
 				updates_read3.close()
 
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.streamName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.streamName, stream_url, self.coverUrl)], showPlaylist=False, ltype='movie4k', cover=True)
 
 	def keyCancel(self):
 		self.close()
@@ -1715,9 +1603,7 @@ class m4kPartListeScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.sname)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.sname, stream_url)], showPlaylist=False, ltype='movie4k', cover=False)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -1846,22 +1732,7 @@ class m4kEpisodenListeScreen(Screen):
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
-		if image:
-			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(image[0])
 
 	def keyOK(self):
 		exist = self['filmList'].getCurrent()
@@ -1961,8 +1832,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
-		if image:
-			downloadPage(image[0], "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		CoverHelper(self['coverArt']).getCover(image[0])
 
 		handlung = re.findall('<div class="moviedescription">(.*?)<', data, re.S)
 		if handlung:
@@ -1970,20 +1840,6 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(handlung))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
@@ -2171,21 +2027,7 @@ class m4kSerienABCListe(Screen):
 
 	def loadPic(self):
 		landImageUrl = self['filmList'].getCurrent()[0][2]
-		downloadPage(landImageUrl, "/tmp/Icon.jpg").addCallback(self.ShowCoverFlag)
-
-	def ShowCoverFlag(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(landImageUrl)
 
 	def keyOK(self):
 		exist = self['filmList'].getCurrent()
