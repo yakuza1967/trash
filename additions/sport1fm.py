@@ -142,9 +142,10 @@ class sport1fmListeScreen(Screen):
 	def loadPageData(self, data):
 		self.streamliste = []
 		streams = re.findall('<ip>(.*?)</ip>', data, re.S)
-		if streams:
+		mount = re.findall('<mount>(.*?)</mount>', data, re.S)
+		if streams and mount:
 			for stream in streams:
-				stream = "http://%s/%sAAC" % (stream, self.sport1fmUrl)
+				stream = "http://%s/%s" % (stream, mount[0])
 				print stream
 				self.streamliste.append((stream))
 
