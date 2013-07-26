@@ -1,5 +1,5 @@
 ﻿#	-*-	coding:	utf-8	-*-
-
+from Plugins.Extensions.MediaPortal.resources.imports import *
 from twisted.web.client import downloadPage
 from enigma import gPixmapPtr, ePicLoad
 from Components.AVSwitch import AVSwitch

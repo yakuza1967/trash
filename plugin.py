@@ -73,6 +73,7 @@ from additions.musicstreamcc import *
 from additions.vibeo import *
 from additions.retrotv import *
 from additions.galileovl import *
+from additions.sport1fm import *
 
 try:
 	import ast
@@ -218,6 +219,7 @@ config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 config.mediaportal.showretrotv = ConfigYesNo(default = True)
 config.mediaportal.showgalileovl = ConfigYesNo(default = True)
+config.mediaportal.showsport1fm = ConfigYesNo(default = True)
 if astModule:
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
 
@@ -402,6 +404,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
 		self.configlist.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
 		self.configlist.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
+		self.configlist.append(getConfigListEntry("Zeige Sport1.fm:", config.mediaportal.showsport1fm))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
@@ -1728,6 +1731,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("retro-tv", "retrotv", "Mediathek"))
 		if config.mediaportal.showgalileovl.value:
 			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Mediathek"))
+		if config.mediaportal.showsport1fm.value:
+			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Fun"))
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
@@ -2256,6 +2261,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(vibeoFilmListeScreen)
 		elif auswahl == "heiseVIDEO":
 			self.session.open(HeiseTvGenreScreen)
+		elif auswahl == "Sport1.fm":
+			self.session.open(sport1fmGenreScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
