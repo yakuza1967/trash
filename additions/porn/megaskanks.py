@@ -408,9 +408,6 @@ class megaskanksStreamListeScreen(Screen):
 					movieinfo = [stream_url,self.streamName,""]
 				self.session.open(PlayHttpMovie, movieinfo, self.streamName)
 			else:
-				sref = eServiceReference(0x1001, 0, stream_url)
-				sref.setName(self.streamName)
-				self.session.open(MoviePlayer, sref)
 				self.session.open(SimplePlayer, [(self.streamName, stream_url)], showPlaylist=False, ltype='megaskanks')
 
 	def keyCancel(self):
