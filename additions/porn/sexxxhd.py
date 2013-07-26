@@ -272,7 +272,7 @@ class sexxxhdFilmScreen(Screen):
 				stream_url = stream_url.replace('720.mp4','360.mp4')
 			elif self.videoPrio == 1:
 				stream_url = stream_url.replace('720.mp4','480.mp4')
-			self.session.open(SimplePlayer, [(xxxtile, stream_url)], showPlaylist=False, ltype='sexxxhd')
+			self.session.open(SimplePlayer, [(xxxtitle, stream_url)], showPlaylist=False, ltype='sexxxhd')
 
 	def keyCancel(self):
 		self.close()

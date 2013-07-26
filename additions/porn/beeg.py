@@ -313,7 +313,7 @@ class beegFilmScreen(Screen):
 
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
-		self.session.open(SimplePlayer, [(xxxtile, file)], showPlaylist=False, ltype='beeg')
+		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='beeg')
 
 	def keyCancel(self):
 		self.close()

@@ -637,7 +637,7 @@ class fourtubeFilmScreen(Screen):
 
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
-		self.session.open(SimplePlayer, [(xxxtile, file)], showPlaylist=False, ltype='4tube')
+		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='4tube')
 
 	def keyCancel(self):
 		self.close()

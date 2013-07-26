@@ -323,7 +323,7 @@ class pornrabbitFilmScreen(Screen):
 
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
-		self.session.open(SimplePlayer, [(xxxtile, file)], showPlaylist=False, ltype='pornrabbit')
+		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='pornrabbit')
 
 	def keyCancel(self):
 		self.close()

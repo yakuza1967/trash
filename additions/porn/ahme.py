@@ -334,7 +334,7 @@ class ahmeFilmScreen(Screen):
 
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
-		self.session.open(SimplePlayer, [(xxxtile, file)], showPlaylist=False, ltype='ahme')
+		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='ahme')
 
 	def keyCancel(self):
 		self.close()
