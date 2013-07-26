@@ -2,8 +2,6 @@
   <ePixmap position="40,555" size="1200,150" zPosition="-2" pixmap="~/tec/images/spbg.png" />
   <ePixmap position="40,555" size="1200,150" zPosition="3" pixmap="~/tec/images/spglas.png" alphatest="blend" />
   <ePixmap position="40,555" size="1200,150" zPosition="2" pixmap="~/tec/images/spiconframe.png" alphatest="blend" />
-   <ePixmap position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
-   <ePixmap position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />
   <widget source="session.CurrentService" render="Label" position="273,566" size="700,54" font="mediaportal; 24" valign="center" halign="center" backgroundColor="#00000000" transparent="1">
       <convert type="ServiceName">Name</convert>
     </widget>
@@ -22,8 +20,10 @@
   <widget source="session.CurrentService" render="Label" position="872,645" size="100,30" font="mediaportal;22" halign="right" backgroundColor="#00000000" transparent="1">
   <convert type="ServicePosition">Remaining,Negate</convert>
 </widget>
- <widget position="1080,339" size="150,197" zPosition="2" name="Cover" alphatest="blend" />
-  <ePixmap position="90,599" size="120,50" pixmap="~/tec/images/mplogo.png" alphatest="blend" />
+  <widget name="Cover" position="1082,341" size="146,193" zPosition="2" alphatest="blend" />
+<!--  <widget name="spcoverframe" render="Pixmap" position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
+  <widget name="spcoverfg" render="Pixmap" position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />
+-->  <ePixmap position="90,599" size="120,50" pixmap="~/tec/images/mplogo.png" alphatest="blend" />
   <eLabel position="251,569" size="2,110" backgroundColor="#00808888" />
   <eLabel position="991,569" size="2,110" backgroundColor="#00808888" />
   <ePixmap pixmap="~/tec/images/ico_dolby_off.png" position="1013,655" size="57,20" zPosition="1" alphatest="blend" />
