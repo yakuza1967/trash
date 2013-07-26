@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def epornerGenreListEntry(entry):
 	return [entry,
@@ -346,9 +347,7 @@ class epornerFilmScreen(Screen):
 
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
-		sref = eServiceReference(0x1001, 0, file)
-		sref.setName(xxxtitle)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(xxxtile, file)], showPlaylist=False, ltype='eporner')
 
 	def keyCancel(self):
 		self.close()

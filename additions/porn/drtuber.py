@@ -1,6 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-import hashlib
-import base64
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def drtuberGenreListEntry(entry):
 	return [entry,
@@ -315,9 +314,7 @@ class drtuberFilmScreen(Screen):
 
 	def play(self,file):
 		xxxtitle = self['genreList'].getCurrent()[0][0]
-		sref = eServiceReference(0x1001, 0, file)
-		sref.setName(xxxtitle)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(xxxtile, file)], showPlaylist=False, ltype='drtuber')
 
 	def keyCancel(self):
 		self.close()

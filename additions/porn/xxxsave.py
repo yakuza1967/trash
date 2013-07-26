@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def xxxsaveFilmListEntry(entry):
 	return [entry,
@@ -258,9 +259,7 @@ class xxxsaveStreamListeScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.streamName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.streamName, stream_url)], showPlaylist=False, ltype='xxxsave')
 
 	def keyCancel(self):
 		self.close()

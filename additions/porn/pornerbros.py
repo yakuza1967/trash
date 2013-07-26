@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+	
 def pornerbrosGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
@@ -274,11 +275,7 @@ class pornerbrosFilmScreen(Screen):
             	xhStream = re.findall("url.*?escape.*?'(.*?)'", data, re.S)
 
 		if xhStream:
-			sref = eServiceReference(0x1001, 0, xhStream[0])
-			sref.setName(xhTitle)
-			self.session.open(MoviePlayer, sref)
-            	else:
-                	print "no video url found."
+			self.session.open(SimplePlayer, [(xhTitle, xhStream[0])], showPlaylist=False, ltype='pornerbros')
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))

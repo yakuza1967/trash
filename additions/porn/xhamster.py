@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def xhamsterGenreListEntry(entry):
 	return [entry,
@@ -240,9 +241,7 @@ class xhamsterFilmScreen(Screen):
 			print xhStream
 
 		if xhStream:
-			sref = eServiceReference(0x1001, 0, xhStream)
-			sref.setName(xhTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(xhTitle, xhStream)], showPlaylist=False, ltype='xhamster')
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))

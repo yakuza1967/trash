@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def sexxxhdGenreListEntry(entry):
 	return [entry,
@@ -271,9 +272,7 @@ class sexxxhdFilmScreen(Screen):
 				stream_url = stream_url.replace('720.mp4','360.mp4')
 			elif self.videoPrio == 1:
 				stream_url = stream_url.replace('720.mp4','480.mp4')
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(xxxtitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(xxxtile, stream_url)], showPlaylist=False, ltype='sexxxhd')
 
 	def keyCancel(self):
 		self.close()

@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 Sbox = [
     0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,
@@ -535,9 +536,7 @@ class pornhubFilmScreen(Screen):
 		title = urllib.unquote_plus(match[0])
 		phStream = decrypt(fetchurl, title, 256)
 		if phStream:
-			sref = eServiceReference(0x1001, 0, phStream)
-			sref.setName(phTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(phTitle, phStream)], showPlaylist=False, ltype='pornhub')
 
 	def keyCancel(self):
 		self.close()

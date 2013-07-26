@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
 
 def megaskanksGenreListEntry(entry):
@@ -410,6 +411,7 @@ class megaskanksStreamListeScreen(Screen):
 				sref = eServiceReference(0x1001, 0, stream_url)
 				sref.setName(self.streamName)
 				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(self.streamName, stream_url)], showPlaylist=False, ltype='megaskanks')
 
 	def keyCancel(self):
 		self.close()
