@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def netzKinoGenreListEntry(entry):
 	return [entry,
@@ -176,9 +177,7 @@ class netzKinoFilmeScreen(Screen):
 			return
 		nkLink = self['genreList'].getCurrent()[0][2]
 		nkTitle = self['genreList'].getCurrent()[0][0]
-		sref = eServiceReference(0x1001, 0, nkLink)
-		sref.setName(nkTitle)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(nkTitle, nkLink)], showPlaylist=False, ltype='netzkino')
 
 	def keyCancel(self):
 		self.close()

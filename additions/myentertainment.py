@@ -1,7 +1,9 @@
 ﻿#	-*-	coding:	utf-8	-*-
-
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+
 kekse = {}
+
 def MEHDGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
@@ -91,7 +93,6 @@ class showMEHDGenre(Screen):
 			enterAuswahlLink = tmpEnterPre + "&titleonly=0&beforeafter=after&contenttypeid=18&sortby=dateline&order=descending&sortorder=descending&searchfromtype=vBForum%3ASearchCommon&type[]=18&do=process"
 			self.session.open(MEHDFilmListeScreen, enterAuswahlLink, "Suche")
 
-
 	def keyCancel(self):
 		self.close()
 
@@ -99,6 +100,7 @@ def MEHDFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
+
 class MEHDFilmListeScreen(Screen):
 
 	def __init__(self, session, genreLink, genreName):
@@ -190,7 +192,6 @@ class MEHDFilmListeScreen(Screen):
 	def setHandlung(self, data):
 		handlung = re.findall('<div class="bbcode_quote_container"></div>(.*?)<', data, re.S)
 		if handlung:
-			#print handlung
 			self['handlung'].setText(decodeHtml2(handlung[0]))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
@@ -223,28 +224,23 @@ class MEHDFilmListeScreen(Screen):
 			self.session.open(enterSerienListScreen, folgen, streamPic)
 		else:
 			stream = re.findall('href="(http://my-entertainment.biz/.*?/Free-Membe.*?.php\?mov=.*?)"', data)
-			# Wenn nur ein Link, dann stream starten, ansonsten handelt es sich wohl um eine Collection
 			if len(stream) == 1:
 				print 'Ein Free Stream....',stream
 				getPage(stream[0], cookies=kekse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamLink).addErrback(self.dataError)
 			else:
-				searchTitle = re.findall('>*\s*\r*\n<.*?>*\r*\n*\s(.*?)<.*?>*\r*\n*\s*<*>*\r*\n*<div style="margin: 5px;">', decodeTitle(data))
+				searchTitle = re.findall('>*\s*\r*\n<.*?>*\r*\n*\s(.*?)<.*?>*\r*\n*\s*<*>*\r*\n*<div style="margin: 5px;">', decodeHtml(data))
 				searchCol = re.findall('<img src="(http://my-entertainment.biz.*?)".*?href="(http://my-entertainment.biz/server/Free-Member.php\\?mov=.*?)"', data, re.S)
-				# Jetzt muessen wir eine neue Screen oeffnen um die Filme der Collection anzuzeigen
 				self.session.open(enterColListScreen, searchCol, searchTitle)
 
 	def getStreamLink(self, data):
 			print data
 			#print 'streamdata...:', data
 			streamName = self['filmList'].getCurrent()[0][0]
-			#stream_url = re.findall('<source src="(.*?)".*?type="video/mp4"', data, re.S)
 			stream_url = re.findall('(http://free.+.my-entertainment.biz.*?)"', data, re.S)
 			print stream_url
 			if stream_url:
 				streamName = self['filmList'].getCurrent()[0][0]
-				sref = eServiceReference(0x1001, 0, stream_url[0])
-				sref.setName(streamName)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(streamName, stream_url[0])], showPlaylist=False, ltype='myentertainment')
 
 	def keyUp(self):
 		if self.keyLocked:
@@ -299,9 +295,7 @@ class MEHDFilmListeScreen(Screen):
 			ytLink = y.getVideoUrl(ytLinkId, "2")
 			if ytLink:
 				streamName = self['filmList'].getCurrent()[0][0]
-				sref = eServiceReference(0x1001, 0, ytLink)
-				sref.setName(streamName)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(streamName, ytLink)], showPlaylist=False, ltype='myentertainment')
 			else:
 				sText = 'Kein Trailer verfuegbar'
 				self.session.open(MessageBox,_(sText), MessageBox.TYPE_INFO)
@@ -355,7 +349,6 @@ class enterColListScreen(Screen):
 		self['streamlist'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.showColData)
 
-
 	def showColData(self):
 		i=0
 		if self.pageCol:
@@ -391,7 +384,6 @@ class enterColListScreen(Screen):
 
 	def getRealLink(self, data):
 		print 'getRealLink'
-		#stream_url = re.findall('<source src="(.*?)".*?type="video/mp4"', data, re.S)
 		stream_url = re.findall('(http://free-s1.my-entertainment.biz.*?)"', data, re.S)
 		print stream_url
 		if stream_url:
@@ -399,10 +391,7 @@ class enterColListScreen(Screen):
 			self.startMovie(stream_url[0])
 
 	def startMovie(self, link):
-		sref = eServiceReference(4097, 0, link)
-		sref.setName(self.streamName)
-		self.session.open(MoviePlayer, sref)
-
+		self.session.open(SimplePlayer, [(self.streamName, link)], showPlaylist=False, ltype='myentertainment')
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -485,7 +474,6 @@ class enterSerienListScreen(Screen):
 		self['streamlist'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.showColData)
 
-
 	def showColData(self):
 		i=1
 		if self.folgenCol:
@@ -518,7 +506,6 @@ class enterSerienListScreen(Screen):
 					self['coverArt'].show()
 					del self.picload
 
-
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -536,9 +523,7 @@ class enterSerienListScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.streamName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.streamName, stream_url)], showPlaylist=False, ltype='myentertainment')
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -569,88 +554,3 @@ class enterSerienListScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-
-def decodeTitle(text):
-	text = text.replace('<font size="3">',"")
-	text = text.replace('\xe4',"ae")
-	text = text.replace('%3A',":")
-	text = text.replace('\xb2','2')
-	text = text.replace('\xb3','3')
-	text = text.replace('&auml;','ae')
-	text = text.replace('\u00e4','ae')
-	text = text.replace('\xe4','ae')
-	text = text.replace('&#228;','ae')
-
-	text = text.replace('&Auml;','Ae')
-	text = text.replace('\u00c4','Ae')
-	text = text.replace('&#196;','Ae')
-	text = text.replace('\xc4','Ae')
-
-	text = text.replace('&ouml;','oe')
-	text = text.replace('\u00f6','oe')
-	text = text.replace('&#246;','oe')
-	text = text.replace('\xf6','oe')
-
-	text = text.replace('<font size="4">',"")
-	text = text.replace('/font',"")
-	text = text.replace('\xd6','Oe')
-	text = text.replace('&ouml;','Oe')
-	text = text.replace('\u00d6','Oe')
-	text = text.replace('&#214;','Oe')
-
-	text = text.replace('br /',"")
-	text = text.replace('<b>',"")
-	text = text.replace('&uuml;','ue')
-	text = text.replace('\u00fc','ue')
-	text = text.replace('\xfc','ue')
-	text = text.replace('&#252;','ue')
-
-	text = text.replace('\xdc','Ue')
-	text = text.replace('&Uuml;','Ue')
-	text = text.replace('\u00dc','Ue')
-	text = text.replace('&#220;','Ue')
-
-	text = text.replace('&szlig;','ss')
-	text = text.replace('\u00df','ss')
-	text = text.replace('&#223;','ss')
-
-	text = text.replace('%2F',"/")
-	text = text.replace('&amp;','&')
-	text = text.replace('%26',"&")
-	text = text.replace('%3F',"?")
-	text = text.replace('&amp','')
-	text = text.replace('\xde',"s")
-	text = text.replace('\xfe',"s")
-	text = text.replace('&quot;','\"')
-	text = text.replace('&gt;','\'')
-	text = text.replace('&apos;',"'")
-	text = text.replace('&acute;','\'')
-	text = text.replace('%3D',"=")
-	text = text.replace('&ndash;','-')
-	text = text.replace('&bdquo;','"')
-	text = text.replace('&rdquo;','"')
-	text = text.replace('&ldquo;','"')
-	text = text.replace('&lsquo;','\'')
-	text = text.replace('&rsquo;','\'')
-	text = text.replace('\xe7',"c")
-	text = text.replace('\xf0',"g")
-	text = text.replace('&#038;','&')
-	text = text.replace('&#039;','\'')
-	text = text.replace('&#160;',' ')
-	text = text.replace('&#174;','')
-	text = text.replace('&#225;','a')
-	text = text.replace('\xc7',"c")
-	text = text.replace('&#233;','e')
-	text = text.replace('&#243;','o')
-	text = text.replace('&#8211;',"-")
-	text = text.replace('&#8216;',"'")
-	text = text.replace('&#8217;',"'")
-	text = text.replace('&#8220;',"'")
-	text = text.replace('\xfd',"i")
-	text = text.replace('&#8221;','"')
-	text = text.replace('&#8222;',',')
-	text = text.replace('\xdd','I')
-	text = text.replace('&#8230;','...')
-	text = text.replace('\xdf',"ss")
-	text = text.replace('\xe9',"e")
-	return text

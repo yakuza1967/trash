@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def kinokisteGenreListEntry(entry):
 	return [entry,
@@ -308,9 +309,7 @@ class kinokistePartsScreen(Screen):
 			finalurl = res.geturl()
 			print finalurl
 			streamname = "%s - %s" % (self.stream_name, part)
-			sref = eServiceReference(0x1001, 0, finalurl)
-			sref.setName(streamname)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(streamname, finalurl)], showPlaylist=False, ltype='kinokiste')
 
 	def dataError(self, error):
 		printl(error,self,"E")

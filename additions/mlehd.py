@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.yt_url import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def mlehdGenreListEntry(entry):
 	return [entry,
@@ -345,16 +346,15 @@ class mlehdFilmAuswahlScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			sref = eServiceReference(0x1001, 0, stream_url)
-			sref.setName(self.genreName+" "+self.part)
-			self.session.open(MoviePlayer, sref)
+			title = self.genreName+" "+self.part
+			self.session.open(SimplePlayer, [(title, stream_url)], showPlaylist=False, ltype='mlehd')
 
 	def getStream(self, data):
 		stream_url = re.findall('<location>(http://.*?)</location>', data, re.S)
 		if stream_url:
 			print stream_url
-			sref = eServiceReference(0x1001, 0, stream_url[0])
-			sref.setName(self.genreName+" "+self.part)
-			self.session.open(MoviePlayer, sref)
+			title = self.genreName+" "+self.part
+			self.session.open(SimplePlayer, [(title, stream_url[0])], showPlaylist=False, ltype='mlehd')
 
 	def dataError(self, error):
 		printl(error,self,"E")

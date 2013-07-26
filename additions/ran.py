@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def ranListEntry(entry):
 	#TYPE_TEXT, x, y, width, height, fnt, flags, string [, color, backColor, backColorSelected, borderWidth, borderColor])
@@ -156,10 +157,8 @@ class ranGenreScreen(Screen):
 			ranTitle = self['liste'].getCurrent()[0][1]
 			ranName = "%s: %s" % (ranCat, ranTitle)
 			self.keyLocked = False
-			print stream_url[0].replace('\\','')
-			sref = eServiceReference(0x1001, 0, stream_url[0].replace('\\',''))
-			sref.setName(ranName)
-			self.session.open(MoviePlayer, sref)
+			stream_url = stream_url[0].replace('\\','')
+			self.session.open(SimplePlayer, [(ranName, stream_url)], showPlaylist=False, ltype='ran')
 		else:
 			message = self.session.open(MessageBox, _("Video not found!"), MessageBox.TYPE_INFO, timeout=5)
 

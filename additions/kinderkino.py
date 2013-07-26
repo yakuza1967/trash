@@ -1,6 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
-from Components.config import config
 import json
 
 def kinderKinoListEntry(entry):
@@ -148,9 +148,7 @@ class kinderKinoScreen(Screen):
 			self.session.open(PlayRtmpMovie, movieinfo, kkTitle)
 		else:
 			kkRtmpLink = "rtmp://fms.edge.newmedia.nacamar.net/loadtv_vod/' playpath=mp4:kinderkino-kostenlos/%s pageUrl=http://kostenlos.kinderkino.de/ swfUrl=http://kinderkinokostenlos-www.azurewebsites.net/asset'" % (kkUrlPart)
-			sref = eServiceReference(0x1001, 0, kkRtmpLink)
-			sref.setName(kkTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(kkTitle, kkRtmpLink)], showPlaylist=False, ltype='kinderkino')
 
 	def keyCancel(self):
 		self.close()
