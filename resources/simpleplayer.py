@@ -181,7 +181,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def randomNow(self):
 		if self.playAll:
 			self.playRandom(config.mediaportal.sp_on_movie_stop.value)
-	
+
 	def seekFwd(self):
 		if self.playAll:
 			self.playNextStream(config.mediaportal.sp_on_movie_stop.value)
