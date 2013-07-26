@@ -14,11 +14,12 @@ class CoverHelper:
 	COVER_PIC_PATH = "/tmp/Icon.jpg"
 	NO_COVER_PIC_PATH = "/images/no_coverArt.png"
 
-	def __init__(self, cover, callback=None):
+	def __init__(self, cover, callback=None, nc_callback=None):
 		self._cover = cover
 		self.picload = ePicLoad()
 		self._no_picPath = "%s/skins/%s%s" % (mp_globals.pluginPath, config.mediaportal.skin.value, self.NO_COVER_PIC_PATH)
 		self._callback = callback
+		self._nc_callback = nc_callback
 
 	def getCover(self, url):
 		print "getCover:", url
@@ -38,7 +39,11 @@ class CoverHelper:
 
 	def showCoverNone(self):
 		print "_showCoverNone:"
-		self.showCoverFile(self._no_picPath)
+		if self._nc_callback:
+			self._cover.hide()
+			self._nc_callback()
+		else:
+			self.showCoverFile(self._no_picPath)
 
 	def showCoverFile(self, picPath):
 		print "showCoverFile:"
