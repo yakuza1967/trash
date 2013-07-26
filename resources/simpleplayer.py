@@ -93,7 +93,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 		# load default cover
 		self['Cover'] = Pixmap()
-		self._Cover = CoverHelper(self['Cover'])
+		self._Cover = CoverHelper(self['Cover'], nc_callback=self.hideCover)
 
 		self.SaverTimer = eTimer()
 		self.SaverTimer.callback.append(self.openSaver)
@@ -389,10 +389,13 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 	def showIcon(self):
 		print "showIcon:"
 		if not self.cover:
-			self['spcoverframe'].hide()
-			self['spcoverfg'].hide()
+			self.hideCover()
 		pm_file = self.wallicon_path + mp_globals.activeIcon + ".png"
 		self._Icon.showCoverFile(pm_file)
+
+	def hideCover(self):
+		self['spcoverframe'].hide()
+		self['spcoverfg'].hide()
 
 	#def lockShow(self):
 	#	pass
