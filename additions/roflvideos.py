@@ -6,6 +6,14 @@ def auswahlListEntry(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
+special_headers = {
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31',
+	'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Language': 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Referer': 'http://videos.rofl.to/'
+}
+
 class roflScreen(Screen):
 
 	def __init__(self, session):
@@ -128,8 +136,11 @@ class roflScreen(Screen):
 			return
 		roflName = self['roflList'].getCurrent()[0][0]
 		roflURL = self['roflList'].getCurrent()[0][1]
-		data = urllib.urlopen(roflURL).read()
-		roflLink = re.findall('id="video-player".*?href="(.*?.flv)"', data)
+		getPage(roflURL, agent=special_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+
+	def parseData(self, data):
+		print data
+		roflLink = re.findall('id="video-player".*?href="(.*?.flv)"', data, re.S)
 		if roflLink:
 			self.session.open(SimplePlayer, [(roflName, roflLink[0])], showPlaylist=False, ltype='roflto')
 
