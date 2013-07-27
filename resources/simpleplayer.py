@@ -12,6 +12,7 @@ from cannalink import CannaLink
 from eightieslink import EightiesLink
 from mtvdelink import MTVdeLink
 from coverhelper import CoverHelper
+from Components.Pixmap import MovingPixmap
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
@@ -19,7 +20,83 @@ if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo')
 else:
 	MediainfoPresent = False
 
-class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
+class SimpleSeekHelper:
+
+	def __init__(self):
+		self["seekbarcursor"] = MovingPixmap()
+		#self["seekbartime"] = Label()
+		self.cursorTimer = eTimer()
+		self.cursorTimer.callback.append(self.__updateCursor)
+		self.seekBarShown = False
+		self.seekBarLocked = False
+
+	def initSeek(self):
+		InfoBarShowHide.lockShow(self)
+		self.seekBarLocked = True
+		self.percent = 0.0
+		self.length = None
+		service = self.session.nav.getCurrentService()
+		if service:
+			self.seek = service.seek()
+			if self.seek:
+				self.length = self.seek.getLength()
+				position = self.seek.getPlayPosition()
+				if self.length and position:
+					if int(position[1]) > 0:
+						self.percent = float(position[1]) * 100.0 / float(self.length[1])
+			self.cursorTimer.start(200, False)
+
+	def startHideTimer(self):
+		#print "startHide:"
+		self.seekBarShown = True
+		InfoBarShowHide.startHideTimer(self)
+
+	def doTimerHide(self):
+		#print "doHide:"
+		self.seekBarShown = False
+		InfoBarShowHide.doTimerHide(self)
+
+	def toggleShow(self):
+		#print "toggle:"
+		if self.seekBarLocked:
+			self.unlockShow()
+			self.seekBarLocked = False
+			self.seekOK()
+		InfoBarShowHide.toggleShow(self)
+
+	def __updateCursor(self):
+		if self.length:
+			x = 271 + int(6.95 * self.percent)
+			self["seekbarcursor"].moveTo(x, 609, 1)
+			self["seekbarcursor"].startMoving()
+			pts = int(float(self.length[1]) / 100.0 * self.percent)
+			#self["seekbartime"].setText("%d:%02d" % ((pts/60/90000), ((pts/90000)%60)))
+
+	def seekExit(self):
+		#print "seekExit:"
+		self.cursorTimer.stop()
+
+	def seekOK(self):
+		#print "seekOK:"
+		if self.length:
+			self.seek.seekTo(int(float(self.length[1]) / 100.0 * self.percent))
+			self.seekExit()
+
+	def seekLeft(self):
+		#print "seekLeft:"
+		#self.percent -= float(config.mediaportal.Seekbar-sensibility.value) / 10.0
+		self.percent -= float(10) / 10.0
+		if self.percent < 0.0:
+			self.percent = 0.0
+
+	def seekRight(self):
+		#print "seekRight:"
+		#self.percent += float(config.mediaportal.Seekbar-sensibility.value) / 10.0
+		self.percent += float(10) / 10.0
+		if self.percent > 100.0:
+			self.percent = 100.0
+
+class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
@@ -50,6 +127,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 		}, -1)
 
+		SimpleSeekHelper.__init__(self)
 		InfoBarNotifications.__init__(self)
 		#InfoBarServiceNotifications.__init__(self)
 		InfoBarBase.__init__(self)
@@ -155,7 +233,6 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "_prevStream:"
 		if not self.playAll or self.playLen <= 1:
 			self.handleLeave(config.mediaportal.sp_on_movie_stop.value)
-			#return
 		else:
 			if self.playIdx > 0:
 				self.playIdx -= 1
@@ -167,7 +244,6 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "playNextStream:"
 		if not self.playAll or self.playLen <= 1:
 			self.handleLeave(value)
-			#return
 		else:
 			if self.playIdx in range(0, self.playLen-1):
 				self.playIdx += 1
@@ -182,18 +258,25 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 			self.playVideo()
 		else:
 			self.handleLeave(value)
-			#return
 
 	def randomNow(self):
 		if self.playAll:
 			self.playRandom(config.mediaportal.sp_on_movie_stop.value)
 
 	def seekFwd(self):
-		if self.playAll:
+		if self.seekBarShown and not self.seekBarLocked:
+			self.initSeek()
+		elif self.seekBarLocked:
+			self.seekRight()
+		elif self.playAll:
 			self.playNextStream(config.mediaportal.sp_on_movie_stop.value)
 
 	def seekBack(self):
-		if self.playAll:
+		if self.seekBarShown and not self.seekBarLocked:
+			self.initSeek()
+		elif self.seekBarLocked:
+			self.seekLeft()
+		elif self.playAll:
 			self.playPrevStream()
 
 	def handleLeave(self, how):
@@ -247,6 +330,7 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 
 	def playExit(self):
 		print "playExit:"
+		self.SaverTimer.stop()
 		self.session.nav.playService(self.lastservice)
 
 	def getVideo(self):
@@ -558,17 +642,6 @@ class SimplePlaylist(Screen):
 	def red(self):
 		if self.plType == 'global':
 			idx = self['streamlist'].getSelectedIndex()
-			"""
-			del playList[idx]
-			l = len(self.playList)
-			if l == 0:
-				self.close([-1,'',self.playList])
-			else:
-				self.chooseMenuList.setList(map(self.playListEntry, self.playList))
-				if self.playIdx not in range(0, l):
-					self.playIdx -= 1
-				self['genreList'].moveToIndex(self.playIdx)
-			"""
 			self.close([idx,'del',self.playList])
 
 	def exit(self):
