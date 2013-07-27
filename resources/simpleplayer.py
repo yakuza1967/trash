@@ -76,10 +76,10 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		self.playIdx = playIdx
 		self.playLen = len(playList)
 		self.returning = False
-		self.pl_entry = ['', '', '', '', '', '', '', '']
+		self.pl_entry = ['', '', '', '', '', '', '', '', '']
 		self.plType = plType
 		self.playList2 = []
-		self.pl_name = ''
+		self.pl_name = 'mp_global_pl_01'
 		self.title_inr = title_inr
 		self.cover = cover
 		self.ltype = ltype
@@ -137,7 +137,12 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		else:
 			sref.setName(title)
 
-		self.pl_entry = [title, None, artist, album, self.ltype, '', imgurl]
+		if self.cover:
+			cflag = '1'
+		else:
+			cflag = '0'
+
+		self.pl_entry = [title, None, artist, album, self.ltype, '', imgurl, cflag]
 		self.session.nav.stopService()
 		self.session.nav.playService(sref)
 
@@ -195,11 +200,19 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		print "handleLeave:"
 		self.is_closing = True
 		if how == "ask":
-			list = (
-				(_("Yes"), "quit"),
-				(_("No"), "continue"),
-				(_("No, but restart from begin"), "restart")
-			)
+			if self.plType == 'local':
+				list = (
+					(_("Yes"), "quit"),
+					(_("Ja & Service zur glob. Playlist hinzufügen"), "add"),
+					(_("No"), "continue"),
+					(_("No, but restart from begin"), "restart")
+				)
+			else:
+				list = (
+					(_("Yes"), "quit"),
+					(_("No"), "continue"),
+					(_("No, but restart from begin"), "restart")
+				)
 
 			from Screens.ChoiceBox import ChoiceBox
 			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Stop playing this movie?"), list = list)
@@ -214,11 +227,11 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 		if answer in ("quit", "movielist"):
 			self.close()
 		elif answer == "restart":
-			print "restart"
 			self.doSeek(0)
 			self.setSeekState(self.SEEK_STATE_PLAY)
-		else:
-			print "continue"
+		elif answer == "add":
+			self.addToPlaylist()
+			self.close()
 
 	def leavePlayer(self):
 		print "leavePlayer:"
@@ -334,38 +347,10 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 				self.setPlaymode()
 				self.configSaver()
 			elif data[0] == 2:
-				if self.plType != 'local':
-					self.session.open(MessageBox, _("Fehler: Service darf nur von der lok. PL hinzugefügt werden"), MessageBox.TYPE_INFO, timeout=5)
-					return
-
-				if self.pl_entry[4] == 'youtube':
-					url = self.playList[self.playIdx][2]
-				elif self.pl_entry[4] == 'myvideo':
-					url = self.playList[self.playIdx][1]
-					self.pl_entry[5] = self.playList[self.playIdx][2]
-				elif self.pl_entry[4] == 'mtv':
-					url = self.playList[self.playIdx][1]
-				else:
-					url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
-
-					if re.match('.*?(putpattv)', url, re.I):
-						self.session.open(MessageBox, _("Fehler: URL ist nicht persistent !"), MessageBox.TYPE_INFO, timeout=5)
-						return
-
-
-				self.pl_entry[1] = url
-				self.pl_name = data[1]
-				res = SimplePlaylistIO.addEntry(data[1], self.pl_entry)
-				if res == 1:
-					self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
-				elif res == 0:
-					self.session.open(MessageBox, _("Eintrag schon vorhanden"), MessageBox.TYPE_INFO, timeout=5)
-				else:
-					self.session.open(MessageBox, _("Fehler!"), MessageBox.TYPE_INFO, timeout=5)
+				self.addToPlaylist()
 
 			elif data[0] == 3:
-				self.pl_name = data[1]
-				pl_list = SimplePlaylistIO.getPL(data[1])
+				pl_list = SimplePlaylistIO.getPL(data[self.pl_name])
 				if pl_list != []:
 					self.playList2 = pl_list
 					self.playIdx = 0
@@ -376,12 +361,39 @@ class SimplePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoB
 			elif data[0] == 4:
 				if self.plType != 'local':
 					self.plType = 'local'
-					self.pl_name = ''
 					self.playIdx = 0
 					self.playLen = len(self.playList)
 					self.playList2 = []
 				if self.playLen > 0:
 					self.openPlaylist()
+
+	def addToPlaylist(self):
+		if self.plType != 'local':
+			self.session.open(MessageBox, _("Fehler: Service darf nur von der lok. PL hinzugefügt werden"), MessageBox.TYPE_INFO, timeout=5)
+			return
+
+		if self.pl_entry[4] == 'youtube':
+			url = self.playList[self.playIdx][2]
+		elif self.pl_entry[4] == 'myvideo':
+			url = self.playList[self.playIdx][1]
+			self.pl_entry[5] = self.playList[self.playIdx][2]
+		elif self.pl_entry[4] == 'mtv':
+			url = self.playList[self.playIdx][1]
+		else:
+			url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
+
+			if re.match('.*?(putpattv)', url, re.I):
+				self.session.open(MessageBox, _("Fehler: URL ist nicht persistent !"), MessageBox.TYPE_INFO, timeout=5)
+				return
+
+		self.pl_entry[1] = url
+		res = SimplePlaylistIO.addEntry(self.pl_name, self.pl_entry)
+		if res == 1:
+			self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
+		elif res == 0:
+			self.session.open(MessageBox, _("Eintrag schon vorhanden"), MessageBox.TYPE_INFO, timeout=5)
+		else:
+			self.session.open(MessageBox, _("Fehler!"), MessageBox.TYPE_INFO, timeout=5)
 
 	def showCover(self, cover):
 		print "showCover:", cover
@@ -642,9 +654,9 @@ class SimplePlayerMenu(Screen):
 		if choice == 1:
 			self.openConfig()
 		elif choice == 2:
-			self.addToPlaylist(2, 'mp_global_pl_01')
+			self.addToPlaylist(2, '')
 		elif choice == 3:
-			self.openPlaylist(3, 'mp_global_pl_01')
+			self.openPlaylist(3, '')
 		elif choice == 4:
 			self.openPlaylist(4, '')
 
@@ -671,7 +683,7 @@ class SimplePlaylistIO:
 		try:
 			f1 = open(pl_path, 'w')
 			while j < l:
-				wdat = '<title>%s</<url>%s</<album>%s</<artist>%s</<ltype %s/><token %s/><img %s/>\n' % (list[j][1], list[j][2], list[j][3], list[j][4], list[j][5], list[j][6], list[j][7])
+				wdat = '<title>%s</<url>%s</<album>%s</<artist>%s</<ltype %s/><token %s/><img %s/><cflag %s/>\n' % (list[j][1], list[j][2], list[j][3], list[j][4], list[j][5], list[j][6], list[j][7], list[j][8])
 				f1.write(wdat)
 				j += 1
 
@@ -686,6 +698,7 @@ class SimplePlaylistIO:
 	def addEntry(pl_name, entry):
 		print "addEntry:"
 
+		cflag = entry[7]
 		imgurl = entry[6]
 		token = entry[5]
 		ltype = entry[4]
@@ -728,7 +741,7 @@ class SimplePlaylistIO:
 			else:
 				f1 = open(pl_path, 'w')
 
-			wdat = '<title>%s</<url>%s</<album>%s</<artist>%s</<ltype %s/><token %s/><img %s/>\n' % (title, url, album, artist, ltype, token, imgurl)
+			wdat = '<title>%s</<url>%s</<album>%s</<artist>%s</<ltype %s/><token %s/><img %s/><cflag %s/>\n' % (title, url, album, artist, ltype, token, imgurl, cflag)
 			f1.write(wdat)
 			f1.close()
 			return 1
@@ -765,12 +778,14 @@ class SimplePlaylistIO:
 					m2 = re.search('<ltype (.*?)/>', entry)
 					m3 = re.search('<token (.*?)/>', entry)
 					m4 = re.search('<img (.*?)/>', entry)
+					m5 = re.search('<cflag (.*?)/>', entry)
 					if m:
 						print "m:"
 						titel = m.group(1)
 						url = m.group(2)
 						album = m.group(3)
 						artist = m.group(4)
+						cflag = m.group(5)
 						if m2:
 							ltype = m2.group(1)
 						else:
@@ -783,13 +798,17 @@ class SimplePlaylistIO:
 							imgurl = m4.group(1)
 						else:
 							imgurl = ''
+						if m5:
+							cflag = m5.group(1)
+						else:
+							cflag = ''
 
 						if artist != '':
 							name = "%s - %s" % (artist, titel)
 						else:
 							name = titel
 
-						list.append((name, titel, url, album, artist, ltype, token, imgurl))
+						list.append((name, titel, url, album, artist, ltype, token, imgurl, cflag))
 
 				f1.close()
 
