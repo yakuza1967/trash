@@ -162,6 +162,7 @@ config.mediaportal.pornpin = ConfigYesNo(default = True)
 config.mediaportal.setuppin = ConfigYesNo(default = False)
 config.mediaportal.watchlistpath = ConfigText(default="/etc/enigma2/", fixed_size=False)
 config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("hits", _("Hits")), ("abc", _("ABC")), ("user", _("User"))])
+config.mediaportal.showapplepagestyle = ConfigYesNo(default = True)
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
 
@@ -335,6 +336,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("XXX-Pincodeabfrage:", config.mediaportal.pornpin))
 		self.configlist.append(getConfigListEntry("Selektor-Farbe:", config.mediaportal.selektor))
 		self.configlist.append(getConfigListEntry("HauptScreen-Ansicht:", config.mediaportal.ansicht))
+		self.configlist.append(getConfigListEntry("Apple Page Style:", config.mediaportal.showapplepagestyle))
 		self.configlist.append(getConfigListEntry("Skinauswahl:", config.mediaportal.skin))
 		self.configlist.append(getConfigListEntry("HTTPDump benutzen:", config.mediaportal.useHttpDump))
 		self.configlist.append(getConfigListEntry("RTMPDump benutzen:", config.mediaportal.useRtmpDump))
@@ -1477,6 +1479,7 @@ class pluginSort(Screen):
 		self.skin_path = mp_globals.pluginPath + "/skins"
 
 		path = "%s/%s/pluginSortScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		
 		if not fileExists(path):
 			path = self.skin_path + "/original/pluginSortScreen.xml"
 
@@ -1940,6 +1943,21 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				posx = 20
 				posy = 210
 
+		# Appe Page Style
+		if config.mediaportal.showapplepagestyle.value:
+			self.counting_pages = len(self.plugin_liste) / 40
+			print "COUNTING PAGES:", self.counting_pages
+			pagebar_size = int(self.counting_pages) * 30
+			rest_size = 1280 - int(pagebar_size)
+			start_pagebar = int(rest_size) / 2
+			
+			for x in range(1,self.counting_pages+2):
+				normal = 650
+				print x, start_pagebar, normal
+				skincontent += "<widget name=\"page_empty" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
+				skincontent += "<widget name=\"page_sel" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
+				start_pagebar += 30	
+		
 		self.skin_dump = ""
 		self.skin_dump += "<widget name=\"frame\" position=\"20,210\" size=\"150,80\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/Selektor_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
 		self.skin_dump += skincontent
@@ -1947,6 +1965,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path = mp_globals.pluginPath + "/skins"
+		self.images_path = path = "%s/%s/images" % (self.skin_path, config.mediaportal.skin.value)
 
 		path = "%s/%s/hauptScreenWall.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
@@ -1984,9 +2003,18 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self['green'] = Label("")
 		self['page'] = Label("")
 		self["frame"] = MovingPixmap()
+
 		for x in range(1,len(self.plugin_liste)+1):
 			self["zeile"+str(x)] = Pixmap()
 			self["zeile"+str(x)].show()
+			
+		# Apple Page Style
+		if config.mediaportal.showapplepagestyle.value:
+			for x in range(1,self.counting_pages+2):
+				self["page_empty"+str(x)] = Pixmap()
+				self["page_empty"+str(x)].show()
+				self["page_sel"+str(x)] = Pixmap()
+				self["page_sel"+str(x)].show()
 
 		self.selektor_index = 1
 		self.select_list = 0
@@ -2062,6 +2090,28 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self["zeile"+str(x)].instance.setPixmap(pic)
 				if x <= 40:
 					self["zeile"+str(x)].show()
+
+		if config.mediaportal.showapplepagestyle.value:
+			for x in range(1,self.counting_pages+2):
+				poster_path = "%s/page_select.png" % (self.images_path)
+				#print "postername:", postername, poster_path
+				self["page_sel"+str(x)].instance.setPixmap(None)
+				self["page_sel"+str(x)].hide()
+				pic = LoadPixmap(cached=True, path=poster_path)
+				if pic != None:
+					self["page_sel"+str(x)].instance.setPixmap(pic)
+					if x == 1:
+						self["page_sel"+str(x)].show()
+
+			for x in range(1,self.counting_pages+2):
+				poster_path = "%s/page.png" % (self.images_path)
+				self["page_empty"+str(x)].instance.setPixmap(None)
+				self["page_empty"+str(x)].hide()
+				pic = LoadPixmap(cached=True, path=poster_path)
+				if pic != None:
+					self["page_empty"+str(x)].instance.setPixmap(pic)
+					if x > 1:
+						self["page_empty"+str(x)].show()
 
 		# erstelle mainlist
 		self.widget_list()
@@ -2460,6 +2510,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		#self.selektor_index = self.mainlist[int(self.select_list)][-1]
 		print self.selektor_index
 		self.move_selector()
+		# Apple Page Style
+		if config.mediaportal.showapplepagestyle.value:
+			self.refresh_apple_page_bar()
+			
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
 
@@ -2468,9 +2522,23 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self['page'].setText(pageinfo)
 		self.selektor_index = 1
 		self.move_selector()
+		# Apple Page Style
+		if config.mediaportal.showapplepagestyle.value:
+			self.refresh_apple_page_bar()
+			
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
 
+	# Apple Page Style
+	def refresh_apple_page_bar(self):
+		for x in range(1,len(self.mainlist)+1):
+			if x == self.select_list+1:
+				self["page_empty"+str(x)].hide()
+				self["page_sel"+str(x)].show()
+			else:
+				self["page_sel"+str(x)].hide()
+				self["page_empty"+str(x)].show()
+		
 	def keySetup(self):
 		if config.mediaportal.setuppin.value:
 			self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
