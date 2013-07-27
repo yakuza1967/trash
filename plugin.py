@@ -2089,7 +2089,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.autoupdate.value:
 			checkupdate(self.session).checkforupdate()
 
-		# load plugin icons
+		## load plugin icons
 		print "Set Filter:", config.mediaportal.filter.value
 		self['blue'].setText(config.mediaportal.filter.value)
 		self.sortplugin = config.mediaportal.sortplugins.value
