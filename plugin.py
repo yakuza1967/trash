@@ -532,7 +532,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 
 		self['title'] = Label("MediaPortal - Setup - (Version %s)" % config.mediaportal.versiontext.value)
 		self['name'] = Label("Setup")
-		self['coverArt'] = Pixmap()
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"    : self.keyOK,
