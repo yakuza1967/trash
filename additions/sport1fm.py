@@ -69,6 +69,9 @@ class sport1fmGenreScreen(Screen):
 				self.genreliste.append((decodeHtml(match), stream, status, score))
 			self.chooseMenuList.setList(map(sport1fmGenreListEntry, self.genreliste))
 			self.keyLocked = False
+		else:
+			self.genreliste.append(("Keine Streams vorhanden."))
+			self.chooseMenuList.setList(map(sport1fmListEntry, self.genreliste))
 
 	def dataError(self, error):
 		printl(error,self,"E")
