@@ -732,6 +732,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("retro-tv", "retrotv"))
 		if config.mediaportal.showgalileovl.value:
 			self.mediatheken.append(self.hauptListEntry("Galileo-Videolexikon", "galileovl"))
+		if config.mediaportal.showsport1fm.value:
+			self.mediatheken.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -1366,6 +1368,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(retrotvFilmListeScreen)
 		elif auswahl == "Galileo-Videolexikon":
 			self.session.open(galileovlGenreScreen)
+		elif auswahl == "Sport1.fm":
+			self.session.open(sport1fmGenreScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
@@ -1732,7 +1736,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showgalileovl.value:
 			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Mediathek"))
 		if config.mediaportal.showsport1fm.value:
-			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Fun"))
+			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Mediathek"))
@@ -2261,8 +2265,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(vibeoFilmListeScreen)
 		elif auswahl == "heiseVIDEO":
 			self.session.open(HeiseTvGenreScreen)
-		elif auswahl == "Sport1.fm":
-			self.session.open(sport1fmGenreScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
@@ -2295,6 +2297,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(ARDGenreScreen)
 		elif auswahl == "Galileo-Videolexikon":
 			self.session.open(galileovlGenreScreen)
+		elif auswahl == "Sport1.fm":
+			self.session.open(sport1fmGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
