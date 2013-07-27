@@ -378,6 +378,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Spobox:", config.mediaportal.showSpobox))
 		self.configlist.append(getConfigListEntry("Zeige Laola1:", config.mediaportal.showLaola1))
 		self.configlist.append(getConfigListEntry("Zeige Ran.de:", config.mediaportal.showRan))
+		self.configlist.append(getConfigListEntry("Zeige Sport1.fm:", config.mediaportal.showsport1fm))
 
 		### Fun
 		self.configlist.append(getConfigListEntry("----- Fun -----", config.mediaportal.fake_entry))
@@ -407,7 +408,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
 		self.configlist.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
 		self.configlist.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
-		self.configlist.append(getConfigListEntry("Zeige Sport1.fm:", config.mediaportal.showsport1fm))
 		if config.mediaportal.showgrauzone.value:
 			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
 			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
@@ -1945,14 +1945,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		# Appe Page Style
 		if config.mediaportal.showapplepagestyle.value:
-			self.sortplugin = config.mediaportal.sortplugins.value
-			if self.sortplugin == "hits":
-				self.sortplugin = "Hits"
-			elif self.sortplugin == "abc":
-				self.sortplugin = "ABC"
-			elif self.sortplugin == "user":
-				self.sortplugin = "User"
-
 			self.dump_liste_page_tmp = self.plugin_liste
 			if config.mediaportal.filter.value != "ALL":
 				self.plugin_liste_page_tmp = []
@@ -2111,7 +2103,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page_select.png" % (self.images_path)
 				#print "postername:", postername, poster_path
-				self["page_sel"+str(x)].instance.setPixmap(gPixmapPtr()))
+				self["page_sel"+str(x)].instance.setPixmap(gPixmapPtr())
 				self["page_sel"+str(x)].hide()
 				pic = LoadPixmap(cached=True, path=poster_path)
 				if pic != None:
@@ -2121,7 +2113,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page.png" % (self.images_path)
-				self["page_empty"+str(x)].instance.setPixmap(gPixmapPtr()))
+				self["page_empty"+str(x)].instance.setPixmap(gPixmapPtr())
 				self["page_empty"+str(x)].hide()
 				pic = LoadPixmap(cached=True, path=poster_path)
 				if pic != None:
