@@ -16,7 +16,7 @@
     <widget source="session.CurrentService" render="Label" position="1028,646" size="90,25" font="mediaportal; 20" foregroundColor="#00ffffff" backgroundColor="#26181d20" halign="center" transparent="1">
       <convert type="ServicePosition">Length</convert>
     </widget>
-    <widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/no_coverArt.png" position="998,487" size="160,120" transparent="1" alphatest="blend" />
+	<widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/no_coverArt.png" position="1002,464" size="150,150" transparent="1" alphatest="blend" />
     <widget name="artist" position="913,337" size="328,60" backgroundColor="#26181d20" transparent="1" font="mediaportal; 22" valign="center" foregroundColor="#00ffffff" halign="center" />
     <eLabel text="Album" position="85,625" size="100,25" backgroundColor="#26181d20" transparent="1" foregroundColor="#00ffffff" font="mediaportal;20" valign="top" />
     <widget name="album" position="185,625" size="580,25" backgroundColor="#26181d20" transparent="1" font="mediaportal;18" valign="top" foregroundColor="#00ffffff" />
