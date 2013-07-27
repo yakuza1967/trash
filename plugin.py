@@ -156,7 +156,7 @@ config.mediaportal.useRtmpDump = ConfigYesNo(default = False)
 config.mediaportal.useHttpDump = ConfigYesNo(default = False)
 config.mediaportal.storagepath = ConfigText(default="/media/hdd/mediaportal/tmp/", fixed_size=False)
 config.mediaportal.autoplayThreshold = ConfigInteger(default = 50, limits = (1,100))
-config.mediaportal.filter = ConfigSelection(default = "ALL", choices = [("ALL", ("ALL")), ("Mediathek", ("Mediathek")), ("Grauzone", ("Grauzone")), ("Fun", ("Fun")), ("Sport", ("Sport")), ("Porn", ("Porn"))])
+config.mediaportal.filter = ConfigSelection(default = "ALL", choices = [("ALL", ("ALL")), ("Mediathek", ("Mediathek")), ("Grauzone", ("Grauzone")), ("Fun", ("Fun")), ("Sport", ("Sport")), ("Music", ("Music")), ("Porn", ("Porn"))])
 config.mediaportal.youtubeprio = ConfigSelection(default = "1", choices = [("0", _("Low")),("1", _("Medium")),("2", _("High"))])
 config.mediaportal.pornpin = ConfigYesNo(default = True)
 config.mediaportal.setuppin = ConfigYesNo(default = False)
@@ -1603,13 +1603,13 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showDdlme.value:
 				self.plugin_liste.append(("ddl.me", "ddl_me", "Grauzone"))
 			if config.mediaportal.showSongsto.value:
-				self.plugin_liste.append(("Songs.to", "songsto", "Fun"))
+				self.plugin_liste.append(("Songs.to", "songsto", "Music"))
 			if config.mediaportal.showCanna.value:
-				self.plugin_liste.append(("Canna-Power", "canna", "Fun"))
+				self.plugin_liste.append(("Canna-Power", "canna", "Music"))
 			if config.mediaportal.showEighties.value:
-				self.plugin_liste.append(("80s & 90s Music", "eighties", "Fun"))
+				self.plugin_liste.append(("80s & 90s Music", "eighties", "Music"))
 			if config.mediaportal.showMusicstreamcc.value:
-				self.plugin_liste.append(("Musicstream.cc", "musicstreamcc", "Fun"))
+				self.plugin_liste.append(("Musicstream.cc", "musicstreamcc", "Music"))
 			if config.mediaportal.showMovie25.value:
 				self.plugin_liste.append(("Movie25", "movie25", "Grauzone"))
 			if config.mediaportal.showWatchseries.value:
@@ -1678,9 +1678,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showDokuHouse.value:
 			self.plugin_liste.append(("DokuHouse", "dokuhouse", "Mediathek"))
 		if config.mediaportal.showAllMusicHouse.value:
-			self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Fun"))
+			self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Music"))
 		if config.mediaportal.showputpattv.value:
-			self.plugin_liste.append(("putpat.tv", "putpattv", "Fun"))
+			self.plugin_liste.append(("putpat.tv", "putpattv", "Music"))
 		if config.mediaportal.showRofl.value:
 			self.plugin_liste.append(("Rofl.to", "rofl", "Fun"))
 		if config.mediaportal.showFail.value:
@@ -1690,7 +1690,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showTvkino.value:
 			self.plugin_liste.append(("TV-Kino", "tvkino", "Fun"))
 		if config.mediaportal.showRadio.value:
-			self.plugin_liste.append(("Radio.de", "radiode", "Fun"))
+			self.plugin_liste.append(("Radio.de", "radiode", "Music"))
 		if config.mediaportal.showSpobox.value:
 			self.plugin_liste.append(("Spobox", "spobox", "Sport"))
 		if config.mediaportal.showLiveLeak.value:
@@ -1708,13 +1708,13 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showGameChannels.value:
 			self.plugin_liste.append(("GAME-Channels", "gamechannels", "Fun"))
 		if config.mediaportal.showMusicChannels.value:
-			self.plugin_liste.append(("MUSIC-Channels", "musicchannels", "Fun"))
+			self.plugin_liste.append(("MUSIC-Channels", "musicchannels", "Music"))
 		if config.mediaportal.showUserChannels.value:
 			self.plugin_liste.append(("USER-Channels", "userchannels", "Fun"))
 		if config.mediaportal.showYoutube.value:
 			self.plugin_liste.append(("YouTube", "youtube", "Fun"))
 		if config.mediaportal.showClipfish.value:
-			self.plugin_liste.append(("Clipfish", "clipfish", "Fun"))
+			self.plugin_liste.append(("Clipfish", "clipfish", "Fun/Music"))
 		if config.mediaportal.showRan.value:
 			self.plugin_liste.append(("Ran.de", "ran", "Sport"))
 		if config.mediaportal.showTeledunet.value:
@@ -1722,13 +1722,13 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showGEOde.value:
 			self.plugin_liste.append(("GEO.de", "geo_de", "Fun"))
 		if config.mediaportal.showDeluxemusic.value:
-			self.plugin_liste.append(("Deluxemusic", "deluxemusic", "Fun"))
+			self.plugin_liste.append(("Deluxemusic", "deluxemusic", "Music"))
 		if config.mediaportal.showNuna.value:
-			self.plugin_liste.append(("Nuna", "nuna", "Fun"))
+			self.plugin_liste.append(("Nuna", "nuna", "Music"))
 		if config.mediaportal.showMyvideoTop100.value:
-			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Fun"))
+			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Music"))
 		if config.mediaportal.showMTVdeCharts.value:
-			self.plugin_liste.append(("MTV.de Charts", "mtvdecharts", "Fun"))
+			self.plugin_liste.append(("MTV.de Charts", "mtvdecharts", "Music"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.plugin_liste.append(("Wrestlingnetwork", "wrestlingnetwork", "Mediathek"))
 		if config.mediaportal.showretrotv.value:
@@ -1889,7 +1889,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 							for pname, ppic, pgenre in self.plugin_liste:
 								if p_name not in p_dupeliste:
 									if p_name == pname:
-										read_pluginliste_tmp.write('"%s" "%s" "%s" "%s" "%s"\n' % (p_name, p_picname, p_genre, p_hits, p_sort))
+										read_pluginliste_tmp.write('"%s" "%s" "%s" "%s" "%s"\n' % (p_name, p_picname, pgenre, p_hits, p_sort))
 										p_dupeliste.append((p_name))
 										print pop_count
 										self.plugin_liste.pop(int(pop_count))
@@ -2032,7 +2032,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.dump_liste = self.plugin_liste
 		if config.mediaportal.filter.value != "ALL":
 			self.plugin_liste = []
-			self.plugin_liste = [x for x in self.dump_liste if config.mediaportal.filter.value == x[2]]
+			self.plugin_liste = [x for x in self.dump_liste if re.search(config.mediaportal.filter.value, x[2])]
 		if len(self.plugin_liste) == 0:
 			self.chFilter()
 			self['blue'].setText(config.mediaportal.filter.value)
@@ -2511,6 +2511,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif config.mediaportal.filter.value == "Grauzone":
 			config.mediaportal.filter.value = "Sport"
 		elif config.mediaportal.filter.value == "Sport":
+			config.mediaportal.filter.value = "Music"
+		elif config.mediaportal.filter.value == "Music":
 			config.mediaportal.filter.value = "Fun"
 		elif config.mediaportal.filter.value == "Fun":
 			config.mediaportal.filter.value = "Porn"
@@ -2524,7 +2526,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.filter.value != "ALL":
 			dump_liste2 = self.dump_liste
 			self.plugin_liste = []
-			self.plugin_liste = [x for x in dump_liste2 if config.mediaportal.filter.value == x[2]]
+			self.plugin_liste = [x for x in dump_liste2 if re.search(config.mediaportal.filter.value, x[2])]
 			if len(self.plugin_liste) == 0:
 				print "Filter ist deaktviert.. recheck..: %s" % config.mediaportal.filter.value
 				self.chFilter()
