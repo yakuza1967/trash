@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def LiveLeakEntry(entry):
 	return [entry,
@@ -188,9 +189,7 @@ class LiveLeakClips(Screen):
 		Stream = re.findall('file: "(.*?)"', data, re.S)
 		if Stream:
 			print Stream
-			sref = eServiceReference(0x1001, 0, Stream[0])
-			sref.setName(llTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(llTitle, Stream[0])], showPlaylist=False, ltype='liveleak')
 
 	def keyCancel(self):
 		self.close()

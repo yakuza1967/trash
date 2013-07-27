@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def fiwituGenreListEntry(entry):
 	return [entry,
@@ -324,8 +325,4 @@ class fiwituGenre3Screen(Screen):
 
 	def playVideo(self,url):
 		title = self['genreList'].getCurrent()[0][0]
-		sref = eServiceReference(0x1001, 0, url)
-		sref.setName(title)
-		self.session.open(MoviePlayer, sref)
-
-
+		self.session.open(SimplePlayer, [(title, url)], showPlaylist=False, ltype='fiwitu')

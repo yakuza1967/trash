@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def failListEntry(entry):
 	return [entry,
@@ -146,9 +147,7 @@ class failScreen(Screen):
 		if flStream:
 			rflStream = "http://www.fail.to" + flStream[0]
 			print rflStream
-			sref = eServiceReference(0x1001, 0, rflStream)
-			sref.setName(flTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(flTitle, rflStream)], showPlaylist=False, ltype='failto')
 
 	def keyCancel(self):
 		self.close()

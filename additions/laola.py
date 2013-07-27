@@ -1,4 +1,5 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def laolaLiveListEntry(entry):
 	date_time = re.findall('(.*?,.*?),(.*?)$', entry[3], re.S)
@@ -450,9 +451,7 @@ class laolaTopVideosScreen(Screen):
 				x = len(url_string)-1
 				stream_url = "%s%s%s" % (main_url[0], url_string[x][0], url_string[x][1])
 				print stream_url
-				sref = eServiceReference(0x1001, 0, stream_url)
-				sref.setName(laTitle)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(laTitle, stream_url)], showPlaylist=False, ltype='laola1')
 		else:
 			laTitle = self['roflList'].getCurrent()[0][0]
 			main_url = re.findall('<meta name="httpBase" content="(.*?)"', data)
@@ -466,9 +465,7 @@ class laolaTopVideosScreen(Screen):
 				print 'url_params: ' + url_params[1].replace('&amp;','&')
 				stream_url = "%s%s%s%s%s" % (main_url[0], url_string[0][1:] + "/bitrate=0?", url_params[1].replace('&amp;','&'), "&v=2.11.3&fp=WIN%2011,7,700,202", "&r=AAAAA"+"&g=BBBBBBBBBBBB")
 				print 'stream_url: ' + stream_url
-				sref = eServiceReference(0x1001, 0, stream_url)
-				sref.setName(laTitle)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(laTitle, stream_url)], showPlaylist=False, ltype='laola1')
 
 	def keyCancel(self):
 		self.close()

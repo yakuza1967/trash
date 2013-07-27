@@ -358,20 +358,6 @@ class show_GAME_ListScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		"""
-		dhTitle = self['liste'].getCurrent()[0][1]
-		dhVideoId = self['liste'].getCurrent()[0][2]
-		print "Title: ",dhTitle
-		#print "VideoId: ",dhVideoId
-		y = youtubeUrl(self.session)
-		y.addErrback(self.youtubeErr)
-		dhLink = y.getVideoUrl(dhVideoId, self.videoPrio)
-		if dhLink:
-			print dhLink
-			sref = eServiceReference(0x1001, 0, dhLink)
-			sref.setName(dhTitle)
-			self.session.open(MoviePlayer, sref)
-		"""
 		self.session.openWithCallback(
 			self.setVideoPrio,
 			YoutubePlayer,

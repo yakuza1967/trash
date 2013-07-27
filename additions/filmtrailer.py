@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def trailerMainListEntry(entry):
 	return [entry,
@@ -105,9 +106,7 @@ class trailer(Screen, ConfigListScreen):
 		video = re.findall('<url>(.*?)<', data, re.S)
 		if video:
 			print video
-			sref = eServiceReference(0x1001, 0, video[-1])
-			sref.setName(self.filmtrailer)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.filmtrailer, video[-1])], showPlaylist=False, ltype='filmtrailer')
 
 	def keyLeft(self):
 		if self.keyLocked:

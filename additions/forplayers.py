@@ -1,7 +1,5 @@
-##Thanks to Tristan Fischer for XBMC-API (sphere@dersphere.de)
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
-
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.api import VuBox4PlayersApi, NetworkError, SYSTEMS
 
 api = VuBox4PlayersApi()
@@ -253,9 +251,7 @@ class forPlayersVideoScreen(Screen):
 		print streamUrl
 		print playersTitle
 		if playersUrl:
-			sref = eServiceReference(0x1001, 0, streamUrl)
-			sref.setName(playersTitleStr)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(playersTitleStr, streamUrl)], showPlaylist=False, ltype='4players')
 
 	def keyCancel(self):
 		self.close()

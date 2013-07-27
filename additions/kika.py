@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def kikaListEntry(entry):
 	return [entry,
@@ -206,9 +207,7 @@ class kikaFilmListeScreen(Screen):
 		stream = re.findall('so.addVariable\("fullscreenPfad", "(rtmp://.*?)"', data, re.S)
 		if stream:
 			print stream
-			sref = eServiceReference(0x1001, 0, stream[0])
-			sref.setName(self.streamName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.streamName, stream[0])], showPlaylist=False, ltype='kika')
 
 	def keyCancel(self):
 		self.close()

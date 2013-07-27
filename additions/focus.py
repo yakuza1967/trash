@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def focusGenreListEntry(entry):
 	return [entry,
@@ -171,10 +172,7 @@ class focus(Screen):
 				streamUrl = streamUrl[1]
 			else:
 				streamUrl = streamUrl[0]
-
-			sref = eServiceReference(0x1001, 0, streamUrl)
-			sref.setName(Title)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(Title, streamUrl)], showPlaylist=False, ltype='focus')
 
 	def keyLeft(self):
 		if self.keyLocked:

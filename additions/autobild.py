@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def autoBildGenreListEntry(entry):
 	return [entry,
@@ -157,9 +158,7 @@ class autoBildFilmListeScreen(Screen):
 		streamname = self['filmList'].getCurrent()[0][0]
 		stream_url = re.findall('src="(.*?)"', data, re.S)
 		if stream_url:
-			sref = eServiceReference(0x1001, 0, stream_url[0])
-			sref.setName(streamname)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(streamname, stream_url[0])], showPlaylist=False, ltype='autobild')
 
 	def keyLeft(self):
 		if self.keyLocked:

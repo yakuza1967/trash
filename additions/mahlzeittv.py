@@ -1,5 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def mahlzeitTVGenreListEntry(entry):
 	return [entry,
@@ -418,9 +418,7 @@ class mahlzeitStreamScreen(Screen):
 		title = self['streamlist'].getCurrent()[0][0]
 		print file
 		if file:
-			sref = eServiceReference(0x1001, 0, file[0])
-			sref.setName(title)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(title, file[0])], showPlaylist=False, ltype='mahlzeittv')
 
 	def keyLeft(self):
 		if self.keyLocked:

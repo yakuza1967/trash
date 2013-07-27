@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def baskinoMainListEntry(entry):
 	return [entry,
@@ -97,9 +98,7 @@ class baskino(Screen):
 		video = re.findall('file:"(.*?)"', data, re.S)
 		if video:
 			print video
-			sref = eServiceReference(0x1001, 0, video[0])
-			sref.setName(self.filmName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.filmName, video[0])], showPlaylist=False, ltype='baskino')
 		else:
 			message = self.session.open(MessageBox, _("No Stream Found."), MessageBox.TYPE_INFO, timeout=3)
 

@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def cczweiListEntry(entry):
 	return [entry,
@@ -67,9 +68,7 @@ class cczwei(Screen):
 			auswahl = "0" + auswahl
 		file = "http://cczwei.mirror.speedpartner.de/cc2tv/CC2_%s.mp4" % auswahl
 		xxxtitle = self['streamlist'].getCurrent()[0][0]
-		sref = eServiceReference(0x1001, 0, file)
-		sref.setName(xxxtitle)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='cczwei')
 
 	def keyCancel(self):
 		self.close()

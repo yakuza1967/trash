@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def dreamscreencastListEntry(entry):
 	return [entry,
@@ -98,9 +99,7 @@ class dreamscreencast(Screen):
 		stream = self['streamlist'].getCurrent()[0][3]
 		if stream:
 			print stream
-			sref = eServiceReference(0x1001, 0, stream)
-			sref.setName(self.Dscname)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(self.Dscname, stream)], showPlaylist=False, ltype='dreamscreencast')
 
 	def keyLeft(self):
 		if self.keyLocked:

@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def filmonListEntry(entry):
 	return [entry,
@@ -73,9 +74,7 @@ class filmON(Screen):
 		if streamDaten:
 			(rtmpFile, rtmpServer) = streamDaten[0]
 			streamUrl = "%s/%s" % (rtmpServer, rtmpFile)
-			sref = eServiceReference(0x1001, 0, streamUrl)
-			sref.setName(foTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(foTitle, streamUrl)], showPlaylist=False, ltype='filmon')
 
 	def keyCancel(self):
 		self.close()

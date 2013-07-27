@@ -109,27 +109,6 @@ class myVideoFilmScreen(Screen):
 
 		self.onLayoutFinish.append(self.loadPage)
 
-	"""
-	def __md5(self, s):
-		return hashlib.md5(s).hexdigest()
-
-	def __rc4crypt(self, data, key):
-		x = 0
-		box = range(256)
-		for i in range(256):
-			x = (x + box[i] + ord(key[i % len(key)])) % 256
-			box[i], box[x] = box[x], box[i]
-		x = 0
-		y = 0
-		out = []
-		for char in data:
-			x = (x + 1) % 256
-			y = (y + box[x]) % 256
-			box[x], box[y] = box[y], box[x]
-			out.append(chr(ord(char) ^ box[(box[x] + box[y]) % 256]))
-		return ''.join(out)
-	"""
-
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://www.myvideo.de/iframe.php?lpage=%s&function=mv_success_box&action=filme_video_list&searchGroup=%s&searchOrder=1" % (str(self.page), self.myID)
@@ -225,14 +204,6 @@ class myVideoFilmScreen(Screen):
 			#MyvideoLink(self.session).getLink(self.playStream, self.dataError, kiTitle, url, id[0])
 
 			self.session.open(MyvideoPlayer, [(kiTitle, url, id[0], imgurl)])
-	"""
-	def playStream(self, title, url, imgurl='', artist=''):
-		if url != None:
-			print url
-			sref = eServiceReference(0x1001, 0, url)
-			sref.setName(title)
-			self.session.open(MoviePlayer, sref)
-	"""
 
 	def keyCancel(self):
 		self.close()

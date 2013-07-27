@@ -345,7 +345,6 @@ class mlehdFilmAuswahlScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			sref = eServiceReference(0x1001, 0, stream_url)
 			title = self.genreName+" "+self.part
 			self.session.open(SimplePlayer, [(title, stream_url)], showPlaylist=False, ltype='mlehd')
 

@@ -698,12 +698,6 @@ class AMH_Streams(Screen, ConfigListScreen):
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
 
 	def setVideoPrio(self):
-		"""
-		if self.videoPrio+1 > 2:
-			self.videoPrio = 0
-		else:
-			self.videoPrio += 1
-		"""
 		self.videoPrio = int(config.mediaportal.youtubeprio.value)
 		self['vPrio'].setText(self.videoPrioS[self.videoPrio])
 
@@ -713,18 +707,6 @@ class AMH_Streams(Screen, ConfigListScreen):
 			return
 		dhTitle = self['liste'].getCurrent()[0][0]
 		dhVideoId = self['liste'].getCurrent()[0][1]
-		"""
-		print "Title: ",dhTitle
-		#print "VideoId: ",dhVideoId
-		y = youtubeUrl(self.session)
-		y.addErrback(self.youtubeErr)
-		dhLink = y.getVideoUrl(dhVideoId, self.videoPrio)
-		if dhLink:
-			print dhLink
-			sref = eServiceReference(0x1001, 0, dhLink)
-			sref.setName(dhTitle)
-			self.session.open(MoviePlayer, sref)
-		"""
 		self.session.openWithCallback(
 			self.setVideoPrio,
 			YoutubePlayer,
