@@ -8,6 +8,8 @@
   <widget source="session.CurrentService" render="Progress" position="273,626" size="700,14" pixmap="~/tec/images/spbar.png" zPosition="3" transparent="1" backgroundColor="#00000000">
   <convert type="ServicePosition">Position</convert>
 </widget>
+<!--<widget name="seekbartime" position="50,130" size="100,20" font="Regular;20" halign="left" backgroundColor="#4e5a74" transparent="1" />-->
+  <widget name="seekbarcursor" position="271,609" size="8,18" zPosition="3" pixmap="~/tec/images/position_arrow.png" alphatest="on" />
   <widget source="session.CurrentService" render="PositionGauge" position="271,624" size="695,12" zPosition="3" transparent="1">
   <convert type="ServicePosition">Gauge</convert>
 </widget>
