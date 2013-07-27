@@ -2095,7 +2095,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page_select.png" % (self.images_path)
 				#print "postername:", postername, poster_path
-				self["page_sel"+str(x)].instance.setPixmap(None)
+				self["page_sel"+str(x)].instance.setPixmap(gPixmapPtr())
 				self["page_sel"+str(x)].hide()
 				pic = LoadPixmap(cached=True, path=poster_path)
 				if pic != None:
@@ -2105,7 +2105,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page.png" % (self.images_path)
-				self["page_empty"+str(x)].instance.setPixmap(None)
+				self["page_empty"+str(x)].instance.setPixmap(gPixmapPtr())
 				self["page_empty"+str(x)].hide()
 				pic = LoadPixmap(cached=True, path=poster_path)
 				if pic != None:
