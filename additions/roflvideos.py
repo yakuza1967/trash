@@ -129,7 +129,7 @@ class roflScreen(Screen):
 		roflName = self['roflList'].getCurrent()[0][0]
 		roflURL = self['roflList'].getCurrent()[0][1]
 		data = urllib.urlopen(roflURL).read()
-		roflLink = re.findall('href="(.*?.flv)"', data)
+		roflLink = re.findall('id="video-player".*?href="(.*?.flv)"', data)
 		if roflLink:
 			self.session.open(SimplePlayer, [(roflName, roflLink[0])], showPlaylist=False, ltype='roflto')
 
