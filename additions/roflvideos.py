@@ -1,5 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.decrypt import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def auswahlListEntry(entry):
 	return [entry,
@@ -131,9 +131,7 @@ class roflScreen(Screen):
 		data = urllib.urlopen(roflURL).read()
 		roflLink = re.findall('href="(.*?.flv)"', data)
 		if roflLink:
-			sref = eServiceReference(0x1001, 0, roflLink[0])
-			sref.setName(roflName)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(roflName, roflLink[0])], showPlaylist=False, ltype='roflto')
 
 	def keyCancel(self):
 		self.close()

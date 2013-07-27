@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def tvkinoGenreListEntry(entry):
 	return [entry,
@@ -76,9 +77,7 @@ class tvkino(Screen):
 			streamUrl = "%s/%s swfUrl=http://stream.tv-kino.net/player.swf" % (stream[0], sender[0])
 			if streamUrl:
 				print streamUrl
-				sref = eServiceReference(0x1001, 0, streamUrl)
-				sref.setName(name)
-				self.session.open(MoviePlayer, sref)
+				self.session.open(SimplePlayer, [(name, streamUrl)], showPlaylist=False, ltype='tvkino')
 
 	def keyCancel(self):
 		self.close()

@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def sportBildListEntry(entry):
 	return [entry,
@@ -136,7 +137,6 @@ class sportBildScreen(Screen):
 			return
 		spUrl = self['roflList'].getCurrent()[0][1]
 		spUrl = re.sub('seite=.*?html','templateId=renderJavaScript,layout=17,startvideo=true.js',spUrl)
-		#url = "http://sportbild.bild.de" + spUrl.replace('seite=*.html','templateId=renderJavaScript,layout=17,startvideo=true.js')
 		url = "http://sportbild.bild.de" + spUrl
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
@@ -146,9 +146,7 @@ class sportBildScreen(Screen):
 		spStream = re.findall('src="(http://.*?[mp4|flv])"', data, re.S)
 		if spStream:
 			print spStream
-			sref = eServiceReference(0x1001, 0, spStream[0])
-			sref.setName(spTitle)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(spTitle, spStream[0])], showPlaylist=False, ltype='sportbild')
 
 	def keyCancel(self):
 		self.close()

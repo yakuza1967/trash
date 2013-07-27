@@ -1,6 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
-
-# inspired by teledunet xbmc addon (thx).
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def teleGenreListEntry(entry):
 	return [entry,
@@ -117,9 +116,7 @@ class teleGenreScreen(Screen):
 
 		stream_url = self.rtmpdump_output(rtmp_params)
 		print stream_url
-		sref = eServiceReference(0x1001, 0, stream_url)
-		sref.setName(channelname)
-		self.session.open(MoviePlayer, sref)
+		self.session.open(SimplePlayer, [(channelname, stream_url)], showPlaylist=False, ltype='teledunet')
 
 	def rtmpdump_output(self, rtmp_params):
 		return (

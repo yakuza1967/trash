@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def spoboxGenreListEntry(entry):
 	return [entry,
@@ -202,9 +203,7 @@ class spoboxFilmListeScreen(Screen):
 		stream = re.findall('<a data-.*?href="(.*?)"', data, re.S)
 		if stream:
 			streamname = self['filmList'].getCurrent()[0][0]
-			sref = eServiceReference(0x1001, 0, stream[0])
-			sref.setName(streamname)
-			self.session.open(MoviePlayer, sref)
+			self.session.open(SimplePlayer, [(streamname, stream[0])], showPlaylist=False, ltype='spox')
 
 	def keyLeft(self):
 		if self.keyLocked:
