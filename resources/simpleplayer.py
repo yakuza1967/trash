@@ -63,11 +63,7 @@ class SimpleSeekHelper:
 	def toggleShow(self):
 		#print "toggle:"
 		if self.seekBarLocked:
-			self.unlockShow()
-			self.seekBarLocked = False
 			self.seekOK()
-			self["seekbarcursor"].hide()
-			self["seekbartime"].hide()
 		InfoBarShowHide.toggleShow(self)
 
 	def __updateCursor(self):
@@ -80,7 +76,12 @@ class SimpleSeekHelper:
 
 	def seekExit(self):
 		#print "seekExit:"
+		self.seekBarLocked = False
 		self.cursorTimer.stop()
+		self.unlockShow()
+		self["seekbarcursor"].hide()
+		self["seekbartime"].hide()
+		self.hide()
 
 	def seekOK(self):
 		#print "seekOK:"
@@ -99,6 +100,10 @@ class SimpleSeekHelper:
 		self.percent += float(config.mediaportal.sp_seekbar_sensibility.value) / 10.0
 		if self.percent > 100.0:
 			self.percent = 100.0
+			
+	def cancelSeek(self):
+		if self.seekBarLocked:
+			self.seekExit()
 
 class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True
@@ -322,7 +327,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 
 	def leavePlayer(self):
 		print "leavePlayer:"
-		self.handleLeave(config.mediaportal.sp_on_movie_stop.value)
+		if self.seekBarLocked:
+			self.cancelSeek()
+		else:
+			self.handleLeave(config.mediaportal.sp_on_movie_stop.value)
 
 	def doEofInternal(self, playing):
 		print "doEofInt:"
