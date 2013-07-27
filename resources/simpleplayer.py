@@ -66,8 +66,8 @@ class SimpleSeekHelper:
 
 	def __updateCursor(self):
 		if self.length:
-			x = 271 + int(6.95 * self.percent)
-			self["seekbarcursor"].moveTo(x, 609, 1)
+			x = 273 + int(6.95 * self.percent)
+			self["seekbarcursor"].moveTo(x, 626, 1)
 			self["seekbarcursor"].startMoving()
 			pts = int(float(self.length[1]) / 100.0 * self.percent)
 			#self["seekbartime"].setText("%d:%02d" % ((pts/60/90000), ((pts/90000)%60)))
