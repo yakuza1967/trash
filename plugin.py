@@ -326,6 +326,12 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 
 		self.configlist = []
+		self.sport = []
+		self.music = []
+		self.fun = []
+		self.mediatheken = []
+		self.porn = []
+		self.grauzone = []
 		ConfigListScreen.__init__(self, self.configlist)
 
 		## Allgemein
@@ -348,155 +354,175 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
 
 		### Sport
-		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Zeige Laola1:", config.mediaportal.showLaola1))
-		self.configlist.append(getConfigListEntry("Zeige NHL:", config.mediaportal.showNhl))
-		self.configlist.append(getConfigListEntry("Zeige Ran.de:", config.mediaportal.showRan))
-		self.configlist.append(getConfigListEntry("Zeige Spobox:", config.mediaportal.showSpobox))
-		self.configlist.append(getConfigListEntry("Zeige Sport1.fm:", config.mediaportal.showsport1fm))
+		self.sport.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
+		self.sport.append(getConfigListEntry("Zeige NHL:", config.mediaportal.showNhl))
+		self.sport.append(getConfigListEntry("Zeige Spobox:", config.mediaportal.showSpobox))
+		self.sport.append(getConfigListEntry("Zeige Laola1:", config.mediaportal.showLaola1))
+		self.sport.append(getConfigListEntry("Zeige Sport1.fm:", config.mediaportal.showsport1fm))
+		self.sport.append(getConfigListEntry("Zeige Ran.de:", config.mediaportal.showRan))
+		self.sport.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		### Music
-		self.configlist.append(getConfigListEntry("----- Music -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Zeige AllMusicHouse:", config.mediaportal.showAllMusicHouse))
-		self.configlist.append(getConfigListEntry("Zeige Deluxemusic:", config.mediaportal.showDeluxemusic))
-		self.configlist.append(getConfigListEntry("Zeige MTV.de Charts:", config.mediaportal.showMTVdeCharts))
-		self.configlist.append(getConfigListEntry("Zeige MUSIC-Channels:", config.mediaportal.showMusicChannels))
-		self.configlist.append(getConfigListEntry("Zeige Myvideo Top 100:", config.mediaportal.showMyvideoTop100))
-		self.configlist.append(getConfigListEntry("Zeige Nuna:", config.mediaportal.showNuna))
-		self.configlist.append(getConfigListEntry("Zeige putpat.tv:", config.mediaportal.showputpattv))
+		self.music.append(getConfigListEntry("----- Music -----", config.mediaportal.fake_entry))
+		self.music.append(getConfigListEntry("Zeige AllMusicHouse:", config.mediaportal.showAllMusicHouse))
+		self.music.append(getConfigListEntry("Zeige Deluxemusic:", config.mediaportal.showDeluxemusic))
+		self.music.append(getConfigListEntry("Zeige MTV.de Charts:", config.mediaportal.showMTVdeCharts))
+		self.music.append(getConfigListEntry("Zeige MUSIC-Channels:", config.mediaportal.showMusicChannels))
+		self.music.append(getConfigListEntry("Zeige Myvideo Top 100:", config.mediaportal.showMyvideoTop100))
+		self.music.append(getConfigListEntry("Zeige Nuna:", config.mediaportal.showNuna))
+		self.music.append(getConfigListEntry("Zeige putpat.tv:", config.mediaportal.showputpattv))
 		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
-			self.configlist.append(getConfigListEntry("Zeige Canna-Power:", config.mediaportal.showCanna))
-			self.configlist.append(getConfigListEntry("Zeige Musicstream.cc:", config.mediaportal.showMusicstreamcc))
-			self.configlist.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
+			self.music.append(getConfigListEntry("Zeige 80s & 90s Music:", config.mediaportal.showEighties))
+			self.music.append(getConfigListEntry("Zeige Canna-Power:", config.mediaportal.showCanna))
+			self.music.append(getConfigListEntry("Zeige Musicstream.cc:", config.mediaportal.showMusicstreamcc))
+			self.music.append(getConfigListEntry("Zeige Songs.to:", config.mediaportal.showSongsto))
+		self.music.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		### Fun
-		self.configlist.append(getConfigListEntry("----- Fun -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Zeige Rofl.to:", config.mediaportal.showRofl))
-		self.configlist.append(getConfigListEntry("Zeige Fail.to:", config.mediaportal.showFail))
-		self.configlist.append(getConfigListEntry("Zeige LiveLeak:", config.mediaportal.showLiveLeak))
-		self.configlist.append(getConfigListEntry("Zeige Radio.de:", config.mediaportal.showRadio))
-		self.configlist.append(getConfigListEntry("Zeige TvKino:", config.mediaportal.showTvkino))
-		self.configlist.append(getConfigListEntry("Zeige FilmOn:", config.mediaportal.showFilmOn))
-		self.configlist.append(getConfigListEntry("Zeige Focus:", config.mediaportal.showFocus))
-		self.configlist.append(getConfigListEntry("Zeige HörspielHouse:", config.mediaportal.showHoerspielHouse))
-		self.configlist.append(getConfigListEntry("Zeige Hörspiel-Channels:", config.mediaportal.showHoerspielChannels))
-		self.configlist.append(getConfigListEntry("Zeige CAR-Channels:", config.mediaportal.showCarChannels))
-		self.configlist.append(getConfigListEntry("Zeige GAME-Channels:", config.mediaportal.showGameChannels))
-		self.configlist.append(getConfigListEntry("Zeige USER-Channels:", config.mediaportal.showUserChannels))
-		self.configlist.append(getConfigListEntry("Zeige Clipfish:", config.mediaportal.showClipfish))
-		self.configlist.append(getConfigListEntry("Zeige YouTube:", config.mediaportal.showYoutube))
-		self.configlist.append(getConfigListEntry("Zeige Teledunet:", config.mediaportal.showTeledunet))
-		self.configlist.append(getConfigListEntry("Zeige GEOde:", config.mediaportal.showGEOde))
-		self.configlist.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
-		self.configlist.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
-		self.configlist.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
-		self.configlist.append(getConfigListEntry("Zeige Dreamscreencast:", config.mediaportal.showDsc))
-		self.configlist.append(getConfigListEntry("Zeige Focus:", config.mediaportal.showFocus))
-		self.configlist.append(getConfigListEntry("Zeige CCZwei:", config.mediaportal.showCczwei))
-		self.configlist.append(getConfigListEntry("Zeige Filmtrailer:", config.mediaportal.showTrailer))
-		self.configlist.append(getConfigListEntry("Zeige ScienceTV:", config.mediaportal.showScienceTV))
-		self.configlist.append(getConfigListEntry("Zeige Doku.me:", config.mediaportal.showDoku))
-		self.configlist.append(getConfigListEntry("Zeige DokuStream:", config.mediaportal.showDokuStream))
-		self.configlist.append(getConfigListEntry("Zeige 4Players:", config.mediaportal.show4Players))
-		self.configlist.append(getConfigListEntry("Zeige GIGA.de:", config.mediaportal.showGIGA))
-		self.configlist.append(getConfigListEntry("Zeige Audi.tv:", config.mediaportal.showaudi))
-		self.configlist.append(getConfigListEntry("Zeige gronkh.de:", config.mediaportal.showgronkh))
-		self.configlist.append(getConfigListEntry("Zeige mahlzeit.tv:", config.mediaportal.showMahlzeitTV))
-		self.configlist.append(getConfigListEntry("Zeige fiwitu.tv:", config.mediaportal.showFiwitu))
-		self.configlist.append(getConfigListEntry("Zeige Apple Movie Trailers:", config.mediaportal.showappletrailers))
-		self.configlist.append(getConfigListEntry("Zeige DOKUh:", config.mediaportal.showDOKUh))
-		self.configlist.append(getConfigListEntry("Zeige DokuHouse:", config.mediaportal.showDokuHouse))
-		self.configlist.append(getConfigListEntry("Zeige AutoBild:", config.mediaportal.showAutoBild))
-		self.configlist.append(getConfigListEntry("Zeige SportBild:", config.mediaportal.showSportBild))
+		self.fun.append(getConfigListEntry("----- Fun -----", config.mediaportal.fake_entry))
+		self.fun.append(getConfigListEntry("Zeige Rofl.to:", config.mediaportal.showRofl))
+		self.fun.append(getConfigListEntry("Zeige Fail.to:", config.mediaportal.showFail))
+		self.fun.append(getConfigListEntry("Zeige LiveLeak:", config.mediaportal.showLiveLeak))
+		self.fun.append(getConfigListEntry("Zeige Radio.de:", config.mediaportal.showRadio))
+		self.fun.append(getConfigListEntry("Zeige TvKino:", config.mediaportal.showTvkino))
+		self.fun.append(getConfigListEntry("Zeige FilmOn:", config.mediaportal.showFilmOn))
+		self.fun.append(getConfigListEntry("Zeige Focus:", config.mediaportal.showFocus))
+		self.fun.append(getConfigListEntry("Zeige HörspielHouse:", config.mediaportal.showHoerspielHouse))
+		self.fun.append(getConfigListEntry("Zeige Hörspiel-Channels:", config.mediaportal.showHoerspielChannels))
+		self.fun.append(getConfigListEntry("Zeige CAR-Channels:", config.mediaportal.showCarChannels))
+		self.fun.append(getConfigListEntry("Zeige GAME-Channels:", config.mediaportal.showGameChannels))
+		self.fun.append(getConfigListEntry("Zeige USER-Channels:", config.mediaportal.showUserChannels))
+		self.fun.append(getConfigListEntry("Zeige Clipfish:", config.mediaportal.showClipfish))
+		self.fun.append(getConfigListEntry("Zeige YouTube:", config.mediaportal.showYoutube))
+		self.fun.append(getConfigListEntry("Zeige Teledunet:", config.mediaportal.showTeledunet))
+		self.fun.append(getConfigListEntry("Zeige GEOde:", config.mediaportal.showGEOde))
+		self.fun.append(getConfigListEntry("Zeige Wrestling Network:", config.mediaportal.showWrestlingnetwork))
+		self.fun.append(getConfigListEntry("Zeige retro-tv:", config.mediaportal.showretrotv))
+		self.fun.append(getConfigListEntry("Zeige Galileo-Videolexikon:", config.mediaportal.showgalileovl))
+		self.fun.append(getConfigListEntry("Zeige Dreamscreencast:", config.mediaportal.showDsc))
+		self.fun.append(getConfigListEntry("Zeige Focus:", config.mediaportal.showFocus))
+		self.fun.append(getConfigListEntry("Zeige CCZwei:", config.mediaportal.showCczwei))
+		self.fun.append(getConfigListEntry("Zeige Filmtrailer:", config.mediaportal.showTrailer))
+		self.fun.append(getConfigListEntry("Zeige ScienceTV:", config.mediaportal.showScienceTV))
+		self.fun.append(getConfigListEntry("Zeige Doku.me:", config.mediaportal.showDoku))
+		self.fun.append(getConfigListEntry("Zeige DokuStream:", config.mediaportal.showDokuStream))
+		self.fun.append(getConfigListEntry("Zeige 4Players:", config.mediaportal.show4Players))
+		self.fun.append(getConfigListEntry("Zeige GIGA.de:", config.mediaportal.showGIGA))
+		self.fun.append(getConfigListEntry("Zeige Audi.tv:", config.mediaportal.showaudi))
+		self.fun.append(getConfigListEntry("Zeige gronkh.de:", config.mediaportal.showgronkh))
+		self.fun.append(getConfigListEntry("Zeige mahlzeit.tv:", config.mediaportal.showMahlzeitTV))
+		self.fun.append(getConfigListEntry("Zeige fiwitu.tv:", config.mediaportal.showFiwitu))
+		self.fun.append(getConfigListEntry("Zeige Apple Movie Trailers:", config.mediaportal.showappletrailers))
+		self.fun.append(getConfigListEntry("Zeige DOKUh:", config.mediaportal.showDOKUh))
+		self.fun.append(getConfigListEntry("Zeige DokuHouse:", config.mediaportal.showDokuHouse))
+		self.fun.append(getConfigListEntry("Zeige AutoBild:", config.mediaportal.showAutoBild))
+		self.fun.append(getConfigListEntry("Zeige SportBild:", config.mediaportal.showSportBild))
 		if astModule:
-			self.configlist.append(getConfigListEntry("Zeige HeiseVideo:", config.mediaportal.showHeiseVideo))
+			self.fun.append(getConfigListEntry("Zeige HeiseVideo:", config.mediaportal.showHeiseVideo))
+		self.fun.sort(key=lambda t : tuple(t[0][0].lower()))
 
-		### mediatheken
-		self.configlist.append(getConfigListEntry("----- Mediatheken -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Zeige ARD Mediathek:", config.mediaportal.showARD))
-		self.configlist.append(getConfigListEntry("Zeige KIKA+:", config.mediaportal.showkika))
-		self.configlist.append(getConfigListEntry("Zeige KinderKino:", config.mediaportal.showKinderKino))
-		self.configlist.append(getConfigListEntry("Zeige Myvideo:", config.mediaportal.showMyvideo))
-		self.configlist.append(getConfigListEntry("Zeige NetzKino:", config.mediaportal.showNetzKino))
-		self.configlist.append(getConfigListEntry("Zeige N-TVNOW:", config.mediaportal.showNTVnow))
-		self.configlist.append(getConfigListEntry("Zeige ORF TVthek:", config.mediaportal.showORF))
-		self.configlist.append(getConfigListEntry("Zeige RTLNOW:", config.mediaportal.showRTLnow))
-		self.configlist.append(getConfigListEntry("Zeige RTL2NOW:", config.mediaportal.showRTL2now))
-		self.configlist.append(getConfigListEntry("Zeige RTLNITRONOW:", config.mediaportal.showRTLnitro))
-		self.configlist.append(getConfigListEntry("Zeige SRF Player:", config.mediaportal.showSRF))
-		self.configlist.append(getConfigListEntry("Zeige SUPERRTLNOW:", config.mediaportal.showSUPERRTLnow))
-		self.configlist.append(getConfigListEntry("Zeige Tivi:", config.mediaportal.showtivi))
-		self.configlist.append(getConfigListEntry("Zeige VOXNOW:", config.mediaportal.showVoxnow))
-		self.configlist.append(getConfigListEntry("Zeige ZDF Mediathek:", config.mediaportal.showZDF))
+		### Mediatheken
+		self.mediatheken.append(getConfigListEntry("----- Mediatheken -----", config.mediaportal.fake_entry))
+		self.mediatheken.append(getConfigListEntry("Zeige ARD Mediathek:", config.mediaportal.showARD))
+		self.mediatheken.append(getConfigListEntry("Zeige KIKA+:", config.mediaportal.showkika))
+		self.mediatheken.append(getConfigListEntry("Zeige KinderKino:", config.mediaportal.showKinderKino))
+		self.mediatheken.append(getConfigListEntry("Zeige Myvideo:", config.mediaportal.showMyvideo))
+		self.mediatheken.append(getConfigListEntry("Zeige NetzKino:", config.mediaportal.showNetzKino))
+		self.mediatheken.append(getConfigListEntry("Zeige N-TVNOW:", config.mediaportal.showNTVnow))
+		self.mediatheken.append(getConfigListEntry("Zeige ORF TVthek:", config.mediaportal.showORF))
+		self.mediatheken.append(getConfigListEntry("Zeige RTLNOW:", config.mediaportal.showRTLnow))
+		self.mediatheken.append(getConfigListEntry("Zeige RTL2NOW:", config.mediaportal.showRTL2now))
+		self.mediatheken.append(getConfigListEntry("Zeige RTLNITRONOW:", config.mediaportal.showRTLnitro))
+		self.mediatheken.append(getConfigListEntry("Zeige SRF Player:", config.mediaportal.showSRF))
+		self.mediatheken.append(getConfigListEntry("Zeige SUPERRTLNOW:", config.mediaportal.showSUPERRTLnow))
+		self.mediatheken.append(getConfigListEntry("Zeige Tivi:", config.mediaportal.showtivi))
+		self.mediatheken.append(getConfigListEntry("Zeige VOXNOW:", config.mediaportal.showVoxnow))
+		self.mediatheken.append(getConfigListEntry("Zeige ZDF Mediathek:", config.mediaportal.showZDF))
+		self.mediatheken.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		### Porn
-		self.configlist.append(getConfigListEntry("----- Porn -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Zeige 4Tube:", config.mediaportal.show4tube))
-		self.configlist.append(getConfigListEntry("Zeige Ah-Me:", config.mediaportal.showahme))
-		self.configlist.append(getConfigListEntry("Zeige AmateurPorn:", config.mediaportal.showamateurporn))
-		self.configlist.append(getConfigListEntry("Zeige beeg:", config.mediaportal.showbeeg))
-		self.configlist.append(getConfigListEntry("Zeige DrTuber:", config.mediaportal.showdrtuber))
-		self.configlist.append(getConfigListEntry("Zeige El-Ladies:", config.mediaportal.showelladies))
-		self.configlist.append(getConfigListEntry("Zeige Eporner:", config.mediaportal.showeporner))
-		self.configlist.append(getConfigListEntry("Zeige EroProfile:", config.mediaportal.showeroprofile))
-		self.configlist.append(getConfigListEntry("Zeige ExtremeTube:", config.mediaportal.showextremetube))
+		self.porn.append(getConfigListEntry("----- Porn -----", config.mediaportal.fake_entry))
+		self.porn.append(getConfigListEntry("Zeige 4Tube:", config.mediaportal.show4tube))
+		self.porn.append(getConfigListEntry("Zeige Ah-Me:", config.mediaportal.showahme))
+		self.porn.append(getConfigListEntry("Zeige AmateurPorn:", config.mediaportal.showamateurporn))
+		self.porn.append(getConfigListEntry("Zeige beeg:", config.mediaportal.showbeeg))
+		self.porn.append(getConfigListEntry("Zeige DrTuber:", config.mediaportal.showdrtuber))
+		self.porn.append(getConfigListEntry("Zeige El-Ladies:", config.mediaportal.showelladies))
+		self.porn.append(getConfigListEntry("Zeige Eporner:", config.mediaportal.showeporner))
+		self.porn.append(getConfigListEntry("Zeige EroProfile:", config.mediaportal.showeroprofile))
+		self.porn.append(getConfigListEntry("Zeige ExtremeTube:", config.mediaportal.showextremetube))
+		self.porn.append(getConfigListEntry("Zeige HDPorn:", config.mediaportal.showhdporn))
+		self.porn.append(getConfigListEntry("Zeige hotshame:", config.mediaportal.showhotshame))
+		self.porn.append(getConfigListEntry("Zeige Pinkrod:", config.mediaportal.showpinkrod))
+		self.porn.append(getConfigListEntry("Zeige PornerBros:", config.mediaportal.showpornerbros))
+		self.porn.append(getConfigListEntry("Zeige Pornhub:", config.mediaportal.showPornhub))
+		self.porn.append(getConfigListEntry("Zeige PornRabbit:", config.mediaportal.showpornrabbit))
+		self.porn.append(getConfigListEntry("Zeige RealGFPorn:", config.mediaportal.showrealgfporn))
+		self.porn.append(getConfigListEntry("Zeige RedTube:", config.mediaportal.showredtube))
+		self.porn.append(getConfigListEntry("Zeige SeXXX-HD:", config.mediaportal.showsexxxhd))
+		self.porn.append(getConfigListEntry("Zeige SunPorno:", config.mediaportal.showsunporno))
+		self.porn.append(getConfigListEntry("Zeige TheNewPorn:", config.mediaportal.showthenewporn))
+		self.porn.append(getConfigListEntry("Zeige UpdateTube:", config.mediaportal.showupdatetube))
+		self.porn.append(getConfigListEntry("Zeige WetPlace:", config.mediaportal.showwetplace))
+		self.porn.append(getConfigListEntry("Zeige xHamster:", config.mediaportal.showXhamster))
+		self.porn.append(getConfigListEntry("Zeige YouPorn:", config.mediaportal.showyouporn))
 		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("Zeige Free Online Movies:", config.mediaportal.showfreeomovie))
-			self.configlist.append(getConfigListEntry("Zeige G-Stream-XXX:", config.mediaportal.showgstreaminxxx))
-		self.configlist.append(getConfigListEntry("Zeige HDPorn:", config.mediaportal.showhdporn))
-		self.configlist.append(getConfigListEntry("Zeige hotshame:", config.mediaportal.showhotshame))
-		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("Zeige MegaSkanks:", config.mediaportal.showmegaskanks))
-			self.configlist.append(getConfigListEntry("Zeige IStream-XXX:", config.mediaportal.showIStreamPorn))
-			self.configlist.append(getConfigListEntry("Zeige Movie4k-XXX:", config.mediaportal.showM4kPorn))
-			self.configlist.append(getConfigListEntry("Zeige ParadiseHill:", config.mediaportal.showparadisehill))
-		self.configlist.append(getConfigListEntry("Zeige Pinkrod:", config.mediaportal.showpinkrod))
-		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("Zeige PlayPorn:", config.mediaportal.showplayporn))
-		self.configlist.append(getConfigListEntry("Zeige PornerBros:", config.mediaportal.showpornerbros))
-		self.configlist.append(getConfigListEntry("Zeige Pornhub:", config.mediaportal.showPornhub))
-		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("Zeige PORNMVZ:", config.mediaportal.showpornmvz))
-			self.configlist.append(getConfigListEntry("Zeige PornoStreams:", config.mediaportal.showpornostreams))
-		self.configlist.append(getConfigListEntry("Zeige PornRabbit:", config.mediaportal.showpornrabbit))
-		self.configlist.append(getConfigListEntry("Zeige RealGFPorn:", config.mediaportal.showrealgfporn))
-		self.configlist.append(getConfigListEntry("Zeige RedTube:", config.mediaportal.showredtube))
-		self.configlist.append(getConfigListEntry("Zeige SeXXX-HD:", config.mediaportal.showsexxxhd))
-		self.configlist.append(getConfigListEntry("Zeige SunPorno:", config.mediaportal.showsunporno))
-		self.configlist.append(getConfigListEntry("Zeige TheNewPorn:", config.mediaportal.showthenewporn))
-		self.configlist.append(getConfigListEntry("Zeige UpdateTube:", config.mediaportal.showupdatetube))
-		self.configlist.append(getConfigListEntry("Zeige WetPlace:", config.mediaportal.showwetplace))
-		self.configlist.append(getConfigListEntry("Zeige xHamster:", config.mediaportal.showXhamster))
-		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("Zeige XXXSaVe:", config.mediaportal.showxxxsave))
-		self.configlist.append(getConfigListEntry("Zeige YouPorn:", config.mediaportal.showyouporn))
+			self.porn.append(getConfigListEntry("Zeige PlayPorn:", config.mediaportal.showplayporn))
+			self.porn.append(getConfigListEntry("Zeige PORNMVZ:", config.mediaportal.showpornmvz))
+			self.porn.append(getConfigListEntry("Zeige PornoStreams:", config.mediaportal.showpornostreams))
+			self.porn.append(getConfigListEntry("Zeige MegaSkanks:", config.mediaportal.showmegaskanks))
+			self.porn.append(getConfigListEntry("Zeige IStream-XXX:", config.mediaportal.showIStreamPorn))
+			self.porn.append(getConfigListEntry("Zeige Movie4k-XXX:", config.mediaportal.showM4kPorn))
+			self.porn.append(getConfigListEntry("Zeige ParadiseHill:", config.mediaportal.showparadisehill))
+			self.porn.append(getConfigListEntry("Zeige Free Online Movies:", config.mediaportal.showfreeomovie))
+			self.porn.append(getConfigListEntry("Zeige G-Stream-XXX:", config.mediaportal.showgstreaminxxx))
+			self.porn.append(getConfigListEntry("Zeige XXXSaVe:", config.mediaportal.showxxxsave))
+			self.porn.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		### Grauzone
 		if config.mediaportal.showgrauzone.value:
-			self.configlist.append(getConfigListEntry("----- Grauzone -----", config.mediaportal.fake_entry))
-			self.configlist.append(getConfigListEntry("Zeige SzeneStreams:", config.mediaportal.showSzeneStreams))
-			self.configlist.append(getConfigListEntry("Zeige My-Entertainment:", config.mediaportal.showMEHD))
-			self.configlist.append(getConfigListEntry("Zeige IStream:", config.mediaportal.showIStream))
-			self.configlist.append(getConfigListEntry("Zeige Baskino:", config.mediaportal.showBaskino))
-			self.configlist.append(getConfigListEntry("Zeige KinoKiste:", config.mediaportal.showKinoKiste))
-			self.configlist.append(getConfigListEntry("Zeige Stream-Oase:", config.mediaportal.showStreamOase))
-			self.configlist.append(getConfigListEntry("Zeige Burning-Series:", config.mediaportal.showBs))
-			self.configlist.append(getConfigListEntry("Zeige Kinox:", config.mediaportal.showKinox))
-			self.configlist.append(getConfigListEntry("Zeige Movie4k:", config.mediaportal.showM4k))
-			self.configlist.append(getConfigListEntry("Zeige Cinestream:", config.mediaportal.showCinestream))
-			self.configlist.append(getConfigListEntry("Zeige MLE-HD:", config.mediaportal.showmlehd))
-			self.configlist.append(getConfigListEntry("Zeige PrimeWire:", config.mediaportal.showprimewire))
-			self.configlist.append(getConfigListEntry("Zeige ddl.me:", config.mediaportal.showDdlme))
-			self.configlist.append(getConfigListEntry("Zeige movie25:", config.mediaportal.showMovie25))
-			self.configlist.append(getConfigListEntry("Zeige watchseries:", config.mediaportal.showWatchseries))
-			self.configlist.append(getConfigListEntry("Zeige Vibeo:", config.mediaportal.showVibeo))
-			self.configlist.append(getConfigListEntry("Zeige Moovizon:", config.mediaportal.showMoovizon))
-			#self.configlist.append(getConfigListEntry("Zeige Viewster:", config.mediaportal.showViewster))
+			self.grauzone.append(getConfigListEntry("----- Grauzone -----", config.mediaportal.fake_entry))
+			self.grauzone.append(getConfigListEntry("Zeige SzeneStreams:", config.mediaportal.showSzeneStreams))
+			self.grauzone.append(getConfigListEntry("Zeige My-Entertainment:", config.mediaportal.showMEHD))
+			self.grauzone.append(getConfigListEntry("Zeige IStream:", config.mediaportal.showIStream))
+			self.grauzone.append(getConfigListEntry("Zeige Baskino:", config.mediaportal.showBaskino))
+			self.grauzone.append(getConfigListEntry("Zeige KinoKiste:", config.mediaportal.showKinoKiste))
+			self.grauzone.append(getConfigListEntry("Zeige Stream-Oase:", config.mediaportal.showStreamOase))
+			self.grauzone.append(getConfigListEntry("Zeige Burning-Series:", config.mediaportal.showBs))
+			self.grauzone.append(getConfigListEntry("Zeige Kinox:", config.mediaportal.showKinox))
+			self.grauzone.append(getConfigListEntry("Zeige Movie4k:", config.mediaportal.showM4k))
+			self.grauzone.append(getConfigListEntry("Zeige Cinestream:", config.mediaportal.showCinestream))
+			self.grauzone.append(getConfigListEntry("Zeige MLE-HD:", config.mediaportal.showmlehd))
+			self.grauzone.append(getConfigListEntry("Zeige PrimeWire:", config.mediaportal.showprimewire))
+			self.grauzone.append(getConfigListEntry("Zeige ddl.me:", config.mediaportal.showDdlme))
+			self.grauzone.append(getConfigListEntry("Zeige movie25:", config.mediaportal.showMovie25))
+			self.grauzone.append(getConfigListEntry("Zeige watchseries:", config.mediaportal.showWatchseries))
+			self.grauzone.append(getConfigListEntry("Zeige Vibeo:", config.mediaportal.showVibeo))
+			self.grauzone.append(getConfigListEntry("Zeige Moovizon:", config.mediaportal.showMoovizon))
+			#self.grauzone.append(getConfigListEntry("Zeige Viewster:", config.mediaportal.showViewster))
+			self.grauzone.sort(key=lambda t : tuple(t[0][0].lower()))
 
-			self.configlist.append(getConfigListEntry("----- Watchlist -----", config.mediaportal.fake_entry))
-			self.configlist.append(getConfigListEntry("Zeige Kinox Watchlist:", config.mediaportal.showKinoxWatchlist))
-			self.configlist.append(getConfigListEntry("Zeige Movie4k Watchlist:", config.mediaportal.showM4kWatchlist))		
+			self.grauzone.append(getConfigListEntry("----- Watchlist -----", config.mediaportal.fake_entry))
+			self.grauzone.append(getConfigListEntry("Zeige Kinox Watchlist:", config.mediaportal.showKinoxWatchlist))
+			self.grauzone.append(getConfigListEntry("Zeige Movie4k Watchlist:", config.mediaportal.showM4kWatchlist))
+
+		for x in self.sport:
+			self.configlist.append(x)
+
+		for x in self.music:
+			self.configlist.append(x)
+
+		for x in self.fun:
+			self.configlist.append(x)
+
+		for x in self.mediatheken:
+			self.configlist.append(x)
+
+		for x in self.porn:
+			self.configlist.append(x)
+
+		for x in self.grauzone:
+			self.configlist.append(x)
 
 		self.configlist.append(getConfigListEntry("----- Debug -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Grauzonen-Erweiterungen sichtbar:", config.mediaportal.showgrauzone))
@@ -1480,7 +1506,7 @@ class pluginSort(Screen):
 		self.skin_path = mp_globals.pluginPath + "/skins"
 
 		path = "%s/%s/pluginSortScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
-		
+
 		if not fileExists(path):
 			path = self.skin_path + "/original/pluginSortScreen.xml"
 
@@ -1952,21 +1978,21 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste_page_tmp = [x for x in self.dump_liste_page_tmp if re.search(config.mediaportal.filter.value, x[2])]
 			else:
 				self.plugin_liste_page_tmp = self.plugin_liste
-				
+
 			if len(self.plugin_liste_page_tmp) != 0:
 				self.counting_pages = len(self.plugin_liste_page_tmp) / 40
 				print "COUNTING PAGES:", self.counting_pages
 				pagebar_size = int(self.counting_pages) * 30
 				rest_size = 1280 - int(pagebar_size)
 				start_pagebar = int(rest_size) / 2
-				
+
 				for x in range(1,self.counting_pages+2):
 					normal = 650
 					print x, start_pagebar, normal
 					skincontent += "<widget name=\"page_empty" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
 					skincontent += "<widget name=\"page_sel" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
-					start_pagebar += 30	
-		
+					start_pagebar += 30
+
 		self.skin_dump = ""
 		self.skin_dump += "<widget name=\"frame\" position=\"20,210\" size=\"150,80\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/Selektor_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
 		self.skin_dump += skincontent
@@ -2016,7 +2042,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		for x in range(1,len(self.plugin_liste)+1):
 			self["zeile"+str(x)] = Pixmap()
 			self["zeile"+str(x)].show()
-			
+
 		# Apple Page Style
 		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			for x in range(1,self.counting_pages+2):
@@ -2522,7 +2548,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		# Apple Page Style
 		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			self.refresh_apple_page_bar()
-			
+
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
 
@@ -2534,7 +2560,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		# Apple Page Style
 		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			self.refresh_apple_page_bar()
-			
+
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
 
@@ -2547,7 +2573,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			else:
 				self["page_sel"+str(x)].hide()
 				self["page_empty"+str(x)].show()
-		
+
 	def keySetup(self):
 		if config.mediaportal.setuppin.value:
 			self.session.openWithCallback(self.pinok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
