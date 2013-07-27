@@ -29,10 +29,10 @@
 			<widget source="session.CurrentService" render="Label" position="670,530" size="90,25" backgroundColor="#00101214" transparent="1" font="mediaportal;22" valign="center" halign="right">
 			  <convert type="ServicePosition">Remaining</convert>
 			</widget>
- <ePixmap pixmap="~/original/images/buttonred.png" position="60,630" size="100,2" alphatest="blend" />
-    <ePixmap pixmap="~/original/images/buttongreen.png" position="205,630" size="100,2" alphatest="blend" />
-    <ePixmap pixmap="~/original/images/buttonyellow.png" position="350,630" size="100,2" alphatest="blend" />
-    <ePixmap pixmap="~/original/images/buttonblue.png" position="492,630" size="100,2" alphatest="blend" />
+ <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttonred.png" position="60,630" size="100,2" alphatest="blend" />
+    <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongreen.png" position="205,630" size="100,2" alphatest="blend" />
+    <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttonyellow.png" position="350,630" size="100,2" alphatest="blend" />
+    <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttonblue.png" position="492,630" size="100,2" alphatest="blend" />
     <widget name="F1" position="60,605" size="100,30" transparent="1" font="mediaportal; 20" backgroundColor="#00101214" valign="bottom" halign="center" />
     <widget name="F2" position="205,605" size="100,30" transparent="1" backgroundColor="#00101214" font="mediaportal; 20" valign="bottom" halign="center" />
     <widget name="F3" position="350,605" size="100,30" transparent="1" font="mediaportal; 20" backgroundColor="#00101214" valign="bottom" halign="center" />
