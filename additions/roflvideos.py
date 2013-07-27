@@ -6,14 +6,6 @@ def auswahlListEntry(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
-special_headers = {
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0',
-	'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Language': 'en-US;q=0.6,en;q=0.4',
-	'Referer': 'http://clips.rofl.to/'
-}
-
 class roflScreen(Screen):
 
 	def __init__(self, session):
@@ -56,7 +48,7 @@ class roflScreen(Screen):
 	def loadPage(self):
 		self.keyLocked = True
 		url = "http://clips.rofl.to/new-clips/week/%s" % str(self.page)
-		getPage(url, agent=special_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
 		roflVideos = re.findall('class="container.*?<a\shref="(http://clips.rofl.to/clip/.*?)"\srel="nofollow"\stitle=".*?"><img\ssrc="(http://media.rofl.to/clipshots/.*?)".*?alt="(.*?)"\s/>', data)
@@ -134,13 +126,13 @@ class roflScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		roflName = self['roflList'].getCurrent()[0][0]
 		roflURL = self['roflList'].getCurrent()[0][1]
 		print roflURL
-		getPage(roflURL, agent=special_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		getPage(roflURL, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
 		print data
+		roflName = self['roflList'].getCurrent()[0][0]
 		roflLink = re.findall('id="video-player".*?href="(.*?.flv)"', data, re.S)
 		if roflLink:
 			self.session.open(SimplePlayer, [(roflName, roflLink[0])], showPlaylist=False, ltype='roflto')
