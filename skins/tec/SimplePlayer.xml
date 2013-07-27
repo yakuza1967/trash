@@ -8,20 +8,20 @@
   <widget source="session.CurrentService" render="Progress" position="273,626" size="700,14" pixmap="~/tec/images/spbar.png" zPosition="3" transparent="1" backgroundColor="#00000000">
   <convert type="ServicePosition">Position</convert>
 </widget>
-<!--<widget name="seekbartime" position="50,130" size="100,20" font="Regular;20" halign="left" backgroundColor="#4e5a74" transparent="1" />-->
-  <widget name="seekbarcursor" position="273,626" size="16,16" zPosition="3" pixmap="~/tec/images/seekbutton.png" alphatest="on" />
+  <widget name="seekbarcursor" position="273,626" size="16,16" zPosition="4" pixmap="~/tec/images/seekbutton.png" alphatest="on" />
   <widget source="session.CurrentService" render="PositionGauge" position="271,624" size="695,12" zPosition="3" transparent="1">
   <convert type="ServicePosition">Gauge</convert>
 </widget>
-  <widget source="session.CurrentService" render="Label" position="273,645" size="100,30" font="mediaportal;22" halign="left" backgroundColor="#00000000" transparent="1">
-  <convert type="ServicePosition">Position</convert>
-</widget>
-  <widget source="session.CurrentService" render="Label" position="591,645" size="100,30" font="mediaportal;22" halign="center" backgroundColor="#00000000" transparent="1">
-  <convert type="ServicePosition">Length</convert>
-</widget>
-  <widget source="session.CurrentService" render="Label" position="872,645" size="100,30" font="mediaportal;22" halign="right" backgroundColor="#00000000" transparent="1">
-  <convert type="ServicePosition">Remaining,Negate</convert>
-</widget>
+  <widget source="session.CurrentService" render="Label" position="273,645" size="100,30" font="mediaportal;20" halign="left" backgroundColor="#00000000" transparent="1" valign="top">
+    <convert type="ServicePosition">Position</convert>
+  </widget>
+  <widget source="session.CurrentService" render="Label" position="591,645" size="100,20" font="mediaportal;20" halign="center" backgroundColor="#00000000" transparent="1" valign="top">
+    <convert type="ServicePosition">Length</convert>
+  </widget>
+  <widget source="session.CurrentService" render="Label" position="872,645" size="100,30" font="mediaportal;20" halign="right" backgroundColor="#00000000" transparent="1" valign="top">
+    <convert type="ServicePosition">Remaining,Negate</convert>
+  </widget>
+  <!--<widget name="seekbartime" position="591,665" size="100,20" font="mediaportal;20" halign="center" backgroundColor="#00000000" transparent="1" />-->
   <widget name="Cover" position="1082,341" size="146,193" zPosition="2" alphatest="blend" />
   <widget name="spcoverframe" position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
   <widget name="spcoverfg" position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />
