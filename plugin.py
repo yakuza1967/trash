@@ -1945,18 +1945,34 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		# Appe Page Style
 		if config.mediaportal.showapplepagestyle.value:
-			self.counting_pages = len(self.plugin_liste) / 40
-			print "COUNTING PAGES:", self.counting_pages
-			pagebar_size = int(self.counting_pages) * 30
-			rest_size = 1280 - int(pagebar_size)
-			start_pagebar = int(rest_size) / 2
-			
-			for x in range(1,self.counting_pages+2):
-				normal = 650
-				print x, start_pagebar, normal
-				skincontent += "<widget name=\"page_empty" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
-				skincontent += "<widget name=\"page_sel" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
-				start_pagebar += 30	
+			self.sortplugin = config.mediaportal.sortplugins.value
+			if self.sortplugin == "hits":
+				self.sortplugin = "Hits"
+			elif self.sortplugin == "abc":
+				self.sortplugin = "ABC"
+			elif self.sortplugin == "user":
+				self.sortplugin = "User"
+
+			self.dump_liste_page_tmp = self.plugin_liste
+			if config.mediaportal.filter.value != "ALL":
+				self.plugin_liste_page_tmp = []
+				self.plugin_liste_page_tmp = [x for x in self.dump_liste_page_tmp if re.search(config.mediaportal.filter.value, x[2])]
+			else:
+				self.plugin_liste_page_tmp = self.plugin_liste
+				
+			if len(self.plugin_liste_page_tmp) != 0:
+				self.counting_pages = len(self.plugin_liste_page_tmp) / 40
+				print "COUNTING PAGES:", self.counting_pages
+				pagebar_size = int(self.counting_pages) * 30
+				rest_size = 1280 - int(pagebar_size)
+				start_pagebar = int(rest_size) / 2
+				
+				for x in range(1,self.counting_pages+2):
+					normal = 650
+					print x, start_pagebar, normal
+					skincontent += "<widget name=\"page_empty" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
+					skincontent += "<widget name=\"page_sel" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
+					start_pagebar += 30	
 		
 		self.skin_dump = ""
 		self.skin_dump += "<widget name=\"frame\" position=\"20,210\" size=\"150,80\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/Selektor_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
@@ -2095,7 +2111,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page_select.png" % (self.images_path)
 				#print "postername:", postername, poster_path
-				self["page_sel"+str(x)].instance.setPixmap(gPixmapPtr())
+				self["page_sel"+str(x)].instance.setPixmap(None)
 				self["page_sel"+str(x)].hide()
 				pic = LoadPixmap(cached=True, path=poster_path)
 				if pic != None:
@@ -2105,7 +2121,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page.png" % (self.images_path)
-				self["page_empty"+str(x)].instance.setPixmap(gPixmapPtr())
+				self["page_empty"+str(x)].instance.setPixmap(None)
 				self["page_empty"+str(x)].hide()
 				pic = LoadPixmap(cached=True, path=poster_path)
 				if pic != None:
