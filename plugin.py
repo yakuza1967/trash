@@ -533,10 +533,60 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self['title'] = Label("MediaPortal - Setup - (Version %s)" % config.mediaportal.versiontext.value)
 		self['name'] = Label("Setup")
 
-		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions"], {
 			"ok"    : self.keyOK,
-			"cancel": self.keyOK
+			"cancel": self.keyOK,
+			"nextBouquet": self.keyDown,
+			"prevBouquet": self.keyUp
 		}, -1)
+
+	def keyDown(self):
+		current = self["config"].getCurrentIndex()
+		if int(current) < 20:
+			self["config"].setCurrentIndex(20)
+		elif int(current) < 40:
+			self["config"].setCurrentIndex(40)
+		elif int(current) < 60:
+			self["config"].setCurrentIndex(60)
+		elif int(current) < 80:
+			self["config"].setCurrentIndex(80)
+		elif int(current) < 100:
+			self["config"].setCurrentIndex(100)
+		elif int(current) < 120:
+			self["config"].setCurrentIndex(120)
+		elif int(current) < 140:
+			self["config"].setCurrentIndex(140)
+		elif int(current) < 160:
+			self["config"].setCurrentIndex(160)
+		elif int(current) < 160:
+			self["config"].setCurrentIndex(180)
+		elif int(current) < 160:
+			self["config"].setCurrentIndex(200)
+
+	def keyUp(self):
+		current = self["config"].getCurrentIndex()
+		if int(current) > 200:
+			self["config"].setCurrentIndex(200)
+		elif int(current) > 180:
+			self["config"].setCurrentIndex(180)
+		elif int(current) > 160:
+			self["config"].setCurrentIndex(160)			
+		elif int(current) > 140:
+			self["config"].setCurrentIndex(140)
+		elif int(current) > 120:
+			self["config"].setCurrentIndex(120)
+		elif int(current) > 100:
+			self["config"].setCurrentIndex(100)
+		elif int(current) > 80:
+			self["config"].setCurrentIndex(80)			
+		elif int(current) > 60:
+			self["config"].setCurrentIndex(60)
+		elif int(current) > 40:
+			self["config"].setCurrentIndex(40)
+		elif int(current) > 20:
+			self["config"].setCurrentIndex(20)
+		elif int(current) >= 20:
+			self["config"].setCurrentIndex(0)
 
 	def keyOK(self):
 		if config.mediaportal.watchlistpath.value[-1] != '/':
