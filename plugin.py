@@ -2017,7 +2017,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self["zeile"+str(x)].show()
 			
 		# Apple Page Style
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			for x in range(1,self.counting_pages+2):
 				self["page_empty"+str(x)] = Pixmap()
 				self["page_empty"+str(x)].show()
@@ -2099,7 +2099,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				if x <= 40:
 					self["zeile"+str(x)].show()
 
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page_select.png" % (self.images_path)
 				#print "postername:", postername, poster_path
@@ -2519,7 +2519,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		print self.selektor_index
 		self.move_selector()
 		# Apple Page Style
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			self.refresh_apple_page_bar()
 			
 		for x in self.mainlist[int(self.select_list)]:
@@ -2531,7 +2531,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.selektor_index = 1
 		self.move_selector()
 		# Apple Page Style
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			self.refresh_apple_page_bar()
 			
 		for x in self.mainlist[int(self.select_list)]:
