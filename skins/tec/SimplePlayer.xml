@@ -21,7 +21,7 @@
   <widget source="session.CurrentService" render="Label" position="872,645" size="100,30" font="mediaportal;20" halign="right" backgroundColor="#00000000" transparent="1" valign="top">
     <convert type="ServicePosition">Remaining,Negate</convert>
   </widget>
-  <!--<widget name="seekbartime" position="591,665" size="100,20" font="mediaportal;20" halign="center" backgroundColor="#00000000" transparent="1" />-->
+  <widget name="seekbartime" position="591,665" size="100,20" font="mediaportal;20" halign="center" backgroundColor="#00000000" transparent="1" />
   <widget name="Cover" position="1082,341" size="146,193" zPosition="2" alphatest="blend" />
   <widget name="spcoverframe" position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
   <widget name="spcoverfg" position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />

@@ -25,7 +25,7 @@ class SimpleSeekHelper:
 	def __init__(self):
 		self["seekbarcursor"] = MovingPixmap()
 		self["seekbarcursor"].hide()
-		#self["seekbartime"] = Label()
+		self["seekbartime"] = Label()
 		self.cursorTimer = eTimer()
 		self.cursorTimer.callback.append(self.__updateCursor)
 		self.seekBarShown = False
@@ -73,7 +73,7 @@ class SimpleSeekHelper:
 			self["seekbarcursor"].moveTo(x, 626, 1)
 			self["seekbarcursor"].startMoving()
 			pts = int(float(self.length[1]) / 100.0 * self.percent)
-			#self["seekbartime"].setText("%d:%02d" % ((pts/60/90000), ((pts/90000)%60)))
+			self["seekbartime"].setText("%d:%02d" % ((pts/60/90000), ((pts/90000)%60)))
 
 	def seekExit(self):
 		#print "seekExit:"
@@ -87,15 +87,13 @@ class SimpleSeekHelper:
 
 	def seekLeft(self):
 		#print "seekLeft:"
-		#self.percent -= float(config.mediaportal.Seekbar-sensibility.value) / 10.0
-		self.percent -= float(10) / 10.0
+		self.percent -= float(config.mediaportal.sp_seekbar_sensibility.value) / 10.0
 		if self.percent < 0.0:
 			self.percent = 0.0
 
 	def seekRight(self):
 		#print "seekRight:"
-		#self.percent += float(config.mediaportal.Seekbar-sensibility.value) / 10.0
-		self.percent += float(10) / 10.0
+		self.percent += float(config.mediaportal.sp_seekbar_sensibility.value) / 10.0
 		if self.percent > 100.0:
 			self.percent = 100.0
 
@@ -673,6 +671,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Youtube VideoPrio', config.mediaportal.youtubeprio))
 		self.list.append(getConfigListEntry('Behavior in stop movie', config.mediaportal.sp_on_movie_stop))
 		self.list.append(getConfigListEntry('Behavior on movie end', config.mediaportal.sp_on_movie_eof))
+		self.list.append(getConfigListEntry('Seekbar sensibility', config.mediaportal.sp_seekbar_sensibility))
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{
