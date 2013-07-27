@@ -24,6 +24,7 @@ class SimpleSeekHelper:
 
 	def __init__(self):
 		self["seekbarcursor"] = MovingPixmap()
+		self["seekbarcursor"].hide()
 		#self["seekbartime"] = Label()
 		self.cursorTimer = eTimer()
 		self.cursorTimer.callback.append(self.__updateCursor)
@@ -33,6 +34,7 @@ class SimpleSeekHelper:
 	def initSeek(self):
 		InfoBarShowHide.lockShow(self)
 		self.seekBarLocked = True
+		self["seekbarcursor"].show()
 		self.percent = 0.0
 		self.length = None
 		service = self.session.nav.getCurrentService()
@@ -62,6 +64,7 @@ class SimpleSeekHelper:
 			self.unlockShow()
 			self.seekBarLocked = False
 			self.seekOK()
+			self["seekbarcursor"].hide()
 		InfoBarShowHide.toggleShow(self)
 
 	def __updateCursor(self):
