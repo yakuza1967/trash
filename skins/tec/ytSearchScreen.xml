@@ -12,7 +12,7 @@
     <!-- select screen -->
     <widget name="ContentTitle" position="80,180" size="850,25" backgroundColor="#26181d20" zPosition="5" foregroundColor="#00ffffff" font="mediaportal;22" halign="center" transparent="1" />
     <widget name="name" position="913,331" size="328,100" backgroundColor="#26181d20" transparent="1" zPosition="1" font="mediaportal;24" valign="center" halign="center" foregroundColor="#00ffffff" />
-    <widget name="genreList" position="55,221" size="850,250" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColor="#00999999" />
+    <widget name="genreList" position="55,221" size="850,250" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColorSelected="#ffffff" foregroundColor="#00999999" />
     <widget name="title" position="80,106" size="850,60" foregroundColor="#00ffffff" backgroundColor="#26181d20" transparent="1" font="mediaportal;26" valign="center" halign="center" />
     <widget name="Parameter" position="55,475" size="150,30" foregroundColor="#00999999" backgroundColor="#26181d20" transparent="1" font="mediaportal; 26" valign="center" halign="center" zPosition="0" />
     <widget name="ParameterToEdit" position="220,474" size="60,30" foregroundColor="#00ffffff" backgroundColor="#26181d20" transparent="1" font="mediaportal; 26" valign="center" zPosition="0" halign="left" />

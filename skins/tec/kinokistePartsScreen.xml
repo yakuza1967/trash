@@ -17,7 +17,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/buttonglas.png" position="1035,680" size="90,36" alphatest="blend" zPosition="2" />
 	<!-- select screen -->
     <widget name="name" position="913,331" size="328,100" backgroundColor="#26181d20" transparent="1" zPosition="1" font="mediaportal;24" valign="center" halign="center" foregroundColor="#00ffffff" />
-    <widget name="genreList" position="55,190" size="850,500" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColor="#00999999" />
+    <widget name="genreList" position="55,190" size="850,500" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColorSelected="#ffffff" foregroundColor="#00999999" />
     <widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="917,439" size="320,240" transparent="1" alphatest="blend" />
     <widget name="title" position="55,106" size="850,60" foregroundColor="#00ffffff" backgroundColor="#26181d20" transparent="1" font="mediaportal;26" valign="center" halign="center" />
   </screen>
