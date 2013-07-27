@@ -7,11 +7,11 @@ def auswahlListEntry(entry):
 		]
 
 special_headers = {
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0',
 	'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Language': 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Referer': 'http://videos.rofl.to/'
+	'Accept-Language': 'en-US;q=0.6,en;q=0.4',
+	'Referer': 'http://clips.rofl.to/'
 }
 
 class roflScreen(Screen):
@@ -55,11 +55,11 @@ class roflScreen(Screen):
 
 	def loadPage(self):
 		self.keyLocked = True
-		url = "http://videos.rofl.to/neue-videos/woche/%s" % str(self.page)
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		url = "http://clips.rofl.to/new-clips/week/%s" % str(self.page)
+		getPage(url, agent=special_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		roflVideos = re.findall('<a href="(http://videos.rofl.to/clip/.*?)" rel="nofollow" title=".*?"><img src="(http://media.rofl.to/clipshots/.*?)".*?alt="(.*?)" />', data)
+		roflVideos = re.findall('class="container.*?<a\shref="(http://clips.rofl.to/clip/.*?)"\srel="nofollow"\stitle=".*?"><img\ssrc="(http://media.rofl.to/clipshots/.*?)".*?alt="(.*?)"\s/>', data)
 		if roflVideos:
 			self.roflListe = []
 			for roflUrl,roflPic,roflName in roflVideos:
@@ -136,6 +136,7 @@ class roflScreen(Screen):
 			return
 		roflName = self['roflList'].getCurrent()[0][0]
 		roflURL = self['roflList'].getCurrent()[0][1]
+		print roflURL
 		getPage(roflURL, agent=special_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
