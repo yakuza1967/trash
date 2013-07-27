@@ -18,7 +18,7 @@
 	<!-- select screen -->
     <widget name="name" position="913,331" size="328,100" backgroundColor="#26181d20" transparent="1" zPosition="1" font="mediaportal;24" valign="center" halign="center" foregroundColor="#00ffffff" />
     <widget name="streamlist" position="55,180" size="850,350" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColorSelected="#ffffff" foregroundColor="#00999999" />
-    <widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="917,439" size="320,240" transparent="1" alphatest="blend" />
+    <widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="1002,439" size="150,200" transparent="1" alphatest="blend" />
     <widget name="title" position="155,106" size="750,60" foregroundColor="#00ffffff" backgroundColor="#26181d20" transparent="1" font="mediaportal;26" valign="center" halign="center" />
     <widget name="handlung" position="55,543" size="850,150" backgroundColor="#26181d20" transparent="1" font="mediaportal;18" valign="top" foregroundColor="#00ffffff" />
     <eLabel text="Page " position="55,106" size="100,60" backgroundColor="#26181d20" transparent="1" foregroundColor="#00ffffff" font="mediaportal;20" valign="center" />
