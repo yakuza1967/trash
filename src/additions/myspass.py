@@ -1,5 +1,6 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def myspassGenreListEntry(entry):
 	return [entry,
@@ -186,6 +187,10 @@ class myspassFolgenListeScreen(Screen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
 			"red": self.keyCancel
 		}, -1)
 
@@ -218,14 +223,23 @@ class myspassFolgenListeScreen(Screen):
 		getPage(self.myspassUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		folgen = re.findall('<a\shref="/myspass/shows/.*?/.*?/.*?/(.*?)/".*?;">(.*?)<', data)
+		folgen = re.findall('class="episodeListInformation">.*?location.href=.*?--\/(.*?)\/.*?img\ssrc="(.*?)"\salt="(.*?)".*?\/h5>(.*?)</div>', data, re.S|re.I)
 		if folgen:
-			self.folgenliste
-			for (id, name) in folgen:
+			for (id, image, title, description) in folgen:
 				link = "http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id=%s" % (id)
-				self.folgenliste.append((decodeHtml(name), link))
+				image = "http://www.myspass.de" + image
+				self.folgenliste.append((decodeHtml(title), link, image, description))
 			self.chooseMenuList.setList(map(myspassListEntry, self.folgenliste))
 			self.keyLocked = False
+			self.loadPic()
+		
+	def loadPic(self):
+		streamTitle = self['liste'].getCurrent()[0][0]
+		streamPic = self['liste'].getCurrent()[0][2]
+		streamHandlung = self['liste'].getCurrent()[0][3]
+		self['name'].setText(streamTitle)
+		self['handlung'].setText(streamHandlung)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -236,13 +250,37 @@ class myspassFolgenListeScreen(Screen):
 		getPage(self.mylink , headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
 
 	def get_link(self, data):
-		stream_url = re.findall('<url_flv><.*?CDATA\[(.*?)\]\]></url_flv>', data, re.S)
+		stream_url = re.search('<url_flv><.*?CDATA\[(.*?)\]\]></url_flv>', data, re.S)
 		if stream_url:
-			print stream_url[0]
-			self.session.open(SimplePlayer, [(self.myname, stream_url[0])], showPlaylist=False, ltype='myspass')
+			print stream_url.group(1)
+			self.session.open(SimplePlayer, [(self.myname, stream_url.group(1))], showPlaylist=False, ltype='myspass')
 
 	def dataError(self, error):
 		printl(error,self,"E")
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['liste'].pageUp()
+		self.loadPic()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['liste'].pageDown()
+		self.loadPic()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['liste'].up()
+		self.loadPic()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['liste'].down()
+		self.loadPic()
 
 	def keyCancel(self):
 		self.close()
