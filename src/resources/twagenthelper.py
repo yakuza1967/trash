@@ -108,7 +108,8 @@ class TwAgentHelper:
 		"""
 
 		def __getWebPageDef(self, url, *args, **kwargs):
-			getPage(url, followRedirect=True, agent=self.headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self._wp_callback, *args, **kwargs).addErrback(self._errback)
+			#getPage(url, followRedirect=True, agent=self.headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self._wp_callback, *args, **kwargs).addErrback(self._errback)
+			getPage(url, followRedirect=True, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self._wp_callback, *args, **kwargs).addErrback(self._errback)
 
 		def __getResource(self, response):
 			print "__getResource:"
