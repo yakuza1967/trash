@@ -9,7 +9,7 @@
 				<convert type="ClockToText">Format:%A, %d.%m.%Y</convert>
 			</widget>
 			<widget name="leftContentTitle" position="0,80" size="900,26" backgroundColor="#00aaaaaa" zPosition="5" foregroundColor="#00000000" font="mediaportal;22" halign="center" />
-			<widget name="streamlist" position="0,106" size="900,300" backgroundColor="#00101214" scrollbarMode="showOnDemand" foregroundColorSelected="#ffffff" transparent="0"  />
+			<widget name="streamlist" position="0,106" size="900,300" backgroundColor="#00101214" scrollbarMode="showOnDemand" selectionPixmap="~/original/images/sel.png" foregroundColorSelected="#ffffff" transparent="0"  />
 			<widget name="stationIcon" position="10,415" size="107,150" transparent="1" alphatest="blend" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt100.png" />
 			<ePixmap position="740,595" size="100,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongreen.png" alphatest="blend" backgroundColor="#00101214" />
             <ePixmap position="790,595" size="100,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongreen.png" alphatest="blend" backgroundColor="#00101214" />			
