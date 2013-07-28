@@ -11,7 +11,7 @@
 			<widget name="leftContentTitle" position="0,60" size="900,25" backgroundColor="#00aaaaaa" zPosition="5" foregroundColor="#00000000" font="mediaportal;22" halign="center" />
 			<widget name="streamlist" position="0,85" size="900,325" backgroundColor="#00101214" scrollbarMode="showOnDemand" foregroundColorSelected="#ffffff" transparent="0"  />
 			<eLabel position="215,460" size="675,2" backgroundColor="#00555556" />
-			<widget name="stationIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt.png" position="20,420" size="145,200" transparent="1" alphatest="blend" />
+			<widget name="stationIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt100.png" position="20,420" size="145,200" transparent="1" alphatest="blend" />
 			<widget name="name" position="230,420" size="520,30" foregroundColor="#00e5b243" backgroundColor="#00101214" transparent="1" font="mediaportal;26" valign="top" />
 			<widget name="handlung" position="205,473" size="680,140" backgroundColor="#00101214" transparent="1" font="mediaportal;20" valign="top" />
             <ePixmap position="785,645" size="100,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttonred.png" alphatest="blend" backgroundColor="#00101214" />

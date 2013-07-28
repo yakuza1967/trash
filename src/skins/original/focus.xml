@@ -14,6 +14,6 @@
 				<convert type="ServicePosition">Length</convert>
 			</widget>
 			<eLabel position="215,460" size="565,2" backgroundColor="#00555556" />
-			<widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt.png" position="20,440" size="160,120" transparent="1" alphatest="blend" />
+			<widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt100.png" position="20,440" size="160,120" transparent="1" alphatest="blend" />
 			<widget name="handlung" position="205,473" size="680,140" backgroundColor="#00101214" transparent="1" font="mediaportal;20" valign="top" />
 		</screen>

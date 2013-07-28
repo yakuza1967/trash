@@ -10,7 +10,7 @@
     <widget name="ContentTitle" position="0,60" size="900,25" backgroundColor="#00aaaaaa" zPosition="0" foregroundColor="#00000000" font="mediaportal;22" halign="center" />
     <widget name="liste" position="0,86" size="900,303" backgroundColor="#00101214" scrollbarMode="showOnDemand" foregroundColorSelected="#ffffff" transparent="0" />
     <eLabel position="20,390" size="860,2" backgroundColor="#00555556" />
-    <widget name="coverArt" pixmap="~/original/images/no_coverArt.png" position="20,396" size="150,200" transparent="1" alphatest="blend" borderWidth="2" borderColor="#00555556" />
+    <widget name="coverArt" pixmap="~/original/images/no_coverArt100.png" position="20,396" size="150,200" transparent="1" alphatest="blend" borderWidth="2" borderColor="#00555556" />
     <widget name="name" position="180,395" size="700,30" foregroundColor="#00e5b243" backgroundColor="#00101214" transparent="1" font="mediaportal;26" valign="top" zPosition="0" />
     <widget name="handlung" position="180,425" size="700,170" backgroundColor="#00101214" transparent="1" font="mediaportal;20" valign="top" zPosition="0" />
     <widget name="Page" position="740,605" size="55,25" backgroundColor="#00101214" transparent="1" foregroundColor="#00555556" font="mediaportal;20" valign="center" halign="right" zPosition="0" />
