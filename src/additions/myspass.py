@@ -43,6 +43,7 @@ class myspassGenreScreen(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
+		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
 
@@ -59,19 +60,19 @@ class myspassGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		ganze = re.findall('<div class="showsAZName"><a href="(/myspass/shows/.*?)".*?>(.*?)</a></div>', data, re.S)
+		ganze = re.findall('class="showsAZName"><a\shref="(/myspass/shows/.*?)".*?>(.*?)</a></div>', data, re.S)
 		if ganze:
 			self.genreliste = []
 			for (link, name) in ganze:
 				link = "http://www.myspass.de%s" % link
 				print name, link
-				self.genreliste.append((decodeHtml(name), link))		
+				self.genreliste.append((decodeHtml(name), link))
 			self.chooseMenuList.setList(map(myspassListEntry, self.genreliste))
-			self.keyLocked = False		
+			self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -117,6 +118,7 @@ class myspassStaffelListeScreen(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
+		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
 		self['handlung'] = Label("")
@@ -137,14 +139,14 @@ class myspassStaffelListeScreen(Screen):
 		getPage(self.myspassUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		staffeln = re.findall('<li.*?><a.*?href="#seasonlist_full_episode.*?" onclick="ajax.*?(getEpisodeListFromSeason.*?)\'.*?>(.*?)</a></li>', data)
+		staffeln = re.findall('<li.*?><a.*?href="#seasonlist_full_episode.*?"\sonclick="ajax.*?(getEpisodeListFromSeason.*?)\'.*?>(.*?)</a></li>', data)
 		if staffeln:
 			self.staffelliste = []
 			for (link, name) in staffeln:
 				link = "http://www.myspass.de/myspass/includes/php/ajax.php?action=%s" % (link.replace('&amp;','&'))
-				self.staffelliste.append((decodeHtml(name), link))		
+				self.staffelliste.append((decodeHtml(name), link))
 			self.chooseMenuList.setList(map(myspassListEntry, self.staffelliste))
-			self.keyLocked = False		
+			self.keyLocked = False
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -160,7 +162,7 @@ class myspassStaffelListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class myspassFolgenListeScreen(Screen):
 
 	def __init__(self, session, myspassName, myspassUrl):
@@ -195,6 +197,7 @@ class myspassFolgenListeScreen(Screen):
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
+		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
 		self['handlung'] = Label("")
@@ -215,21 +218,21 @@ class myspassFolgenListeScreen(Screen):
 		getPage(self.myspassUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		folgen = re.findall('<a href="/myspass/shows/.*?/.*?/.*?/(.*?)/".*?;">(.*?)<', data)
+		folgen = re.findall('<a\shref="/myspass/shows/.*?/.*?/.*?/(.*?)/".*?;">(.*?)<', data)
 		if folgen:
 			self.folgenliste
 			for (id, name) in folgen:
 				link = "http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id=%s" % (id)
-				self.folgenliste.append((decodeHtml(name), link))		
+				self.folgenliste.append((decodeHtml(name), link))
 			self.chooseMenuList.setList(map(myspassListEntry, self.folgenliste))
-			self.keyLocked = False		
+			self.keyLocked = False
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		self.myname = self['liste'].getCurrent()[0][0]
 		self.mylink = self['liste'].getCurrent()[0][1]
-		print self.myname, self.mylink 
+		print self.myname, self.mylink
 		getPage(self.mylink , headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
 
 	def get_link(self, data):
