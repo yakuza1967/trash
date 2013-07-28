@@ -9,9 +9,9 @@
 				<convert type="ClockToText">Format:%A, %d.%m.%Y</convert>
 			</widget>
 			<widget name="leftContentTitle" position="0,80" size="440,26" backgroundColor="#00aaaaaa" zPosition="5" foregroundColor="#00000000" font="mediaportal;22" halign="center" />
-			<widget name="streamlist" position="0,106" size="440,350" backgroundColor="#00101214" scrollbarMode="showOnDemand" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/sel.png" foregroundColorSelected="#ffffff" transparent="0"  />
+			<widget name="streamlist" position="0,106" size="440,350" backgroundColor="#00101214" scrollbarMode="showOnDemand" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/sel.png" foregroundColorSelected="#00e5b243" transparent="0"  />
 			<widget name="rightContentTitle" position="460,80" size="440,26" backgroundColor="#00aaaaaa" zPosition="5" foregroundColor="#00000000" font="mediaportal;22" halign="center" />		
-			<widget name="playlist" position="460,106" size="440,350" backgroundColor="#00101214" scrollbarMode="showOnDemand" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/sel.png" foregroundColorSelected="#ffffff" transparent="0"  />
+			<widget name="playlist" position="460,106" size="440,350" backgroundColor="#00101214" scrollbarMode="showOnDemand" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/sel.png" foregroundColorSelected="#00e5b243" transparent="0"  />
 			<widget name="stationIcon" position="20,465" zPosition="1" size="60,60" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/no_coverArt.png" />
 			<eLabel text="Play" position="120,470" size="120,25" backgroundColor="#00101214" transparent="1" foregroundColor="#00555556" font="mediaportal;20" valign="top" />
 			<widget name="stationInfo" position="240,470" size="450,25" backgroundColor="#00101214" foregroundColor="#00e5b243" transparent="1" font="mediaportal;20" valign="top" />
