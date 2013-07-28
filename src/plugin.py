@@ -776,6 +776,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("Galileo-Videolexikon", "galileovl"))
 		if config.mediaportal.showsport1fm.value:
 			self.mediatheken.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
+		if config.mediaportal.showmyspass.value:
+			self.mediatheken.append(self.hauptListEntry("MySpass", "myspass"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -1412,6 +1414,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(galileovlGenreScreen)
 		elif auswahl == "Sport1.fm":
 			self.session.open(sport1fmGenreScreen)
+		elif auswahl == "MySpass":
+			self.session.open(myspassGenreScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
