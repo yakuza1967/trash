@@ -8,7 +8,7 @@
   <convert type="ClockToText">Format:%A, %d.%m.%Y</convert>
  </widget>
 <eLabel text="User Plugin Sortierung" position="9,14" size="450,36" transparent="1" font="mediaportal; 26" backgroundColor="#18101214" foregroundColor="#00ffffff" valign="center" halign="left" zPosition="1" />
- <widget name="config2" position="45,91" size="790,500" scrollbarMode="showOnDemand" selectionPixmap="~/original/images/sel.png" foregroundColorSelected="#ffffff" transparent="1"  />
+ <widget name="config2" position="45,91" size="790,500" scrollbarMode="showOnDemand" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/sel.png" foregroundColorSelected="#ffffff" transparent="1"  />
  <ePixmap position="820,645" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />
 	<eLabel text="OK " position="730,620" size="80,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00ffffff" valign="center" halign="center" zPosition="1" />
     <ePixmap position="740,645" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />
