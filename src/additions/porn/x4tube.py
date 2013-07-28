@@ -612,6 +612,7 @@ class fourtubeFilmScreen(Screen):
 		videoPage = re.findall('sources:\s\[\{"file":"(.*?)"', data, re.S)
 		if videoPage:
 			url = videoPage[0].replace('\/','/')
+			self.keyLocked = False
 			self.play(url)
 
 		"""
