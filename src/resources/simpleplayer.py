@@ -31,12 +31,9 @@ class SimpleSeekHelper:
 		self.cursorTimer.callback.append(self.__updateCursor)
 		self.seekBarShown = False
 		self.seekBarLocked = False
+		self.onClose.append(self.cancelSeek)
 
 	def initSeek(self):
-		InfoBarShowHide.lockShow(self)
-		self.seekBarLocked = True
-		self["seekbarcursor"].show()
-		self["seekbartime"].show()
 		self.percent = 0.0
 		self.length = None
 		service = self.session.nav.getCurrentService()
@@ -48,7 +45,11 @@ class SimpleSeekHelper:
 				if self.length and position:
 					if int(position[1]) > 0:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
-			self.cursorTimer.start(200, False)
+						InfoBarShowHide.lockShow(self)
+						self.seekBarLocked = True
+						self["seekbarcursor"].show()
+						self["seekbartime"].show()
+						self.cursorTimer.start(200, False)
 
 	def startHideTimer(self):
 		#print "startHide:"
@@ -194,6 +195,8 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 
 	def playVideo(self):
 		print "playVideo:"
+		if self.seekBarLocked:
+			self.cancelSeek()
 		if self.plType == 'global':
 			self.getVideo2()
 		else:
@@ -422,10 +425,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 						self.close()
 					else:
 						self.openPlaylist()
-				else:
-					self.getVideo2()
-			else:
-				self.getVideo()
+			self.playVideo()
 
 	def openMediainfo(self):
 		if MediainfoPresent:
