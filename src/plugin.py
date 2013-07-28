@@ -1997,7 +1997,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				start_pagebar = int(rest_size) / 2 - 9
 
 				for x in range(1,self.counting_pages+2):
-					normal = 669
+					if config.mediaportal.skin.value == "original":
+						normal = 650
+					else:
+						normal = 669
 					print x, start_pagebar, normal
 					skincontent += "<widget name=\"page_empty" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
 					skincontent += "<widget name=\"page_sel" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
