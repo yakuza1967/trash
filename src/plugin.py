@@ -74,6 +74,7 @@ from additions.vibeo import *
 from additions.retrotv import *
 from additions.galileovl import *
 from additions.sport1fm import *
+from additions.myspass import *
 
 try:
 	import ast
@@ -221,6 +222,8 @@ config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 config.mediaportal.showretrotv = ConfigYesNo(default = True)
 config.mediaportal.showgalileovl = ConfigYesNo(default = True)
 config.mediaportal.showsport1fm = ConfigYesNo(default = True)
+config.mediaportal.showmyspass = ConfigYesNo(default = True)
+
 if astModule:
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
 
@@ -435,6 +438,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.mediatheken.append(getConfigListEntry("Tivi", config.mediaportal.showtivi))
 		self.mediatheken.append(getConfigListEntry("VOXNOW", config.mediaportal.showVoxnow))
 		self.mediatheken.append(getConfigListEntry("ZDF Mediathek", config.mediaportal.showZDF))
+		self.mediatheken.append(getConfigListEntry("MySpass", config.mediaportal.showmyspass))
 		self.mediatheken.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		### Porn
@@ -1776,6 +1780,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Fun"))
 		if config.mediaportal.showsport1fm.value:
 			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
+		if config.mediaportal.showmyspass.value:
+			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
+			
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Fun"))
@@ -2399,6 +2406,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(galileovlGenreScreen)
 		elif auswahl == "Sport1.fm":
 			self.session.open(sport1fmGenreScreen)
+		elif auswahl == "MySpass":
+			self.session.open(myspassGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
