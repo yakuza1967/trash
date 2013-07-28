@@ -1994,10 +1994,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				print "COUNTING PAGES:", self.counting_pages
 				pagebar_size = int(self.counting_pages) * 30
 				rest_size = 1280 - int(pagebar_size)
-				start_pagebar = int(rest_size) / 2
+				start_pagebar = int(rest_size) / 2 - 9
 
 				for x in range(1,self.counting_pages+2):
-					normal = 650
+					normal = 669
 					print x, start_pagebar, normal
 					skincontent += "<widget name=\"page_empty" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
 					skincontent += "<widget name=\"page_sel" + str(x) + "\" position=\"" + str(start_pagebar) + "," + str(normal) + "\" size=\"18,18\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
@@ -2184,7 +2184,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 					self.mainlist.append(list_dummy)
 
 		print self.mainlist
-		pageinfo = "%s / %s" % (self.select_list+1, len(self.mainlist))
+		if config.mediaportal.showapplepagestyle.value:
+			pageinfo = ""
+		else:
+			pageinfo = "Page %s / %s" % (self.select_list+1, len(self.mainlist))
 		self['page'].setText(pageinfo)
 		select_nr = self.mainlist[int(self.select_list)][int(self.selektor_index)-1]
 		plugin_name = self.plugin_liste[int(select_nr)-1][0]
@@ -2538,7 +2541,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 	def check_empty_list(self):
 		if len(self.plugin_liste) == 0:
-			self['name'].setText('Keine Plugins der Kategorie %s aktiviert !' % config.mediaportal.filter.value)
+			self['name'].setText('Keine Plugins der Kategorie %s aktiviert!' % config.mediaportal.filter.value)
 			self["frame"].hide()
 			return True
 		else:
@@ -2549,7 +2552,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self["zeile"+str(x)].hide()
 
 	def paint_new_last(self):
-		pageinfo = "%s / %s" % (self.select_list+1, len(self.mainlist))
+		if config.mediaportal.showapplepagestyle.value:
+			pageinfo = ""
+		else:
+			pageinfo = "Page %s / %s" % (self.select_list+1, len(self.mainlist))
 		self['page'].setText(pageinfo)
 		self.selektor_index = len(self.mainlist[int(self.select_list)])
 		#self.selektor_index = self.mainlist[int(self.select_list)][-1]
@@ -2563,7 +2569,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self["zeile"+str(x)].show()
 
 	def paint_new(self):
-		pageinfo = "%s / %s" % (self.select_list+1, len(self.mainlist))
+		if config.mediaportal.showapplepagestyle.value:
+			pageinfo = ""
+		else:
+			pageinfo = "Page %s / %s" % (self.select_list+1, len(self.mainlist))
 		self['page'].setText(pageinfo)
 		self.selektor_index = 1
 		self.move_selector()

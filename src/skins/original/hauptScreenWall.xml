@@ -1,20 +1,20 @@
+<!-- Hauptscreen_Wall -->
 <screen name="MediaPortal" position="center,center" size="1280,680" backgroundColor="#00060606" flags="wfNoBorder">
-		<widget name="name" position="320,50" size="650,50" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 30" valign="center" halign="center" />
-		<widget name="page" position="310,645" size="100,30" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal;25" valign="center" halign="center" />"
-		<eLabel text="Page " position="260,645" size="100,30" font="mediaportal;25" halign="left" valign="center" foregroundColor="#00aaaaaa" transparent="1" backgroundColor="#00101214" />"
-		<widget name="blue" position="710,645" size="100,25" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 18" valign="center" halign="center" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttonblue.png" position="710,670" size="100,2" alphatest="blend" zPosition="5" transparent="1" />
-        <ePixmap position="1050,670" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
-		<eLabel text="Menu " position="1050,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
-		<ePixmap position="1120,670" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
-		<eLabel text="Help " position="1120,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
-		<ePixmap position="1190,670" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
-		<eLabel text="Exit " position="1191,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
-		<ePixmap position="30,670" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
-		<eLabel text="CH+" position="30,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
-		<ePixmap position="100,670" size="60,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
-		<eLabel text="CH-" position="100,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
-        <ePixmap position="600,670" size="100,2" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttonyellow.png" alphatest="blend" backgroundColor="#00101214" />"
-		<eLabel text="Sort" position="600,645" size="100,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
-        <widget name="green" position="490,645" size="100,25" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 18" valign="center" halign="center" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/images/buttongreen.png" position="490,670" size="100,2" alphatest="blend" zPosition="5" transparent="1" />
+	<widget name="name" position="320,50" size="650,50" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 30" valign="center" halign="center" />
+	<widget name="page" position="260,645" size="100,30" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal;25" valign="center" halign="center" />"
+	<widget name="blue" position="710,645" size="100,25" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 18" valign="center" halign="center" />
+	<ePixmap pixmap="~/original/images/buttonblue.png" position="710,670" size="100,2" alphatest="blend" zPosition="5" transparent="1" />
+	<ePixmap position="1050,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="Menu " position="1050,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
+	<ePixmap position="1120,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="Help " position="1120,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
+	<ePixmap position="1190,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="Exit " position="1191,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
+	<ePixmap position="30,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="CH+" position="30,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
+	<ePixmap position="100,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="CH-" position="100,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
+	<ePixmap position="600,670" size="100,2" zPosition="1" pixmap="~/original/images/buttonyellow.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="Sort" position="600,645" size="100,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
+	<widget name="green" position="490,645" size="100,25" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 18" valign="center" halign="center" />
+	<ePixmap pixmap="~/original/images/buttongreen.png" position="490,670" size="100,2" alphatest="blend" zPosition="5" transparent="1" />
