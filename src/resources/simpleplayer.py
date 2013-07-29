@@ -65,6 +65,9 @@ class SimpleSeekHelper:
 		#print "toggle:"
 		if self.seekBarLocked:
 			self.seekOK()
+		elif self.seekBarShown:
+			self.seekBarShown = False
+		
 		InfoBarShowHide.toggleShow(self)
 
 	def __updateCursor(self):
