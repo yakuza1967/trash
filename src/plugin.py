@@ -406,7 +406,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.fun.append(getConfigListEntry("retro-tv", config.mediaportal.showretrotv))
 		self.fun.append(getConfigListEntry("Galileo-Videolexikon", config.mediaportal.showgalileovl))
 		self.fun.append(getConfigListEntry("Dreamscreencast", config.mediaportal.showDsc))
-		self.fun.append(getConfigListEntry("Focus", config.mediaportal.showFocus))
 		self.fun.append(getConfigListEntry("CCZwei", config.mediaportal.showCczwei))
 		self.fun.append(getConfigListEntry("Filmtrailer", config.mediaportal.showTrailer))
 		self.fun.append(getConfigListEntry("ScienceTV", config.mediaportal.showScienceTV))
