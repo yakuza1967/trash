@@ -53,130 +53,130 @@ config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = 
 config.mediaportal.sp_seekbar_sensibility = ConfigInteger(default = 10, limits = (1,50))
 
 # Sport
-from additions.ran import *
+from additions.sport.ran import *
 config.mediaportal.showRan = ConfigYesNo(default = True)
-from additions.nhl import *
+from additions.sport.nhl import *
 config.mediaportal.showNhl = ConfigYesNo(default = True)
-from additions.spox import *
+from additions.sport.spox import *
 config.mediaportal.showSpobox = ConfigYesNo(default = True)
-from additions.sport1fm import *
+from additions.sport.sport1fm import *
 config.mediaportal.showsport1fm = ConfigYesNo(default = True)
-from additions.laola import *
+from additions.sport.laola import *
 config.mediaportal.showLaola1 = ConfigYesNo(default = True)
 
 # Music
-from additions.radio import *
+from additions.music.radio import *
 config.mediaportal.showRadio = ConfigYesNo(default = True)
-from additions.songsto import *
+from additions.music.songsto import *
 config.mediaportal.showSongsto = ConfigYesNo(default = False)
-from additions.eighties import *
+from additions.music.eighties import *
 config.mediaportal.showEighties = ConfigYesNo(default = False)
-from additions.nuna import *
+from additions.music.nuna import *
 config.mediaportal.showNuna = ConfigYesNo(default = True)
-from additions.allmusichouse import *
+from additions.music.allmusichouse import *
 config.mediaportal.showAllMusicHouse = ConfigYesNo(default = True)
-from additions.putpattv import *
+from additions.music.putpattv import *
 config.mediaportal.showputpattv = ConfigYesNo(default = True)
-from additions.canna import *
+from additions.music.canna import *
 config.mediaportal.showCanna = ConfigYesNo(default = False)
-from additions.myvideoTop100 import *
+from additions.music.myvideoTop100 import *
 config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
-from additions.mtvdecharts import *
+from additions.music.mtvdecharts import *
 config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
-from additions.musicchannels import *
+from additions.music.musicchannels import *
 config.mediaportal.showMusicChannels = ConfigYesNo(default = True)
-from additions.musicstreamcc import *
+from additions.music.musicstreamcc import *
 config.mediaportal.showMusicstreamcc = ConfigYesNo(default = False)
-from additions.deluxemusic import *
+from additions.music.deluxemusic import *
 config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
 
 # Fun
 if astModule:
-	from additions.heisevideo import *
+	from additions.fun.heisevideo import *
 	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
-from additions.retrotv import *
+from additions.fun.retrotv import *
 config.mediaportal.showretrotv = ConfigYesNo(default = True)
-from additions.galileovl import *
+from additions.fun.galileovl import *
 config.mediaportal.showgalileovl = ConfigYesNo(default = True)
-from additions.forplayers import *
+from additions.fun.forplayers import *
 config.mediaportal.show4Players = ConfigYesNo(default = True)
-from additions.dokume import *
+from additions.fun.dokume import *
 config.mediaportal.showDoku = ConfigYesNo(default = True)
-from additions.roflvideos import *
+from additions.fun.roflvideos import *
 config.mediaportal.showRofl = ConfigYesNo(default = True)
-from additions.focus import *
+from additions.fun.focus import *
 config.mediaportal.showFocus = ConfigYesNo(default = True)
-from additions.tvkino import *
+from additions.fun.tvkino import *
 config.mediaportal.showTvkino = ConfigYesNo(default = True)
-from additions.filmon import *
+from additions.fun.filmon import *
 config.mediaportal.showFilmOn = ConfigYesNo(default = True)
-from additions.failto import *
+from additions.fun.failto import *
 config.mediaportal.showFail = ConfigYesNo(default = True)
-from additions.sportbild import *
+from additions.fun.sportbild import *
 config.mediaportal.showSportBild = ConfigYesNo(default = True)
-from additions.filmtrailer import *
+from additions.fun.filmtrailer import *
 config.mediaportal.showTrailer = ConfigYesNo(default = True)
-from additions.cczwei import *
+from additions.fun.cczwei import *
 config.mediaportal.showCczwei = ConfigYesNo(default = True)
-from additions.dreamscreencast import *
+from additions.fun.dreamscreencast import *
 config.mediaportal.showDsc = ConfigYesNo(default = True)
-from additions.autobild import *
+from additions.fun.autobild import *
 config.mediaportal.showAutoBild = ConfigYesNo(default = True)
-from additions.mahlzeittv import *
+from additions.fun.mahlzeittv import *
 config.mediaportal.showMahlzeitTV = ConfigYesNo(default = True)
-from additions.appletrailers import *
+from additions.fun.appletrailers import *
 config.mediaportal.showappletrailers = ConfigYesNo(default = True)
-from additions.dokuh import *
+from additions.fun.dokuh import *
 config.mediaportal.showDOKUh = ConfigYesNo(default = True)
-from additions.dokuhouse import *
+from additions.fun.dokuhouse import *
 config.mediaportal.showDokuHouse = ConfigYesNo(default = True)
-from additions.liveleak import *
+from additions.fun.liveleak import *
 config.mediaportal.showLiveLeak = ConfigYesNo(default = True)
-from additions.dokustream import *
+from additions.fun.dokustream import *
 config.mediaportal.showDokuStream = ConfigYesNo(default = True)
-from additions.sciencetv import *
+from additions.fun.sciencetv import *
 config.mediaportal.showScienceTV = ConfigYesNo(default = True)
-from additions.hoerspielhouse import *
+from additions.fun.hoerspielhouse import *
 config.mediaportal.showHoerspielHouse = ConfigYesNo(default = True)
-from additions.gigatv import *
+from additions.fun.gigatv import *
 config.mediaportal.showGIGA = ConfigYesNo(default = True)
-from additions.auditv import *
+from additions.fun.auditv import *
 config.mediaportal.showaudi = ConfigYesNo(default = True)
-from additions.gronkh import *
+from additions.fun.gronkh import *
 config.mediaportal.showgronkh = ConfigYesNo(default = True)
-from additions.hoerspielchannels import *
+from additions.fun.hoerspielchannels import *
 config.mediaportal.showHoerspielChannels = ConfigYesNo(default = True)
-from additions.carchannels import *
+from additions.fun.carchannels import *
 config.mediaportal.showCarChannels = ConfigYesNo(default = True)
-from additions.gamechannels import *
+from additions.fun.gamechannels import *
 config.mediaportal.showGameChannels = ConfigYesNo(default = True)
-from additions.fiwitu import *
+from additions.fun.fiwitu import *
 config.mediaportal.showFiwitu = ConfigYesNo(default = True)
-from additions.userchannels import *
+from additions.fun.userchannels import *
 config.mediaportal.showUserChannels = ConfigYesNo(default = True)
-from additions.youtube import *
+from additions.fun.youtube import *
 config.mediaportal.showYoutube = ConfigYesNo(default = True)
-from additions.teledunet import *
+from additions.fun.teledunet import *
 config.mediaportal.showTeledunet = ConfigYesNo(default = True)
-from additions.geo_de import *
+from additions.fun.geo_de import *
 config.mediaportal.showGEOde = ConfigYesNo(default = True)
-from additions.wrestlingnetwork import *
+from additions.fun.wrestlingnetwork import *
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 
 # Mediatheken
-from additions.myvideo import *
+from additions.mediatheken.myvideo import *
 config.mediaportal.showMyvideo = ConfigYesNo(default = True)
-from additions.netzkino import *
+from additions.mediatheken.netzkino import *
 config.mediaportal.showNetzKino = ConfigYesNo(default = True)
-from additions.clipfish import *
+from additions.mediatheken.clipfish import *
 config.mediaportal.showClipfish = ConfigYesNo(default = True)
-from additions.kinderkino import *
+from additions.mediatheken.kinderkino import *
 config.mediaportal.showKinderKino = ConfigYesNo(default = True)
-from additions.tivi import *
+from additions.mediatheken.tivi import *
 config.mediaportal.showtivi = ConfigYesNo(default = True)
-from additions.kika import *
+from additions.mediatheken.kika import *
 config.mediaportal.showkika = ConfigYesNo(default = True)
-from additions.myspass import *
+from additions.mediatheken.myspass import *
 config.mediaportal.showmyspass = ConfigYesNo(default = True)
 from additions.mediatheken.voxnow import *
 config.mediaportal.showVoxnow = ConfigYesNo(default = True)
@@ -266,45 +266,45 @@ from additions.porn.youporn import *
 config.mediaportal.showyouporn = ConfigYesNo(default = False)
 
 # Grauzone
-from additions.myentertainment import *
+from additions.grauzone.myentertainment import *
 config.mediaportal.showMEHD = ConfigYesNo(default = False)
-from additions.streamoase import *
+from additions.grauzone.streamoase import *
 config.mediaportal.showStreamOase = ConfigYesNo(default = False)
-from additions.kinokiste import *
+from additions.grauzone.kinokiste import *
 config.mediaportal.showKinoKiste = ConfigYesNo(default = False)
-from additions.baskino import *
+from additions.grauzone.baskino import *
 config.mediaportal.showBaskino = ConfigYesNo(default = False)
-from additions.kinoxto import *
+from additions.grauzone.kinoxto import *
 config.mediaportal.showKinox = ConfigYesNo(default = False)
 config.mediaportal.showKinoxWatchlist = ConfigYesNo(default = False)
-from additions.movie4k import *
+from additions.grauzone.movie4k import *
 config.mediaportal.showM4k = ConfigYesNo(default = False)
 config.mediaportal.showM4kWatchlist = ConfigYesNo(default = False)
 config.mediaportal.showM4kPorn = ConfigYesNo(default = False)
-from additions.iStreamws import *
+from additions.grauzone.iStreamws import *
 config.mediaportal.showIStream = ConfigYesNo(default = False)
 config.mediaportal.showIStreamPorn = ConfigYesNo(default = False)
-from additions.watchseries import *
+from additions.grauzone.watchseries import *
 config.mediaportal.showWatchseries = ConfigYesNo(default = False)
-from additions.szenestreams import *
+from additions.grauzone.szenestreams import *
 config.mediaportal.showSzeneStreams = ConfigYesNo(default = False)
-from additions.cinestream import *
+from additions.grauzone.cinestream import *
 config.mediaportal.showCinestream = ConfigYesNo(default = False)
-#from additions.viewster import *
+#from additions.grauzone.viewster import *
 #config.mediaportal.showViewster = ConfigYesNo(default = False)
-from additions.moovizon import *
+from additions.grauzone.moovizon import *
 config.mediaportal.showMoovizon = ConfigYesNo(default = False)
-from additions.vibeo import *
+from additions.grauzone.vibeo import *
 config.mediaportal.showVibeo = ConfigYesNo(default = False)
-from additions.burningseries import *
+from additions.grauzone.burningseries import *
 config.mediaportal.showBs = ConfigYesNo(default = False)
-from additions.primewire import *
+from additions.grauzone.primewire import *
 config.mediaportal.showprimewire = ConfigYesNo(default = False)
-from additions.mlehd import *
+from additions.grauzone.mlehd import *
 config.mediaportal.showmlehd = ConfigYesNo(default = False)
-from additions.ddl_me import *
+from additions.grauzone.ddl_me import *
 config.mediaportal.showDdlme = ConfigYesNo(default = False)
-from additions.movie25 import *
+from additions.grauzone.movie25 import *
 config.mediaportal.showMovie25 = ConfigYesNo(default = False)
 
 class hauptScreenSetup(Screen, ConfigListScreen):
@@ -344,6 +344,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("HauptScreen-Ansicht:", config.mediaportal.ansicht))
 		self.configlist.append(getConfigListEntry("Apple Page Style:", config.mediaportal.showapplepagestyle))
 		self.configlist.append(getConfigListEntry("Skinauswahl:", config.mediaportal.skin))
+		self.configlist.append(getConfigListEntry("Schriftart:", config.mediaportal.font))
 		self.configlist.append(getConfigListEntry("HTTPDump benutzen:", config.mediaportal.useHttpDump))
 		self.configlist.append(getConfigListEntry("RTMPDump benutzen:", config.mediaportal.useRtmpDump))
 		self.configlist.append(getConfigListEntry("RTMPDump Cachepath:", config.mediaportal.storagepath))
@@ -352,7 +353,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
 		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
-		self.configlist.append(getConfigListEntry("Schriftart:", config.mediaportal.font))
 
 		### Sport
 		self.sport.append(getConfigListEntry("NHL", config.mediaportal.showNhl))
