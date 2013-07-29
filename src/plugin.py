@@ -43,7 +43,6 @@ config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("h
 config.mediaportal.showapplepagestyle = ConfigYesNo(default = True)
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
-config.mediaportal.simplelist = ConfigYesNo(default = False)
 
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
@@ -352,7 +351,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
 		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
-		self.configlist.append(getConfigListEntry("SimpleList:", config.mediaportal.simplelist))
 
 		### Sport
 		self.sport.append(getConfigListEntry("NHL", config.mediaportal.showNhl))
@@ -654,7 +652,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 
 		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal.ttf", "mediaportal", 100, False)
 
-		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions"], {
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
 			"ok"    : self.keyOK,
 			"up"    : self.keyUp,
 			"down"  : self.keyDown,
@@ -665,6 +663,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			"prevBouquet" :	self.keyPageUp,
 			"menu" : self.keySetup,
 			"info" : self.showPorn,
+			"showMovies" : self.keySimpleList,
 			"displayHelp" : self.keyHelp
 		}, -1)
 
@@ -774,8 +773,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
 		if config.mediaportal.showmyspass.value:
 			self.mediatheken.append(self.hauptListEntry("MySpass", "myspass"))
-		if config.mediaportal.simplelist.value:
-			self.mediatheken.append(self.hauptListEntry("SimpleList", "simplelist"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -1020,6 +1017,10 @@ class haupt_Screen(Screen, ConfigListScreen):
 
 	def keyHelp(self):
 		self.session.open(HelpScreen)
+
+	def keySimpleList(self):
+		mp_globals.activeIcon = "simplelist"
+		self.session.open(simplelistGenreScreen)
 
 	def getTriesEntry(self):
 		return config.ParentalControl.retries.setuppin
@@ -1414,8 +1415,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(sport1fmGenreScreen)
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
-		elif auswahl == "SimpleList":
-			self.session.open(simplelistGenreScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
@@ -1816,8 +1815,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("SRF Player", "srf", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
-		if config.mediaportal.simplelist.value:
-			self.plugin_liste.append(("SimpleList", "simplelist", "Mediathek"))
 
 		### porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2042,7 +2039,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal.ttf", "mediaportal", 100, False)
 
-		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions"], {
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
 			"ok"    : self.keyOK,
 			"up"    : self.keyUp,
 			"down"  : self.keyDown,
@@ -2053,6 +2050,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			"prevBouquet" :	self.page_back,
 			"menu" : self.keySetup,
 			"info" : self.showPorn,
+			"showMovies" : self.keySimpleList,
 			"displayHelp" : self.keyHelp,
 			"blue" : self.chFilter,
 			"green" : self.chSort,
@@ -2414,8 +2412,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(sport1fmGenreScreen)
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
-		elif auswahl == "SimpleList":
-			self.session.open(simplelistGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
@@ -2621,6 +2617,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 	def keyHelp(self):
 		self.session.open(HelpScreen)
+
+	def keySimpleList(self):
+		mp_globals.activeIcon = "simplelist"
+		self.session.open(simplelistGenreScreen)
 
 	def getTriesEntry(self):
 		return config.ParentalControl.retries.setuppin
