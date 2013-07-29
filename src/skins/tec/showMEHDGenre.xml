@@ -12,6 +12,6 @@
     <!-- select screen -->
     <widget name="name" position="913,331" size="328,100" backgroundColor="#26181d20" transparent="1" zPosition="1" font="mediaportal;24" valign="center" halign="center" foregroundColor="#00ffffff" />
     <widget name="filmList" position="55,180" size="850,450" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColorSelected="#ffffff" foregroundColor="#00999999" />
-<!--    <widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="917,439" size="320,240" transparent="1" alphatest="blend" /> -->
+<!--    <widget name="coverArt" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="917,439" size="320,200" transparent="1" alphatest="blend" /> -->
     <widget name="title" position="105,106" size="850,60" foregroundColor="#00ffffff" backgroundColor="#26181d20" transparent="1" font="mediaportal;26" valign="center" halign="center" />
   </screen>

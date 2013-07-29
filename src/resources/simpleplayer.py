@@ -70,7 +70,7 @@ class SimpleSeekHelper:
 			self.seekOK()
 		elif self.seekBarShown:
 			self.seekBarShown = False
-		
+
 		InfoBarShowHide.toggleShow(self)
 
 	def __updateCursor(self):
@@ -86,7 +86,7 @@ class SimpleSeekHelper:
 					self["seekbarcursor"].show()
 				else:
 					self.counter -= 1
-			
+
 
 	def seekExit(self):
 		#print "seekExit:"
@@ -113,7 +113,7 @@ class SimpleSeekHelper:
 		self.percent += float(config.mediaportal.sp_seekbar_sensibility.value) / 10.0
 		if self.percent > 100.0:
 			self.percent = 100.0
-			
+
 	def cancelSeek(self):
 		if self.seekBarLocked:
 			self.seekExit()

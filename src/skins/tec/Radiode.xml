@@ -20,7 +20,7 @@
     <widget name="streamlist" position="55,327" size="440,350" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColorSelected="#ffffff" />
     <widget name="rightContentTitle" position="525,285" size="385,26" backgroundColor="#26181d20" zPosition="5" foregroundColor="#00ffffff" font="mediaportal;22" halign="center" transparent="1" />
     <widget name="playlist" position="525,326" size="440,350" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/sel.png" foregroundColorSelected="#ffffff" />
-    <widget name="stationIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="917,439" size="320,240" transparent="1" alphatest="blend" />
+    <widget name="stationIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/no_coverArt.png" position="917,439" size="320,200" transparent="1" alphatest="blend" />
     <eLabel text="Play" position="55,165" size="120,25" backgroundColor="#26181d20" transparent="1" foregroundColor="#00ffffff" font="mediaportal;20" valign="top" />
     <widget name="stationInfo" position="175,165" size="650,25" backgroundColor="#26181d20" foregroundColor="#00ffffff" transparent="1" font="mediaportal;20" valign="top" />
     <widget source="session.CurrentService" render="Label" position="790,165" size="120,25" font="mediaportal;20" foregroundColor="#00ffffff" backgroundColor="#26181d20" halign="right" valign="top" transparent="1">
