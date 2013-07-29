@@ -29,13 +29,17 @@ class SimpleSeekHelper:
 		self["seekbartime"].hide()
 		self.cursorTimer = eTimer()
 		self.cursorTimer.callback.append(self.__updateCursor)
+		self.cursorShown = False
 		self.seekBarShown = False
 		self.seekBarLocked = False
+		self.counter = 0
 		self.onClose.append(self.cancelSeek)
 
 	def initSeek(self):
 		self.percent = 0.0
 		self.length = None
+		self.cursorShown = False
+		self.counter = 1
 		service = self.session.nav.getCurrentService()
 		if service:
 			self.seek = service.seek()
@@ -47,7 +51,6 @@ class SimpleSeekHelper:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
 						InfoBarShowHide.lockShow(self)
 						self.seekBarLocked = True
-						self["seekbarcursor"].show()
 						self["seekbartime"].show()
 						self.cursorTimer.start(200, False)
 
@@ -77,6 +80,13 @@ class SimpleSeekHelper:
 			self["seekbarcursor"].startMoving()
 			pts = int(float(self.length[1]) / 100.0 * self.percent)
 			self["seekbartime"].setText("%d:%02d" % ((pts/60/90000), ((pts/90000)%60)))
+			if not self.cursorShown:
+				if not self.counter:
+					self.cursorShown = True
+					self["seekbarcursor"].show()
+				else:
+					self.counter -= 1
+			
 
 	def seekExit(self):
 		#print "seekExit:"
@@ -85,7 +95,6 @@ class SimpleSeekHelper:
 		self.unlockShow()
 		self["seekbarcursor"].hide()
 		self["seekbartime"].hide()
-		self.hide()
 
 	def seekOK(self):
 		#print "seekOK:"
