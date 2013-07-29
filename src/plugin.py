@@ -3,81 +3,7 @@
 # General imports
 from resources.imports import *
 from resources.update import *
-
-#simplelist
 from resources.simplelist import *
-
-# Stream-Sites import
-from additions.forplayers import *
-from additions.dokume import *
-from additions.roflvideos import *
-from additions.focus import *
-from additions.tvkino import *
-from additions.filmon import *
-from additions.netzkino import *
-from additions.kinokiste import *
-from additions.failto import *
-from additions.sportbild import *
-from additions.myvideo import *
-from additions.laola import *
-from additions.burningseries import *
-from additions.filmtrailer import *
-from additions.primewire import *
-from additions.radio import *
-from additions.cczwei import *
-from additions.baskino import *
-from additions.kinoxto import *
-from additions.dreamscreencast import *
-from additions.streamoase import *
-from additions.autobild import *
-from additions.nhl import *
-from additions.spox import *
-from additions.songsto import *
-from additions.myentertainment import *
-from additions.movie4k import *
-from additions.iStreamws import *
-from additions.mahlzeittv import *
-from additions.appletrailers import *
-from additions.dokuh import *
-from additions.dokuhouse import *
-from additions.allmusichouse import *
-from additions.putpattv import *
-from additions.liveleak import *
-from additions.dokustream import *
-from additions.sciencetv import *
-from additions.szenestreams import *
-from additions.hoerspielhouse import *
-from additions.gigatv import *
-from additions.auditv import *
-from additions.gronkh import *
-from additions.hoerspielchannels import *
-from additions.carchannels import *
-from additions.gamechannels import *
-from additions.musicchannels import *
-from additions.fiwitu import *
-from additions.userchannels import *
-from additions.cinestream import *
-from additions.moovizon import *
-from additions.youtube import *
-from additions.clipfish import *
-from additions.mlehd import *
-from additions.ddl_me import *
-from additions.ran import *
-from additions.movie25 import *
-from additions.eighties import *
-from additions.teledunet import *
-from additions.geo_de import *
-from additions.deluxemusic import *
-from additions.nuna import *
-from additions.watchseries import *
-from additions.wrestlingnetwork import *
-#from additions.viewster import *
-from additions.musicstreamcc import *
-from additions.vibeo import *
-from additions.retrotv import *
-from additions.galileovl import *
-from additions.sport1fm import *
-from additions.myspass import *
 
 try:
 	import ast
@@ -85,67 +11,15 @@ except:
 	print "No 'ast' module"
 	astModule = False
 else:
-	from additions.heisevideo import *
 	print "Module 'ast' loaded"
 	astModule = True
 
-# kids
-from additions.kinderkino import *
-from additions.tivi import *
-from additions.kika import *
-
-# mediatheken
-from additions.mediatheken.voxnow import *
-from additions.mediatheken.rtlnow import *
-from additions.mediatheken.ntvnow import *
-from additions.mediatheken.rtlnitronow import *
-from additions.mediatheken.rtl2now import *
-from additions.mediatheken.superrtlnow import *
-from additions.mediatheken.zdf import *
-from additions.mediatheken.orf import *
-from additions.mediatheken.srf import *
-from additions.mediatheken.ard import *
-
-# music
-from additions.canna import *
-from additions.myvideoTop100 import *
-from additions.mtvdecharts import *
-
-# porn
-from additions.porn.ahme import *
-from additions.porn.amateurporn import *
-from additions.porn.beeg import *
-from additions.porn.drtuber import *
-from additions.porn.elladies import *
-from additions.porn.eporner import *
-from additions.porn.eroprofile import *
-from additions.porn.extremetube import *
-from additions.porn.freeomovie import *
-from additions.porn.gstreaminxxx import *
-from additions.porn.hdporn import *
-from additions.porn.hotshame import *
-from additions.porn.megaskanks import *
-from additions.porn.paradisehill import *
-from additions.porn.pinkrod import *
-from additions.porn.playporn import *
-from additions.porn.pornerbros import *
-from additions.porn.pornhub import *
-from additions.porn.pornmvz import *
-from additions.porn.pornostreams import *
-from additions.porn.pornrabbit import *
-from additions.porn.realgfporn import *
-from additions.porn.redtube import *
-from additions.porn.sexxxhd import *
-from additions.porn.sunporno import *
-from additions.porn.thenewporn import *
-from additions.porn.updatetube import *
-from additions.porn.wetplace import *
-from additions.porn.xhamster import *
-from additions.porn.xxxsave import *
-from additions.porn.x4tube import *
-from additions.porn.youporn import *
-
 config.mediaportal = ConfigSubsection()
+
+# Fake entry fuer die Kategorien
+config.mediaportal.fake_entry = NoSave(ConfigNothing())
+
+# Allgemein
 config.mediaportal.version = NoSave(ConfigText(default="460"))
 config.mediaportal.versiontext = NoSave(ConfigText(default="4.6.0"))
 config.mediaportal.autoupdate = ConfigYesNo(default = True)
@@ -171,149 +45,267 @@ config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
 config.mediaportal.simplelist = ConfigYesNo(default = False)
 
-# Kinder
-config.mediaportal.showKinderKino = ConfigYesNo(default = True)
-config.mediaportal.showtivi = ConfigYesNo(default = True)
-config.mediaportal.showkika = ConfigYesNo(default = True)
-
-config.mediaportal.showDoku = ConfigYesNo(default = True)
-config.mediaportal.showRofl = ConfigYesNo(default = True)
-config.mediaportal.showFail = ConfigYesNo(default = True)
-config.mediaportal.showMyvideo = ConfigYesNo(default = True)
-config.mediaportal.showFocus = ConfigYesNo(default = True)
-config.mediaportal.showFilmOn = ConfigYesNo(default = True)
-config.mediaportal.showTvkino = ConfigYesNo(default = True)
-config.mediaportal.showSpobox = ConfigYesNo(default = True)
-config.mediaportal.showNetzKino = ConfigYesNo(default = True)
-config.mediaportal.showSportBild = ConfigYesNo(default = True)
-config.mediaportal.showLaola1 = ConfigYesNo(default = True)
-config.mediaportal.showRadio = ConfigYesNo(default = True)
-config.mediaportal.showCczwei = ConfigYesNo(default = True)
-config.mediaportal.showTrailer = ConfigYesNo(default = True)
-config.mediaportal.showDsc = ConfigYesNo(default = True)
-config.mediaportal.showAutoBild = ConfigYesNo(default = True)
-config.mediaportal.showNhl = ConfigYesNo(default = True)
-config.mediaportal.show4Players = ConfigYesNo(default = True)
-config.mediaportal.showGIGA = ConfigYesNo(default = True)
-config.mediaportal.showaudi = ConfigYesNo(default = True)
-config.mediaportal.showgronkh = ConfigYesNo(default = True)
-config.mediaportal.showMahlzeitTV = ConfigYesNo(default = True)
-config.mediaportal.showappletrailers = ConfigYesNo(default = True)
-config.mediaportal.showDOKUh = ConfigYesNo(default = True)
-config.mediaportal.showDokuHouse = ConfigYesNo(default = True)
-config.mediaportal.showAllMusicHouse = ConfigYesNo(default = True)
-config.mediaportal.showputpattv = ConfigYesNo(default = True)
-config.mediaportal.showLiveLeak = ConfigYesNo(default = True)
-config.mediaportal.showDokuStream = ConfigYesNo(default = True)
-config.mediaportal.showScienceTV = ConfigYesNo(default = True)
-config.mediaportal.showHoerspielHouse = ConfigYesNo(default = True)
-config.mediaportal.showHoerspielChannels = ConfigYesNo(default = True)
-config.mediaportal.showCarChannels = ConfigYesNo(default = True)
-config.mediaportal.showGameChannels = ConfigYesNo(default = True)
-config.mediaportal.showFiwitu = ConfigYesNo(default = True)
-config.mediaportal.showMusicChannels = ConfigYesNo(default = True)
-config.mediaportal.showUserChannels = ConfigYesNo(default = True)
-config.mediaportal.showYoutube = ConfigYesNo(default = True)
-config.mediaportal.showClipfish = ConfigYesNo(default = True)
-config.mediaportal.showRan = ConfigYesNo(default = True)
-config.mediaportal.showTeledunet = ConfigYesNo(default = True)
-config.mediaportal.showGEOde = ConfigYesNo(default = True)
-config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
-config.mediaportal.showNuna = ConfigYesNo(default = True)
-config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
-config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
-config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
-config.mediaportal.showretrotv = ConfigYesNo(default = True)
-config.mediaportal.showgalileovl = ConfigYesNo(default = True)
-config.mediaportal.showsport1fm = ConfigYesNo(default = True)
-config.mediaportal.showmyspass = ConfigYesNo(default = True)
-
-if astModule:
-	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
-
-# grauzone
-config.mediaportal.showMusicstreamcc = ConfigYesNo(default = False)
-config.mediaportal.showVibeo = ConfigYesNo(default = False)
-config.mediaportal.showWatchseries = ConfigYesNo(default = False)
-config.mediaportal.showMovie25 = ConfigYesNo(default = False)
-config.mediaportal.showEighties = ConfigYesNo(default = False)
-config.mediaportal.showmlehd = ConfigYesNo(default = False)
-config.mediaportal.showDdlme = ConfigYesNo(default = False)
-config.mediaportal.showCanna = ConfigYesNo(default = False)
-config.mediaportal.showSzeneStreams = ConfigYesNo(default = False)
-config.mediaportal.showCinestream = ConfigYesNo(default = False)
-config.mediaportal.showMoovizon = ConfigYesNo(default = False)
-config.mediaportal.showBaskino = ConfigYesNo(default = False)
-config.mediaportal.showKinoKiste = ConfigYesNo(default = False)
-config.mediaportal.showStreamOase = ConfigYesNo(default = False)
-config.mediaportal.showBs = ConfigYesNo(default = False)
-config.mediaportal.showprimewire = ConfigYesNo(default = False)
-config.mediaportal.showKinox = ConfigYesNo(default = False)
-config.mediaportal.showSongsto = ConfigYesNo(default = False)
-#config.mediaportal.showViewster = ConfigYesNo(default = False)
-config.mediaportal.showMEHD = ConfigYesNo(default = False)
-config.mediaportal.showIStream = ConfigYesNo(default = False)
-config.mediaportal.showM4k = ConfigYesNo(default = False)
-config.mediaportal.showM4kWatchlist = ConfigYesNo(default = False)
-config.mediaportal.showKinoxWatchlist = ConfigYesNo(default = False)
-
-# mediatheken
-config.mediaportal.showVoxnow = ConfigYesNo(default = True)
-config.mediaportal.showRTLnow = ConfigYesNo(default = True)
-config.mediaportal.showNTVnow = ConfigYesNo(default = True)
-config.mediaportal.showRTL2now = ConfigYesNo(default = True)
-config.mediaportal.showRTLnitro = ConfigYesNo(default = True)
-config.mediaportal.showSUPERRTLnow = ConfigYesNo(default = True)
-config.mediaportal.showZDF = ConfigYesNo(default = True)
-config.mediaportal.showORF = ConfigYesNo(default = True)
-config.mediaportal.showSRF = ConfigYesNo(default = True)
-config.mediaportal.showARD = ConfigYesNo(default = True)
-
-# porn
-config.mediaportal.show4tube = ConfigYesNo(default = False)
-config.mediaportal.showahme = ConfigYesNo(default = False)
-config.mediaportal.showamateurporn = ConfigYesNo(default = False)
-config.mediaportal.showbeeg = ConfigYesNo(default = False)
-config.mediaportal.showdrtuber = ConfigYesNo(default = False)
-config.mediaportal.showelladies = ConfigYesNo(default = False)
-config.mediaportal.showeporner = ConfigYesNo(default = False)
-config.mediaportal.showeroprofile = ConfigYesNo(default = False)
-config.mediaportal.showextremetube = ConfigYesNo(default = False)
-config.mediaportal.showfreeomovie = ConfigYesNo(default = False)
-config.mediaportal.showgstreaminxxx = ConfigYesNo(default = False)
-config.mediaportal.showhdporn = ConfigYesNo(default = False)
-config.mediaportal.showhotshame = ConfigYesNo(default = False)
-config.mediaportal.showmegaskanks = ConfigYesNo(default = False)
-config.mediaportal.showIStreamPorn = ConfigYesNo(default = False)
-config.mediaportal.showM4kPorn = ConfigYesNo(default = False)
-config.mediaportal.showparadisehill = ConfigYesNo(default = False)
-config.mediaportal.showpinkrod = ConfigYesNo(default = False)
-config.mediaportal.showplayporn = ConfigYesNo(default = False)
-config.mediaportal.showpornerbros = ConfigYesNo(default = False)
-config.mediaportal.showPornhub = ConfigYesNo(default = False)
-config.mediaportal.showpornmvz = ConfigYesNo(default = False)
-config.mediaportal.showpornostreams = ConfigYesNo(default = False)
-config.mediaportal.showpornrabbit = ConfigYesNo(default = False)
-config.mediaportal.showrealgfporn = ConfigYesNo(default = False)
-config.mediaportal.showredtube = ConfigYesNo(default = False)
-config.mediaportal.showsexxxhd = ConfigYesNo(default = False)
-config.mediaportal.showsunporno = ConfigYesNo(default = False)
-config.mediaportal.showthenewporn = ConfigYesNo(default = False)
-config.mediaportal.showupdatetube = ConfigYesNo(default = False)
-config.mediaportal.showwetplace = ConfigYesNo(default = False)
-config.mediaportal.showXhamster = ConfigYesNo(default = False)
-config.mediaportal.showxxxsave = ConfigYesNo(default = False)
-config.mediaportal.showyouporn = ConfigYesNo(default = False)
-
-#fake entry fuer die kategorien
-config.mediaportal.fake_entry = NoSave(ConfigNothing())
-
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
 config.mediaportal.sp_scrsaver = ConfigSelection(default = "off", choices = [("on", _("On")),("off", _("Off")),("automatic", _("Automatic"))])
 config.mediaportal.sp_on_movie_stop = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service"))])
 config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end"))])
 config.mediaportal.sp_seekbar_sensibility = ConfigInteger(default = 10, limits = (1,50))
+
+# Sport
+from additions.ran import *
+config.mediaportal.showRan = ConfigYesNo(default = True)
+from additions.nhl import *
+config.mediaportal.showNhl = ConfigYesNo(default = True)
+from additions.spox import *
+config.mediaportal.showSpobox = ConfigYesNo(default = True)
+from additions.sport1fm import *
+config.mediaportal.showsport1fm = ConfigYesNo(default = True)
+from additions.laola import *
+config.mediaportal.showLaola1 = ConfigYesNo(default = True)
+
+# Music
+from additions.radio import *
+config.mediaportal.showRadio = ConfigYesNo(default = True)
+from additions.songsto import *
+config.mediaportal.showSongsto = ConfigYesNo(default = False)
+from additions.eighties import *
+config.mediaportal.showEighties = ConfigYesNo(default = False)
+from additions.nuna import *
+config.mediaportal.showNuna = ConfigYesNo(default = True)
+from additions.allmusichouse import *
+config.mediaportal.showAllMusicHouse = ConfigYesNo(default = True)
+from additions.putpattv import *
+config.mediaportal.showputpattv = ConfigYesNo(default = True)
+from additions.canna import *
+config.mediaportal.showCanna = ConfigYesNo(default = False)
+from additions.myvideoTop100 import *
+config.mediaportal.showMyvideoTop100 = ConfigYesNo(default = True)
+from additions.mtvdecharts import *
+config.mediaportal.showMTVdeCharts = ConfigYesNo(default = True)
+from additions.musicchannels import *
+config.mediaportal.showMusicChannels = ConfigYesNo(default = True)
+from additions.musicstreamcc import *
+config.mediaportal.showMusicstreamcc = ConfigYesNo(default = False)
+from additions.deluxemusic import *
+config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
+
+# Fun
+if astModule:
+	from additions.heisevideo import *
+	config.mediaportal.showHeiseVideo = ConfigYesNo(default = True)
+from additions.retrotv import *
+config.mediaportal.showretrotv = ConfigYesNo(default = True)
+from additions.galileovl import *
+config.mediaportal.showgalileovl = ConfigYesNo(default = True)
+from additions.forplayers import *
+config.mediaportal.show4Players = ConfigYesNo(default = True)
+from additions.dokume import *
+config.mediaportal.showDoku = ConfigYesNo(default = True)
+from additions.roflvideos import *
+config.mediaportal.showRofl = ConfigYesNo(default = True)
+from additions.focus import *
+config.mediaportal.showFocus = ConfigYesNo(default = True)
+from additions.tvkino import *
+config.mediaportal.showTvkino = ConfigYesNo(default = True)
+from additions.filmon import *
+config.mediaportal.showFilmOn = ConfigYesNo(default = True)
+from additions.failto import *
+config.mediaportal.showFail = ConfigYesNo(default = True)
+from additions.sportbild import *
+config.mediaportal.showSportBild = ConfigYesNo(default = True)
+from additions.filmtrailer import *
+config.mediaportal.showTrailer = ConfigYesNo(default = True)
+from additions.cczwei import *
+config.mediaportal.showCczwei = ConfigYesNo(default = True)
+from additions.dreamscreencast import *
+config.mediaportal.showDsc = ConfigYesNo(default = True)
+from additions.autobild import *
+config.mediaportal.showAutoBild = ConfigYesNo(default = True)
+from additions.mahlzeittv import *
+config.mediaportal.showMahlzeitTV = ConfigYesNo(default = True)
+from additions.appletrailers import *
+config.mediaportal.showappletrailers = ConfigYesNo(default = True)
+from additions.dokuh import *
+config.mediaportal.showDOKUh = ConfigYesNo(default = True)
+from additions.dokuhouse import *
+config.mediaportal.showDokuHouse = ConfigYesNo(default = True)
+from additions.liveleak import *
+config.mediaportal.showLiveLeak = ConfigYesNo(default = True)
+from additions.dokustream import *
+config.mediaportal.showDokuStream = ConfigYesNo(default = True)
+from additions.sciencetv import *
+config.mediaportal.showScienceTV = ConfigYesNo(default = True)
+from additions.hoerspielhouse import *
+config.mediaportal.showHoerspielHouse = ConfigYesNo(default = True)
+from additions.gigatv import *
+config.mediaportal.showGIGA = ConfigYesNo(default = True)
+from additions.auditv import *
+config.mediaportal.showaudi = ConfigYesNo(default = True)
+from additions.gronkh import *
+config.mediaportal.showgronkh = ConfigYesNo(default = True)
+from additions.hoerspielchannels import *
+config.mediaportal.showHoerspielChannels = ConfigYesNo(default = True)
+from additions.carchannels import *
+config.mediaportal.showCarChannels = ConfigYesNo(default = True)
+from additions.gamechannels import *
+config.mediaportal.showGameChannels = ConfigYesNo(default = True)
+from additions.fiwitu import *
+config.mediaportal.showFiwitu = ConfigYesNo(default = True)
+from additions.userchannels import *
+config.mediaportal.showUserChannels = ConfigYesNo(default = True)
+from additions.youtube import *
+config.mediaportal.showYoutube = ConfigYesNo(default = True)
+from additions.teledunet import *
+config.mediaportal.showTeledunet = ConfigYesNo(default = True)
+from additions.geo_de import *
+config.mediaportal.showGEOde = ConfigYesNo(default = True)
+from additions.wrestlingnetwork import *
+config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
+
+# Mediatheken
+from additions.myvideo import *
+config.mediaportal.showMyvideo = ConfigYesNo(default = True)
+from additions.netzkino import *
+config.mediaportal.showNetzKino = ConfigYesNo(default = True)
+from additions.clipfish import *
+config.mediaportal.showClipfish = ConfigYesNo(default = True)
+from additions.kinderkino import *
+config.mediaportal.showKinderKino = ConfigYesNo(default = True)
+from additions.tivi import *
+config.mediaportal.showtivi = ConfigYesNo(default = True)
+from additions.kika import *
+config.mediaportal.showkika = ConfigYesNo(default = True)
+from additions.myspass import *
+config.mediaportal.showmyspass = ConfigYesNo(default = True)
+from additions.mediatheken.voxnow import *
+config.mediaportal.showVoxnow = ConfigYesNo(default = True)
+from additions.mediatheken.rtlnow import *
+config.mediaportal.showRTLnow = ConfigYesNo(default = True)
+from additions.mediatheken.ntvnow import *
+config.mediaportal.showNTVnow = ConfigYesNo(default = True)
+from additions.mediatheken.rtlnitronow import *
+config.mediaportal.showRTLnitro = ConfigYesNo(default = True)
+from additions.mediatheken.rtl2now import *
+config.mediaportal.showRTL2now = ConfigYesNo(default = True)
+from additions.mediatheken.superrtlnow import *
+config.mediaportal.showSUPERRTLnow = ConfigYesNo(default = True)
+from additions.mediatheken.zdf import *
+config.mediaportal.showZDF = ConfigYesNo(default = True)
+from additions.mediatheken.orf import *
+config.mediaportal.showORF = ConfigYesNo(default = True)
+from additions.mediatheken.srf import *
+config.mediaportal.showSRF = ConfigYesNo(default = True)
+from additions.mediatheken.ard import *
+config.mediaportal.showARD = ConfigYesNo(default = True)
+
+# Porn
+from additions.porn.x4tube import *
+config.mediaportal.show4tube = ConfigYesNo(default = False)
+from additions.porn.ahme import *
+config.mediaportal.showahme = ConfigYesNo(default = False)
+from additions.porn.amateurporn import *
+config.mediaportal.showamateurporn = ConfigYesNo(default = False)
+from additions.porn.beeg import *
+config.mediaportal.showbeeg = ConfigYesNo(default = False)
+from additions.porn.drtuber import *
+config.mediaportal.showdrtuber = ConfigYesNo(default = False)
+from additions.porn.elladies import *
+config.mediaportal.showelladies = ConfigYesNo(default = False)
+from additions.porn.eporner import *
+config.mediaportal.showeporner = ConfigYesNo(default = False)
+from additions.porn.eroprofile import *
+config.mediaportal.showeroprofile = ConfigYesNo(default = False)
+from additions.porn.extremetube import *
+config.mediaportal.showextremetube = ConfigYesNo(default = False)
+from additions.porn.freeomovie import *
+config.mediaportal.showfreeomovie = ConfigYesNo(default = False)
+from additions.porn.gstreaminxxx import *
+config.mediaportal.showgstreaminxxx = ConfigYesNo(default = False)
+from additions.porn.hdporn import *
+config.mediaportal.showhdporn = ConfigYesNo(default = False)
+from additions.porn.hotshame import *
+config.mediaportal.showhotshame = ConfigYesNo(default = False)
+from additions.porn.megaskanks import *
+config.mediaportal.showmegaskanks = ConfigYesNo(default = False)
+from additions.porn.paradisehill import *
+config.mediaportal.showparadisehill = ConfigYesNo(default = False)
+from additions.porn.pinkrod import *
+config.mediaportal.showpinkrod = ConfigYesNo(default = False)
+from additions.porn.playporn import *
+config.mediaportal.showplayporn = ConfigYesNo(default = False)
+from additions.porn.pornerbros import *
+config.mediaportal.showpornerbros = ConfigYesNo(default = False)
+from additions.porn.pornhub import *
+config.mediaportal.showPornhub = ConfigYesNo(default = False)
+from additions.porn.pornmvz import *
+config.mediaportal.showpornmvz = ConfigYesNo(default = False)
+from additions.porn.pornostreams import *
+config.mediaportal.showpornostreams = ConfigYesNo(default = False)
+from additions.porn.pornrabbit import *
+config.mediaportal.showpornrabbit = ConfigYesNo(default = False)
+from additions.porn.realgfporn import *
+config.mediaportal.showrealgfporn = ConfigYesNo(default = False)
+from additions.porn.redtube import *
+config.mediaportal.showredtube = ConfigYesNo(default = False)
+from additions.porn.sexxxhd import *
+config.mediaportal.showsexxxhd = ConfigYesNo(default = False)
+from additions.porn.sunporno import *
+config.mediaportal.showsunporno = ConfigYesNo(default = False)
+from additions.porn.thenewporn import *
+config.mediaportal.showthenewporn = ConfigYesNo(default = False)
+from additions.porn.updatetube import *
+config.mediaportal.showupdatetube = ConfigYesNo(default = False)
+from additions.porn.wetplace import *
+config.mediaportal.showwetplace = ConfigYesNo(default = False)
+from additions.porn.xhamster import *
+config.mediaportal.showXhamster = ConfigYesNo(default = False)
+from additions.porn.xxxsave import *
+config.mediaportal.showxxxsave = ConfigYesNo(default = False)
+from additions.porn.youporn import *
+config.mediaportal.showyouporn = ConfigYesNo(default = False)
+
+# Grauzone
+from additions.myentertainment import *
+config.mediaportal.showMEHD = ConfigYesNo(default = False)
+from additions.streamoase import *
+config.mediaportal.showStreamOase = ConfigYesNo(default = False)
+from additions.kinokiste import *
+config.mediaportal.showKinoKiste = ConfigYesNo(default = False)
+from additions.baskino import *
+config.mediaportal.showBaskino = ConfigYesNo(default = False)
+from additions.kinoxto import *
+config.mediaportal.showKinox = ConfigYesNo(default = False)
+config.mediaportal.showKinoxWatchlist = ConfigYesNo(default = False)
+from additions.movie4k import *
+config.mediaportal.showM4k = ConfigYesNo(default = False)
+config.mediaportal.showM4kWatchlist = ConfigYesNo(default = False)
+config.mediaportal.showM4kPorn = ConfigYesNo(default = False)
+from additions.iStreamws import *
+config.mediaportal.showIStream = ConfigYesNo(default = False)
+config.mediaportal.showIStreamPorn = ConfigYesNo(default = False)
+from additions.watchseries import *
+config.mediaportal.showWatchseries = ConfigYesNo(default = False)
+from additions.szenestreams import *
+config.mediaportal.showSzeneStreams = ConfigYesNo(default = False)
+from additions.cinestream import *
+config.mediaportal.showCinestream = ConfigYesNo(default = False)
+#from additions.viewster import *
+#config.mediaportal.showViewster = ConfigYesNo(default = False)
+from additions.moovizon import *
+config.mediaportal.showMoovizon = ConfigYesNo(default = False)
+from additions.vibeo import *
+config.mediaportal.showVibeo = ConfigYesNo(default = False)
+from additions.burningseries import *
+config.mediaportal.showBs = ConfigYesNo(default = False)
+from additions.primewire import *
+config.mediaportal.showprimewire = ConfigYesNo(default = False)
+from additions.mlehd import *
+config.mediaportal.showmlehd = ConfigYesNo(default = False)
+from additions.ddl_me import *
+config.mediaportal.showDdlme = ConfigYesNo(default = False)
+from additions.movie25 import *
+config.mediaportal.showMovie25 = ConfigYesNo(default = False)
 
 class hauptScreenSetup(Screen, ConfigListScreen):
 
@@ -1794,7 +1786,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
 		if config.mediaportal.showmyspass.value:
 			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
-			
+
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Fun"))
