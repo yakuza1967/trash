@@ -43,6 +43,7 @@ config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("h
 config.mediaportal.showapplepagestyle = ConfigYesNo(default = True)
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
+config.mediaportal.font = ConfigSelection(default = "1", choices = [("1", _("Mediaportal 1")),("2", _("Mediaportal 2"))])
 
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
@@ -351,6 +352,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
 		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
+		self.configlist.append(getConfigListEntry("Schriftart:", config.mediaportal.font))
 
 		### Sport
 		self.sport.append(getConfigListEntry("NHL", config.mediaportal.showNhl))
@@ -650,7 +652,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 
 		Screen.__init__(self, session)
 
-		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal.ttf", "mediaportal", 100, False)
+		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal%s.ttf" % config.mediaportal.font.value, "mediaportal", 100, False)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
 			"ok"    : self.keyOK,
@@ -2037,7 +2039,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		Screen.__init__(self, session)
 
-		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal.ttf", "mediaportal", 100, False)
+		registerFont("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/resources/mediaportal%s.ttf" % config.mediaportal.font.value, "mediaportal", 100, False)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
 			"ok"    : self.keyOK,
