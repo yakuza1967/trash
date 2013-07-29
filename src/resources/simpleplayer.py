@@ -51,7 +51,6 @@ class SimpleSeekHelper:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
 						InfoBarShowHide.lockShow(self)
 						self.seekBarLocked = True
-						#self["seekbarcursor"].show()
 						self["seekbartime"].show()
 						self.cursorTimer.start(200, False)
 
@@ -96,7 +95,6 @@ class SimpleSeekHelper:
 		self.unlockShow()
 		self["seekbarcursor"].hide()
 		self["seekbartime"].hide()
-		self.hide()
 
 	def seekOK(self):
 		#print "seekOK:"
