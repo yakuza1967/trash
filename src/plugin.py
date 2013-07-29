@@ -4,6 +4,9 @@
 from resources.imports import *
 from resources.update import *
 
+#simplelist
+from resources.simplelist import *
+
 # Stream-Sites import
 from additions.forplayers import *
 from additions.dokume import *
@@ -166,6 +169,7 @@ config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("h
 config.mediaportal.showapplepagestyle = ConfigYesNo(default = True)
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
+config.mediaportal.simplelist = ConfigYesNo(default = False)
 
 # Kinder
 config.mediaportal.showKinderKino = ConfigYesNo(default = True)
@@ -356,6 +360,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
 		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
+		self.configlist.append(getConfigListEntry("SimpleList:", config.mediaportal.simplelist))
 
 		### Sport
 		self.sport.append(getConfigListEntry("NHL", config.mediaportal.showNhl))
@@ -778,6 +783,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
 		if config.mediaportal.showmyspass.value:
 			self.mediatheken.append(self.hauptListEntry("MySpass", "myspass"))
+		if config.mediaportal.simplelist.value:
+			self.mediatheken.append(self.hauptListEntry("SimpleList", "simplelist"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if astModule:
@@ -1416,6 +1423,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(sport1fmGenreScreen)
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
+		elif auswahl == "SimpleList":
+			self.session.open(simplelistGenreScreen)
 		#elif auswahl == "Viewster":
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
@@ -1816,6 +1825,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("SRF Player", "srf", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
+		if config.mediaportal.simplelist.value:
+			self.plugin_liste.append(("SimpleList", "simplelist", "Mediathek"))
 
 		### porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2412,6 +2423,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(sport1fmGenreScreen)
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
+		elif auswahl == "SimpleList":
+			self.session.open(simplelistGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
