@@ -95,9 +95,9 @@ class myspassStaffelListeScreen(Screen):
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "%s/%s/defaultListWideScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = self.skin_path + "/original/defaultListWideScreen.xml"
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
 
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -122,16 +122,12 @@ class myspassStaffelListeScreen(Screen):
 		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
-		self['handlung'] = Label("")
-		self['page'] = Label("")
-		self['Page'] = Label("")
-		self['coverArt'] = Pixmap()
 
 		self.staffelliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['liste'] = self.chooseMenuList
+		self['genreList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
 
@@ -140,7 +136,8 @@ class myspassStaffelListeScreen(Screen):
 		getPage(self.myspassUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		staffeln = re.findall('<li.*?><a.*?href="#seasonlist_full_episode.*?"\sonclick="ajax.*?(getEpisodeListFromSeason.*?)\'.*?>(.*?)</a></li>', data)
+		parse = re.search('class="episodeListSeasonList">(.*?)class="episodeListTable', data, re.S)
+		staffeln = re.findall('onclick="ajax.*?\'(getEpisodeListFromSeason.*?)\'.*?episodes.*?>(.*?)</a></li>', parse.group(1), re.S)
 		if staffeln:
 			self.staffelliste = []
 			for (link, name) in staffeln:
@@ -152,8 +149,8 @@ class myspassStaffelListeScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		myname = self['liste'].getCurrent()[0][0]
-		myid = self['liste'].getCurrent()[0][1]
+		myname = self['genreList'].getCurrent()[0][0]
+		myid = self['genreList'].getCurrent()[0][1]
 
 		print myid, myname
 		self.session.open(myspassFolgenListeScreen, myname, myid)
