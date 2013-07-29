@@ -95,12 +95,13 @@ class SimpleSeekHelper:
 		self.unlockShow()
 		self["seekbarcursor"].hide()
 		self["seekbartime"].hide()
+		self.seekBarShown = False
 
 	def seekOK(self):
 		#print "seekOK:"
 		if self.length:
 			self.seek.seekTo(int(float(self.length[1]) / 100.0 * self.percent))
-			self.seekExit()
+		self.seekExit()
 
 	def seekLeft(self):
 		#print "seekLeft:"
