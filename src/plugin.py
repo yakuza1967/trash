@@ -2003,7 +2003,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste_page_tmp = self.plugin_liste
 
 			if len(self.plugin_liste_page_tmp) != 0:
-				self.counting_pages = len(self.plugin_liste_page_tmp) / 40
+				self.counting_pages = (len(self.plugin_liste_page_tmp)-1) / 40
 				print "COUNTING PAGES:", self.counting_pages
 				pagebar_size = int(self.counting_pages) * 30
 				rest_size = 1280 - int(pagebar_size)
