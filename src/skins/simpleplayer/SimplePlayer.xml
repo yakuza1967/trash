@@ -1,14 +1,14 @@
 <screen name="SimplePlayer" position="0,0" size="1280,720" title="InfoBar" backgroundColor="transparent" flags="wfNoBorder">
-  <ePixmap position="40,555" size="1200,150" zPosition="-2" pixmap="~/tec/images/spbg.png" />
-  <ePixmap position="40,555" size="1200,150" zPosition="3" pixmap="~/tec/images/spglas.png" alphatest="blend" />
-  <ePixmap position="40,555" size="1200,150" zPosition="2" pixmap="~/tec/images/spiconframe.png" alphatest="blend" />
+  <ePixmap position="40,555" size="1200,150" zPosition="-2" pixmap="~/simpleplayer/spbg.png" />
+  <ePixmap position="40,555" size="1200,150" zPosition="3" pixmap="~/simpleplayer/spglas.png" alphatest="blend" />
+  <ePixmap position="40,555" size="1200,150" zPosition="2" pixmap="~/simpleplayer/spiconframe.png" alphatest="blend" />
   <widget source="session.CurrentService" render="Label" position="273,566" size="700,54" font="mediaportal; 24" valign="center" halign="center" backgroundColor="#00000000" transparent="1">
       <convert type="ServiceName">Name</convert>
     </widget>
-  <widget source="session.CurrentService" render="Progress" position="273,626" size="700,14" pixmap="~/tec/images/spbar.png" zPosition="3" transparent="1" backgroundColor="#00000000">
+  <widget source="session.CurrentService" render="Progress" position="273,626" size="700,14" pixmap="~/simpleplayer/spbar.png" zPosition="3" transparent="1" backgroundColor="#00000000">
   <convert type="ServicePosition">Position</convert>
 </widget>
-  <widget name="seekbarcursor" position="273,626" size="16,16" zPosition="4" pixmap="~/tec/images/seekbutton.png" alphatest="on" />
+  <widget name="seekbarcursor" position="273,626" size="16,16" zPosition="4" pixmap="~/simpleplayer/seekbutton.png" alphatest="on" />
   <widget source="session.CurrentService" render="PositionGauge" position="271,624" size="695,12" zPosition="3" transparent="1">
   <convert type="ServicePosition">Gauge</convert>
 </widget>
@@ -23,27 +23,27 @@
   </widget>
   <widget name="seekbartime" position="591,665" size="100,20" font="mediaportal;20" halign="center" backgroundColor="#00000000" transparent="1" />
   <widget name="Cover" position="1082,341" size="146,193" zPosition="2" alphatest="blend" />
-  <widget name="spcoverframe" position="1075,333" size="160,210" zPosition="1" pixmap="~/tec/images/spcoverframe.png" />
-  <widget name="spcoverfg" position="1075,333" size="160,210" zPosition="3" pixmap="~/tec/images/spcoverfg.png" alphatest="blend" />
-  <ePixmap position="90,599" size="120,50" pixmap="~/tec/images/mplogo.png" alphatest="blend" />
+  <widget name="spcoverframe" position="1075,333" size="160,210" zPosition="1" pixmap="~/simpleplayer/spcoverframe.png" />
+  <widget name="spcoverfg" position="1075,333" size="160,210" zPosition="3" pixmap="~/simpleplayer/spcoverfg.png" alphatest="blend" />
+  <ePixmap position="90,599" size="120,50" pixmap="~/simpleplayer/mplogo.png" alphatest="blend" />
   <eLabel position="251,569" size="2,110" backgroundColor="#00808888" />
   <eLabel position="991,569" size="2,110" backgroundColor="#00808888" />
-  <ePixmap pixmap="~/tec/images/ico_dolby_off.png" position="1013,655" size="57,20" zPosition="1" alphatest="blend" />
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/tec/images/ico_dolby_on.png" position="1013,655" size="57,20" zPosition="2" alphatest="blend">
+  <ePixmap pixmap="~/simpleplayer/ico_dolby_off.png" position="1013,655" size="57,20" zPosition="1" alphatest="blend" />
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_dolby_on.png" position="1013,655" size="57,20" zPosition="2" alphatest="blend">
     <convert type="ServiceInfo">IsMultichannel</convert>
     <convert type="ConditionalShowHide" />
   </widget>
-  <ePixmap pixmap="~/tec/images/ico_format_off.png" position="1106,655" size="36,20" zPosition="1" alphatest="blend" />
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/tec/images/ico_format_on.png" position="1106,655" size="36,20" zPosition="2" alphatest="blend">
+  <ePixmap pixmap="~/simpleplayer/ico_format_off.png" position="1106,655" size="36,20" zPosition="1" alphatest="blend" />
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_format_on.png" position="1106,655" size="36,20" zPosition="2" alphatest="blend">
     <convert type="ServiceInfo">IsWidescreen</convert>
     <convert type="ConditionalShowHide" />
   </widget>
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/tec/images/ico_hd_off.png" position="1176,655" size="29,20" zPosition="1" alphatest="blend">
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_hd_off.png" position="1176,655" size="29,20" zPosition="1" alphatest="blend">
     <convert type="ServiceInfo">VideoWidth</convert>
     <convert type="ValueRange">0,1279</convert>
     <convert type="ConditionalShowHide" />
   </widget>
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/tec/images/ico_hd_on.png" position="1176,655" size="29,20" zPosition="2" alphatest="blend">
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_hd_on.png" position="1176,655" size="29,20" zPosition="2" alphatest="blend">
     <convert type="ServiceInfo">VideoWidth</convert>
     <convert type="ValueRange">1280,1980</convert>
     <convert type="ConditionalShowHide" />

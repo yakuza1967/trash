@@ -128,7 +128,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		self.skin_path = mp_globals.pluginPath + "/skins"
 		self.wallicon_path = mp_globals.pluginPath + "/icons_wall/"
 
-		path = "%s/tec/SimplePlayer.xml" % self.skin_path
+		path = "%s/simpleplayer/SimplePlayer.xml" % self.skin_path
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()

@@ -52,6 +52,7 @@ src/images/Makefile
 src/resources/Makefile
 src/resources/mechanize/Makefile
 src/skins/Makefile
+src/skins/simpleplayer/Makefile
 src/skins/liquidblue/Makefile
 src/skins/liquidblue/images/Makefile
 src/skins/tec/Makefile
