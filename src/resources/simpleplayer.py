@@ -355,7 +355,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 	def playExit(self):
 		print "playExit:"
 		self.SaverTimer.stop()
-		self.session.nav.playService(self.lastservice)
+		if config.mediaportal.restorelastservice.value == "1":
+			self.session.nav.playService(self.lastservice)
+		else:
+			self.session.nav.stopService()
 
 	def getVideo(self):
 		print "getVideo:"

@@ -44,6 +44,7 @@ config.mediaportal.pagestyle = ConfigSelection(default="Graphic", choices = ["Gr
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
 config.mediaportal.font = ConfigSelection(default = "1", choices = [("1", _("Mediaportal 1")),("2", _("Mediaportal 2"))])
+config.mediaportal.restorelastservice = ConfigSelection(default = "1", choices = [("1", _("after SimplePlayer quits")),("2", _("after MediaPortal quits"))])
 
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
@@ -342,6 +343,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("Page Display Style:", config.mediaportal.pagestyle))
 		self.configlist.append(getConfigListEntry("Skin:", config.mediaportal.skin))
 		self.configlist.append(getConfigListEntry("Skin-Schriftart:", config.mediaportal.font))
+		self.configlist.append(getConfigListEntry("Restore last service:", config.mediaportal.restorelastservice))
 		self.configlist.append(getConfigListEntry("----- Jugendschutz -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Pincode:", config.mediaportal.pincode))
 		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
@@ -639,6 +641,7 @@ class chooseMenuList(MenuList):
 class haupt_Screen(Screen, ConfigListScreen):
 	def __init__(self, session):
 		self.session = session
+		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
 
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path = mp_globals.pluginPath + "/skins"
@@ -1512,9 +1515,11 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.session.open(self.pornscreen, self.cat)
 
 	def keyCancel(self):
+		self.session.nav.playService(self.lastservice)
 		self.close(self.session, True)
 
 	def restart(self):
+		self.session.nav.playService(self.lastservice)
 		self.close(self.session, False)
 
 class pluginSort(Screen):
@@ -1624,6 +1629,7 @@ class pluginSort(Screen):
 class haupt_Screen_Wall(Screen, ConfigListScreen):
 	def __init__(self, session, filter):
 		self.session = session
+		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
 
 		self.plugin_liste = []
 
@@ -2707,6 +2713,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 	def keyCancel(self):
 		config.mediaportal.filter.save()
 		configfile.save()
+		self.session.nav.playService(self.lastservice)
 		self.close(self.session, True)
 
 	def restart(self):
@@ -2714,6 +2721,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		config.mediaportal.filter.save()
 		config.mediaportal.sortplugins.save()
 		configfile.save()
+		self.session.nav.playService(self.lastservice)
 		self.close(self.session, False)
 
 def exit(session, result):
