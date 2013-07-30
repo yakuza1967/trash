@@ -40,7 +40,7 @@ config.mediaportal.pornpin = ConfigYesNo(default = True)
 config.mediaportal.setuppin = ConfigYesNo(default = False)
 config.mediaportal.watchlistpath = ConfigText(default="/etc/enigma2/", fixed_size=False)
 config.mediaportal.sortplugins = ConfigSelection(default = "abc", choices = [("hits", _("Hits")), ("abc", _("ABC")), ("user", _("User"))])
-config.mediaportal.showapplepagestyle = ConfigYesNo(default = True)
+config.mediaportal.showpagestyle = ConfigYesNo(default = True)
 config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
 config.mediaportal.font = ConfigSelection(default = "1", choices = [("1", _("Mediaportal 1")),("2", _("Mediaportal 2"))])
@@ -337,22 +337,24 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		## Allgemein
 		self.configlist.append(getConfigListEntry("----- Allgemein -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Automatic Update Check:", config.mediaportal.autoupdate))
+		self.configlist.append(getConfigListEntry("Hauptansicht Style:", config.mediaportal.ansicht))
+		self.configlist.append(getConfigListEntry("Wall-Selektor-Farbe:", config.mediaportal.selektor))
+		self.configlist.append(getConfigListEntry("Page Display Style:", config.mediaportal.showpagestyle))
+		self.configlist.append(getConfigListEntry("Skin:", config.mediaportal.skin))
+		self.configlist.append(getConfigListEntry("Skin-Schriftart:", config.mediaportal.font))
+		self.configlist.append(getConfigListEntry("----- Jugendschutz -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Pincode:", config.mediaportal.pincode))
+		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
 		self.configlist.append(getConfigListEntry("XXX-Erweiterungen sichtbar:", config.mediaportal.showporn))
 		self.configlist.append(getConfigListEntry("XXX-Pincodeabfrage:", config.mediaportal.pornpin))
-		self.configlist.append(getConfigListEntry("Selektor-Farbe:", config.mediaportal.selektor))
-		self.configlist.append(getConfigListEntry("HauptScreen-Ansicht:", config.mediaportal.ansicht))
-		self.configlist.append(getConfigListEntry("Apple Page Style:", config.mediaportal.showapplepagestyle))
-		self.configlist.append(getConfigListEntry("Skinauswahl:", config.mediaportal.skin))
-		self.configlist.append(getConfigListEntry("Schriftart:", config.mediaportal.font))
-		self.configlist.append(getConfigListEntry("HTTPDump benutzen:", config.mediaportal.useHttpDump))
-		self.configlist.append(getConfigListEntry("RTMPDump benutzen:", config.mediaportal.useRtmpDump))
+		self.configlist.append(getConfigListEntry("----- Sonstiges -----", config.mediaportal.fake_entry))
+		self.configlist.append(getConfigListEntry("HTTPDump verwenden:", config.mediaportal.useHttpDump))
+		self.configlist.append(getConfigListEntry("RTMPDump verwenden:", config.mediaportal.useRtmpDump))
 		self.configlist.append(getConfigListEntry("RTMPDump Cachepath:", config.mediaportal.storagepath))
 		self.configlist.append(getConfigListEntry("Autoplay Threshold [%]:", config.mediaportal.autoplayThreshold))
 		self.configlist.append(getConfigListEntry("YouTube Video Quality Priority:", config.mediaportal.youtubeprio))
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
-		self.configlist.append(getConfigListEntry("Plugins sortieren nach:", config.mediaportal.sortplugins))
-		self.configlist.append(getConfigListEntry("Setup-Pincodeabfrage:", config.mediaportal.setuppin))
+		self.configlist.append(getConfigListEntry("Grauzone aktivieren:", config.mediaportal.showgrauzone))
 
 		### Sport
 		self.sport.append(getConfigListEntry("NHL", config.mediaportal.showNhl))
@@ -526,7 +528,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.configlist.append(getConfigListEntry("Movie4k Watchlist", config.mediaportal.showM4kWatchlist))
 
 		self.configlist.append(getConfigListEntry("----- Debug -----", config.mediaportal.fake_entry))
-		self.configlist.append(getConfigListEntry("Grauzonen-Erweiterungen sichtbar:", config.mediaportal.showgrauzone))
 		self.configlist.append(getConfigListEntry("Debug-Mode:", config.mediaportal.debugMode))
 
 		self["config"].setList(self.configlist)
@@ -1993,7 +1994,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				posy = 210
 
 		# Appe Page Style
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showpagestyle.value:
 			self.dump_liste_page_tmp = self.plugin_liste
 			if config.mediaportal.filter.value != "ALL":
 				self.plugin_liste_page_tmp = []
@@ -2070,7 +2071,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self["zeile"+str(x)].show()
 
 		# Apple Page Style
-		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
+		if config.mediaportal.showpagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			for x in range(1,self.counting_pages+2):
 				self["page_empty"+str(x)] = Pixmap()
 				self["page_empty"+str(x)].show()
@@ -2152,7 +2153,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				if x <= 40:
 					self["zeile"+str(x)].show()
 
-		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
+		if config.mediaportal.showpagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			for x in range(1,self.counting_pages+2):
 				poster_path = "%s/page_select.png" % (self.images_path)
 				#print "postername:", postername, poster_path
@@ -2200,7 +2201,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 					self.mainlist.append(list_dummy)
 
 		print self.mainlist
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showpagestyle.value:
 			pageinfo = ""
 		else:
 			pageinfo = "Page %s / %s" % (self.select_list+1, len(self.mainlist))
@@ -2570,7 +2571,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self["zeile"+str(x)].hide()
 
 	def paint_new_last(self):
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showpagestyle.value:
 			pageinfo = ""
 		else:
 			pageinfo = "Page %s / %s" % (self.select_list+1, len(self.mainlist))
@@ -2580,14 +2581,14 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		print self.selektor_index
 		self.move_selector()
 		# Apple Page Style
-		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
+		if config.mediaportal.showpagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			self.refresh_apple_page_bar()
 
 		for x in self.mainlist[int(self.select_list)]:
 			self["zeile"+str(x)].show()
 
 	def paint_new(self):
-		if config.mediaportal.showapplepagestyle.value:
+		if config.mediaportal.showpagestyle.value:
 			pageinfo = ""
 		else:
 			pageinfo = "Page %s / %s" % (self.select_list+1, len(self.mainlist))
@@ -2595,7 +2596,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.selektor_index = 1
 		self.move_selector()
 		# Apple Page Style
-		if config.mediaportal.showapplepagestyle.value and len(self.plugin_liste_page_tmp) != 0:
+		if config.mediaportal.showpagestyle.value and len(self.plugin_liste_page_tmp) != 0:
 			self.refresh_apple_page_bar()
 
 		for x in self.mainlist[int(self.select_list)]:
