@@ -567,9 +567,9 @@ class SimplePlaylist(Screen):
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "%s/%s/showSongstoAll.xml" % (self.skin_path, config.mediaportal.skin.value)
+		path = "%s/%s/defaultPlaylistScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = self.skin_path + "/original/showSongstoAll.xml"
+			path = self.skin_path + "/original/defaultPlaylistScreen.xml"
 
 		with open(path, "r") as f:
 			self.skin = f.read()

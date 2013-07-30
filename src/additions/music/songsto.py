@@ -83,9 +83,9 @@ class showSongstoAll(Screen, InfoBarBase, InfoBarSeek):
 		self.session = session
 		self.scLink = link
 		self.scGuiName = name
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/showSongstoAll.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultPlaylistScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/showSongstoAll.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultPlaylistScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -252,9 +252,9 @@ class showSongstoTop(Screen, InfoBarBase, InfoBarSeek):
 		self.session = session
 		self.scLink = link
 		self.scGuiName = name
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/showSongstoAll.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultPlaylistScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/showSongstoAll.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultPlaylistScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
