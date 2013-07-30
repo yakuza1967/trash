@@ -42,6 +42,10 @@ src/Makefile
 src/additions/Makefile
 src/additions/porn/Makefile
 src/additions/mediatheken/Makefile
+src/additions/grauzone/Makefile
+src/additions/sport/Makefile
+src/additions/music/Makefile
+src/additions/fun/Makefile
 src/icons/Makefile
 src/icons_wall/Makefile
 src/images/Makefile
