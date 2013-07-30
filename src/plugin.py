@@ -20,8 +20,8 @@ config.mediaportal = ConfigSubsection()
 config.mediaportal.fake_entry = NoSave(ConfigNothing())
 
 # Allgemein
-config.mediaportal.version = NoSave(ConfigText(default="460"))
-config.mediaportal.versiontext = NoSave(ConfigText(default="4.6.0"))
+config.mediaportal.version = NoSave(ConfigText(default="470"))
+config.mediaportal.versiontext = NoSave(ConfigText(default="4.7.0"))
 config.mediaportal.autoupdate = ConfigYesNo(default = True)
 config.mediaportal.pincode = ConfigPIN(default = 0000)
 config.mediaportal.showporn = ConfigYesNo(default = False)
