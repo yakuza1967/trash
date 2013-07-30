@@ -33,7 +33,8 @@ class SimpleSeekHelper:
 		self.seekBarShown = False
 		self.seekBarLocked = False
 		self.counter = 0
-		self.onClose.append(self.cancelSeek)
+		self.onHide.append(self.__seekBarHide)
+		self.onShow.append(self.__seekBarShown)
 
 	def initSeek(self):
 		self.percent = 0.0
@@ -54,25 +55,21 @@ class SimpleSeekHelper:
 						self["seekbartime"].show()
 						self.cursorTimer.start(200, False)
 
-	def startHideTimer(self):
-		#print "startHide:"
+	def __seekBarShown(self):
+		#print "seekBarShown:"
 		self.seekBarShown = True
-		InfoBarShowHide.startHideTimer(self)
 
-	def doTimerHide(self):
-		#print "doHide:"
+	def __seekBarHide(self):
+		#print "seekBarHide:"
 		self.seekBarShown = False
-		InfoBarShowHide.doTimerHide(self)
 
 	def toggleShow(self):
-		#print "toggle:"
+		#print "toggleShow:"
 		if self.seekBarLocked:
 			self.seekOK()
-		elif self.seekBarShown:
-			self.seekBarShown = False
-
-		InfoBarShowHide.toggleShow(self)
-
+		else:
+			InfoBarShowHide.toggleShow(self)
+		
 	def __updateCursor(self):
 		if self.length:
 			x = 273 + int(6.86 * self.percent)
@@ -95,7 +92,6 @@ class SimpleSeekHelper:
 		self.unlockShow()
 		self["seekbarcursor"].hide()
 		self["seekbartime"].hide()
-		self.seekBarShown = False
 
 	def seekOK(self):
 		#print "seekOK:"
