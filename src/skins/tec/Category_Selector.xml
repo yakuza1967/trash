@@ -1,0 +1,3 @@
+<!-- Category_Selector -->
+<screen name="Category_Selector" position="center,center" size="400,520" flags="wfNoBorder" transparent="1" backgroundColor="#ffffffff">
+<ePixmap position="0,0" size="400,520" zPosition="0" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_bg.png" transparent="1" alphatest="blend" />
