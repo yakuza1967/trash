@@ -2061,7 +2061,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			"info" : self.showPorn,
 			"showMovies" : self.keySimpleList,
 			"displayHelp" : self.keyHelp,
-			"blue" : self.chFilter,
+			"blue" : self.startChoose,
 			"green" : self.chSort,
 			"yellow": self.manuelleSortierung
 		}, -1)
@@ -2723,7 +2723,109 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		configfile.save()
 		self.session.nav.playService(self.lastservice)
 		self.close(self.session, False)
+		
+	def startChoose(self):
+		self.session.open(chooseFilter, self.plugin_liste)
+	
+class chooseFilter(Screen):
+	def __init__(self, session, plugin_liste):
+		self.session = session
+		self.plugin_liste = plugin_liste
 
+		self.dupe = []
+		#('ARD Mediathek', 'ard', 'Mediathek', '0', '81')
+		for (pname, iname, filter, hits, cout) in self.plugin_liste:
+			#check auf mehrere filter
+			if re.match('.*?/', filter):
+				mfilter_raw = filter.split('\/')
+				if len(mfilter_raw) != 0:
+					for mfilter in mfilter_raw:
+						if not mfilter in self.dupe:
+							print "multi", mfilter
+							self.dupe.append(mfilter)
+
+			if not filter in self.dupe:
+					print "norma", filter
+					self.dupe.append(filter)
+		hoehe = 65
+		breite = 20
+		skincontent = ""
+		for x in range(1,len(self.dupe)+1):
+			print x, breite, hoehe
+			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
+			hoehe += 65
+
+		self.skin_dump = ""
+		#self.skin_dump += "<screen name=\"Category_Selector\" position=\"center,center\" size=\"400,520\" flags=\"wfNoBorder\" transparent=\"1\" backgroundColor=\"#ffffffff\">"
+		#self.skin_dump += "<ePixmap position=\"0,0\" size=\"400,520\" zPosition=\"0\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_bg.png\" transparent=\"1\" alphatest=\"blend\" />"
+		self.skin_dump += "<widget name=\"frame\" position=\"10,10\" size=\"358,58\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_cyan.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />"
+		self.skin_dump += skincontent
+		self.skin_dump += "</screen>"
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path = mp_globals.pluginPath + "/skins"
+		self.images_path = path = "%s/%s/images" % (self.skin_path, config.mediaportal.skin.value)
+
+		path = "%s/%s/Category_Selector.xml" % (self.skin_path, config.mediaportal.skin.value)
+		print path
+		if not fileExists(path):
+			path = self.skin_path + "/original/Category_Selector.xml"
+
+		with open(path, "r") as f:
+			self.skin_dump2 = f.read()
+		self.skin_dump2 += self.skin_dump
+		print self.skin_dump2
+		self.skin = self.skin_dump2
+		
+		f.close()
+
+		Screen.__init__(self, session)
+		
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
+		#	"ok"    : self.keyOK,
+		#	"up"    : self.keyUp,
+		#	"down"  : self.keyDown,
+			"cancel": self.keyCancel
+		}, -1)
+		
+		self["frame"] = MovingPixmap()
+		self.selektor_index = 1
+		
+		for x in range(1,len(self.dupe)+1):
+			self["menu"+str(x)] = Pixmap()
+			self["menu"+str(x)].show()
+			#self["page_sel"+str(x)] = Pixmap()
+			#self["page_sel"+str(x)].show()
+
+		self.onFirstExecBegin.append(self._onFirstExecBegin)
+
+	def _onFirstExecBegin(self):
+		for x in range(1,len(self.dupe)+1):
+			filtername = self.dupe[int(x)-1]
+			print "filtername", filtername
+			poster_path = "%s/%s.png" % ("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images", filtername)
+			print "poster_path", poster_path
+			if not fileExists(poster_path):
+				poster_path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/no_icon.png"
+
+			self["menu"+str(x)].instance.setPixmap(gPixmapPtr())
+			self["menu"+str(x)].hide()
+			pic = LoadPixmap(cached=True, path=poster_path)
+			if pic != None:
+				self["menu"+str(x)].instance.setPixmap(pic)
+				self["menu"+str(x)].show()
+
+				
+		position = self["menu"+str(self.selektor_index)].instance.position()
+		self["frame"].moveTo(position.x(), position.y(), 1)
+		self["frame"].show()
+		self["frame"].startMoving()
+		
+	def keyCancel(self):
+		self.close()
+		
+		#self["frame"] = MovingPixmap()
+		
 def exit(session, result):
 	if not result:
 		if config.mediaportal.ansicht.value == "liste":
