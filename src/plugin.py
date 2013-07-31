@@ -45,6 +45,7 @@ config.mediaportal.laola1locale = ConfigText(default="de", fixed_size=False)
 config.mediaportal.debugMode = ConfigSelection(default="Silent", choices = ["High", "Normal", "Silent", ])
 config.mediaportal.font = ConfigSelection(default = "1", choices = [("1", _("Mediaportal 1")),("2", _("Mediaportal 2"))])
 config.mediaportal.restorelastservice = ConfigSelection(default = "1", choices = [("1", _("after SimplePlayer quits")),("2", _("after MediaPortal quits"))])
+config.mediaportal.filterselector = ConfigYesNo(default = True)
 
 # Konfiguration erfolgt in SimplePlayer
 config.mediaportal.sp_randomplay = ConfigYesNo(default = False)
@@ -339,6 +340,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("----- Allgemein -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Automatic Update Check:", config.mediaportal.autoupdate))
 		self.configlist.append(getConfigListEntry("Hauptansicht Style:", config.mediaportal.ansicht))
+		self.configlist.append(getConfigListEntry("Filtermenü aktivieren:", config.mediaportal.filterselector))
 		self.configlist.append(getConfigListEntry("Wall-Selektor-Farbe:", config.mediaportal.selektor))
 		self.configlist.append(getConfigListEntry("Page Display Style:", config.mediaportal.pagestyle))
 		self.configlist.append(getConfigListEntry("Skin:", config.mediaportal.skin))
@@ -2061,7 +2063,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			"info" : self.showPorn,
 			"showMovies" : self.keySimpleList,
 			"displayHelp" : self.keyHelp,
-			"blue" : self.startChoose,
+			"blue" : self.changeFilter,
 			"green" : self.chSort,
 			"yellow": self.manuelleSortierung
 		}, -1)
@@ -2651,6 +2653,12 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		print "Sort changed:", config.mediaportal.sortplugins.value
 		self.restart()
 
+	def changeFilter(self):
+		if config.mediaportal.filterselector.value:
+			self.startChoose()
+		else:
+			self.chFilter()
+
 	def chFilter(self):
 		print "Filter:", config.mediaportal.filter.value
 
@@ -2723,17 +2731,17 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		configfile.save()
 		self.session.nav.playService(self.lastservice)
 		self.close(self.session, False)
-		
+
 	def startChoose(self):
 		self.session.openWithCallback(self.gotFilter, chooseFilter, self.dump_liste)
-		
+
 	def gotFilter(self, filter):
 		if filter != True:
 			print "Set new filter to:", filter
 			config.mediaportal.filter.value = filter
 			print "Filter changed:", config.mediaportal.filter.value
 			self.restartAndCheck()
-	
+
 class chooseFilter(Screen, ConfigListScreen):
 	def __init__(self, session, plugin_liste):
 		self.session = session
@@ -2754,7 +2762,7 @@ class chooseFilter(Screen, ConfigListScreen):
 
 		# menu abc sorting
 		self.dupe.sort()
-		
+
 		hoehe = 197
 		breite = 531
 		skincontent = ""
@@ -2782,23 +2790,23 @@ class chooseFilter(Screen, ConfigListScreen):
 			f.close()
 
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
 			"ok": self.keyOk,
 			"cancel": self.keyCancel,
 			"up": self.keyup,
 			"down": self.keydown
 		}, -1)
-		
+
 		self["frame"] = MovingPixmap()
 		self.selektor_index = 1
-		
+
 		for x in range(1,len(self.dupe)+1):
 			self["menu"+str(x)] = Pixmap()
 			self["menu"+str(x)].show()
 
 		self.onFirstExecBegin.append(self.loadPage)
-		
+
 	def loadPage(self):
 		for x in range(1,len(self.dupe)+1):
 			filtername = self.dupe[int(x)-1]
@@ -2810,29 +2818,29 @@ class chooseFilter(Screen, ConfigListScreen):
 				if pic != None:
 					self["menu"+str(x)].instance.setPixmap(pic)
 					self["menu"+str(x)].show()
-			
+
 		self.moveframe()
-		
+
 	def moveframe(self):
 		position = self["menu"+str(self.selektor_index)].instance.position()
 		self["frame"].moveTo(position.x(), position.y(), 1)
 		self["frame"].show()
 		self["frame"].startMoving()
-		
+
 	def keyOk(self):
 		print self.dupe[self.selektor_index-1]
 		self.close(self.dupe[self.selektor_index-1])
-		
+
 	def keyup(self):
 		if int(self.selektor_index) != 1:
 			self.selektor_index -= 1
 			self.moveframe()
-		
+
 	def keydown(self):
 		if int(self.selektor_index) != len(self.dupe):
 			self.selektor_index += 1
 			self.moveframe()
-		
+
 	def keyCancel(self):
 		self.close(True)
 
