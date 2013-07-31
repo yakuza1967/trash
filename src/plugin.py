@@ -2752,7 +2752,7 @@ class chooseFilter(Screen):
 		skincontent = ""
 		for x in range(1,len(self.dupe)+1):
 			print x, breite, hoehe
-			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"2\" transparent=\"1\" alphatest=\"blend\" />"
+			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"1\" transparent=\"1\" alphatest=\"blend\" />"
 			hoehe += 65
 
 		self.skin_dump = ""
@@ -2773,12 +2773,11 @@ class chooseFilter(Screen):
 
 		with open(path, "r") as f:
 			self.skin_dump2 = f.read()
-		self.skin_dump2 += self.skin_dump
-		print self.skin_dump2
-		self.skin = self.skin_dump2
+			self.skin_dump2 += self.skin_dump
+			print self.skin_dump2
+			self.skin = self.skin_dump2
+			f.close()
 		
-		f.close()
-
 		Screen.__init__(self, session)
 		
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
