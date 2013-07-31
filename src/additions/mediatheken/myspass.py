@@ -141,7 +141,7 @@ class myspassStaffelListeScreen(Screen):
 		if staffeln:
 			self.staffelliste = []
 			for (link, name) in staffeln:
-				link = "http://www.myspass.de/myspass/includes/php/ajax.php?action=%s" % (link.replace('&amp;','&'))
+				link = "http://www.myspass.de/myspass/includes/php/ajax.php?action=%s&pageNumber=" % (link.replace('&amp;','&'))
 				self.staffelliste.append((decodeHtml(name), link))
 			self.chooseMenuList.setList(map(myspassListEntry, self.staffelliste))
 			self.keyLocked = False
@@ -188,6 +188,8 @@ class myspassFolgenListeScreen(Screen):
 			"down" : self.keyDown,
 			"right" : self.keyRight,
 			"left" : self.keyLeft,
+			"nextBouquet" : self.keyPageUp,
+			"prevBouquet" : self.keyPageDown,
 			"red": self.keyCancel
 		}, -1)
 
@@ -204,8 +206,10 @@ class myspassFolgenListeScreen(Screen):
 		self['F4'].hide()
 		self['handlung'] = Label("")
 		self['page'] = Label("")
-		self['Page'] = Label("")
+		self['Page'] = Label("Page")
 		self['coverArt'] = Pixmap()
+		self.page = 0
+		self.lastpage = 0
 
 		self.folgenliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -217,9 +221,19 @@ class myspassFolgenListeScreen(Screen):
 
 	def loadPage(self):
 		print "hole daten"
-		getPage(self.myspassUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		self.folgenliste = []
+		url = "%s%s" % (self.myspassUrl, str(self.page))
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
+		lastp = re.findall("setPageByAjaxTextfield\(\'.*?\',\s\'(.*?)\'", data, re.S)
+		if lastp:
+			lastp = int(lastp[0])-1
+			print str(lastp)
+			self.lastpage = lastp
+		else:
+			self.lastpage = 0
+		self['page'].setText(str(self.page+1) + ' / ' + str(self.lastpage+1))
 		folgen = re.findall('class="episodeListInformation">.*?location.href=.*?--\/(.*?)\/.*?img\ssrc="(.*?)"\salt="(.*?)".*?\/h5>(.*?)</div>', data, re.S|re.I)
 		if folgen:
 			for (id, image, title, description) in folgen:
@@ -254,6 +268,22 @@ class myspassFolgenListeScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
+
+	def keyPageDown(self):
+		print "PageDown"
+		if self.keyLocked:
+			return
+		if not self.page < 1:
+			self.page -= 1
+			self.loadPage()
+
+	def keyPageUp(self):
+		print "PageUP"
+		if self.keyLocked:
+			return
+		if self.page < self.lastpage:
+			self.page += 1
+			self.loadPage()
 
 	def keyLeft(self):
 		if self.keyLocked:
