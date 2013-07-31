@@ -458,7 +458,8 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 				self.addToPlaylist()
 
 			elif data[0] == 3:
-				pl_list = SimplePlaylistIO.getPL(data[self.pl_name])
+				nm = self.pl_name
+				pl_list = SimplePlaylistIO.getPL(nm)
 				if pl_list != []:
 					self.playList2 = pl_list
 					self.playIdx = 0
@@ -883,7 +884,6 @@ class SimplePlaylistIO:
 						url = m.group(2)
 						album = m.group(3)
 						artist = m.group(4)
-						cflag = m.group(5)
 						if m2:
 							ltype = m2.group(1)
 						else:
@@ -899,7 +899,7 @@ class SimplePlaylistIO:
 						if m5:
 							cflag = m5.group(1)
 						else:
-							cflag = ''
+							cflag = '0'
 
 						if artist != '':
 							name = "%s - %s" % (artist, titel)
