@@ -2738,9 +2738,7 @@ class chooseFilter(Screen, ConfigListScreen):
 		self.session = session
 		self.plugin_liste = plugin_liste
 
-		# abc sorting
-		self.plugin_liste.sort()
-		
+		print self.plugin_liste
 		self.dupe = []
 		#('ARD Mediathek', 'ard', 'Mediathek', '0', '81')
 		for (pname, iname, filter, hits, cout) in self.plugin_liste:
@@ -2756,7 +2754,10 @@ class chooseFilter(Screen, ConfigListScreen):
 			if not filter in self.dupe:
 				print "norma", filter
 				self.dupe.append(filter)
-				
+
+		# menu abc sorting
+		self.dupe.sort()
+		
 		hoehe = 65
 		breite = 20
 		skincontent = ""
