@@ -2747,33 +2747,23 @@ class chooseFilter(Screen, ConfigListScreen):
 				mfilter_raw = re.split('/', filter)
 				for mfilter in mfilter_raw:
 					if not mfilter in self.dupe:
-						print "multi", mfilter
 						self.dupe.append(mfilter)
 			else:
 				if not filter in self.dupe:
-					print "normal", filter
 					self.dupe.append(filter)
 
 		# menu abc sorting
 		self.dupe.sort()
 		
-		anzahl_menues = len(self.dupe) * 58
-		print anzahl_menues
-		rest = 520 - int(anzahl_menues)
-		print rest
-		basis_hoehe = int(rest) / len(self.dupe)+1
-		print basis_hoehe
-		hoehe = basis_hoehe
-		breite = 20
-		print hoehe
+		hoehe = 197
+		breite = 531
 		skincontent = ""
 		for x in range(1,len(self.dupe)+1):
-			print x, breite, hoehe, basis_hoehe
-			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"1\" transparent=\"0\" alphatest=\"blend\" />"
-			hoehe += 58 + int(basis_hoehe)
+			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"218,38\" zPosition=\"1\" transparent=\"0\" alphatest=\"blend\" />"
+			hoehe += 48
 
 		self.skin_dump = ""
-		self.skin_dump += "<widget name=\"frame\" position=\"10,10\" size=\"358,58\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_cyan.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />"
+		self.skin_dump += "<widget name=\"frame\" position=\"10,10\" size=\"218,38\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/category_selector_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
 		self.skin_dump += skincontent
 		self.skin_dump += "</screen>"
 
@@ -2781,15 +2771,13 @@ class chooseFilter(Screen, ConfigListScreen):
 		self.skin_path = mp_globals.pluginPath + "/skins"
 		self.images_path = path = "%s/%s/images" % (self.skin_path, config.mediaportal.skin.value)
 
-		path = "%s/%s/Category_Selector.xml" % (self.skin_path, config.mediaportal.skin.value)
-		print path
+		path = "%s/%s/category_selector.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = self.skin_path + "/original/Category_Selector.xml"
+			path = self.skin_path + "/original/category_selector.xml"
 
 		with open(path, "r") as f:
 			self.skin_dump2 = f.read()
 			self.skin_dump2 += self.skin_dump
-			print self.skin_dump2
 			self.skin = self.skin_dump2
 			f.close()
 
@@ -2806,7 +2794,6 @@ class chooseFilter(Screen, ConfigListScreen):
 		self.selektor_index = 1
 		
 		for x in range(1,len(self.dupe)+1):
-			print x
 			self["menu"+str(x)] = Pixmap()
 			self["menu"+str(x)].show()
 
@@ -2815,9 +2802,7 @@ class chooseFilter(Screen, ConfigListScreen):
 	def loadPage(self):
 		for x in range(1,len(self.dupe)+1):
 			filtername = self.dupe[int(x)-1]
-			print "filtername", filtername
-			poster_path = "%s/%s.png" % ("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images", filtername)
-			print "poster_path", poster_path
+			poster_path = "%s/tec/images/category_selector_%s.png" % (self.skin_path, filtername.lower())
 			if fileExists(poster_path):
 				self["menu"+str(x)].instance.setPixmap(gPixmapPtr())
 				self["menu"+str(x)].hide()
@@ -2839,13 +2824,11 @@ class chooseFilter(Screen, ConfigListScreen):
 		self.close(self.dupe[self.selektor_index-1])
 		
 	def keyup(self):
-		print "up", self.selektor_index
 		if int(self.selektor_index) != 1:
 			self.selektor_index -= 1
 			self.moveframe()
 		
 	def keydown(self):
-		print "down", self.selektor_index
 		if int(self.selektor_index) != len(self.dupe):
 			self.selektor_index += 1
 			self.moveframe()
