@@ -2725,13 +2725,14 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.close(self.session, False)
 		
 	def startChoose(self):
-		self.session.openWithCallback(self.gotFilter, chooseFilter, self.plugin_liste)
+		self.session.openWithCallback(self.gotFilter, chooseFilter, self.dump_liste)
 		
 	def gotFilter(self, filter):
-		print "Set new filter to:", filter
-		config.mediaportal.filter.value = filter
-		print "Filter changed:", config.mediaportal.filter.value
-		self.restartAndCheck()
+		if filter != True:
+			print "Set new filter to:", filter
+			config.mediaportal.filter.value = filter
+			print "Filter changed:", config.mediaportal.filter.value
+			self.restartAndCheck()
 	
 class chooseFilter(Screen, ConfigListScreen):
 	def __init__(self, session, plugin_liste):
@@ -2740,6 +2741,8 @@ class chooseFilter(Screen, ConfigListScreen):
 
 		print self.plugin_liste
 		self.dupe = []
+		self.dupe.append("All")
+		
 		#('ARD Mediathek', 'ard', 'Mediathek', '0', '81')
 		for (pname, iname, filter, hits, cout) in self.plugin_liste:
 			#check auf mehrere filter
@@ -2758,13 +2761,20 @@ class chooseFilter(Screen, ConfigListScreen):
 		# menu abc sorting
 		self.dupe.sort()
 		
-		hoehe = 65
+		anzahl_menues = len(self.dupe) * 58
+		print anzahl_menues
+		rest = 520 - int(anzahl_menues)
+		print rest
+		basis_hoehe = int(rest) / len(self.dupe)+1
+		print basis_hoehe
+		hoehe = basis_hoehe
 		breite = 20
+		print hoehe
 		skincontent = ""
 		for x in range(1,len(self.dupe)+1):
-			print x, breite, hoehe
+			print x, breite, hoehe, basis_hoehe
 			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"1\" transparent=\"0\" alphatest=\"blend\" />"
-			hoehe += 65
+			hoehe += 58 + int(basis_hoehe)
 
 		self.skin_dump = ""
 		self.skin_dump += "<widget name=\"frame\" position=\"10,10\" size=\"358,58\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_cyan.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />"
@@ -2845,7 +2855,7 @@ class chooseFilter(Screen, ConfigListScreen):
 			self.moveframe()
 		
 	def keyCancel(self):
-		self.close()
+		self.close(True)
 
 def exit(session, result):
 	if not result:
