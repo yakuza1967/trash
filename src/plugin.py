@@ -2725,19 +2725,28 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.close(self.session, False)
 		
 	def startChoose(self):
-		self.session.open(chooseFilter, self.plugin_liste)
+		self.session.openWithCallback(self.gotFilter, chooseFilter, self.plugin_liste)
+		
+	def gotFilter(self, filter):
+		print "Set new filter to:", filter
+		config.mediaportal.filter.value = filter
+		print "Filter changed:", config.mediaportal.filter.value
+		self.restartAndCheck()
 	
-class chooseFilter(Screen):
+class chooseFilter(Screen, ConfigListScreen):
 	def __init__(self, session, plugin_liste):
 		self.session = session
 		self.plugin_liste = plugin_liste
 
+		# abc sorting
+		self.plugin_liste.sort()
+		
 		self.dupe = []
 		#('ARD Mediathek', 'ard', 'Mediathek', '0', '81')
 		for (pname, iname, filter, hits, cout) in self.plugin_liste:
 			#check auf mehrere filter
 			if re.match('.*?/', filter):
-				mfilter_raw = filter.split('\/')
+				mfilter_raw = filter.split('/')
 				if len(mfilter_raw) != 0:
 					for mfilter in mfilter_raw:
 						if not mfilter in self.dupe:
@@ -2745,19 +2754,18 @@ class chooseFilter(Screen):
 							self.dupe.append(mfilter)
 
 			if not filter in self.dupe:
-					print "norma", filter
-					self.dupe.append(filter)
+				print "norma", filter
+				self.dupe.append(filter)
+				
 		hoehe = 65
 		breite = 20
 		skincontent = ""
 		for x in range(1,len(self.dupe)+1):
 			print x, breite, hoehe
-			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"1\" transparent=\"1\" alphatest=\"blend\" />"
+			skincontent += "<widget name=\"menu" + str(x) + "\" position=\"" + str(breite) + "," + str(hoehe) + "\" size=\"358,58\" zPosition=\"1\" transparent=\"0\" alphatest=\"blend\" />"
 			hoehe += 65
 
 		self.skin_dump = ""
-		#self.skin_dump += "<screen name=\"Category_Selector\" position=\"center,center\" size=\"400,520\" flags=\"wfNoBorder\" transparent=\"1\" backgroundColor=\"#ffffffff\">"
-		#self.skin_dump += "<ePixmap position=\"0,0\" size=\"400,520\" zPosition=\"0\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_bg.png\" transparent=\"1\" alphatest=\"blend\" />"
 		self.skin_dump += "<widget name=\"frame\" position=\"10,10\" size=\"358,58\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/Category_Selector_cyan.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />"
 		self.skin_dump += skincontent
 		self.skin_dump += "</screen>"
@@ -2777,54 +2785,67 @@ class chooseFilter(Screen):
 			print self.skin_dump2
 			self.skin = self.skin_dump2
 			f.close()
-		
+
 		Screen.__init__(self, session)
 		
-		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
-		#	"ok"    : self.keyOK,
-		#	"up"    : self.keyUp,
-		#	"down"  : self.keyDown,
-			"cancel": self.keyCancel
+		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
+			"ok": self.keyOk,
+			"cancel": self.keyCancel,
+			"up": self.keyup,
+			"down": self.keydown
 		}, -1)
 		
 		self["frame"] = MovingPixmap()
 		self.selektor_index = 1
 		
 		for x in range(1,len(self.dupe)+1):
+			print x
 			self["menu"+str(x)] = Pixmap()
 			self["menu"+str(x)].show()
-			#self["page_sel"+str(x)] = Pixmap()
-			#self["page_sel"+str(x)].show()
 
-		self.onFirstExecBegin.append(self._onFirstExecBegin)
-
-	def _onFirstExecBegin(self):
+		self.onFirstExecBegin.append(self.loadPage)
+		
+	def loadPage(self):
 		for x in range(1,len(self.dupe)+1):
 			filtername = self.dupe[int(x)-1]
 			print "filtername", filtername
 			poster_path = "%s/%s.png" % ("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images", filtername)
 			print "poster_path", poster_path
-			if not fileExists(poster_path):
-				poster_path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/no_icon.png"
-
-			self["menu"+str(x)].instance.setPixmap(gPixmapPtr())
-			self["menu"+str(x)].hide()
-			pic = LoadPixmap(cached=True, path=poster_path)
-			if pic != None:
-				self["menu"+str(x)].instance.setPixmap(pic)
-				self["menu"+str(x)].show()
-
-				
+			if fileExists(poster_path):
+				self["menu"+str(x)].instance.setPixmap(gPixmapPtr())
+				self["menu"+str(x)].hide()
+				pic = LoadPixmap(cached=True, path=poster_path)
+				if pic != None:
+					self["menu"+str(x)].instance.setPixmap(pic)
+					self["menu"+str(x)].show()
+			
+		self.moveframe()
+		
+	def moveframe(self):
 		position = self["menu"+str(self.selektor_index)].instance.position()
 		self["frame"].moveTo(position.x(), position.y(), 1)
 		self["frame"].show()
 		self["frame"].startMoving()
 		
+	def keyOk(self):
+		print self.dupe[self.selektor_index-1]
+		self.close(self.dupe[self.selektor_index-1])
+		
+	def keyup(self):
+		print "up", self.selektor_index
+		if int(self.selektor_index) != 1:
+			self.selektor_index -= 1
+			self.moveframe()
+		
+	def keydown(self):
+		print "down", self.selektor_index
+		if int(self.selektor_index) != len(self.dupe):
+			self.selektor_index += 1
+			self.moveframe()
+		
 	def keyCancel(self):
 		self.close()
-		
-		#self["frame"] = MovingPixmap()
-		
+
 def exit(session, result):
 	if not result:
 		if config.mediaportal.ansicht.value == "liste":
