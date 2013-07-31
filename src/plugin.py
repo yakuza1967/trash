@@ -2739,24 +2739,20 @@ class chooseFilter(Screen, ConfigListScreen):
 		self.session = session
 		self.plugin_liste = plugin_liste
 
-		print self.plugin_liste
 		self.dupe = []
-		self.dupe.append("All")
-		
-		#('ARD Mediathek', 'ard', 'Mediathek', '0', '81')
-		for (pname, iname, filter, hits, cout) in self.plugin_liste:
+		self.dupe.append("ALL")
+		for (pname, iname, filter, hits, count) in self.plugin_liste:
 			#check auf mehrere filter
-			if re.match('.*?/', filter):
-				mfilter_raw = filter.split('/')
-				if len(mfilter_raw) != 0:
-					for mfilter in mfilter_raw:
-						if not mfilter in self.dupe:
-							print "multi", mfilter
-							self.dupe.append(mfilter)
-
-			if not filter in self.dupe:
-				print "norma", filter
-				self.dupe.append(filter)
+			if re.search('/', filter):
+				mfilter_raw = re.split('/', filter)
+				for mfilter in mfilter_raw:
+					if not mfilter in self.dupe:
+						print "multi", mfilter
+						self.dupe.append(mfilter)
+			else:
+				if not filter in self.dupe:
+					print "normal", filter
+					self.dupe.append(filter)
 
 		# menu abc sorting
 		self.dupe.sort()
