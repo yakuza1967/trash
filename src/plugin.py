@@ -310,6 +310,8 @@ from additions.grauzone.ddl_me import *
 config.mediaportal.showDdlme = ConfigYesNo(default = False)
 from additions.grauzone.movie25 import *
 config.mediaportal.showMovie25 = ConfigYesNo(default = False)
+from additions.grauzone.movie2k import *
+config.mediaportal.movie2k = ConfigYesNo(default = False)
 
 class hauptScreenSetup(Screen, ConfigListScreen):
 
@@ -503,6 +505,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("watchseries", config.mediaportal.showWatchseries))
 			self.grauzone.append(getConfigListEntry("Vibeo", config.mediaportal.showVibeo))
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
+			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			#self.grauzone.append(getConfigListEntry("Viewster", config.mediaportal.showViewster))
 			self.grauzone.sort(key=lambda t : tuple(t[0][0].lower()))
 
@@ -830,6 +833,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			#	self.grauzone.append(self.hauptListEntry("Viewster", "viewster"))
 			if config.mediaportal.showVibeo.value:
 				self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
+			if config.mediaportal.movie2k.value:
+				self.grauzone.append(self.hauptListEntry("Movie2k.tl", "movie2k"))
 
 		# Fun / Sport
 		if config.mediaportal.showAllMusicHouse.value:
@@ -1396,6 +1401,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(HeiseTvGenreScreen)
 		elif auswahl == "Wissen.de":
 			self.session.open(wissenListeScreen)
+		elif auswahl == "Movie2k.tl":
+			self.session.open(movie2kGenreScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
@@ -1698,6 +1705,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("PrimeWire", "primewire", "Grauzone"))
 			if config.mediaportal.showMoovizon.value:
 				self.plugin_liste.append(("Moovizon", "moovizon", "Grauzone"))
+			if config.mediaportal.movie2k.value:
+				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
 
 			# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
