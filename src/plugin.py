@@ -2733,7 +2733,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.close(self.session, False)
 
 	def startChoose(self):
-		self.session.openWithCallback(self.gotFilter, chooseFilter, self.dump_liste)
+		self.session.openWithCallback(self.gotFilter, chooseFilter, self.dump_liste, config.mediaportal.filter.value)
 
 	def gotFilter(self, filter):
 		if filter != True:
@@ -2743,9 +2743,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.restartAndCheck()
 
 class chooseFilter(Screen, ConfigListScreen):
-	def __init__(self, session, plugin_liste):
+	def __init__(self, session, plugin_liste, old_filter):
 		self.session = session
 		self.plugin_liste = plugin_liste
+		self.old_filter = old_filter
 
 		self.dupe = []
 		self.dupe.append("ALL")
@@ -2771,7 +2772,7 @@ class chooseFilter(Screen, ConfigListScreen):
 			hoehe += 48
 
 		self.skin_dump = ""
-		self.skin_dump += "<widget name=\"frame\" position=\"10,10\" size=\"218,38\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/category_selector_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
+		self.skin_dump += "<widget name=\"frame\" position=\"531,197\" size=\"218,38\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/category_selector_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
 		self.skin_dump += skincontent
 		self.skin_dump += "</screen>"
 
@@ -2788,7 +2789,7 @@ class chooseFilter(Screen, ConfigListScreen):
 			self.skin_dump2 += self.skin_dump
 			self.skin = self.skin_dump2
 			f.close()
-
+		
 		Screen.__init__(self, session)
 
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
@@ -2797,10 +2798,10 @@ class chooseFilter(Screen, ConfigListScreen):
 			"up": self.keyup,
 			"down": self.keydown
 		}, -1)
-
+		
 		self["frame"] = MovingPixmap()
-		self.selektor_index = 1
-
+		self["frame"].hide()
+		
 		for x in range(1,len(self.dupe)+1):
 			self["menu"+str(x)] = Pixmap()
 			self["menu"+str(x)].show()
@@ -2819,8 +2820,19 @@ class chooseFilter(Screen, ConfigListScreen):
 					self["menu"+str(x)].instance.setPixmap(pic)
 					self["menu"+str(x)].show()
 
-		self.moveframe()
+		self.getstartframe()
 
+	def getstartframe(self):
+		x = 1
+		for fname in self.dupe:
+			if fname == self.old_filter:
+				position = self["menu"+str(x)].instance.position()
+				self["frame"].moveTo(position.x(), position.y(), 1)
+				self["frame"].show()
+				self["frame"].startMoving()
+				self.selektor_index = x
+			x += 1
+			
 	def moveframe(self):
 		position = self["menu"+str(self.selektor_index)].instance.position()
 		self["frame"].moveTo(position.x(), position.y(), 1)
