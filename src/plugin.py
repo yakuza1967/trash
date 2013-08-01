@@ -164,6 +164,8 @@ from additions.fun.geo_de import *
 config.mediaportal.showGEOde = ConfigYesNo(default = True)
 from additions.fun.wrestlingnetwork import *
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
+from additions.fun.wissen import *
+config.mediaportal.wissen = ConfigYesNo(default = True)
 
 # Mediatheken
 from additions.mediatheken.myvideo import *
@@ -420,6 +422,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.fun.append(getConfigListEntry("DokuHouse", config.mediaportal.showDokuHouse))
 		self.fun.append(getConfigListEntry("AutoBild", config.mediaportal.showAutoBild))
 		self.fun.append(getConfigListEntry("SportBild", config.mediaportal.showSportBild))
+		self.fun.append(getConfigListEntry("Wissen", config.mediaportal.wissen))
 		if astModule:
 			self.fun.append(getConfigListEntry("HeiseVideo", config.mediaportal.showHeiseVideo))
 		self.fun.sort(key=lambda t : tuple(t[0][0].lower()))
@@ -881,6 +884,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("Myvideo Top 100", "myvideotop100"))
 		if config.mediaportal.showMTVdeCharts.value:
 			self.funsport.append(self.hauptListEntry("MTV.de Charts", "mtvdecharts"))
+		if config.mediaportal.wissen.value:
+			self.funsport.append(self.hauptListEntry("Wissen.de", "wissen"))
 		if config.mediaportal.showgrauzone.value:
 			if config.mediaportal.showMusicstreamcc.value:
 				self.funsport.append(self.hauptListEntry("Musicstream.cc", "musicstreamcc"))
@@ -1389,6 +1394,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(vibeoFilmListeScreen)
 		elif auswahl == "heiseVIDEO":
 			self.session.open(HeiseTvGenreScreen)
+		elif auswahl == "Wissen.de":
+			self.session.open(wissenListeScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
@@ -1796,6 +1803,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
 		if config.mediaportal.showmyspass.value:
 			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
+		if config.mediaportal.wissen.value:
+			self.plugin_liste.append(("Wissen.de", "wissen", "Fun/Mediathek"))
 
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
@@ -2387,6 +2396,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(vibeoFilmListeScreen)
 		elif auswahl == "heiseVIDEO":
 			self.session.open(HeiseTvGenreScreen)
+		elif auswahl == "Wissen.de":
+			self.session.open(wissenListeScreen)
+		elif auswahl == "Movie2k.tl":
+			self.session.open(movie2kGenreScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
