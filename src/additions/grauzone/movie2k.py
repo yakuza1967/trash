@@ -114,7 +114,7 @@ class movie2kListeScreen(Screen):
 		}, -1)
 
 		self.keyLocked = True
-		self['title'] = Label("Galileo-Videolexikon.de")
+		self['title'] = Label("Movie2k.tl")
 		self['ContentTitle'] = Label("Videos - %s" % self.movie2kName)
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
