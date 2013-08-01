@@ -11,7 +11,7 @@ def movie2kListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-		
+
 #(url, date, hostername, quali)
 def movie2kStreamListEntry(entry):
 	return [entry,
@@ -144,7 +144,7 @@ class movie2kListeScreen(Screen):
 			self.kinofilme(data)
 		elif self.movie2kName == "Videofilme":
 			self.videofilme(data)
-		
+
 	def kinofilme(self, data):
 		kino = re.findall('<div style="float:left">.*?<a href="(.*?)">.*?<img src="(.*?)".*?alt="(.*?).kostenlos".*?Description:</strong><br>(.*?)<', data, re.S)
 		if kino:
@@ -166,16 +166,16 @@ class movie2kListeScreen(Screen):
 			self.chooseMenuList.setList(map(movie2kListEntry, self.videoliste))
 			self.loadPic()
 			self.keyLocked = False
-		
+
 	def loadPic(self):
 		print self.movie2kName
 		streamPic = self['liste'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(streamPic)
-		
+
 		if self.movie2kName == "Kinofilme":
 			handlung = self['liste'].getCurrent()[0][3]
 			self['handlung'].setText(decodeHtml(handlung))
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
@@ -199,7 +199,7 @@ class movie2kListeScreen(Screen):
 			return
 		self['liste'].down()
 		self.loadPic()
-			
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -215,7 +215,7 @@ class movie2kListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class movie2kStreamListeScreen(Screen):
 
 	def __init__(self, session, movie2kName, movie2kUrl, movie2kImage):
@@ -280,10 +280,10 @@ class movie2kStreamListeScreen(Screen):
 			self.chooseMenuList.setList(map(movie2kStreamListEntry, self.streamliste))
 			self.loadPic()
 			self.keyLocked = False
-		
+
 	def loadPic(self):
 		CoverHelper(self['coverArt']).getCover(self.movie2kImage)
-			
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -291,19 +291,19 @@ class movie2kStreamListeScreen(Screen):
 		url = self['liste'].getCurrent()[0][0]
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_hoster_link).addErrback(self.dataError)
-		
+
 	def get_hoster_link(self, data):
 		hoster_link = re.findall('</div><br />\r\n\r\n\t\r\n\t\t\t\t\t\t\t<a href="(.*?)" target="_BLANK"><img src="http://www.movie2k.tl/assets/img/click_link.jpg" border="0" /></a>', data, re.S)
 		if hoster_link:
 			print hoster_link[0]
 			get_stream_link(self.session).check_link(hoster_link[0], self.got_link, False)
-			
+
 	def got_link(self, stream_url):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			self.session.open(SimplePlayer, [(self.movie2kName, stream_url, self.movie2kImage)], showPlaylist=False, ltype='movie2k', cover=True)
-	
+
 	def dataError(self, error):
 		printl(error,self,"E")
 

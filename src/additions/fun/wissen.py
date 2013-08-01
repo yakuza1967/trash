@@ -38,8 +38,8 @@ class wissenListeScreen(Screen):
 			"down": self.keyDown,
 			"right": self.keyRight,
 			"left": self.keyLeft,
-			"nextBouquet": self.npage,
-			"prevBouquet": self.bpage
+			"nextBouquet" : self.keyPageUp,
+			"prevBouquet" : self.keyPageDown
 		}, -1)
 
 		self.keyLocked = True
@@ -54,12 +54,13 @@ class wissenListeScreen(Screen):
 		self['F4'].hide()
 		self['handlung'] = Label("")
 		self['page'] = Label("")
-		self['Page'] = Label("")
+		self['Page'] = Label("Page")
 		self['coverArt'] = Pixmap()
 
 		self.videoliste = []
 		self.page = 0
-		
+		self.lastpage = 0
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
@@ -69,29 +70,37 @@ class wissenListeScreen(Screen):
 
 	def loadPage(self):
 		self.keyLocked = True
-		print "hole daten"
+		self.videoliste = []
 		url = "http://www.wissen.de/medien-videos/all?page=%s" % str(self.page)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		self.videoliste = []
-		videos = re.findall('<a href="(/video/.*?)">.*?background-image..url\(\'(.*?)\'.*?<p class="teaser-h2">(.*?)</p>', data, re.S)
-		self.tpage = re.findall('href="/medien-videos/all.page=(.*?)">', data, re.S)
-		if videos and self.tpage:
+		lastlast = re.search('class="pager-last\slast".*?all\?page=(.*?)"', data, re.S)
+		currentlast = re.search('pager-current\slast">(.*?)</li>', data, re.S)
+		if lastlast:
+			lastp = int(lastlast.group(1))
+		else:
+			lastp = int(currentlast.group(1))-1
+		if lastp:
+			lastp = lastp
+			print str(lastp)
+			self.lastpage = lastp
+		else:
+			self.lastpage = 0
+		self['page'].setText(str(self.page+1) + ' / ' + str(self.lastpage+1))
+
+		videos = re.findall('<a\shref="(/video/.*?)">.*?background-image..url\(\'(.*?)\'.*?<p\sclass="teaser-h2">(.*?)</p>', data, re.S)
+		if videos:
 			for (url, img, title) in videos:
 				url = "http://www.wissen.de%s" % url
 				self.videoliste.append((decodeHtml(title), url, img))
 			self.chooseMenuList.setList(map(wissenListEntry, self.videoliste))
-			self['Page'].setText("Page: %s" % self.page)
-			self['page'].setText("/ %s" % len(self.tpage))
 			self.loadPic()
 			self.keyLocked = False
 
 	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(streamPic)
-		#handlung = self['liste'].getCurrent()[0][2]
-		#self['handlung'].setText(decodeHtml(handlung))
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -117,24 +126,22 @@ class wissenListeScreen(Screen):
 		self['liste'].down()
 		self.loadPic()
 
-	def npage(self):
+	def keyPageDown(self):
+		print "PageDown"
 		if self.keyLocked:
 			return
-		if self.page <= len(self.tpage):
-			self.page += 1
-			self['Page'].setText("Page: %s" % self.page)
-			self['page'].setText("/ %s" % len(self.tpage))
-			self.loadPage()
-	
-	def bpage(self):
-		if self.keyLocked:
-			return
-		if self.page != 0:
+		if not self.page < 1:
 			self.page -= 1
-			self['Page'].setText("Page: %s" % self.page)
-			self['page'].setText("/ %s" % len(self.tpage))
 			self.loadPage()
-			
+
+	def keyPageUp(self):
+		print "PageUP"
+		if self.keyLocked:
+			return
+		if self.page < self.lastpage:
+			self.page += 1
+			self.loadPage()
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -145,18 +152,18 @@ class wissenListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_js_link).addErrback(self.dataError)
 
 	def get_js_link(self, data):
-		js_link = re.findall('<script type="text/javascript" src="(http://edge-cdn.net/videojs_.*?)"></script>', data, re.S)
+		js_link = re.findall('<script\stype="text/javascript"\ssrc="(http://edge-cdn.net/videojs_.*?)"></script>', data, re.S)
 		if js_link:
 			getPage(js_link[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_xml).addErrback(self.dataError)
-	
+
 	def get_xml(self, data):
 		xml_link = re.findall('"config_url",".*?,(.*?)"', data, re.S)
 		if xml_link:
 			url = urllib.unquote(xml_link[0])
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.read_xml).addErrback(self.dataError)
-	
+
 	def read_xml(self, data):
-		streams = re.findall('<name type="string">(.*?)</name>.*?<url_hd type="string">(.*?)<', data, re.S)
+		streams = re.findall('<name\stype="string">(.*?)</name>.*?<url_hd\stype="string">(.*?)<', data, re.S)
 		if streams:
 			stream_url = streams[0][1]
 			print stream_url

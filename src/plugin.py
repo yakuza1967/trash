@@ -1813,7 +1813,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showmyspass.value:
 			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
 		if config.mediaportal.wissen.value:
-			self.plugin_liste.append(("Wissen.de", "wissen", "Fun/Mediathek"))
+			self.plugin_liste.append(("Wissen.de", "wissen", "Fun"))
 
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:

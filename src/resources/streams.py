@@ -10,7 +10,6 @@ from flashx import Flashx
 from userporn import Userporn
 from twagenthelper import TwAgentHelper
 
-
 # cookies
 ck = {}
 cj = {}
@@ -821,12 +820,12 @@ class get_stream_link:
 			message = self.session.open(MessageBox, _("Stream startet in 10 sec."), MessageBox.TYPE_INFO, timeout=6)
 		else:
 			self.stream_not_found()
-			
+
 	def yesload_getPage(self, *args, **kwargs):
 		print "CAAAAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAATTTTTTTEEEEEEEEEEEERRRRRRRRRRRRR"
 		getPage(*args, **kwargs).addCallback(self.yesload_data).addErrback(self.errorload)
-		
-	def yesload_data(self, data):	
+
+	def yesload_data(self, data):
 		print "unpack javascript"
 		get_packedjava = re.findall("<script type=.text.javascript.>(eval.function(.*?\)\)\)).*/script>", data, re.S|re.DOTALL)
 		if get_packedjava:
