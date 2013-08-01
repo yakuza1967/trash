@@ -160,6 +160,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		self.skinName = 'MediaPortal SimplePlayer'
 		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
 
+		self.showGlobalPlaylist = True
 		self.showPlaylist = showPlaylist
 		self.scrSaver = ''
 		self.saverActive = False
@@ -407,7 +408,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			self.close()
 
 	def openPlaylist(self):
-		if self.showPlaylist and self.playLen > 0:
+		if  (self.showGlobalPlaylist or self.showPlaylist) and self.playLen > 0:
 			if self.playlistQ.empty():
 				self.playlistQ.put(self.pl_status)
 			self.pl_open = True
@@ -446,7 +447,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 				self.session.open(mediaInfo, True)
 
 	def openMenu(self):
-		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, self.plType, self.showPlaylist)
+		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, self.plType, self.showPlaylist or self.showGlobalPlaylist)
 
 	def cb_Menu(self, data):
 		print "cb_Menu:"
