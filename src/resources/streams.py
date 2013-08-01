@@ -115,17 +115,9 @@ class get_stream_link:
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.divxstage).addErrback(self.errorload)
 
-			elif re.match('.*?yesload.net', data, re.S):
+			elif re.match('.*?yesload.tv', data, re.S):
 				link = data
-				#print link
-				id = link.split('/')
-				id = id[-1]
-				if id:
-					#print id
-					api_url = "http://yesload.net/player_api/info?token=%s" % id
-					getPage(api_url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload).addErrback(self.errorload)
-				else:
-					self.stream_not_found()
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload, link).addErrback(self.errorload)
 
 			elif re.match('.*?faststream', data, re.S):
 				link = data
@@ -807,10 +799,62 @@ class get_stream_link:
 		else:
 			self.stream_not_found()
 
-	def yesload(self, data):
-		stream_url = re.findall('url=(.*?.flv)', data)
-		if stream_url:
-			self._callback(stream_url[0])
+	def yesload(self, data, url):
+		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
+		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
+		fname = re.findall('type="hidden" name="fname".*?value="(.*?)"', data, re.S)
+		referer = re.findall('type="hidden" name="referer".*?value="(.*?)"', data, re.S)
+		hash = re.findall('type="hidden" name="hash".*?value="(.*?)"', data, re.S)
+		if op and id and fname and referer and hash:
+			info = urlencode({
+				'fname': fname[0],
+				'hash': hash[0],
+				'id': id[0],
+				'imhuman': "Proceed to video",
+				'op': "download1",
+				'referer': "",
+				'usr_login': ""})
+
+			print info
+			#getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload_data).addErrback(self.errorload)
+			reactor.callLater(10, self.yesload_getPage, url, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
+			message = self.session.open(MessageBox, _("Stream startet in 10 sec."), MessageBox.TYPE_INFO, timeout=6)
+		else:
+			self.stream_not_found()
+			
+	def yesload_getPage(self, *args, **kwargs):
+		print "CAAAAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAATTTTTTTEEEEEEEEEEEERRRRRRRRRRRRR"
+		getPage(*args, **kwargs).addCallback(self.yesload_data).addErrback(self.errorload)
+		
+	def yesload_data(self, data):	
+		print "unpack javascript"
+		get_packedjava = re.findall("<script type=.text.javascript.>(eval.function(.*?\)\)\)).*/script>", data, re.S|re.DOTALL)
+		if get_packedjava:
+			print get_packedjava[0]
+			sJavascript = get_packedjava[0]
+			sUnpacked = cJsUnpacker().unpackByString(sJavascript)
+			print sUnpacked
+			if sUnpacked:
+				print "joooooooooooooooooooooo"
+				if re.match('.*?type="video/divx', sUnpacked):
+					print "DDIIIIIIIIIVVVXXX"
+					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
+					if stream_url:
+						print stream_url[0]
+						self._callback(stream_url[0])
+					else:
+						self.stream_not_found()
+				elif re.match(".*?'file'", sUnpacked):
+					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
+					stream_url = re.findall("'file','(.*?)'", sUnpacked)
+					if stream_url:
+						self._callback(stream_url[0])
+					else:
+						self.stream_not_found()
+				else:
+					self.stream_not_found()
+			else:
+				self.stream_not_found()
 		else:
 			self.stream_not_found()
 

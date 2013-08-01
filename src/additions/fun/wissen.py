@@ -152,12 +152,13 @@ class wissenListeScreen(Screen):
 	def get_xml(self, data):
 		xml_link = re.findall('"config_url",".*?,(.*?)"', data, re.S)
 		if xml_link:
-			getPage(xml_link[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.read_xml).addErrback(self.dataError)
+			url = urllib.unquote(xml_link[0])
+			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.read_xml).addErrback(self.dataError)
 	
 	def read_xml(self, data):
 		streams = re.findall('<name type="string">(.*?)</name>.*?<url_hd type="string">(.*?)<', data, re.S)
 		if streams:
-			stream_url = streams[0]
+			stream_url = streams[0][1]
 			print stream_url
 			self.session.open(SimplePlayer, [(self.wissentitle, stream_url)], showPlaylist=False, ltype='wissen')
 
