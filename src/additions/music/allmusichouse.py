@@ -6,7 +6,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-AMH_Version = "AllMusicHouse.de v0.99"
+AMH_Version = "AllMusicHouse.de v1.00"
 
 AMH_siteEncoding = 'utf-8'
 
@@ -73,8 +73,8 @@ class show_AMH_Genre(Screen):
 		self.keyLocked = True
 		self.genreSelected = False
 		self.menuListe = []
-		self.baseUrl = "http://www.allmusichouse.de"
-		self.genreBase = "/category"
+		self.baseUrl = "http://www.dokuhouse.de/musik-genre"
+		self.genreBase = ""
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -368,31 +368,20 @@ class AMH_FilmListeScreen(Screen):
 		self.eventL.clear()
 		print "dataError:"
 		printl(error,self,"E")
-		self.musicListe.append(("No music found !","",""))
+		self.musicListe.append(("No music found !","","",""))
 		self.chooseMenuList.setList(map(AMH_FilmListEntry, self.musicListe))
 
 	def loadPageData(self, data):
 		print "loadPageData:"
 
-		if self.genreSpecials:
-			print "Specials suche..."
-			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-		else:
-			print "Normal search.."
-			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-
-		if m:
-			music = re.findall('<h2 class="title"><a href="(.*?)".*?rel="bookmark">(.*?)</a>.*?class="entry clearfix">'\
-								'.*?<p>(.*?)</p>', m.group(1), re.S)
-		else:
-			music = None
+		music = re.findall('class="article-image darken"><a href="(.*?)".*?data-lazy-src="(.*?)".*?alt="(.*?)".*?class="excerpt">(.*?)</div>', data)
 
 		if music:
 			print "Music found !"
 			if not self.pages:
-				m = re.findall('class=\'pages\'>Seite.*?von (.*?)</', data)
+				m = re.findall('data-paginated="(.*?)"', data)
 				if m:
-					self.pages = int(m[0])
+					self.pages = int(m[len(m)-1])
 				else:
 					self.pages = 1
 				self.page = 1
@@ -400,14 +389,14 @@ class AMH_FilmListeScreen(Screen):
 				self['page'].setText("%d / %d" % (self.page,self.pages))
 
 			self.musicListe = []
-			for	(url,name,desc) in music:
+			for	(url,img,name,desc) in music:
 				#print	"Url: ", url, "Name: ", name
-				self.musicListe.append((decodeHtml(name), url, desc.lstrip().rstrip()))
+				self.musicListe.append((decodeHtml(name), url, img, desc.lstrip().rstrip()))
 			self.chooseMenuList.setList(map(AMH_FilmListEntry, self.musicListe))
 
 		else:
 			print "No music found !"
-			self.musicListe.append(("No music found !","",""))
+			self.musicListe.append(("No music found !","","",""))
 			self.chooseMenuList.setList(map(AMH_FilmListEntry, self.musicListe))
 		self.loadPic()
 
@@ -415,7 +404,8 @@ class AMH_FilmListeScreen(Screen):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
 		self['name'].setText(streamName)
-		desc = self['liste'].getCurrent()[0][2]
+		desc = self['liste'].getCurrent()[0][3]
+		streamPic = self['liste'].getCurrent()[0][2]
 		#print "streamName: ",streamName
 		#print "streamUrl: ",streamUrl
 		self.getHandlung(desc)
@@ -424,6 +414,7 @@ class AMH_FilmListeScreen(Screen):
 		else:
 			self.eventL.clear()
 		self.keyLocked	= False
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def getHandlung(self, desc):
 		print "getHandlung:"
@@ -443,10 +434,11 @@ class AMH_FilmListeScreen(Screen):
 
 		streamLink = self['liste'].getCurrent()[0][1]
 		streamName = self['liste'].getCurrent()[0][0]
+		streamPic = self['liste'].getCurrent()[0][2]
 		print "Open AMH_Streams:"
 		print "Name: ",streamName
 		print "Link: ",streamLink
-		self.session.open(AMH_Streams, streamLink, streamName)
+		self.session.open(AMH_Streams, streamLink, streamName, streamPic)
 
 	def keyUp(self):
 		if self.keyLocked:
@@ -573,10 +565,11 @@ def AMH_StreamListEntry(entry):
 		]
 class AMH_Streams(Screen, ConfigListScreen):
 
-	def __init__(self, session, dokuUrl, dokuName):
+	def __init__(self, session, dokuUrl, dokuName, dokuImg):
 		self.session = session
 		self.dokuUrl = dokuUrl
 		self.dokuName = dokuName
+		self.dokuImg = dokuImg
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path = mp_globals.pluginPath + "/skins"
 
@@ -636,29 +629,36 @@ class AMH_Streams(Screen, ConfigListScreen):
 
 	def parseData(self, data):
 		print "parseData:"
-		m = re.search('"http://www.youtube.com/(embed|v)/(.*?)("|\?).*?data-text="(.*?)"', data, re.S)
-		parts = re.search('<p>Part 1 von (.*?)<br', data)
-		mdesc = re.search('</iframe></p>.*?>(.*?)</p>', data, re.S)
-		self.streamListe = []
-		#if streams:
+		desc = ''
+		m = re.search('<!-- aeBeginAds -->(.*?)<!-- aeEndAds -->', data, re.S)
 		if m:
-			print "Streams found"
-			if mdesc:
-				print "Descr. found"
-				desc = mdesc.group(1).replace('<br />','')
-			else:
-				desc = ""
-			if parts:
-				self.nParts = int(parts.group(1))
-				pstr = " [1/%d]" % self.nParts
-			else:
-				self.nParts = 0
-				pstr = ""
+			ldesc = re.findall('<p>(.*?</p>)',m.group(1),re.S)
+			if ldesc:
+				i = 0
+				for txt in ldesc:
+					txt = re.sub('<span.*?</span>','',txt)
+					txt = re.sub('\n','',txt)
+					if i > 0:
+						txt = re.sub('</p>','\n',txt)
+					txt = re.sub('&nbsp;',' ',txt)
+					desc = "%s%s" % (desc,re.sub('<.*?>','',txt))
+					i += 1
 
-			self.streamListe.append((decodeHtml(m.group(4))+pstr,m.group(2),desc))
+		self.streamListe = []
+		m2 = re.search('//www.youtube.com/(embed|v)/(.*?)("|\?)', m.group(1))
+		imgurl = self.dokuImg
+
+		if m2:
+			print "Streams found"
+			self.nParts = 0
+			pstr = self.dokuName
+			self.streamListe.append((pstr,m2.group(2),desc,imgurl))
+			self.keyLocked	= False
 		else:
-			print "No music found !"
-			self.streamListe.append(("No streams found!","",""))
+			print "No dokus found !"
+			desc = None
+			self.streamListe.append(("No streams found!","","",""))
+
 		self.streamMenuList.setList(map(AMH_StreamListEntry, self.streamListe))
 		self.loadPic()
 
@@ -686,10 +686,12 @@ class AMH_Streams(Screen, ConfigListScreen):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
 		self['name'].setText(streamName)
+		streamPic = self['liste'].getCurrent()[0][3]
 		desc = self['liste'].getCurrent()[0][2]
 		print "streamName: ",streamName
 		self.getHandlung(desc)
 		self.keyLocked = False
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def dataError(self, error):
 		print "dataError:"

@@ -6,7 +6,7 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-HSH_Version = "HörspielHouse.de v0.92"
+HSH_Version = "HörspielHouse.de v0.93"
 
 HSH_siteEncoding = 'utf-8'
 
@@ -75,8 +75,8 @@ class show_HSH_Genre(Screen):
 		self.keyLocked = True
 		self.genreSelected = False
 		self.menuListe = []
-		self.baseUrl = "http://www.xn--hrspielhouse-4ib.de"
-		self.genreBase = "/category"
+		self.baseUrl = "http://www.dokuhouse.de/hoerbuch-genre"
+		self.genreBase = ""
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -398,26 +398,14 @@ class HSH_FilmListeScreen(Screen):
 
 	def loadPageData(self, data):
 		print "loadPageData:"
-
-		if self.genreSpecials:
-			print "Specials suche..."
-			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-		else:
-			print "Normal search.."
-			m=re.search('<div id="content">(.*?)<!-- #content -->',data,re.S)
-
-		if m:
-			music = re.findall('<h2 class="title"><a href="(.*?)".*?rel="bookmark">(.*?)</a>.*?class="entry clearfix">'\
-								'.*?<p>(.*?)</p>', m.group(1), re.S)
-		else:
-			music = None
+		music = re.findall('class="article-image darken"><a href="(.*?)"><img src="(.*?)".*?"article-excerpt"><h2><a.*?">(.*?)</a>.*?class="excerpt">(.*?)</div>', data)
 
 		if music:
 			print "Music found !"
 			if not self.pages:
-				m = re.findall('class=\'pages\'>Seite.*?von (.*?)</', data)
+				m = re.findall('data-paginated="(.*?)"', data)
 				if m:
-					self.pages = int(m[0])
+					self.pages = int(m[len(m)-1])
 				else:
 					self.pages = 1
 				self.page = 1
@@ -425,14 +413,14 @@ class HSH_FilmListeScreen(Screen):
 				self['page'].setText("%d / %d" % (self.page,self.pages))
 
 			self.musicListe = []
-			for	(url,name,desc) in music:
+			for	(url,img,name,desc) in music:
 				#print	"Url: ", url, "Name: ", name
-				self.musicListe.append((decodeHtml(name), url, desc.lstrip().rstrip()))
+				self.musicListe.append((decodeHtml(name), url, img, desc.lstrip().rstrip()))
 			self.chooseMenuList.setList(map(HSH_FilmListEntry, self.musicListe))
 
 		else:
 			print "No audio drama found !"
-			self.musicListe.append(("No audio drama found !","",""))
+			self.musicListe.append(("No audio drama found !","","",""))
 			self.chooseMenuList.setList(map(HSH_FilmListEntry, self.musicListe))
 		self.loadPic()
 
@@ -440,7 +428,8 @@ class HSH_FilmListeScreen(Screen):
 		print "loadPic:"
 		streamName = self['liste'].getCurrent()[0][0]
 		self['name'].setText(streamName)
-		desc = self['liste'].getCurrent()[0][2]
+		streamPic = self['liste'].getCurrent()[0][2]
+		desc = self['liste'].getCurrent()[0][3]
 		#print "streamName: ",streamName
 		#print "streamUrl: ",streamUrl
 		self.getHandlung(desc)
@@ -449,6 +438,7 @@ class HSH_FilmListeScreen(Screen):
 		else:
 			self.eventL.clear()
 		self.keyLocked	= False
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def getHandlung(self, desc):
 		print "getHandlung:"
@@ -468,10 +458,11 @@ class HSH_FilmListeScreen(Screen):
 
 		streamLink = self['liste'].getCurrent()[0][1]
 		streamName = self['liste'].getCurrent()[0][0]
+		streamPic = self['liste'].getCurrent()[0][2]
 		print "Open HSH_Streams:"
 		print "Name: ",streamName
 		print "Link: ",streamLink
-		self.session.open(HSH_Streams, streamLink, streamName)
+		self.session.open(HSH_Streams, streamLink, streamName, streamPic)
 
 	def keyUp(self):
 		if self.keyLocked:
@@ -598,10 +589,11 @@ def HSH_StreamListEntry(entry):
 		]
 class HSH_Streams(Screen, ConfigListScreen):
 
-	def __init__(self, session, dokuUrl, dokuName):
+	def __init__(self, session, dokuUrl, dokuName, dokuImg):
 		self.session = session
 		self.dokuUrl = dokuUrl
 		self.dokuName = dokuName
+		self.dokuImg = dokuImg
 
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
@@ -662,29 +654,36 @@ class HSH_Streams(Screen, ConfigListScreen):
 
 	def parseData(self, data):
 		print "parseData:"
+		desc = ''
 		m = re.search('<!-- aeBeginAds -->(.*?)<!-- aeEndAds -->', data, re.S)
-		movie = None
 		if m:
-			mdesc = re.search('<p>(.*?)</p>', m.group(1), re.S)
-			movie = re.findall('<object.*?"movie" value=".*?/v/(.*?)\?vers', m.group(1))
+			ldesc = re.findall('<p>(.*?</p>)',m.group(1),re.S)
+			if ldesc:
+				i = 0
+				for txt in ldesc:
+					txt = re.sub('<span.*?</span>','',txt)
+					txt = re.sub('\n','',txt)
+					if i > 0:
+						txt = re.sub('</p>','\n',txt)
+					txt = re.sub('&nbsp;',' ',txt)
+					desc = "%s%s" % (desc,re.sub('<.*?>','',txt))
+					i += 1
 
 		self.streamListe = []
-		if movie:
-			print "Streams found"
-			if mdesc:
-				print "Descr. found"
-				self.desc = mdesc.group(1).replace('<br />','')
-			else:
-				self.desc = ""
+		m2 = re.search('//www.youtube.com/(embed|v)/(.*?)("|\?)', m.group(1))
+		imgurl = self.dokuImg
 
-			i = 1
-			j = len(movie)
-			for vid in movie:
-				self.streamListe.append(("Teil %d / %d" % (i,j),vid))
-				i += 1
+		if m2:
+			print "Streams found"
+			self.nParts = 0
+			pstr = self.dokuName
+			self.streamListe.append((pstr,m2.group(2),desc,imgurl))
+			self.keyLocked	= False
 		else:
-			print "No audio streams found !"
-			self.streamListe.append(("No audio streams found !",""))
+			print "No dokus found !"
+			desc = None
+			self.streamListe.append(("No streams found!","","",""))
+
 		self.streamMenuList.setList(map(HSH_StreamListEntry, self.streamListe))
 		self.loadPic()
 
@@ -714,6 +713,7 @@ class HSH_Streams(Screen, ConfigListScreen):
 		print "streamName: ",self.dokuName
 		self.getHandlung(self.desc)
 		self.keyLocked = False
+		CoverHelper(self['coverArt']).getCover(self.dokuImg)
 
 	def dataError(self, error):
 		print "dataError:"
