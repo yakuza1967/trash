@@ -306,14 +306,13 @@ class beegFilmScreen(Screen):
 		videoPage = re.findall('\'file\': \'(.*?)\',', data, re.S)
 		if videoPage:
 			for phurl in videoPage:
-				print phurl
 				url = phurl
-				self.play(url)
-		self.keyLocked = False
-
-	def play(self,file):
-		xxxtitle = self['genreList'].getCurrent()[0][0]
-		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='beeg')
+				if re.search('http://.*?007i.net', url, re.S):
+					url = url + "?start=0"
+				print url
+			self.keyLocked = False
+			xxxtitle = self['genreList'].getCurrent()[0][0]
+			self.session.open(SimplePlayer, [(xxxtitle, url)], showPlaylist=False, ltype='beeg')
 
 	def keyCancel(self):
 		self.close()
