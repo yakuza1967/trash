@@ -85,19 +85,21 @@ class show_AMH_Genre(Screen):
 
 		self.genreMenu = [
 			[
+			("*VARIOUS ARTIST", "/varius-artists"),
 			("0-9", "/0-9"),
-			("A-B", "/a-c"),
-			("C-D", "/d-f"),
-			("E-F", "/g-i"),
-			("G-H", "/j-l"),
-			("I-J", "/m-o"),
-			("K-L", "/p-r"),
-			("M-N", "/s-u"),
-			("O-P-Q", "/v-z"),
-			("R-S", "/r-s"),
-			("T-U", "/t-u"),
-			("V-W", "/v-w"),
-			("X-Y-Z", "/x-y-z"),
+			("A-B", "/a-b"),
+			("C-D", "/c-d"),
+			("E-F", "/e-f"),
+			("G-H", "/g-h"),
+			("I-J", "/i-j"),
+			("K-L", "/k-l"),
+			("M-N", "/m-n"),
+			("O-P", "/o-p"),
+			("Q-R", "/q-r"),
+			("S-T", "/s-t"),
+			("U-V", "/u-v"),
+			("W-X", "/w-x"),
+			("Y-Z", "/y-z")
 			],
 			[None],
 			[
