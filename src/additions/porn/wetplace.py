@@ -54,10 +54,11 @@ class wetplaceGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
 	def genreData(self, data):
-		parse = re.search('class="category">(.*?)categories_block', data, re.S)
-		phCats = re.findall('<img class="thumb" src="(.*?)" alt="(.*?)"/>.*?<div class="title"><a href="(.*?)"', parse.group(1), re.S)
+		parse = re.search('class="cats">(.*?)</section>', data, re.S)
+		phCats = re.findall('class="icnt">.*?href="(.*?)".*?class="img".*?url\((.*?)\).*?class="info">(.*?)</div>', parse.group(1), re.S)
 		if phCats:
-			for (phImage, phTitle, phUrl) in phCats:
+			for (phUrl, phImage, phTitle) in phCats:
+				phTitle = phTitle.replace(' ','').replace('\n','')
 				self.genreliste.append((phTitle.title(), phUrl, phImage))
 			self.genreliste.sort()
 			self.genreliste.insert(0, ("Most Popular", "http://www.wetplace.com/most-popular/", None))
@@ -208,17 +209,17 @@ class wetplaceFilmScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
 
 	def loadData(self, data):
-		lastp = re.search('<div>Showing.*of\s(.*?[0-9])\sitems', data, re.S)
+		lastp = re.search('sd.tmp.items_total\s=\s(.*?[0-9]);', data, re.S)
 		if lastp:
-			lastp = round((float(lastp.group(1)) / 40) + 0.5)
+			lastp = round((float(lastp.group(1)) / 24) + 0.5)
 			print lastp
 			self.lastpage = int(lastp)
 		else:
 			self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
-		phMovies = re.findall('class="video">.*?<a href="(.*?)".*?title="(.*?)"><img class="thumb" src="(.*?)"', data, re.S)
+		phMovies = re.findall('alt="(.*?)".*?data-inset="(.*?)".*?background-image.*?url\((.*?)\)', data, re.S)
 		if phMovies:
-			for (phUrl, phTitle, phImage) in phMovies:
+			for (phTitle, phUrl, phImage) in phMovies:
 				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
 			self.chooseMenuList.setList(map(wetplaceFilmListEntry, self.filmliste))
 			self.chooseMenuList.moveToIndex(0)
@@ -313,7 +314,7 @@ class wetplaceFilmScreen(Screen):
 		getPage(phLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
 
 	def getVideoPage(self, data):
-		videoPage = re.findall('<source type="video/mp4" src="(.*?)">', data, re.S)
+		videoPage = re.findall("video_url:\s'(.*?.mp4)/'", data, re.S)
 		if videoPage:
 			for phurl in videoPage:
 				url = phurl
