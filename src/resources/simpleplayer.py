@@ -37,6 +37,8 @@ class SimpleSeekHelper:
 		self.onShow.append(self.__seekBarShown)
 		self.myspass_ofs = 0L
 		self.myspass_len = 0L
+		self.mySpassPath = None
+		self.isMySpass = False
 
 	def initSeek(self):
 		self.percent = 0.0
@@ -55,7 +57,10 @@ class SimpleSeekHelper:
 						position[1] += self.myspass_ofs
 					else:
 						self.myspass_len = self.length[1]
-						
+						self.mySpassPath = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
+						if '/myspass' in self.mySpassPath:
+							self.isMySpass = True
+
 					if int(position[1]) > 0:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
 						InfoBarShowHide.lockShow(self)
@@ -77,7 +82,7 @@ class SimpleSeekHelper:
 			self.seekOK()
 		else:
 			InfoBarShowHide.toggleShow(self)
-		
+
 	def __updateCursor(self):
 		if self.length:
 			x = 273 + int(6.86 * self.percent)
@@ -92,7 +97,6 @@ class SimpleSeekHelper:
 				else:
 					self.counter -= 1
 
-
 	def seekExit(self):
 		#print "seekExit:"
 		self.seekBarLocked = False
@@ -105,9 +109,10 @@ class SimpleSeekHelper:
 		#print "seekOK:"
 		if self.length:
 			seekpos = float(self.length[1]) / 100.0 * self.percent
-			if self.ltype == 'myspass':
+			#if self.ltype == 'myspass':
+			if self.isMySpass:
 				self.myspass_ofs = seekpos
-				self.doMySpassSeek(seekpos)
+				self.doMySpassSeekTo(seekpos)
 			else:
 				self.seek.seekTo(int(seekpos))
 				self.seekExit()
@@ -124,10 +129,11 @@ class SimpleSeekHelper:
 		if self.percent > 100.0:
 			self.percent = 100.0
 
-	def doMySpassSeek(self, seekpos):
+	def doMySpassSeekTo(self, seekpos):
 		service = self.session.nav.getCurrentService()
 		title = service.info().getName()
-		path = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
+		#path = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
+		path = self.mySpassPath
 		seeksecs = seekpos / 90000
 		#print "seeksecs:",seeksecs
 		url = "%s?start=%f.1" % (path.split('?')[0], seeksecs)
@@ -136,14 +142,16 @@ class SimpleSeekHelper:
 		self.seekExit()
 		self.session.nav.stopService()
 		self.session.nav.playService(sref)
-		
+
 	def restartMySpass(self):
 		self.resetMySpass()
-		self.doMySpassSeek(0L)
-		
+		self.doMySpassSeekTo(0L)
+
 	def resetMySpass(self):
 		self.myspass_ofs = 0L
 		self.myspass_len = 0L
+		self.mySpassPath = None
+		self.isMySpass = False
 
 	def cancelSeek(self):
 		if self.seekBarLocked:
@@ -367,7 +375,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		if answer in ("quit", "movielist"):
 			self.close()
 		elif answer == "restart":
-			if self.ltype == 'myspass':
+			if self.isMySpass:
 				self.restartMySpass()
 			else:
 				self.doSeek(0)
@@ -530,7 +538,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		else:
 			url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
 
-			if re.match('.*?(putpattv|myspass)', url, re.I):
+			if re.match('.*?(putpattv|/myspass)', url, re.I):
 				self.session.open(MessageBox, _("Fehler: URL ist nicht persistent !"), MessageBox.TYPE_INFO, timeout=5)
 				return
 
@@ -601,6 +609,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			self.playMode = "Random"
 		else:
 			self.playMode = "Next"
+
+	def createSummary(self):
+		print "createSummary"
+		return SimplePlayerSummary
 
 class SimplePlaylist(Screen):
 
@@ -998,3 +1010,10 @@ class SimpleScreenSaver(Screen):
 
 	def cancel(self):
 		self.close()
+
+class SimplePlayerSummary(Screen):
+
+	def __init__(self, session, parent):
+		Screen.__init__(self, session)
+		self.skinName = "InfoBarMoviePlayerSummary"
+
