@@ -35,10 +35,7 @@ class SimpleSeekHelper:
 		self.counter = 0
 		self.onHide.append(self.__seekBarHide)
 		self.onShow.append(self.__seekBarShown)
-		self.myspass_ofs = 0L
-		self.myspass_len = 0L
-		self.mySpassPath = None
-		self.isMySpass = False
+		self.resetMySpass()
 
 	def initSeek(self):
 		self.percent = 0.0
@@ -60,6 +57,10 @@ class SimpleSeekHelper:
 						self.mySpassPath = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
 						if '/myspass' in self.mySpassPath:
 							self.isMySpass = True
+						elif 'file=retro-tv' in self.mySpassPath:
+							#self.isRetroTv = True
+							#self.isMySpass = True
+							pass
 
 					if int(position[1]) > 0:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
@@ -132,11 +133,14 @@ class SimpleSeekHelper:
 	def doMySpassSeekTo(self, seekpos):
 		service = self.session.nav.getCurrentService()
 		title = service.info().getName()
-		#path = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
 		path = self.mySpassPath
 		seeksecs = seekpos / 90000
 		#print "seeksecs:",seeksecs
-		url = "%s?start=%f.1" % (path.split('?')[0], seeksecs)
+		if self.isRetroTv:
+			url = "%s?start=%ld" % (path.split('&')[0], int(seeksecs*145000))
+		else:
+			url = "%s?start=%f.1" % (path.split('?')[0], seeksecs)
+		#print "seekto:",url
 		sref = eServiceReference(0x1001, 0, url)
 		sref.setName(title)
 		self.seekExit()
@@ -152,6 +156,7 @@ class SimpleSeekHelper:
 		self.myspass_len = 0L
 		self.mySpassPath = None
 		self.isMySpass = False
+		self.isRetroTv = False
 
 	def cancelSeek(self):
 		if self.seekBarLocked:
@@ -161,7 +166,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
-	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True):
+	def __init__(self, session, playList, playList2=[], playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True):
 
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
@@ -214,11 +219,15 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		self.playAll = playAll
 		self.playList = playList
 		self.playIdx = playIdx
-		self.playLen = len(playList)
+		if plType == 'local':
+			self.playLen = len(playList)
+		else:
+			self.playLen = len(playList2)
+
 		self.returning = False
 		self.pl_entry = ['', '', '', '', '', '', '', '', '']
 		self.plType = plType
-		self.playList2 = []
+		self.playList2 = playList2
 		self.pl_name = 'mp_global_pl_01'
 		self.title_inr = title_inr
 		self.cover = cover
@@ -268,7 +277,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		if self.cover:
 			self.showCover(imgurl)
 
-		sref = eServiceReference(0x1001, 0, url)
+		if url.endswith('.ts'):
+			sref = eServiceReference(0x0001, 0, url)
+		else:
+			sref = eServiceReference(0x1001, 0, url)
 
 		pos = title.find('. ', 0, 5)
 		if pos > 0:
@@ -464,6 +476,8 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList, self.playIdx, listTitle=self.listTitle, plType=self.plType, title_inr=self.title_inr, queue=self.playlistQ, mp_event=self.pl_event)
 			else:
 				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList2, self.playIdx, listTitle=None, plType=self.plType, title_inr=0, queue=self.playlistQ, mp_event=self.pl_event)
+		elif not self.playLen:
+			self.session.open(MessageBox, _("Keine Einträge in der Playlist vorhanden!"), MessageBox.TYPE_INFO, timeout=5)
 
 	def cb_Playlist(self, data):
 		self.pl_open = False
@@ -507,20 +521,22 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			elif data[0] == 3:
 				nm = self.pl_name
 				pl_list = SimplePlaylistIO.getPL(nm)
-				if pl_list != []:
-					self.playList2 = pl_list
+				self.playList2 = pl_list
+				playLen = len(self.playList2)
+				if playLen > 0:
 					self.playIdx = 0
-					self.playLen = len(self.playList2)
+					self.playLen = playLen
 					self.plType = 'global'
-					self.openPlaylist()
+				self.openPlaylist()
 
 			elif data[0] == 4:
 				if self.plType != 'local':
-					self.plType = 'local'
-					self.playIdx = 0
-					self.playLen = len(self.playList)
-					self.playList2 = []
-				if self.playLen > 0:
+					playLen = len(self.playList)
+					if playLen > 0:
+						self.playIdx = 0
+						self.playLen = playLen
+						self.plType = 'local'
+						self.playList2 = []
 					self.openPlaylist()
 
 	def addToPlaylist(self):
@@ -780,7 +796,8 @@ class SimplePlayerMenu(Screen):
 		}, -2)
 
 		self.liste = []
-		self.liste.append(('Configuration', 1))
+		if pltype != 'extern':
+			self.liste.append(('Configuration', 1))
 		if pltype in ('local', 'extern') :
 			self.liste.append(('Add service to global playlist', 2))
 			if showPlaylist and pltype == 'local':
