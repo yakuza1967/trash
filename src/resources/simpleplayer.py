@@ -67,6 +67,8 @@ class SimpleSeekHelper:
 							self.isMySpass = True
 						elif 'media.amateurporn.net' in self.mySpassPath:
 							self.isMySpass = True
+						elif 'media.hdporn.net' in self.mySpassPath:
+							self.isMySpass = True
 
 					if int(position[1]) > 0:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
@@ -145,7 +147,7 @@ class SimpleSeekHelper:
 		if self.isRetroTv:
 			url = "%s&start=%ld" % (path.split('&')[0], int(seeksecs*145000))
 		else:
-			url = "%s?start=%f.1" % (path.split('?')[0], seeksecs)
+			url = "%s?start=%f" % (path.split('?')[0], seeksecs)
 		#print "seekto:",url
 		sref = eServiceReference(0x1001, 0, url)
 		sref.setName(title)
