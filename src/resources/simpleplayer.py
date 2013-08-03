@@ -61,6 +61,8 @@ class SimpleSeekHelper:
 							#self.isRetroTv = True
 							#self.isMySpass = True
 							pass
+						elif '007i.net' in self.mySpassPath:
+							self.isMySpass = True
 
 					if int(position[1]) > 0:
 						self.percent = float(position[1]) * 100.0 / float(self.length[1])
@@ -137,7 +139,7 @@ class SimpleSeekHelper:
 		seeksecs = seekpos / 90000
 		#print "seeksecs:",seeksecs
 		if self.isRetroTv:
-			url = "%s?start=%ld" % (path.split('&')[0], int(seeksecs*145000))
+			url = "%s&start=%ld" % (path.split('&')[0], int(seeksecs*145000))
 		else:
 			url = "%s?start=%f.1" % (path.split('?')[0], seeksecs)
 		#print "seekto:",url
