@@ -188,7 +188,7 @@ class retrotvFilmListeScreen(Screen):
 	def getlink(self, data):
 		parse = re.findall('file:\s"(.*?)"', data, re.S)		
 		if parse:
-			stream_url = 'http://infernsehen.de/xmoov.php?file=' + parse[-1] + '&start=0'
+			stream_url = 'http://in-fernsehen.de/xmoov.php?file=' + parse[-1] + '&start=0'
 			title = self['liste'].getCurrent()[0][0]
 			self.session.open(retrotvPlayer, [(title, stream_url)])
 
