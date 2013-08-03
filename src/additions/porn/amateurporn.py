@@ -64,6 +64,7 @@ class amateurpornGenreScreen(Screen):
 			self.genreliste.sort()
 			self.genreliste.insert(0, ("Top Rated", "/top-rated/", None))
 			self.genreliste.insert(0, ("Most Popular", "/most-viewed/", None))
+			self.genreliste.insert(0, ("Newest", "", None))
 			self.genreliste.insert(0, ("--- Search ---", "callSuchen", None))
 			self.chooseMenuList.setList(map(amateurpornGenreListEntry, self.genreliste))
 			self.keyLocked = False
