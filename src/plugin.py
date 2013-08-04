@@ -242,6 +242,8 @@ from additions.porn.pornerbros import *
 config.mediaportal.showpornerbros = ConfigYesNo(default = False)
 from additions.porn.pornhub import *
 config.mediaportal.showPornhub = ConfigYesNo(default = False)
+from additions.porn.pornkino import *
+config.mediaportal.showpornkino = ConfigYesNo(default = False)
 from additions.porn.pornmvz import *
 config.mediaportal.showpornmvz = ConfigYesNo(default = False)
 from additions.porn.pornostreams import *
@@ -483,6 +485,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.porn.append(getConfigListEntry("ParadiseHill", config.mediaportal.showparadisehill))
 			self.porn.append(getConfigListEntry("Free Online Movies", config.mediaportal.showfreeomovie))
 			self.porn.append(getConfigListEntry("G-Stream-XXX", config.mediaportal.showgstreaminxxx))
+			self.porn.append(getConfigListEntry("PornKino", config.mediaportal.showpornkino))
 			self.porn.append(getConfigListEntry("XXXSaVe", config.mediaportal.showxxxsave))
 		self.porn.sort(key=lambda t : tuple(t[0][0].lower()))
 
@@ -949,6 +952,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.showPornhub.value:
 				self.porn.append(self.hauptListEntry("Pornhub", "pornhub"))
 			if config.mediaportal.showgrauzone.value:
+				if config.mediaportal.showpornkino.value:
+					self.porn.append(self.hauptListEntry("PornKino", "pornkino"))
 				if config.mediaportal.showpornmvz.value:
 					self.porn.append(self.hauptListEntry("PORNMVZ", "pornmvz"))
 				if config.mediaportal.showpornostreams.value:
@@ -1487,6 +1492,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.pornscreen = pornerbrosGenreScreen
 		elif auswahl == "Pornhub":
 			self.pornscreen = pornhubGenreScreen
+		elif auswahl == "PornKino":
+			self.pornscreen = pornkinoGenreScreen
 		elif auswahl == "PORNMVZ":
 			self.pornscreen = pornmvzGenreScreen
 		elif auswahl == "PornoStreams":
@@ -1895,6 +1902,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showPornhub.value:
 				self.plugin_liste.append(("Pornhub", "pornhub", "Porn"))
 			if config.mediaportal.showgrauzone.value:
+				if config.mediaportal.showpornkino.value:
+					self.plugin_liste.append(("PornKino", "pornkino", "Porn"))
 				if config.mediaportal.showpornmvz.value:
 					self.plugin_liste.append(("PORNMVZ", "pornmvz", "Porn"))
 				if config.mediaportal.showpornostreams.value:
@@ -2491,6 +2500,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.pornscreen = pornerbrosGenreScreen
 		elif auswahl == "Pornhub":
 			self.pornscreen = pornhubGenreScreen
+		elif auswahl == "PornKino":
+			self.pornscreen = pornkinoGenreScreen
 		elif auswahl == "PORNMVZ":
 			self.pornscreen = pornmvzGenreScreen
 		elif auswahl == "PornoStreams":
