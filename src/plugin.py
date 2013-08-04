@@ -91,6 +91,8 @@ from additions.music.musicstreamcc import *
 config.mediaportal.showMusicstreamcc = ConfigYesNo(default = False)
 from additions.music.deluxemusic import *
 config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
+from additions.music.omr import *
+config.mediaportal.showomr = ConfigYesNo(default = True)
 
 # Fun
 if astModule:
@@ -387,6 +389,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.music.append(getConfigListEntry("Canna-Power", config.mediaportal.showCanna))
 			self.music.append(getConfigListEntry("Musicstream.cc", config.mediaportal.showMusicstreamcc))
 			self.music.append(getConfigListEntry("Songs.to", config.mediaportal.showSongsto))
+			self.music.append(getConfigListEntry("OnlineMusicRecorder.com ", config.mediaportal.showomr))
 		self.music.sort(key=lambda t : tuple(t[0][0].lower()))
 
 		### Fun
@@ -901,6 +904,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.funsport.append(self.hauptListEntry("80s & 90s Music", "eighties"))
 			if config.mediaportal.showCanna.value:
 				self.funsport.append(self.hauptListEntry("Canna-Power", "canna"))
+			if config.mediaportal.showomr.value:
+				self.funsport.append(self.hauptListEntry("OnlineMusicRecorder", "omr"))
 			if config.mediaportal.showSongsto.value:
 				self.funsport.append(self.hauptListEntry("Songs.to", "songsto"))
 
@@ -1378,6 +1383,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(show_DDLME_Genre)
 		elif auswahl == "Canna-Power":
 			self.session.open(cannaGenreScreen)
+		elif auswahl == "OnlineMusicRecorder":
+			self.session.open(omrGenreScreen)
 		elif auswahl == "Ran.de":
 			self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":
@@ -1684,6 +1691,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("Songs.to", "songsto", "Music"))
 			if config.mediaportal.showCanna.value:
 				self.plugin_liste.append(("Canna-Power", "canna", "Music"))
+			if config.mediaportal.showomr.value:
+				self.plugin_liste.append(("OnlineMusicRecorder", "omr", "Music"))
 			if config.mediaportal.showEighties.value:
 				self.plugin_liste.append(("80s & 90s Music", "eighties", "Music"))
 			if config.mediaportal.showMusicstreamcc.value:
@@ -2388,6 +2397,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(mlehdGenreScreen)
 		elif auswahl == "Canna-Power":
 			self.session.open(cannaGenreScreen)
+		elif auswahl == "OnlineMusicRecorder":
+			self.session.open(omrGenreScreen)
 		elif auswahl == "Ran.de":
 			self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":

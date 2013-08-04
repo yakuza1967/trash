@@ -634,7 +634,6 @@ class get_stream_link:
 		else:
 			self.stream_not_found()
 
-
 	def vidstream_in(self, data, url):
 		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
 		fname = re.findall('type="hidden" name="fname".*?value="(.*?)"', data, re.S)
