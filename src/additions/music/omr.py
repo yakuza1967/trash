@@ -112,6 +112,7 @@ class omrGenreScreen(Screen):
 			self.loadGenre()
 	
 	def loadGenre(self):
+		print "Login:", self.login
 		self.genreliste = [('A',"http://www.onlinemusicrecorder.com/archive/a.php"),
 							('B',"http://www.onlinemusicrecorder.com/archive/b.php"),
 							('C',"http://www.onlinemusicrecorder.com/archive/c.php"),
@@ -149,8 +150,10 @@ class omrGenreScreen(Screen):
 		if self.keyLocked:
 			return
 			
-		if not self.login:
+		print 
+		if self.login == False:
 			message = self.session.open(MessageBox, _("Login ERROR."), MessageBox.TYPE_INFO, timeout=5)
+			return
 			
 		self.omrName = self['genreList'].getCurrent()[0][0]
 		omrUrl = self['genreList'].getCurrent()[0][1]
