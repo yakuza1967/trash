@@ -448,7 +448,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			artist = self.playList2[self.playIdx][4]
 			imgurl = self.playList2[self.playIdx][7]
 			self.cover2 = self.playList2[self.playIdx][8] == '1' and self.plType == 'global'
-			
+
 			if len(self.playList2[self.playIdx]) < 6:
 				ltype = ''
 			else:
@@ -763,6 +763,10 @@ class SimplePlaylist(Screen):
 		print "resetEvent:"
 		if self.event:
 			self.event.reset()
+
+	def createSummary(self):
+		print "createSummary"
+		return SimplePlayerSummary
 
 class SimpleConfig(ConfigListScreen, Screen):
 	skin = '\n\t\t<screen position="center,center" size="460,200" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="440,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
