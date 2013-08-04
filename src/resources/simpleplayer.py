@@ -138,6 +138,48 @@ class SimpleSeekHelper:
 		if self.percent > 100.0:
 			self.percent = 100.0
 
+	def seekKey1(self):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) - 15 * 90000
+		self.percent = pts * 100 / float(self.length[1])
+		if self.percent < 0.0:
+			self.percent = 0.0
+		self.seekOK()
+
+	def seekKey4(self):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) - 60 * 90000
+		self.percent = pts * 100 / float(self.length[1])
+		if self.percent < 0.0:
+			self.percent = 0.0
+		self.seekOK()
+
+	def seekKey7(self):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) - 300 * 90000
+		self.percent = pts * 100 / float(self.length[1])
+		if self.percent < 0.0:
+			self.percent = 0.0
+		self.seekOK()
+
+	def seekKey3(self):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) + 15 * 90000
+		self.percent = pts * 100 / float(self.length[1])
+		if self.percent > 100.0:
+			self.percent = 100.0
+		self.seekOK()
+
+	def seekKey6(self):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) + 60 * 90000
+		self.percent = pts * 100 / float(self.length[1])
+		if self.percent > 100.0:
+			self.percent = 100.0
+		self.seekOK()
+
+	def seekKey9(self):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) + 300 * 90000
+		self.percent = pts * 100 / float(self.length[1])
+		if self.percent > 100.0:
+			self.percent = 100.0
+		self.seekOK()
+
 	def doMySpassSeekTo(self, seekpos):
 		service = self.session.nav.getCurrentService()
 		title = service.info().getName()
@@ -197,9 +239,15 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			"down":		self.randomNow,
 			"back":		self.leavePlayer,
 			"left":		self.seekBack,
-			"right":	self.seekFwd
+			"right":	self.seekFwd,
+			"seekdef:1": self.Key1,
+			"seekdef:3": self.Key3,
+			"seekdef:4": self.Key4,
+			"seekdef:6": self.Key6,
+			"seekdef:7": self.Key7,
+			"seekdef:9": self.Key9
 
-		}, -1)
+		}, -2)
 
 		SimpleSeekHelper.__init__(self)
 		InfoBarNotifications.__init__(self)
@@ -365,6 +413,30 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			self.seekLeft()
 		elif self.playAll:
 			self.playPrevStream()
+
+	def Key1(self):
+		self.initSeek()
+		self.seekKey1()
+
+	def Key3(self):
+		self.initSeek()
+		self.seekKey3()
+
+	def Key4(self):
+		self.initSeek()
+		self.seekKey4()
+
+	def Key6(self):
+		self.initSeek()
+		self.seekKey6()
+
+	def Key7(self):
+		self.initSeek()
+		self.seekKey7()
+
+	def Key9(self):
+		self.initSeek()
+		self.seekKey9()
 
 	def handleLeave(self, how):
 		print "handleLeave:"
