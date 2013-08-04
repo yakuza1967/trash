@@ -251,11 +251,13 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		# load default cover
 		self['Cover'] = Pixmap()
 		self._Cover = CoverHelper(self['Cover'], nc_callback=self.hideSPCover)
-		self.cover_is_hidden = False
+		self.coverBGisHidden = False
+		self.cover2 = False
 
 		self.SaverTimer = eTimer()
 		self.SaverTimer.callback.append(self.openSaver)
 
+		self.hideSPCover()
 		self.setPlaymode()
 		self.configSaver()
 		self.onClose.append(self.playExit)
@@ -282,7 +284,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		if not url:
 			return
 
-		if self.cover:
+		if self.cover or self.cover2:
 			self.showCover(imgurl)
 
 		if url.endswith('.ts'):
@@ -445,6 +447,8 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			album = self.playList2[self.playIdx][3]
 			artist = self.playList2[self.playIdx][4]
 			imgurl = self.playList2[self.playIdx][7]
+			self.cover2 = self.playList2[self.playIdx][8] == '1' and self.plType == 'global'
+			
 			if len(self.playList2[self.playIdx]) < 6:
 				ltype = ''
 			else:
@@ -576,27 +580,29 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			self.session.open(MessageBox, _("Fehler!"), MessageBox.TYPE_INFO, timeout=5)
 
 	def showCover(self, cover):
-		print "showCover:", cover
-		if self.cover_is_hidden:
+		#print "showCover:", cover
+		if self.coverBGisHidden:
 			self.showSPCover()
 		self._Cover.getCover(cover)
 
 	def showIcon(self):
 		print "showIcon:"
-		if not self.cover:
-			self.hideSPCover()
 		pm_file = self.wallicon_path + mp_globals.activeIcon + ".png"
 		self._Icon.showCoverFile(pm_file)
 
 	def hideSPCover(self):
-		self['spcoverframe'].hide()
-		self['spcoverfg'].hide()
-		self.cover_is_hidden = True
+		#print "hideSPCover:"
+		if not self.coverBGisHidden:
+			self['spcoverframe'].hide()
+			self['spcoverfg'].hide()
+			self.coverBGisHidden = True
 
 	def showSPCover(self):
-		self['spcoverframe'].show()
-		self['spcoverfg'].show()
-		self.cover_is_hidden = False
+		print "showSPCover:"
+		if self.coverBGisHidden:
+			self['spcoverframe'].show()
+			self['spcoverfg'].show()
+			self.coverBGisHidden = False
 
 	#def lockShow(self):
 	#	pass
