@@ -359,7 +359,11 @@ class pornkinoFilmAuswahlScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			title = self.genreName
-			self.session.open(SimplePlayer, [(title, stream_url, self.cover)], showPlaylist=False, ltype='pornkino', cover=True)
+			if re.search('no_cover', self.cover):
+				cover = None
+			else:
+				cover = self.cover
+			self.session.open(SimplePlayer, [(title, stream_url, cover)], showPlaylist=False, ltype='pornkino', cover=True)
 
 	def dataError(self, error):
 		print "dataError:"
