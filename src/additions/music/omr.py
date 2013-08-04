@@ -1,8 +1,5 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
-from urllib import quote, urlencode
-from Components.GUIComponent import GUIComponent
-from Components.GUIComponent import GUIComponent
 
 def omrGenreListEntry(entry):
 	return [entry,
