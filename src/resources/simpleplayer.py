@@ -32,6 +32,7 @@ class SimpleSeekHelper:
 		self.cursorShown = False
 		self.seekBarShown = False
 		self.seekBarLocked = False
+		self.isNumberSeek = False
 		self.counter = 0
 		self.onHide.append(self.__seekBarHide)
 		self.onShow.append(self.__seekBarShown)
@@ -70,8 +71,8 @@ class SimpleSeekHelper:
 						elif 'media.hdporn.net' in self.mySpassPath:
 							self.isMySpass = True
 
-					if int(position[1]) > 0:
-						self.percent = float(position[1]) * 100.0 / float(self.length[1])
+					self.percent = float(position[1]) * 100.0 / float(self.length[1])
+					if not self.isNumberSeek:
 						InfoBarShowHide.lockShow(self)
 						self.seekBarLocked = True
 						self["seekbartime"].show()
@@ -108,11 +109,14 @@ class SimpleSeekHelper:
 
 	def seekExit(self):
 		#print "seekExit:"
-		self.seekBarLocked = False
-		self.cursorTimer.stop()
-		self.unlockShow()
-		self["seekbarcursor"].hide()
-		self["seekbartime"].hide()
+		if not self.isNumberSeek:
+			self.seekBarLocked = False
+			self.cursorTimer.stop()
+			self.unlockShow()
+			self["seekbarcursor"].hide()
+			self["seekbartime"].hide()
+		else:
+			self.isNumberSeek = False
 
 	def seekOK(self):
 		#print "seekOK:"
@@ -125,6 +129,8 @@ class SimpleSeekHelper:
 			else:
 				self.seek.seekTo(int(seekpos))
 				self.seekExit()
+		else:
+			self.seekExit()
 
 	def seekLeft(self):
 		#print "seekLeft:"
@@ -138,47 +144,16 @@ class SimpleSeekHelper:
 		if self.percent > 100.0:
 			self.percent = 100.0
 
-	def seekKey1(self):
-		pts = int(float(self.length[1]) / 100.0 * self.percent) - 15 * 90000
+	def numberKeySeek(self, val):
+		pts = int(float(self.length[1]) / 100.0 * self.percent) + val * 90000
 		self.percent = pts * 100 / float(self.length[1])
 		if self.percent < 0.0:
 			self.percent = 0.0
-		self.seekOK()
-
-	def seekKey4(self):
-		pts = int(float(self.length[1]) / 100.0 * self.percent) - 60 * 90000
-		self.percent = pts * 100 / float(self.length[1])
-		if self.percent < 0.0:
-			self.percent = 0.0
-		self.seekOK()
-
-	def seekKey7(self):
-		pts = int(float(self.length[1]) / 100.0 * self.percent) - 300 * 90000
-		self.percent = pts * 100 / float(self.length[1])
-		if self.percent < 0.0:
-			self.percent = 0.0
-		self.seekOK()
-
-	def seekKey3(self):
-		pts = int(float(self.length[1]) / 100.0 * self.percent) + 15 * 90000
-		self.percent = pts * 100 / float(self.length[1])
-		if self.percent > 100.0:
+		elif self.percent > 100.0:
 			self.percent = 100.0
-		self.seekOK()
 
-	def seekKey6(self):
-		pts = int(float(self.length[1]) / 100.0 * self.percent) + 60 * 90000
-		self.percent = pts * 100 / float(self.length[1])
-		if self.percent > 100.0:
-			self.percent = 100.0
 		self.seekOK()
-
-	def seekKey9(self):
-		pts = int(float(self.length[1]) / 100.0 * self.percent) + 300 * 90000
-		self.percent = pts * 100 / float(self.length[1])
-		if self.percent > 100.0:
-			self.percent = 100.0
-		self.seekOK()
+		self.doShow()
 
 	def doMySpassSeekTo(self, seekpos):
 		service = self.session.nav.getCurrentService()
@@ -207,6 +182,7 @@ class SimpleSeekHelper:
 		self.mySpassPath = None
 		self.isMySpass = False
 		self.isRetroTv = False
+		self.isNumberSeek = False
 
 	def cancelSeek(self):
 		if self.seekBarLocked:
@@ -415,28 +391,34 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 			self.playPrevStream()
 
 	def Key1(self):
+		self.isNumberSeek = True
 		self.initSeek()
-		self.seekKey1()
+		self.numberKeySeek(-config.seek.selfdefined_13.value)
 
 	def Key3(self):
+		self.isNumberSeek = True
 		self.initSeek()
-		self.seekKey3()
+		self.numberKeySeek(config.seek.selfdefined_13.value)
 
 	def Key4(self):
+		self.isNumberSeek = True
 		self.initSeek()
-		self.seekKey4()
+		self.numberKeySeek(-config.seek.selfdefined_46.value)
 
 	def Key6(self):
+		self.isNumberSeek = True
 		self.initSeek()
-		self.seekKey6()
+		self.numberKeySeek(config.seek.selfdefined_46.value)
 
 	def Key7(self):
+		self.isNumberSeek = True
 		self.initSeek()
-		self.seekKey7()
+		self.numberKeySeek(-config.seek.selfdefined_79.value)
 
 	def Key9(self):
+		self.isNumberSeek = True
 		self.initSeek()
-		self.seekKey9()
+		self.numberKeySeek(config.seek.selfdefined_79.value)
 
 	def handleLeave(self, how):
 		print "handleLeave:"
