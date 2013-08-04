@@ -508,7 +508,7 @@ class watchseriesStreamListeScreen(Screen):
 				self.filmliste = []
 				for (shname,shurl) in streams:
 					print shname,shurl
-					if re.match('.*?(sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', shname, re.S|re.I):
+					if re.match('.*?(sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', shname, re.S|re.I):
 						url = "http://watchseries.lt%s" % shurl
 						self.filmliste.append((decodeHtml(shname),url))
 

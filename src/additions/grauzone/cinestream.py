@@ -215,7 +215,7 @@ class cinestreamStreamListeScreen(Screen):
 		if streams:
 			self.filmliste = []
 			for streamName,streamLink in streams:
-				if re.match('.*?(putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|BitShare|Userporn)', streamName, re.S|re.I):
+				if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|BitShare|Userporn)', streamName, re.S|re.I):
 					self.filmliste.append((streamName.replace('www.',''),streamLink))
 			self.chooseMenuList.setList(map(cinestreamStreamsListEntry, self.filmliste))
 			self.keyLocked = False

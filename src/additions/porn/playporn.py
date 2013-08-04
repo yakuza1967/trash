@@ -375,10 +375,10 @@ class playpornStreamListeScreen(Screen):
 	def loadPageData(self, data):
 		print "daten bekommen"
 		parse = re.search('class="video">(.*)</div>', data, re.S)
-		streams = re.findall('(http://(streamcloud|flashx|[w]+.putlocker|[w]+.sockshare|userporn|).*?)"', parse.group(1), re.S)
+		streams = re.findall('(http://(streamclou|flashx|[w]+.putlocker|[w]+.sockshare|userporn|).*?)"', parse.group(1), re.S)
 		if streams:
 			for (stream, hostername) in streams:
-				if re.match('.*?(putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Userporn)', hostername.strip(' '), re.S|re.I):
+				if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Userporn)', hostername.strip(' '), re.S|re.I):
 					print hostername, stream
 					hostername = hostername.strip('www.')
 					hostername = hostername.title()

@@ -344,7 +344,7 @@ class PrimeWireStreamsScreen(Screen):
 			for (chCode, chUrl, chStreamHoster) in streams:
 				chUrl = 'http://www.primewire.ag/external.php?gd=%s&url=%s&%s' % (chCode, chUrl, chStreamHoster)
 				print chStreamHoster, chUrl
-				if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn|sharesix)', chStreamHoster, re.S):
+				if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn|sharesix)', chStreamHoster, re.S):
 					self.streamList.append((chStreamHoster, chUrl))
 			self.streamMenuList.setList(map(chStreamListEntry, self.streamList))
 			self.keyLocked = False

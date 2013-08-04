@@ -335,7 +335,7 @@ class pornkinoFilmAuswahlScreen(Screen):
 		streams = re.findall('class="entry\sclr">.*?href="(http://(.*?)/.*?)"', data , re.S)
 		if streams:
 			for (stream, hostername) in streams:
-				if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn|vidx)', hostername, re.S|re.I):
+				if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn|vidx)', hostername, re.S|re.I):
 					self.filmliste.append((hostername, stream))
 				else:
 					self.filmliste.append(("No streams found!",None))

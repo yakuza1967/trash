@@ -122,7 +122,10 @@ class get_stream_link:
 			elif re.match('.*?faststream', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.faststream, link).addErrback(self.errorload)
+				if re.search('faststream.in/embed', data, re.S):
+					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.faststream_data).addErrback(self.errorload)
+				else:
+					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.faststream, link).addErrback(self.errorload)
 
 			elif re.match('.*?primeshare', data, re.S):
 				link = data

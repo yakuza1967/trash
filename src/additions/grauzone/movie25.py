@@ -283,7 +283,7 @@ class movie25StreamListeScreen(Screen):
 		if streams:
 			self.filmliste = []
 			for (name,link) in streams:
-				if re.match('.*?(sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', name, re.S|re.I):
+				if re.match('.*?(sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', name, re.S|re.I):
 					self.filmliste.append((decodeHtml(name),link))
 
 			if len(self.filmliste) == 0:

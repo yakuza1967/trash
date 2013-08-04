@@ -560,7 +560,8 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 			self.filmliste = []
 			for teil_url, title in xxxGenre:
 				url = '%s%s' % ('http://www.movie4k.to/', teil_url)
-				title.replace("\t","")
+				title = title.replace("\t","")
+				title = title.strip(" ")
 				self.filmliste.append((decodeHtml(title), url))
 			self.chooseMenuList.setList(map(m4kFilmListEntry, self.filmliste))
 			self.keyLocked = False
@@ -1354,7 +1355,7 @@ class m4kStreamListeScreen(Screen):
 				for url,datum,hostername,quali in hoster:
 					url = "%s%s" % ("http://www.movie4k.to/", url)
 					print hostername, url
-					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
+					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|fastsream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, datum, hostername, quali.replace('Movie quality ','').replace('\\','')))
 
 				if len(self.filmliste) == 0:
@@ -1371,7 +1372,7 @@ class m4kStreamListeScreen(Screen):
 				for url,hostername in hoster:
 					url = "%s%s" % ("http://www.movie4k.to/", url)
 					print hostername, url
-					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
+					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|fastsream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, hostername))
 
 				if len(self.filmliste) == 0:
@@ -1465,6 +1466,12 @@ class m4kStreamListeScreen(Screen):
 				print link[0]
 				get_stream_link(self.session).check_link(link[0], self.got_link, False)
 
+			link = re.findall('<IFRAME SRC="(.*?)" FRAMEBORDER=.*?></IFRAME>', data, re.S|re.I)
+			if link:
+				link_found = True
+				print link[0]
+				get_stream_link(self.session).check_link(link[0], self.got_link, False)
+				
 			if not link_found:
 				message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
@@ -1593,8 +1600,26 @@ class m4kPartListeScreen(Screen):
 		link = re.findall('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S)
 		if link:
 			link_found = True
-			print link[0].replace('?embed','')
-			get_stream_link(self.session).check_link(link[0].replace('?embed',''), self.got_link, False)
+			print link[0]
+			get_stream_link(self.session).check_link(link[0], self.got_link, False)
+
+		link = re.findall('<iframe width=".*?" height=".*?" frameborder=".*?" src="(.*?)" scrolling="no"></iframe>', data)
+		if link:
+			link_found = True
+			print link[0]
+			get_stream_link(self.session).check_link(link[0], self.got_link, False)
+
+		link = re.findall('<iframe src="(.*?)" width=".*?" height=".*?" frameborder=".*?" scrolling="no"></iframe>', data)
+		if link:
+			link_found = True
+			print link[0]
+			get_stream_link(self.session).check_link(link[0], self.got_link, False)
+
+		link = re.findall('<IFRAME SRC="(.*?)" FRAMEBORDER=.*?></IFRAME>', data, re.S|re.I)
+		if link:
+			link_found = True
+			print link[0]
+			get_stream_link(self.session).check_link(link[0], self.got_link, False)
 
 		if not link_found:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
@@ -1817,7 +1842,8 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		if serien:
 			for url,title in serien:
 				url = "%s%s" % ("http://www.movie4k.to/", url)
-				title.replace("\t","")
+				title = title.replace("\t","")
+				title = title.strip(" ")
 				self.filmliste.append((decodeHtml(title), url))
 			self.chooseMenuList.setList(map(m4kFilmListEntry, self.filmliste))
 			self['page'].setText(str(self.page))
