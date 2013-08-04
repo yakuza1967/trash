@@ -92,7 +92,7 @@ config.mediaportal.showMusicstreamcc = ConfigYesNo(default = False)
 from additions.music.deluxemusic import *
 config.mediaportal.showDeluxemusic = ConfigYesNo(default = True)
 from additions.music.omr import *
-config.mediaportal.showomr = ConfigYesNo(default = True)
+config.mediaportal.showomr = ConfigYesNo(default = False)
 
 # Fun
 if astModule:
