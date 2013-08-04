@@ -206,7 +206,7 @@ class gigatvFilmScreen(Screen):
 		else:
 			self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
-		phMovies = re.findall('<article\sclass=.*?smallimg">.*?<a\shref="(.*?)"\s{0,2}>(.*?)</a>.*?<img.*?data-original="(.*?)"', data, re.S|re.I)
+		phMovies = re.findall('<article\sclass=.*?smallimg">.*?<a\shref="(.*?)".*?>(.*?)</a>.*?<img.*?data-original="(.*?)"', data, re.S|re.I)
 		if phMovies:
 			for (phUrl, phTitle, phImage) in phMovies:
 				phTitle = phTitle.replace('<b>','').replace('</b>','')
