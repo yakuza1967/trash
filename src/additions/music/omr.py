@@ -252,7 +252,7 @@ class omrPlayer(SimplePlayer):
 		print self.playList[self.playIdx][0][0]
 		self.ntitle = self.playList[self.playIdx][0]
 		url = self.playList[self.playIdx][1]
-		print self.title, url.replace(' ', '%20')
+		print self.ntitle, url.replace(' ', '%20')
 		getPage(url.replace(' ', '%20'), cookies=kekse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_link).addErrback(self.dataError)
 
 	def get_link(self, data):
