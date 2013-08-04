@@ -5,6 +5,7 @@ def autoBildGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
+
 class autoBildGenreScreen(Screen):
 
 	def __init__(self, session):
@@ -38,14 +39,15 @@ class autoBildGenreScreen(Screen):
 
 	def layoutFinished(self):
 		self.genreliste.append(("Alle Videos", "http://www.autobild.de/videos/?page="))
+		self.genreliste.append(("Aktionen", "http://www.autobild.de/videos/aktionen/?page="))
 		self.genreliste.append(("Erlkoenige", "http://www.autobild.de/videos/erlkoenige/?page="))
-		self.genreliste.append(("Tests", "http://www.autobild.de/videos/tests/?page="))
-		self.genreliste.append(("Crashtests", "http://www.autobild.de/videos/crashtests/?page="))
-		self.genreliste.append(("Heft-Dvd", "http://www.autobild.de/videos/heft-dvd/?page="))
+		self.genreliste.append(("Fahrberichte", "http://www.autobild.de/videos/fahrberichte/?page="))
 		self.genreliste.append(("Klassik", "http://www.autobild.de/videos/klassik/?page="))
 		self.genreliste.append(("Messen", "http://www.autobild.de/videos/messen/?page="))
+		self.genreliste.append(("Motorsport", "http://www.autobild.de/index_3398533.html?page="))
+		self.genreliste.append(("Neuvorstellungen", "http://www.autobild.de/videos/neuvorstellungen/?page="))
 		self.genreliste.append(("Ratgeber", "http://www.autobild.de/videos/ratgeber/?page="))
-		self.genreliste.append(("MotorSport", "http://www.autobild.de/index_3398533.html?page="))
+		self.genreliste.append(("Tests", "http://www.autobild.de/videos/tests/?page="))
 		self.chooseMenuList.setList(map(autoBildGenreListEntry, self.genreliste))
 
 	def keyOK(self):
@@ -60,6 +62,7 @@ def autoBildFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
+
 class autoBildFilmListeScreen(Screen):
 	def __init__(self, session, streamGenreLink):
 		self.session = session
