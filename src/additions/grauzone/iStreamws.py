@@ -672,7 +672,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		if streams:
 			print "Streams found"
 			for (isUrl,isStream,streamPart) in streams:
-				if re.match('.*?(putlocker|sockshare|flash strea|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Zooupload|Click.*?Play|BitShare)', isStream, re.S|re.I):
+				if re.match('.*?(putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', isStream, re.S|re.I):
 					#print isUrl
 					#print isStream,streamPart
 					self.streamListe.append((isStream,isUrl,streamPart))

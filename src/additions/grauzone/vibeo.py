@@ -432,7 +432,7 @@ class vibeoStreamListeScreen(Screen):
 			self.filmliste = []
 			for (sname, surl) in streams:
 				print sname, surl.replace('\\','')
-				if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Zooupload|Wupfile|BitShare|Userporn)', sname, re.S|re.I):
+				if re.match('.*?(putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|BitShare|Userporn)', sname, re.S|re.I):
 					self.filmliste.append((sname, surl.replace('\\','')))
 			self.chooseMenuList.setList(map(vibeoListEntry, self.filmliste))
 			self.keyLocked = False

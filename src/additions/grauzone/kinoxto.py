@@ -1369,7 +1369,7 @@ class kxStreams(Screen):
 									get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, 'Mirror='+str(i))
 
 								print get_stream_url_m
-								if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
+								if re.match('.*?(putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
 									self.streamList.append((hostername, get_stream_url_m, str(i)+"/"+mirrors[0], hits.replace(',','').replace(' ',''), date))
 				else:
 					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>Hits</b>\:.(.*\d+)<br /><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
@@ -1377,7 +1377,7 @@ class kxStreams(Screen):
 						(get_stream_url, hostername, hits, date)= hosters[0]
 						get_stream_url = "http://kinox.to/aGET/Mirror/%s" % get_stream_url.replace('&amp;','&')
 						print get_stream_url, hostername, "1", hits, date
-						if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
+						if re.match('.*?(putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
 							self.streamList.append((hostername, get_stream_url, "1", hits, date))
 
 			self.streamMenuList.setList(map(kxStreamListEntry, self.streamList))

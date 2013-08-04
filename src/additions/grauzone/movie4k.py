@@ -1354,7 +1354,7 @@ class m4kStreamListeScreen(Screen):
 				for url,datum,hostername,quali in hoster:
 					url = "%s%s" % ("http://www.movie4k.to/", url)
 					print hostername, url
-					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn)', hostername, re.S|re.I):
+					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, datum, hostername, quali.replace('Movie quality ','').replace('\\','')))
 
 				if len(self.filmliste) == 0:
@@ -1371,7 +1371,7 @@ class m4kStreamListeScreen(Screen):
 				for url,hostername in hoster:
 					url = "%s%s" % ("http://www.movie4k.to/", url)
 					print hostername, url
-					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Zooupload|Wupfile|BitShare|Userporn)', hostername, re.S|re.I):
+					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamcloud|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, hostername))
 
 				if len(self.filmliste) == 0:
