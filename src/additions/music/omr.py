@@ -151,6 +151,10 @@ class omrGenreScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
+			
+		if not self.login:
+			message = self.session.open(MessageBox, _("Login ERROR."), MessageBox.TYPE_INFO, timeout=5)
+			
 		self.omrName = self['genreList'].getCurrent()[0][0]
 		omrUrl = self['genreList'].getCurrent()[0][1]
 		print self.omrName, omrUrl
