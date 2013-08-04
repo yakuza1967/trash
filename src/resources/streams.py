@@ -116,6 +116,7 @@ class get_stream_link:
 
 			elif re.match('.*?yesload.tv', data, re.S):
 				link = data
+				aage = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload, link).addErrback(self.errorload)
 
 			elif re.match('.*?faststream', data, re.S):
@@ -241,6 +242,10 @@ class get_stream_link:
 				id = link.split('org/')
 				url = "http://youwatch.org/embed-%s.html" % id[1]
 				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.youwatch).addErrback(self.errorload)
+				
+			elif re.match('.*?vidx.to', data, re.S):
+				link = data
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vidx, link).addErrback(self.errorload)
 
 			else:
 				message = self.session.open(MessageBox, _("No supported Stream Hoster, try another one !"), MessageBox.TYPE_INFO, timeout=5)
@@ -255,6 +260,40 @@ class get_stream_link:
 		if self.showmsgbox:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
+			
+	def vidx(self, data, url):
+		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
+		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
+		fname = re.findall('type="hidden" name="fname".*?value="(.*?)"', data, re.S)
+		referer = re.findall('type="hidden" name="referer".*?value="(.*?)"', data, re.S)
+		hash = re.findall('type="hidden" name="hash".*?value="(.*?)"', data, re.S)
+		
+		if op and id and fname and referer and hash:
+			info = urlencode({
+				'fname': fname[0],
+				'hash': hash[0],
+				'id': id[0],
+				'imhuman': "Weiter",
+				'op': "download1",
+				'referer': referer[0],
+				'usr_login': ""})
+			print info
+			reactor.callLater(10, self.vidx_data, url, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
+		else:
+			self.stream_not_found()
+
+	def vidx_data(self, *args, **kwargs):
+		print "drin"
+		getPage(*args, **kwargs).addCallback(self.vidx_data2).addErrback(self.errorload)	
+
+	def vidx_data2(self, data):
+		print "get stream"
+		stream_url = re.findall('file: "(.*?)"', data, re.S)
+		if stream_url:
+			self._callback(stream_url[0])
+		else:
+			self.stream_not_found()
+	
 	def youwatch(self, data):
 		stream_url = re.findall('file: "(.*?)"', data, re.S)
 		if stream_url:
@@ -811,13 +850,14 @@ class get_stream_link:
 				'id': id[0],
 				'imhuman': "Proceed to video",
 				'op': "download1",
-				'referer': "",
+				'referer': referer[0],
 				'usr_login': ""})
 
 			print info
-			#getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload_data).addErrback(self.errorload)
-			reactor.callLater(10, self.yesload_getPage, url, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
-			message = self.session.open(MessageBox, _("Stream startet in 10 sec."), MessageBox.TYPE_INFO, timeout=6)
+			aage = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'
+			#getPage(url, method='POST', postdata=info, headers={'referer': url}).addCallback(self.yesload_data).addErrback(self.errorload)
+			reactor.callLater(11, self.yesload_getPage, url, method='POST', postdata=info, headers={'referer': url})
+			message = self.session.open(MessageBox, _("Stream startet in 10 sec."), MessageBox.TYPE_INFO, timeout=10)
 		else:
 			self.stream_not_found()
 
@@ -827,7 +867,9 @@ class get_stream_link:
 
 	def yesload_data(self, data):
 		print "unpack javascript"
-		get_packedjava = re.findall("<script type=.text.javascript.>(eval.function(.*?\)\)\)).*/script>", data, re.S|re.DOTALL)
+		print data
+		get_packedjava = re.findall("<script type=.text.javascript.>(eval.function(.*?)</script>", data, re.S|re.DOTALL)
+		print get_packedjava
 		if get_packedjava:
 			print get_packedjava[0]
 			sJavascript = get_packedjava[0]
