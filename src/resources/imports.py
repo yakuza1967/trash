@@ -29,7 +29,7 @@ from Screens.InfoBar import MoviePlayer, InfoBar
 from Screens.Standby import TryQuitMainloop
 from twisted.web.client import downloadPage, getPage, error
 from twisted.internet import reactor, defer
-from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
+from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN, createDir
 from Tools.LoadPixmap import LoadPixmap
 
 from jsunpacker import cJsUnpacker

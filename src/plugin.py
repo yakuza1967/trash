@@ -4,6 +4,7 @@
 from resources.imports import *
 from resources.update import *
 from resources.simplelist import *
+from resources.simpleplayer import SimplePlaylistIO
 
 try:
 	import ast
@@ -317,6 +318,24 @@ config.mediaportal.showMovie25 = ConfigYesNo(default = False)
 from additions.grauzone.movie2k import *
 config.mediaportal.movie2k = ConfigYesNo(default = False)
 
+class CheckPathes:
+	def __init__(self, session):
+		self.session = session
+		self.cb = None
+
+	def checkPathes(self, cb):
+		self.cb = cb
+		res, msg = SimplePlaylistIO.checkPath(config.mediaportal.watchlistpath.value, '', True)
+		if not res:
+			self.session.openWithCallback(self._callback, MessageBox, msg, MessageBox.TYPE_ERROR)
+		res, msg = SimplePlaylistIO.checkPath(config.mediaportal.storagepath.value, '', True)
+		if not res:
+			self.session.openWithCallback(self._callback, MessageBox, msg, MessageBox.TYPE_ERROR)
+
+	def _callback(self, answer):
+		if self.cb:
+			self.cb()
+
 class hauptScreenSetup(Screen, ConfigListScreen):
 
 	def __init__(self, session):
@@ -576,6 +595,8 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		if (config.mediaportal.showgrauzone.value == False and config.mediaportal.filter.value == 'Grauzone'):
 			config.mediaportal.filter.value = 'ALL'
 
+		CheckPathes(self.session).checkPathes(self.cb_checkPathes)
+
 		if (config.mediaportal.showgrauzone.value and not config.mediaportal.pingrauzone.value):
 			self.a = str(random.randint(1,9))
 			self.b = str(random.randint(0,9))
@@ -585,6 +606,9 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.session.openWithCallback(self.keyOK2,MessageBox,_(message), MessageBox.TYPE_YESNO)
 		else:
 			self.confSave()
+
+	def cb_checkPathes(self):
+		pass
 
 	def keyOK2(self, answer):
 		if answer is True:
@@ -706,6 +730,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		self.currentlist = "porn"
 
 		self.onLayoutFinish.append(self.layoutFinished)
+		self.onFirstExecBegin.append(self.checkPathes)
 
 	def layoutFinished(self):
 		if config.mediaportal.autoupdate.value:
@@ -1011,6 +1036,12 @@ class haupt_Screen(Screen, ConfigListScreen):
 		self["porn"].setList(self.porn)
 		self["porn"].l.setItemHeight(44)
 		self.keyRight()
+
+	def checkPathes(self):
+		CheckPathes(self.session).checkPathes(self.cb_checkPathes)
+
+	def cb_checkPathes(self):
+		self.session.openWithCallback(self.restart, hauptScreenSetup)
 
 	def hauptListEntry(self, name, jpg):
 		res = [(name, jpg)]
@@ -2126,6 +2157,13 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		self.select_list = 0
 
 		self.onFirstExecBegin.append(self._onFirstExecBegin)
+		self.onFirstExecBegin.append(self.checkPathes)
+
+	def checkPathes(self):
+		CheckPathes(self.session).checkPathes(self.cb_checkPathes)
+
+	def cb_checkPathes(self):
+		self.session.openWithCallback(self.restart, hauptScreenSetup)
 
 	def manuelleSortierung(self):
 		self.session.openWithCallback(self.restart, pluginSort)
@@ -2833,7 +2871,7 @@ class chooseFilter(Screen, ConfigListScreen):
 			self.skin_dump2 += self.skin_dump
 			self.skin = self.skin_dump2
 			f.close()
-		
+
 		Screen.__init__(self, session)
 
 		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions", "HelpActions", "InfobarActions"], {
@@ -2842,10 +2880,10 @@ class chooseFilter(Screen, ConfigListScreen):
 			"up": self.keyup,
 			"down": self.keydown
 		}, -1)
-		
+
 		self["frame"] = MovingPixmap()
 		self["frame"].hide()
-		
+
 		for x in range(1,len(self.dupe)+1):
 			self["menu"+str(x)] = Pixmap()
 			self["menu"+str(x)].show()
@@ -2876,7 +2914,7 @@ class chooseFilter(Screen, ConfigListScreen):
 				self["frame"].startMoving()
 				self.selektor_index = x
 			x += 1
-			
+
 	def moveframe(self):
 		position = self["menu"+str(self.selektor_index)].instance.position()
 		self["frame"].moveTo(position.x(), position.y(), 1)

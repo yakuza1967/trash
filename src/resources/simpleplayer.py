@@ -904,6 +904,39 @@ class SimplePlayerMenu(Screen):
 
 class SimplePlaylistIO:
 
+	Msgs = [_("Der Verzeichnispfad ended nicht mit '/':\n%s"),
+		_("Datei mit gleichen Namen im Verzeichnispfad vorhanden:\n%s"),
+		_("Das fehlende Verzeichnis:\n%s konnte nicht angelegt werden!"),
+		_("Der Verzeichnispfad:\n%s ist nicht vorhanden!"),
+		_("Es existiert schon ein Verzeichnis mit dem Dateinamen:\n%s"),
+		_("Der Pfad ist i.O., der Dateiname wurde nicht angegeben:\n%s"),
+		_("Der Verzeichnispfad & Dateiname is i.O.:\n%s"),
+		_("Der Verzeichnispfad wurde nicht angegeben!"),
+		_("Symbolik Link mit gleichen Namen im Verzeichnispfad:\n%s vorhanden!")]
+
+	@staticmethod
+	def checkPath(path, pl_name, createPath=False):
+		if not path:
+			return (0, SimplePlaylistIO.Msgs[7])
+		if path[-1] != '/':
+			return (0, SimplePlaylistIO.Msgs[0] % path)
+		if not os.path.isdir(path):
+			if os.path.isfile(path[:-1]):
+				return (0, SimplePlaylistIO.Msgs[1] % path)
+			if os.path.islink(path[:-1]):
+				return (0, SimplePlaylistIO.Msgs[8] % path)
+			if createPath:
+				if createDir(path, True) == 0:
+					return (0, SimplePlaylistIO.Msgs[2] % path)
+			else:
+				return (0, SimplePlaylistIO.Msgs[3] % path)
+		if not pl_name:
+			return (1, SimplePlaylistIO.Msgs[5] % path)
+		if os.path.isdir(path+pl_name):
+			return (0, SimplePlaylistIO.Msgs[4] % (path, pl_name))
+			
+		return (1, SimplePlaylistIO.Msgs[6] % (path, pl_name))
+
 	@staticmethod
 	def delEntry(pl_name, list, idx):
 		print "delEntry:"
