@@ -2056,16 +2056,16 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		skincontent = ""
 
-		posx = 20
+		posx = 22
 		posy = 210
 		for x in range(1,len(self.plugin_liste)+1):
 			skincontent += "<widget name=\"zeile" + str(x) + "\" position=\"" + str(posx) + "," + str(posy) + "\" size=\"150,80\" zPosition=\"1\" transparent=\"0\" alphatest=\"blend\" />"
 			posx += 155
 			if x == 8 or x == 16 or x == 24 or x == 32 or x == 48 or x == 56 or x == 64 or x == 72 or x == 88 or x == 96 or x == 104 or x == 112 or x == 128 or x == 136 or x == 144 or x == 152:
-				posx = 20
+				posx = 22
 				posy += 85
 			elif x == 40 or x == 80 or x == 120 or x == 160 or x == 200:
-				posx = 20
+				posx = 22
 				posy = 210
 
 		# Appe Page Style
@@ -2095,7 +2095,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 					start_pagebar += 30
 
 		self.skin_dump = ""
-		self.skin_dump += "<widget name=\"frame\" position=\"20,210\" size=\"150,80\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/Selektor_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
+		self.skin_dump += "<widget name=\"frame\" position=\"22,210\" size=\"150,80\" pixmap=\"/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/icons_wall/Selektor_%s.png\" zPosition=\"2\" transparent=\"0\" alphatest=\"blend\" />" % config.mediaportal.selektor.value
 		self.skin_dump += skincontent
 		self.skin_dump += "</screen>"
 
