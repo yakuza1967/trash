@@ -14,12 +14,13 @@ from mtvdelink import MTVdeLink
 from coverhelper import CoverHelper
 from Components.Pixmap import MovingPixmap
 
-if fileExists('/usr/lib/enigma2/python/Plugins/SystemPlugins/Videomode/plugin.pyo'):
+try:
 	from Plugins.SystemPlugins.Videomode.plugin import VideoSetup
 	from Plugins.SystemPlugins.Videomode.VideoHardware import video_hw
-	VideoSetupPresent = True
-else:
+except:
 	VideoSetupPresent = False
+else:
+	VideoSetupPresent = True
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
@@ -195,7 +196,7 @@ class SimpleSeekHelper:
 		if self.seekBarLocked:
 			self.seekExit()
 
-class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
+class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
@@ -233,6 +234,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 		}, -2)
 
 		SimpleSeekHelper.__init__(self)
+		InfoBarMenu.__init__(self)
 		InfoBarNotifications.__init__(self)
 		#InfoBarServiceNotifications.__init__(self)
 		InfoBarBase.__init__(self)
@@ -612,6 +614,9 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarBase, InfoBarSeek, InfoBarNo
 						self.playList2 = []
 					self.openPlaylist()
 
+			elif data[0] == 6:
+				self.mainMenu()
+
 	def addToPlaylist(self):
 		if self.plType != 'local':
 			self.session.open(MessageBox, _("Fehler: Service darf nur von der lok. PL hinzugefügt werden"), MessageBox.TYPE_INFO, timeout=5)
@@ -873,6 +878,8 @@ class SimplePlayerMenu(Screen):
 			self.liste.append(('Open local playlist', 4))
 		if VideoSetupPresent:
 			self.liste.append(('A/V Settings', 5))
+		else:
+			self.liste.append(('E2 Mainmenu', 6))
 		self['menu'] = MenuList(self.liste)
 
 	def openConfig(self):
@@ -890,6 +897,9 @@ class SimplePlayerMenu(Screen):
 			self.session.open(VideoSetup, video_hw)
 		self.close([5, ''])
 
+	def openMainmenu(self, id, name):
+		self.close([id, name])
+
 	def keyOk(self):
 		choice = self['menu'].l.getCurrentSelection()[1]
 		if choice == 1:
@@ -902,6 +912,8 @@ class SimplePlayerMenu(Screen):
 			self.openPlaylist(4, '')
 		elif choice == 5:
 			self.openSetup()
+		elif choice == 6:
+			self.openMainmenu(6, '')
 
 	def keyCancel(self):
 		self.close([])
