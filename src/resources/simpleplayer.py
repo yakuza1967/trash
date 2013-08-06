@@ -20,7 +20,7 @@ if fileExists('/usr/lib/enigma2/python/Plugins/SystemPlugins/Videomode/plugin.py
 	VideoSetupPresent = True
 else:
 	VideoSetupPresent = False
-	
+
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
 	MediainfoPresent = True
@@ -845,21 +845,9 @@ class SimpleConfig(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{
-			'ok': 		self.save,
+			'ok': 		self.keySave,
 			'cancel': 	self.keyCancel
 		},-2)
-
-	def save(self):
-		for x in self['config'].list:
-			x[1].save()
-
-		self.close()
-
-	def keyCancel(self):
-		for x in self['config'].list:
-			x[1].cancel()
-
-		self.close()
 
 class SimplePlayerMenu(Screen):
 	skin = '\n\t\t<screen position="center,center" size="300,200" title="MP Player Menü">\n\t\t\t<widget name="menu" position="10,10" size="290,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
@@ -901,7 +889,7 @@ class SimplePlayerMenu(Screen):
 		if VideoSetupPresent:
 			self.session.open(VideoSetup, video_hw)
 		self.close([5, ''])
-		
+
 	def keyOk(self):
 		choice = self['menu'].l.getCurrentSelection()[1]
 		if choice == 1:
@@ -950,7 +938,7 @@ class SimplePlaylistIO:
 			return (1, SimplePlaylistIO.Msgs[5] % path)
 		if os.path.isdir(path+pl_name):
 			return (0, SimplePlaylistIO.Msgs[4] % (path, pl_name))
-			
+
 		return (1, SimplePlaylistIO.Msgs[6] % (path, pl_name))
 
 	@staticmethod
