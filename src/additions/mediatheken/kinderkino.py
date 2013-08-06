@@ -36,7 +36,7 @@ class kinderKinoScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("KinderKino.de")
-		self['roflPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['name'] = Label("")
 		self['page'] = Label("1")
 		self.kkListe = []
@@ -45,7 +45,7 @@ class kinderKinoScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['roflList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
@@ -75,24 +75,24 @@ class kinderKinoScreen(Screen):
 		printl(error,self,"E")
 
 	def showPic(self):
-		kkTitle = self['roflList'].getCurrent()[0][0]
-		kkPicLink = self['roflList'].getCurrent()[0][2]
+		kkTitle = self['List'].getCurrent()[0][0]
+		kkPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(kkTitle)
 		self['page'].setText(str(self.page))
 		downloadPage(kkPicLink, "/tmp/kkPic.jpg").addCallback(self.roflCoverShow)
 
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/kkPic.jpg"):
-			self['roflPic'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['roflPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/kkPic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['roflPic'].instance.setPixmap(ptr)
-					self['roflPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyPageDown(self):
@@ -116,32 +116,32 @@ class kinderKinoScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['roflList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['roflList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		kkTitle = str(self['roflList'].getCurrent()[0][0])
-		kkUrlPart = str(self['roflList'].getCurrent()[0][1])
+		kkTitle = str(self['List'].getCurrent()[0][0])
+		kkUrlPart = str(self['List'].getCurrent()[0][1])
 		if config.mediaportal.useRtmpDump.value:
 			kkRtmpLink = "rtmp://fms.edge.newmedia.nacamar.net/loadtv_vod/' --playpath=mp4:kinderkino-kostenlos/%s --app=loadtv_vod/ --pageUrl=http://kostenlos.kinderkino.de/ --swfUrl=http://kinderkinokostenlos-www.azurewebsites.net/asset'" % (kkUrlPart)
 			movieinfo = [kkRtmpLink,kkTitle]

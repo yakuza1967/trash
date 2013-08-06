@@ -9,9 +9,9 @@ def baskinoMainListEntry(entry):
 class baskino(Screen):
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/baskino.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinderKinoScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/baskino.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kinderKinoScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -31,8 +31,7 @@ class baskino(Screen):
 		}, -1)
 
 		self['title'] = Label("Baskino.com")
-		self['leftContentTitle'] = Label("Movies")
-		self['stationIcon'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['page'] = Label("1")
 		self['name'] = Label("Choose a Movie")
 
@@ -40,7 +39,7 @@ class baskino(Screen):
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
-		self['streamlist'] = self.streamMenuList
+		self['List'] = self.streamMenuList
 
 		self.keyLocked = False
 		self.page = 1
@@ -66,31 +65,31 @@ class baskino(Screen):
 
 	def showInfos(self):
 		self['page'].setText("%s" % str(self.page))
-		coverUrl = self['streamlist'].getCurrent()[0][2]
-		self.filmName = self['streamlist'].getCurrent()[0][0]
+		coverUrl = self['List'].getCurrent()[0][2]
+		self.filmName = self['List'].getCurrent()[0][0]
 		self['name'].setText(self.filmName)
 		if coverUrl:
 			downloadPage(coverUrl, "/tmp/baIcon.jpg").addCallback(self.showCover)
 
 	def showCover(self, picData):
 		if fileExists("/tmp/baIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/baIcon.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyOK(self):
-		exist = self['streamlist'].getCurrent()
+		exist = self['List'].getCurrent()
 		if self.keyLocked or exist == None:
 			return
-		url = self['streamlist'].getCurrent()[0][1]
+		url = self['List'].getCurrent()[0][1]
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideo).addErrback(self.dataError)
 
@@ -105,25 +104,25 @@ class baskino(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageUp()
+		self['List'].pageUp()
 		self.showInfos()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageDown()
+		self['List'].pageDown()
 		self.showInfos()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].up()
+		self['List'].up()
 		self.showInfos()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].down()
+		self['List'].down()
 		self.showInfos()
 
 	def keyPageDown(self):

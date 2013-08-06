@@ -35,14 +35,14 @@ class failScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("Fail.to")
-		self['roflPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['name'] = Label("")
 		self['page'] = Label("1")
 		self.flListe = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['roflList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
 
@@ -68,24 +68,24 @@ class failScreen(Screen):
 		printl(error,self,"E")
 
 	def showPic(self):
-		flTitle = self['roflList'].getCurrent()[0][0]
-		flPicLink = self['roflList'].getCurrent()[0][2]
+		flTitle = self['List'].getCurrent()[0][0]
+		flPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(flTitle)
 		self['page'].setText(str(self.page))
 		downloadPage(flPicLink, "/tmp/flPic.jpg").addCallback(self.roflCoverShow)
 
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/flPic.jpg"):
-			self['roflPic'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['roflPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/flPic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['roflPic'].instance.setPixmap(ptr)
-					self['roflPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyPageNumber(self):
@@ -114,35 +114,35 @@ class failScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['roflList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['roflList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		flURL = self['roflList'].getCurrent()[0][1]
+		flURL = self['List'].getCurrent()[0][1]
 		getPage(flURL, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		flTitle = self['roflList'].getCurrent()[0][0]
+		flTitle = self['List'].getCurrent()[0][0]
 		flStream = re.findall("'file': '(.*?)'", data)
 		if flStream:
 			rflStream = "http://www.fail.to" + flStream[0]

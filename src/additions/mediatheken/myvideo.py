@@ -93,7 +93,7 @@ class myVideoFilmScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("MyVideo.de")
-		self['roflPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['name'] = Label("")
 		self['page'] = Label("1")
 		self['handlung'] = Label("")
@@ -101,7 +101,7 @@ class myVideoFilmScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['roflList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 
 		#self.GK = ('WXpnME1EZGhNRGhpTTJNM01XVmhOREU0WldNNVpHTTJOakpt'
 		#	'TW1FMU5tVTBNR05pWkRaa05XRXhNVFJoWVRVd1ptSXhaVEV3'
@@ -130,9 +130,9 @@ class myVideoFilmScreen(Screen):
 		printl(error,self,"E")
 
 	def showPic(self):
-		myTitle = self['roflList'].getCurrent()[0][0]
-		myPicLink = self['roflList'].getCurrent()[0][2]
-		myHandlung = self['roflList'].getCurrent()[0][3]
+		myTitle = self['List'].getCurrent()[0][0]
+		myPicLink = self['List'].getCurrent()[0][2]
+		myHandlung = self['List'].getCurrent()[0][3]
 		self['name'].setText(myTitle)
 		self['page'].setText(str(self.page))
 		self['handlung'].setText(myHandlung)
@@ -140,16 +140,16 @@ class myVideoFilmScreen(Screen):
 
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/myPic.jpg"):
-			self['roflPic'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['roflPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/myPic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['roflPic'].instance.setPixmap(ptr)
-					self['roflPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyPageDown(self):
@@ -170,37 +170,37 @@ class myVideoFilmScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['roflList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['roflList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		mvUrl = self['roflList'].getCurrent()[0][1]
+		mvUrl = self['List'].getCurrent()[0][1]
 		print mvUrl
 		id = re.findall('/watch/(.*?)/', mvUrl)
 		if id:
 			url = "http://www.myvideo.de/dynamic/get_player_video_xml.php?ID=" + id[0]
-			kiTitle = self['roflList'].getCurrent()[0][0]
-			imgurl = self['roflList'].getCurrent()[0][2]
+			kiTitle = self['List'].getCurrent()[0][0]
+			imgurl = self['List'].getCurrent()[0][2]
 			#MyvideoLink(self.session).getLink(self.playStream, self.dataError, kiTitle, url, id[0])
 
 			self.session.open(MyvideoPlayer, [(kiTitle, url, id[0], imgurl)])

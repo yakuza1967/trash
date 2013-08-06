@@ -34,14 +34,14 @@ class roflScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("Rofl.to")
-		self['roflPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['name'] = Label("")
 		self['page'] = Label("1")
-		self.roflListe = []
+		self.Liste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['roflList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
 
@@ -53,10 +53,10 @@ class roflScreen(Screen):
 	def loadPageData(self, data):
 		roflVideos = re.findall('class="container.*?<a\shref="(http://clips.rofl.to/clip/.*?)"\srel="nofollow"\stitle=".*?"><img\ssrc="(http://media.rofl.to/clipshots/.*?)".*?alt="(.*?)"\s/>', data)
 		if roflVideos:
-			self.roflListe = []
-			for roflUrl,roflPic,roflName in roflVideos:
-				self.roflListe.append((decodeHtml(roflName), roflUrl, roflPic))
-			self.chooseMenuList.setList(map(auswahlListEntry, self.roflListe))
+			self.Liste = []
+			for roflUrl,Pic,roflName in roflVideos:
+				self.Liste.append((decodeHtml(roflName), roflUrl, Pic))
+			self.chooseMenuList.setList(map(auswahlListEntry, self.Liste))
 			self.showPic()
 			self.keyLocked = False
 
@@ -64,24 +64,24 @@ class roflScreen(Screen):
 		printl(error,self,"E")
 
 	def showPic(self):
-		roflPicLink = self['roflList'].getCurrent()[0][2]
-		roflName = self['roflList'].getCurrent()[0][0]
+		PicLink = self['List'].getCurrent()[0][2]
+		roflName = self['List'].getCurrent()[0][0]
 		self['name'].setText(roflName)
 		self['page'].setText(str(self.page))
-		downloadPage(roflPicLink, "/tmp/roflPic.jpg").addCallback(self.roflCoverShow)
+		downloadPage(PicLink, "/tmp/Pic.jpg").addCallback(self.roflCoverShow)
 
 	def roflCoverShow(self, data):
-		if fileExists("/tmp/roflPic.jpg"):
-			self['roflPic'].instance.setPixmap(gPixmapPtr())
+		if fileExists("/tmp/Pic.jpg"):
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['roflPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/roflPic.jpg", 0, 0, False) == 0:
+			if self.picload.startDecode("/tmp/Pic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['roflPic'].instance.setPixmap(ptr)
-					self['roflPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyPageDown(self):
@@ -102,37 +102,37 @@ class roflScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['roflList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['roflList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		roflURL = self['roflList'].getCurrent()[0][1]
+		roflURL = self['List'].getCurrent()[0][1]
 		print roflURL
 		getPage(roflURL, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
 		print data
-		roflName = self['roflList'].getCurrent()[0][0]
+		roflName = self['List'].getCurrent()[0][0]
 		roflLink = re.findall('id="video-player".*?href="(.*?.flv)"', data, re.S)
 		if roflLink:
 			self.session.open(SimplePlayer, [(roflName, roflLink[0])], showPlaylist=False, ltype='roflto')

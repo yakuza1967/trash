@@ -290,13 +290,13 @@ class laolaTopVideosScreen(Screen):
 		self.keyLocked = True
 		self.page = 1
 		self['title'] = Label("Laola1.tv")
-		self['roflPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['name'] = Label("")
 		self.laListe = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(50)
-		self['roflList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadNewPageData)
 
@@ -349,23 +349,23 @@ class laolaTopVideosScreen(Screen):
 		printl(error,self,"E")
 
 	def showPic(self):
-		laTitle = self['roflList'].getCurrent()[0][0]
-		laPicLink = self['roflList'].getCurrent()[0][2]
+		laTitle = self['List'].getCurrent()[0][0]
+		laPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(laTitle)
 		downloadPage(laPicLink, "/tmp/laPic.jpg").addCallback(self.roflCoverShow)
 
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/laPic.jpg"):
-			self['roflPic'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['roflPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/laPic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['roflPic'].instance.setPixmap(ptr)
-					self['roflPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyPageDown(self):
@@ -388,31 +388,31 @@ class laolaTopVideosScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['roflList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['roflList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		laUrl = self['roflList'].getCurrent()[0][1]
+		laUrl = self['List'].getCurrent()[0][1]
 		print 'laUrl' + laUrl
 		getPage(laUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
@@ -444,7 +444,7 @@ class laolaTopVideosScreen(Screen):
 
 	def parseXML(self, data):
 		if self.isLive == 'true':
-			laTitle = self['roflList'].getCurrent()[0][0]
+			laTitle = self['List'].getCurrent()[0][0]
 			main_url = re.findall('<meta name="httpBase" content="(.*?)"', data)
 			url_string = re.findall('<video src="(.*?)" system-bitrate="(.*?)"', data, re.S)
 			if main_url and url_string:
@@ -453,7 +453,7 @@ class laolaTopVideosScreen(Screen):
 				print stream_url
 				self.session.open(SimplePlayer, [(laTitle, stream_url)], showPlaylist=False, ltype='laola1')
 		else:
-			laTitle = self['roflList'].getCurrent()[0][0]
+			laTitle = self['List'].getCurrent()[0][0]
 			main_url = re.findall('<meta name="httpBase" content="(.*?)"', data)
 			print 'main_url: ' + main_url[0]
 			url_string = re.findall('<meta name="vod" content="true" value="(.*?)"', data)

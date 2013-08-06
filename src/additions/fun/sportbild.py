@@ -34,7 +34,7 @@ class sportBildScreen(Screen):
 		self.keyLocked = True
 		self.page = 0
 		self['title'] = Label("SportBild.de")
-		self['roflPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['name'] = Label("")
 		self['page'] = Label("1")
 		self['runtime'] = Label("")
@@ -43,7 +43,7 @@ class sportBildScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['roflList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
 
@@ -69,10 +69,10 @@ class sportBildScreen(Screen):
 		printl(error,self,"E")
 
 	def showPic(self):
-		spTitle = self['roflList'].getCurrent()[0][0]
-		spPicLink = self['roflList'].getCurrent()[0][2]
-		spRuntime = self['roflList'].getCurrent()[0][3]
-		spDate = self['roflList'].getCurrent()[0][4]
+		spTitle = self['List'].getCurrent()[0][0]
+		spPicLink = self['List'].getCurrent()[0][2]
+		spRuntime = self['List'].getCurrent()[0][3]
+		spDate = self['List'].getCurrent()[0][4]
 		self['name'].setText(spTitle)
 		self['page'].setText(str(self.page))
 		self['date'].setText(spDate)
@@ -81,16 +81,16 @@ class sportBildScreen(Screen):
 
 	def roflCoverShow(self, data):
 		if fileExists("/tmp/spPic.jpg"):
-			self['roflPic'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['roflPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/spPic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['roflPic'].instance.setPixmap(ptr)
-					self['roflPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyPageDown(self):
@@ -111,38 +111,38 @@ class sportBildScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['roflList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['roflList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['roflList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		spUrl = self['roflList'].getCurrent()[0][1]
+		spUrl = self['List'].getCurrent()[0][1]
 		spUrl = re.sub('seite=.*?html','templateId=renderJavaScript,layout=17,startvideo=true.js',spUrl)
 		url = "http://sportbild.bild.de" + spUrl
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		spTitle = self['roflList'].getCurrent()[0][0]
+		spTitle = self['List'].getCurrent()[0][0]
 		spStream = re.findall('src="(http://.*?[mp4|flv])"', data, re.S)
 		if spStream:
 			print spStream

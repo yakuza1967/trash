@@ -96,9 +96,9 @@ class appletrailersFilmScreen(Screen):
 		self.session = session
 		self.phCatLink = phCatLink
 		self.phHD = phHD
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/appletrailersFilmScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/appletrailersFilmScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXFilmScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()

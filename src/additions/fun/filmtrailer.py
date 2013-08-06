@@ -10,9 +10,9 @@ class trailer(Screen, ConfigListScreen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/trailer.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/roflScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/trailer.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/roflScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -32,8 +32,7 @@ class trailer(Screen, ConfigListScreen):
 		}, -1)
 
 		self['title'] = Label("Filmtrailer.net")
-		self['leftContentTitle'] = Label("Trailer")
-		self['stationIcon'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self['page'] = Label("1")
 		self['name'] = Label("Trailer Auswahl")
 
@@ -41,7 +40,7 @@ class trailer(Screen, ConfigListScreen):
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 24))
 		self.streamMenuList.l.setItemHeight(25)
-		self['streamlist'] = self.streamMenuList
+		self['List'] = self.streamMenuList
 
 		self.keyLocked = False
 		self.page = 1
@@ -67,31 +66,31 @@ class trailer(Screen, ConfigListScreen):
 
 	def showInfos(self):
 		self['page'].setText("%s" % str(self.page))
-		coverUrl = self['streamlist'].getCurrent()[0][2]
-		self.filmtrailer = self['streamlist'].getCurrent()[0][0]
+		coverUrl = self['List'].getCurrent()[0][2]
+		self.filmtrailer = self['List'].getCurrent()[0][0]
 		self['name'].setText(self.filmtrailer)
 		if coverUrl:
 			downloadPage(coverUrl, "/tmp/trIcon.jpg").addCallback(self.showCover)
 
 	def showCover(self, picData):
 		if fileExists("/tmp/trIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/trIcon.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyOK(self):
-		exist = self['streamlist'].getCurrent()
+		exist = self['List'].getCurrent()
 		if self.keyLocked or exist == None:
 			return
-		url = self['streamlist'].getCurrent()[0][1]
+		url = self['List'].getCurrent()[0][1]
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseID).addErrback(self.dataError)
 
@@ -111,25 +110,25 @@ class trailer(Screen, ConfigListScreen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageUp()
+		self['List'].pageUp()
 		self.showInfos()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageDown()
+		self['List'].pageDown()
 		self.showInfos()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].up()
+		self['List'].up()
 		self.showInfos()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].down()
+		self['List'].down()
 		self.showInfos()
 
 	def keyPageDown(self):
