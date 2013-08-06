@@ -25,7 +25,7 @@ class focusGenre(Screen):
 			"cancel": self.keyCancel
 		}, -1)
 
-		self['title'] = Label("Focus.de - VideoPortal")
+		self['title'] = Label("Focus.de")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
 
@@ -38,7 +38,10 @@ class focusGenre(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		self.genreliste.append(("Neueste Videos", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=newest"))
+		self.genreliste.append(("Neueste", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=newest"))
+		self.genreliste.append(("Meistgesehen", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=bookmarks_most-viewed"))
+		self.genreliste.append(("Meistkommentiert", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=bookmarks_most-commented"))
+		self.genreliste.append(("Bestbewertet", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=bookmarks_most-rated"))
 		self.genreliste.append(("Politik", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=politik"))
 		self.genreliste.append(("Finanzen", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=finance"))
 		self.genreliste.append(("Wissen", "http://www.focus.de/ajax/video/videoplaylist/?playlist_name=knowledge"))
@@ -88,7 +91,7 @@ class focus(Screen):
 			"left" : self.keyLeft
 		}, -1)
 
-		self['title'] = Label("Focus.de - VideoPortal")
+		self['title'] = Label("Focus.de")
 		self['coverArt'] = Pixmap()
 		self['name'] = Label("")
 		self['handlung'] = Label("")
@@ -98,8 +101,6 @@ class focus(Screen):
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.streamMenuList
-
-		self.keyLocked = False
 		self.page = 1
 
 		self.onLayoutFinish.append(self.loadpage)
@@ -110,43 +111,41 @@ class focus(Screen):
 		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.pageData).addErrback(self.dataError)
 
 	def pageData(self, data):
-		focusVideos = re.findall('<img heig.*?[rel|src]="(.*?.jpg)".*?[alt|title]="(.*?)".*?<a href="(.*?)"', data, re.S|re.I)
+		focusVideos = re.findall('<img.*?[rel|src]="(.*?jpg)".*?<a\shref="(.*?)"\stitle="(.*?)"', data, re.S|re.I)
 		if focusVideos:
-			for (Image, Name, Link) in focusVideos:
+			for (Image, Link, Name) in focusVideos:
+				Image = Image.replace('" src="','')
 				self.streamList.append((decodeHtml(Name), Image, Link))
 			self.streamMenuList.setList(map(focusListEntry, self.streamList))
 			self.keyLocked = False
 			self.showInfos()
 
 	def showInfos(self):
-		if self.keyLocked:
-			return
 		Title = self['streamlist'].getCurrent()[0][0]
 		Image = self['streamlist'].getCurrent()[0][1]
-		print Title, Image.replace('" src="','')
-		self['name'].setText(Title)
-		self.ReadCover(Image.replace('" src="',''))
-
-	def ReadCover(self, stationIconLink):
 		Link = self['streamlist'].getCurrent()[0][2]
-		downloadPage(stationIconLink, "/tmp/fIcon.jpg").addCallback(self.ShowCover)
+		self['name'].setText(Title)
+		self.ReadCover(Image)
 		getPage(Link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.handlungData).addErrback(self.dataError)
 
+	def ReadCover(self, stationIconLink):
+		downloadPage(stationIconLink, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+
 	def handlungData(self, data):
-		handlung = re.findall('<meta name="description" content="(.*?)"', data, re.S)
+		handlung = re.findall('og:description"\scontent="(.*?)"', data, re.S)
 		if handlung:
 			self['handlung'].setText(decodeHtml(handlung[0]))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
 
 	def ShowCover(self, picData):
-		if fileExists("/tmp/fIcon.jpg"):
+		if fileExists("/tmp/Icon.jpg"):
 			self['coverArt'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
 			size = self['coverArt'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/fIcon.jpg", 0, 0, False) == 0:
+			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
 					self['coverArt'].instance.setPixmap(ptr)
@@ -159,19 +158,14 @@ class focus(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		print "ok"
 		Link = self['streamlist'].getCurrent()[0][2]
-		print Link
 		getPage(Link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.searchStream).addErrback(self.dataError)
 
 	def searchStream(self, data):
 		Title = self['streamlist'].getCurrent()[0][0]
 		streamUrl = re.findall('sVideoURL = "(.*?)"', data, re.S)
 		if streamUrl:
-			if streamUrl[1]:
-				streamUrl = streamUrl[1]
-			else:
-				streamUrl = streamUrl[0]
+			streamUrl = streamUrl[-1]
 			self.session.open(SimplePlayer, [(Title, streamUrl)], showPlaylist=False, ltype='focus')
 
 	def keyLeft(self):
