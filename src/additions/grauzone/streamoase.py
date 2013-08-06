@@ -71,9 +71,9 @@ class oasetvFilmListeScreen(Screen):
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/oasetvFilmListeScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/m4kdefaultPageListeScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/oasetvFilmListeScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/m4kdefaultPageListeScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -251,9 +251,9 @@ class oasetvCDListeScreen(Screen):
 		self.streamParts = parts
 		self.stream_name = stream_name
 		self.imageUrl = image_url
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/oasetvCDListeScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/netzKinoFilmeScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/oasetvCDListeScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/netzKinoFilmeScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -276,7 +276,7 @@ class oasetvCDListeScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['filmList'] = self.chooseMenuList
+		self['genreList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -290,8 +290,8 @@ class oasetvCDListeScreen(Screen):
 		if self.keyLocked:
 			return
 
-		name = self['filmList'].getCurrent()[0][0]
-		streamLink = self['filmList'].getCurrent()[0][1]
+		name = self['genreList'].getCurrent()[0][0]
+		streamLink = self['genreList'].getCurrent()[0][1]
 		self.keyLocked = True
 		if name == "vidplay":
 			getPage(streamLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.readPostData, streamLink).addErrback(self.dataError)

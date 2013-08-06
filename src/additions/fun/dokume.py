@@ -11,9 +11,9 @@ class dokuScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/dokuScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxMain.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/dokuScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxMain.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -44,7 +44,7 @@ class dokuScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['genreList'] = self.chooseMenuList
+		self['streamlist'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -76,27 +76,27 @@ class dokuScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['genreList'].pageUp()
+		self['streamlist'].pageUp()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['genreList'].pageDown()
+		self['streamlist'].pageDown()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['genreList'].up()
+		self['streamlist'].up()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['genreList'].down()
+		self['streamlist'].down()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		dkLink = self['genreList'].getCurrent()[0][1]
+		dkLink = self['streamlist'].getCurrent()[0][1]
 		print dkLink
 		getPage(dkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getVideoPage).addErrback(self.dataError)
 
@@ -112,7 +112,7 @@ class dokuScreen(Screen):
 		self.keyLocked = False
 
 	def play(self,file):
-		xxxtitle = self['genreList'].getCurrent()[0][0]
+		xxxtitle = self['streamlist'].getCurrent()[0][0]
 		self.session.open(SimplePlayer, [(xxxtitle, file)], showPlaylist=False, ltype='dokume')
 
 	def keyCancel(self):

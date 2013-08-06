@@ -9,9 +9,9 @@ class cczwei(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/cczwei.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxMain.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/cczwei.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxMain.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -24,8 +24,9 @@ class cczwei(Screen):
 			"cancel": self.keyCancel,
 		}, -1)
 
-		self['title'] = Label("Cczwei.de")
-
+		self['name'] = Label("Cczwei.de")
+		self['title'] = Label("")
+		
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))

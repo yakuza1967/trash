@@ -64,9 +64,9 @@ class kinokisteKinoScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinokisteKinoScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/myVideoFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kinokisteKinoScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/myVideoFilmScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -89,7 +89,7 @@ class kinokisteKinoScreen(Screen):
 		self['name'] = Label("Film Auswahl")
 		self['handlung'] = Label("")
 		self['page'] = Label("")
-		self['coverArt'] = Pixmap()
+		self['Pic'] = Pixmap()
 
 		self.page = 1
 		self.filmeliste = []
@@ -97,7 +97,7 @@ class kinokisteKinoScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['streamlist'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadpage)
 
@@ -121,10 +121,10 @@ class kinokisteKinoScreen(Screen):
 		printl(error,self,"E")
 
 	def showInfos(self):
-		kkTitle = self['streamlist'].getCurrent()[0][0]
+		kkTitle = self['List'].getCurrent()[0][0]
 		self['name'].setText(kkTitle)
-		kkUrl = self['streamlist'].getCurrent()[0][1]
-		kkImage = self['streamlist'].getCurrent()[0][2]
+		kkUrl = self['List'].getCurrent()[0][1]
+		kkImage = self['List'].getCurrent()[0][2]
 		kkImageUrl = "%s" % kkImage
 		print kkImageUrl.replace('_170_120','_145_215')
 		downloadPage(kkImageUrl.replace('_170_120','_145_215'), "/tmp/kkIcon.jpg").addCallback(self.kkCoverShow)
@@ -139,27 +139,27 @@ class kinokisteKinoScreen(Screen):
 
 	def kkCoverShow(self, picData):
 		if fileExists("/tmp/kkIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/kkIcon.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		kkName = self['streamlist'].getCurrent()[0][0]
-		kkUrl = self['streamlist'].getCurrent()[0][1]
+		kkName = self['List'].getCurrent()[0][0]
+		kkUrl = self['List'].getCurrent()[0][1]
 		getPage(kkUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getParts).addErrback(self.dataError)
 
 	def getParts(self, data):
-		kkName = self['streamlist'].getCurrent()[0][0]
+		kkName = self['List'].getCurrent()[0][0]
 		streams = re.findall('<a href="(http://www.ecostream.tv/stream/.*?)"', data, re.S)
 		if streams:
 			self.session.open(kinokistePartsScreen, streams, kkName)
@@ -182,25 +182,25 @@ class kinokisteKinoScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageUp()
+		self['List'].pageUp()
 		self.showInfos()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageDown()
+		self['List'].pageDown()
 		self.showInfos()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].up()
+		self['List'].up()
 		self.showInfos()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].down()
+		self['List'].down()
 		self.showInfos()
 
 	def keyCancel(self):

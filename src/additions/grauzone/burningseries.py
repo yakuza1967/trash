@@ -28,9 +28,9 @@ def mainListEntry(entry):
 class bsMain(Screen, ConfigListScreen):
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/bsMain.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxMain.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/bsMain.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxMain.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -46,7 +46,7 @@ class bsMain(Screen, ConfigListScreen):
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("M e n u")
 		self['stationIcon'] = Pixmap()
-		self['stationInfo'] = Label("")
+		self['name'] = Label("")
 
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)

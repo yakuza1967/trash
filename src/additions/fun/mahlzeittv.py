@@ -328,9 +328,9 @@ class mahlzeitStreamScreen(Screen):
 	def __init__(self, session, genreLink):
 		self.session = session
 		self.genreLink = genreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/mahlzeitStreamScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/netzKinoFilmeScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/mahlzeitStreamScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/netzKinoFilmeScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -355,7 +355,7 @@ class mahlzeitStreamScreen(Screen):
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
-		self['streamlist'] = self.streamMenuList
+		self['genreList'] = self.streamMenuList
 
 		self.keyLocked = False
 
@@ -381,8 +381,8 @@ class mahlzeitStreamScreen(Screen):
 	def showInfos(self):
 		if self.keyLocked:
 			return
-		ptTitle = self['streamlist'].getCurrent()[0][0]
-		ptImage = self['streamlist'].getCurrent()[0][1]
+		ptTitle = self['genreList'].getCurrent()[0][0]
+		ptImage = self['genreList'].getCurrent()[0][1]
 		self.ptRead(ptImage)
 		self['name'].setText(ptTitle)
 
@@ -409,13 +409,13 @@ class mahlzeitStreamScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		Link = self['streamlist'].getCurrent()[0][2]
+		Link = self['genreList'].getCurrent()[0][2]
 		print Link
 		getPage(Link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.playData).addErrback(self.dataError)
 
 	def playData(self, data):
 		file = re.findall('},{&quot;src&quot;:&quot;(.*?.mp4)&quot;,&quot;mime_type&quot;:&quot;video/mp4&quot;,&quot;video_codec&quot;:&quot;.*?&quot;,&quot;audio_codec&quot;:&quot;.*?&quot;}', data)
-		title = self['streamlist'].getCurrent()[0][0]
+		title = self['genreList'].getCurrent()[0][0]
 		print file
 		if file:
 			self.session.open(SimplePlayer, [(title, file[0])], showPlaylist=False, ltype='mahlzeittv')
@@ -423,25 +423,25 @@ class mahlzeitStreamScreen(Screen):
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageUp()
+		self['genreList'].pageUp()
 		self.showInfos()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageDown()
+		self['genreList'].pageDown()
 		self.showInfos()
 
 	def keyUp(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].up()
+		self['genreList'].up()
 		self.showInfos()
 
 	def keyDown(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].down()
+		self['genreList'].down()
 		self.showInfos()
 
 	def keyCancel(self):

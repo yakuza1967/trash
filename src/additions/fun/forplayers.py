@@ -13,9 +13,9 @@ class forPlayersGenreScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/forPlayersGenreScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxMain.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/forPlayersGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxMain.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -35,7 +35,7 @@ class forPlayersGenreScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['selectionList'] = self.chooseMenuList
+		self['streamlist'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
@@ -45,7 +45,7 @@ class forPlayersGenreScreen(Screen):
 		self.chooseMenuList.setList(map(forPlayersGenreListEntry, self.selectionListe))
 
 	def keyOK(self):
-		selectionLink = self['selectionList'].getCurrent()[0][1]
+		selectionLink = self['streamlist'].getCurrent()[0][1]
 		print selectionLink
 		self.session.open(forPlayersVideoScreen, selectionLink)
 
@@ -62,9 +62,9 @@ class forPlayersVideoScreen(Screen):
 	def __init__(self, session, selectionLink):
 		self.session = session
 		self.selectionLink = selectionLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/forPlayersVideoScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinderKinoScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/forPlayersVideoScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kinderKinoScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -88,7 +88,7 @@ class forPlayersVideoScreen(Screen):
 		self['title'] = Label("4Players")
 		self['name'] = Label("")
 		self['page'] = Label("1")
-		self['playersPic'] = Pixmap()
+		self['Pic'] = Pixmap()
 		self.juengstTS = ''
 		self.page = 1
 		self.videosListe = []
@@ -96,7 +96,7 @@ class forPlayersVideoScreen(Screen):
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
-		self['videosList'] = self.chooseMenuList
+		self['List'] = self.chooseMenuList
 		self.onLayoutFinish.append(self.loadVideos)
 
 	def loadVideos(self):
@@ -148,24 +148,24 @@ class forPlayersVideoScreen(Screen):
 		self.showPic()
 
 	def showPic(self):
-		myTitle = self['videosList'].getCurrent()[0][0]
-		myPicLink = self['videosList'].getCurrent()[0][2]
+		myTitle = self['List'].getCurrent()[0][0]
+		myPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(str(myTitle))
 		self['page'].setText(str(self.page))
 		downloadPage(str(myPicLink), "/tmp/myPic.jpg").addCallback(self.playersCoverShow)
 
 	def playersCoverShow(self, data):
 		if fileExists("/tmp/myPic.jpg"):
-			self['playersPic'].instance.setPixmap(gPixmapPtr())
+			self['Pic'].instance.setPixmap(gPixmapPtr())
 			self.scale = AVSwitch().getFramebufferScale()
 			self.picload = ePicLoad()
-			size = self['playersPic'].instance.size()
+			size = self['Pic'].instance.size()
 			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
 			if self.picload.startDecode("/tmp/myPic.jpg", 0, 0, False) == 0:
 				ptr = self.picload.getData()
 				if ptr != None:
-					self['playersPic'].instance.setPixmap(ptr)
-					self['playersPic'].show()
+					self['Pic'].instance.setPixmap(ptr)
+					self['Pic'].show()
 					del self.picload
 
 	def loadPage(self):
@@ -201,26 +201,26 @@ class forPlayersVideoScreen(Screen):
 		self.loadPage()
 
 	def keyLeft(self):
-		self['videosList'].pageUp()
+		self['List'].pageUp()
 		self.showPic()
 
 	def keyRight(self):
-		self['videosList'].pageDown()
+		self['List'].pageDown()
 		self.showPic()
 
 	def keyUp(self):
-		self['videosList'].up()
+		self['List'].up()
 		self.showPic()
 
 	def keyDown(self):
-		self['videosList'].down()
+		self['List'].down()
 		self.showPic()
 
 	def keyInfo(self):
 		text = []
-		gameStudio = self['videosList'].getCurrent()[0][5]
-		gameId = self['videosList'].getCurrent()[0][4]
-		gameTitle = self['videosList'].getCurrent()[0][6]
+		gameStudio = self['List'].getCurrent()[0][5]
+		gameId = self['List'].getCurrent()[0][4]
+		gameTitle = self['List'].getCurrent()[0][6]
 		gameInfoCol = api._get_game_info(gameId)
 		text.append('Titel: ' + str(gameTitle))
 		text.append('\n')
@@ -243,9 +243,9 @@ class forPlayersVideoScreen(Screen):
 		self.session.open(MessageBox,_(sText), MessageBox.TYPE_INFO)
 
 	def keyOK(self):
-		playersUrl = self['videosList'].getCurrent()[0][1]
+		playersUrl = self['List'].getCurrent()[0][1]
 		streamUrl = str(playersUrl)
-		playersTitle = self['videosList'].getCurrent()[0][3]
+		playersTitle = self['List'].getCurrent()[0][3]
 		playersTitleStr = str(playersTitle)
 		print playersUrl
 		print streamUrl
