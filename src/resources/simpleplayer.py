@@ -14,6 +14,13 @@ from mtvdelink import MTVdeLink
 from coverhelper import CoverHelper
 from Components.Pixmap import MovingPixmap
 
+if fileExists('/usr/lib/enigma2/python/Plugins/SystemPlugins/Videomode/plugin.pyo'):
+	from Plugins.SystemPlugins.Videomode.plugin import VideoSetup
+	from Plugins.SystemPlugins.Videomode.VideoHardware import video_hw
+	VideoSetupPresent = True
+else:
+	VideoSetupPresent = False
+	
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
 	MediainfoPresent = True
@@ -876,6 +883,8 @@ class SimplePlayerMenu(Screen):
 				self.liste.append(('Open global playlist', 3))
 		elif showPlaylist:
 			self.liste.append(('Open local playlist', 4))
+		if VideoSetupPresent:
+			self.liste.append(('A/V Settings', 5))
 		self['menu'] = MenuList(self.liste)
 
 	def openConfig(self):
@@ -888,6 +897,11 @@ class SimplePlayerMenu(Screen):
 	def openPlaylist(self, id, name):
 		self.close([id, name])
 
+	def openSetup(self):
+		if VideoSetupPresent:
+			self.session.open(VideoSetup, video_hw)
+		self.close([5, ''])
+		
 	def keyOk(self):
 		choice = self['menu'].l.getCurrentSelection()[1]
 		if choice == 1:
@@ -898,6 +912,8 @@ class SimplePlayerMenu(Screen):
 			self.openPlaylist(3, '')
 		elif choice == 4:
 			self.openPlaylist(4, '')
+		elif choice == 5:
+			self.openSetup()
 
 	def keyCancel(self):
 		self.close([])
