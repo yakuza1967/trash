@@ -716,7 +716,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		self['name'] = Label("Plugin Auswahl")
 
 		self['funsport'] = chooseMenuList([])
-		self['Funsport'] = Label("Fun/Sport")
+		self['Funsport'] = Label("Fun/Music/Sport")
 
 		self['grauzone'] = chooseMenuList([])
 		self['Grauzone'] = Label("")
@@ -741,133 +741,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		self.funsport = []
 		self.porn = []
 
-		# Mediatheken
-		if config.mediaportal.showMyvideo.value:
-			self.mediatheken.append(self.hauptListEntry("MyVideo", "myvideo"))
-		if config.mediaportal.showMoovizon.value:
-			self.mediatheken.append(self.hauptListEntry("Moovizon", "moovizon"))
-		if config.mediaportal.showKinderKino.value:
-			self.mediatheken.append(self.hauptListEntry("KinderKino", "kinderkino"))
-		if config.mediaportal.showNetzKino.value:
-			self.mediatheken.append(self.hauptListEntry("NetzKino", "netzkino"))
-		if config.mediaportal.showtivi.value:
-			self.mediatheken.append(self.hauptListEntry("Tivi", "tivi"))
-		if config.mediaportal.showkika.value:
-			self.mediatheken.append(self.hauptListEntry("KIKA+", "kika"))
-		if config.mediaportal.showVoxnow.value:
-			self.mediatheken.append(self.hauptListEntry("VOXNOW", "voxnow"))
-		if config.mediaportal.showRTLnow.value:
-			self.mediatheken.append(self.hauptListEntry("RTLNOW", "rtlnow"))
-		if config.mediaportal.showNTVnow.value:
-			self.mediatheken.append(self.hauptListEntry("N-TVNOW", "ntvnow"))
-		if config.mediaportal.showRTL2now.value:
-			self.mediatheken.append(self.hauptListEntry("RTL2NOW", "rtl2now"))
-		if config.mediaportal.showRTLnitro.value:
-			self.mediatheken.append(self.hauptListEntry("RTLNITRONOW", "rtlnitro"))
-		if config.mediaportal.showSUPERRTLnow.value:
-			self.mediatheken.append(self.hauptListEntry("SUPERRTLNOW", "superrtlnow"))
-		if config.mediaportal.showZDF.value:
-			self.mediatheken.append(self.hauptListEntry("ZDF Mediathek", "zdf"))
-		if config.mediaportal.showORF.value:
-			self.mediatheken.append(self.hauptListEntry("ORF TVthek", "orf"))
-		if config.mediaportal.showSRF.value:
-			self.mediatheken.append(self.hauptListEntry("SRF Player", "srf"))
-		if config.mediaportal.show4Players.value:
-			self.mediatheken.append(self.hauptListEntry("4Players", "4players"))
-		if config.mediaportal.showGIGA.value:
-			self.mediatheken.append(self.hauptListEntry("GIGA.de", "gigatv"))
-		if config.mediaportal.showaudi.value:
-			self.mediatheken.append(self.hauptListEntry("Audi.tv", "auditv"))
-		if config.mediaportal.showgronkh.value:
-			self.mediatheken.append(self.hauptListEntry("gronkh.de", "gronkh"))
-		if config.mediaportal.showappletrailers.value:
-			self.mediatheken.append(self.hauptListEntry("AppleTrailer", "appletrailers"))
-		if config.mediaportal.showAutoBild.value:
-			self.mediatheken.append(self.hauptListEntry("AutoBild", "autobild"))
-		if config.mediaportal.showCczwei.value:
-			self.mediatheken.append(self.hauptListEntry("CCZwei", "cczwei"))
-		if config.mediaportal.showDoku.value:
-			self.mediatheken.append(self.hauptListEntry("Doku.me", "doku"))
-		if config.mediaportal.showDOKUh.value:
-			self.mediatheken.append(self.hauptListEntry("DOKUh", "dokuh"))
-		if config.mediaportal.showDokuHouse.value:
-			self.mediatheken.append(self.hauptListEntry("DokuHouse", "dokuhouse"))
-		if config.mediaportal.showDokuStream.value:
-			self.mediatheken.append(self.hauptListEntry("DokuStream", "dokustream"))
-		if config.mediaportal.showDsc.value:
-			self.mediatheken.append(self.hauptListEntry("Dreamscreencast", "dreamscreencast"))
-		if config.mediaportal.showTrailer.value:
-			self.mediatheken.append(self.hauptListEntry("Filmtrailer", "trailer"))
-		if config.mediaportal.showFocus.value:
-			self.mediatheken.append(self.hauptListEntry("Focus", "focus"))
-		if config.mediaportal.showMahlzeitTV.value:
-			self.mediatheken.append(self.hauptListEntry("mahlzeit.tv", "mahlzeit"))
-		if config.mediaportal.showFiwitu.value:
-			self.mediatheken.append(self.hauptListEntry("fiwitu.tv", "fiwitu"))
-		if config.mediaportal.showScienceTV.value:
-			self.mediatheken.append(self.hauptListEntry("ScienceTV", "sciencetv"))
-		if config.mediaportal.showSportBild.value:
-			self.mediatheken.append(self.hauptListEntry("SportBild", "sportbild"))
-		if config.mediaportal.showWrestlingnetwork.value:
-			self.mediatheken.append(self.hauptListEntry("Wrestlingnetwork", "wrestlingnetwork"))
-		if config.mediaportal.showretrotv.value:
-			self.mediatheken.append(self.hauptListEntry("retro-tv", "retrotv"))
-		if config.mediaportal.showgalileovl.value:
-			self.mediatheken.append(self.hauptListEntry("Galileo-Videolexikon", "galileovl"))
-		if config.mediaportal.showsport1fm.value:
-			self.mediatheken.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
-		if config.mediaportal.showmyspass.value:
-			self.mediatheken.append(self.hauptListEntry("MySpass", "myspass"))
-		if config.mediaportal.showARD.value:
-			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
-		if astModule:
-			if config.mediaportal.showHeiseVideo.value:
-				self.mediatheken.append(self.hauptListEntry("heiseVIDEO", "heisevideo"))
-
-		# Grauzone
-		if config.mediaportal.showgrauzone.value:
-			if config.mediaportal.showSzeneStreams.value:
-				self.grauzone.append(self.hauptListEntry("SzeneStreams", "szenestreams"))
-			if config.mediaportal.showmlehd.value:
-				self.grauzone.append(self.hauptListEntry("MLE-HD", "mlehd"))
-			if config.mediaportal.showStreamOase.value:
-				self.grauzone.append(self.hauptListEntry("StreamOase", "streamoase"))
-			if config.mediaportal.showMEHD.value:
-				self.grauzone.append(self.hauptListEntry("My-Entertainment", "mehd"))
-			if config.mediaportal.showM4k.value:
-				self.grauzone.append(self.hauptListEntry("Movie4k", "movie4k"))
-			if config.mediaportal.showKinox.value:
-				self.grauzone.append(self.hauptListEntry("Kinox", "kinox"))
-			if config.mediaportal.showCinestream.value:
-				self.grauzone.append(self.hauptListEntry("Cinestream", "cinestream"))
-			if config.mediaportal.showKinoKiste.value:
-				self.grauzone.append(self.hauptListEntry("KinoKiste", "kinokiste"))
-			if config.mediaportal.showIStream.value:
-				self.grauzone.append(self.hauptListEntry("IStream", "istream"))
-			if config.mediaportal.showBs.value:
-				self.grauzone.append(self.hauptListEntry("Burning-Series", "burningseries"))
-			if config.mediaportal.showBaskino.value:
-				self.grauzone.append(self.hauptListEntry("Baskino", "baskino"))
-			if config.mediaportal.showprimewire.value:
-				self.grauzone.append(self.hauptListEntry("PrimeWire", "primewire"))
-			if config.mediaportal.showM4kWatchlist.value:
-				self.grauzone.append(self.hauptListEntry("Movie4k Watchlist", "movie4kwatchlist"))
-			if config.mediaportal.showKinoxWatchlist.value:
-				self.grauzone.append(self.hauptListEntry("Kinox Watchlist", "kinoxwatchlist"))
-			if config.mediaportal.showDdlme.value:
-				self.grauzone.append(self.hauptListEntry("ddl.me", "ddl_me"))
-			if config.mediaportal.showMovie25.value:
-				self.grauzone.append(self.hauptListEntry("Movie25", "movie25"))
-			if config.mediaportal.showWatchseries.value:
-				self.grauzone.append(self.hauptListEntry("Watchseries", "watchseries"))
-			#if config.mediaportal.showViewster.value:
-			#	self.grauzone.append(self.hauptListEntry("Viewster", "viewster"))
-			if config.mediaportal.showVibeo.value:
-				self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
-			if config.mediaportal.movie2k.value:
-				self.grauzone.append(self.hauptListEntry("Movie2k.tl", "movie2k"))
-
-		# Fun / Sport
+		# Fun/Music/Sport
 		if config.mediaportal.showAllMusicHouse.value:
 			self.funsport.append(self.hauptListEntry("AllMusicHouse", "allmusichouse"))
 		if config.mediaportal.showputpattv.value:
@@ -904,8 +778,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("USER-Channels", "userchannels"))
 		if config.mediaportal.showYoutube.value:
 			self.funsport.append(self.hauptListEntry("YouTube", "youtube"))
-		if config.mediaportal.showClipfish.value:
-			self.funsport.append(self.hauptListEntry("Clipfish", "clipfish"))
 		if config.mediaportal.showRan.value:
 			self.funsport.append(self.hauptListEntry("Ran.de", "ran"))
 		if config.mediaportal.showGEOde.value:
@@ -922,6 +794,50 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("MTV.de Charts", "mtvdecharts"))
 		if config.mediaportal.wissen.value:
 			self.funsport.append(self.hauptListEntry("Wissen.de", "wissen"))
+		if config.mediaportal.show4Players.value:
+			self.funsport.append(self.hauptListEntry("4Players", "4players"))
+		if config.mediaportal.showGIGA.value:
+			self.funsport.append(self.hauptListEntry("GIGA.de", "gigatv"))
+		if config.mediaportal.showaudi.value:
+			self.funsport.append(self.hauptListEntry("Audi.tv", "auditv"))
+		if config.mediaportal.showgronkh.value:
+			self.funsport.append(self.hauptListEntry("gronkh.de", "gronkh"))
+		if config.mediaportal.showappletrailers.value:
+			self.funsport.append(self.hauptListEntry("AppleTrailer", "appletrailers"))
+		if config.mediaportal.showAutoBild.value:
+			self.funsport.append(self.hauptListEntry("AutoBild", "autobild"))
+		if config.mediaportal.showCczwei.value:
+			self.funsport.append(self.hauptListEntry("CCZwei", "cczwei"))
+		if config.mediaportal.showDoku.value:
+			self.funsport.append(self.hauptListEntry("Doku.me", "doku"))
+		if config.mediaportal.showDOKUh.value:
+			self.funsport.append(self.hauptListEntry("DOKUh", "dokuh"))
+		if config.mediaportal.showDokuHouse.value:
+			self.funsport.append(self.hauptListEntry("DokuHouse", "dokuhouse"))
+		if config.mediaportal.showDokuStream.value:
+			self.funsport.append(self.hauptListEntry("DokuStream", "dokustream"))
+		if config.mediaportal.showDsc.value:
+			self.funsport.append(self.hauptListEntry("Dreamscreencast", "dreamscreencast"))
+		if config.mediaportal.showTrailer.value:
+			self.funsport.append(self.hauptListEntry("Filmtrailer", "trailer"))
+		if config.mediaportal.showFocus.value:
+			self.funsport.append(self.hauptListEntry("Focus", "focus"))
+		if config.mediaportal.showMahlzeitTV.value:
+			self.funsport.append(self.hauptListEntry("mahlzeit.tv", "mahlzeit"))
+		if config.mediaportal.showFiwitu.value:
+			self.funsport.append(self.hauptListEntry("fiwitu.tv", "fiwitu"))
+		if config.mediaportal.showScienceTV.value:
+			self.funsport.append(self.hauptListEntry("ScienceTV", "sciencetv"))
+		if config.mediaportal.showSportBild.value:
+			self.funsport.append(self.hauptListEntry("SportBild", "sportbild"))
+		if config.mediaportal.showWrestlingnetwork.value:
+			self.funsport.append(self.hauptListEntry("Wrestlingnetwork", "wrestlingnetwork"))
+		if config.mediaportal.showretrotv.value:
+			self.funsport.append(self.hauptListEntry("retro-tv", "retrotv"))
+		if config.mediaportal.showgalileovl.value:
+			self.funsport.append(self.hauptListEntry("Galileo-Videolexikon", "galileovl"))
+		if config.mediaportal.showsport1fm.value:
+			self.funsport.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
 		if config.mediaportal.showgrauzone.value:
 			if config.mediaportal.showMusicstreamcc.value:
 				self.funsport.append(self.hauptListEntry("Musicstream.cc", "musicstreamcc"))
@@ -933,8 +849,47 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.funsport.append(self.hauptListEntry("OnlineMusicRecorder", "omr"))
 			if config.mediaportal.showSongsto.value:
 				self.funsport.append(self.hauptListEntry("Songs.to", "songsto"))
+		if astModule:
+			if config.mediaportal.showHeiseVideo.value:
+				self.funsport.append(self.hauptListEntry("heiseVIDEO", "heisevideo"))
 
-		# porn
+		# Mediatheken
+		if config.mediaportal.showMyvideo.value:
+			self.mediatheken.append(self.hauptListEntry("MyVideo", "myvideo"))
+		if config.mediaportal.showClipfish.value:
+			self.mediatheken.append(self.hauptListEntry("Clipfish", "clipfish"))
+		if config.mediaportal.showKinderKino.value:
+			self.mediatheken.append(self.hauptListEntry("KinderKino", "kinderkino"))
+		if config.mediaportal.showNetzKino.value:
+			self.mediatheken.append(self.hauptListEntry("NetzKino", "netzkino"))
+		if config.mediaportal.showtivi.value:
+			self.mediatheken.append(self.hauptListEntry("Tivi", "tivi"))
+		if config.mediaportal.showkika.value:
+			self.mediatheken.append(self.hauptListEntry("KIKA+", "kika"))
+		if config.mediaportal.showVoxnow.value:
+			self.mediatheken.append(self.hauptListEntry("VOXNOW", "voxnow"))
+		if config.mediaportal.showRTLnow.value:
+			self.mediatheken.append(self.hauptListEntry("RTLNOW", "rtlnow"))
+		if config.mediaportal.showNTVnow.value:
+			self.mediatheken.append(self.hauptListEntry("N-TVNOW", "ntvnow"))
+		if config.mediaportal.showRTL2now.value:
+			self.mediatheken.append(self.hauptListEntry("RTL2NOW", "rtl2now"))
+		if config.mediaportal.showRTLnitro.value:
+			self.mediatheken.append(self.hauptListEntry("RTLNITRONOW", "rtlnitro"))
+		if config.mediaportal.showSUPERRTLnow.value:
+			self.mediatheken.append(self.hauptListEntry("SUPERRTLNOW", "superrtlnow"))
+		if config.mediaportal.showZDF.value:
+			self.mediatheken.append(self.hauptListEntry("ZDF Mediathek", "zdf"))
+		if config.mediaportal.showORF.value:
+			self.mediatheken.append(self.hauptListEntry("ORF TVthek", "orf"))
+		if config.mediaportal.showSRF.value:
+			self.mediatheken.append(self.hauptListEntry("SRF Player", "srf"))
+		if config.mediaportal.showmyspass.value:
+			self.mediatheken.append(self.hauptListEntry("MySpass", "myspass"))
+		if config.mediaportal.showARD.value:
+			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
+
+		# Porn
 		if config.mediaportal.showporn.value:
 			if config.mediaportal.show4tube.value:
 				self.porn.append(self.hauptListEntry("4Tube", "4tube"))
@@ -1011,6 +966,51 @@ class haupt_Screen(Screen, ConfigListScreen):
 					self.porn.append(self.hauptListEntry("XXXSaVe", "xxxsave"))
 			if config.mediaportal.showyouporn.value:
 				self.porn.append(self.hauptListEntry("YouPorn", "youporn"))
+
+		# Grauzone
+		if config.mediaportal.showgrauzone.value:
+			if config.mediaportal.showSzeneStreams.value:
+				self.grauzone.append(self.hauptListEntry("SzeneStreams", "szenestreams"))
+			if config.mediaportal.showmlehd.value:
+				self.grauzone.append(self.hauptListEntry("MLE-HD", "mlehd"))
+			if config.mediaportal.showStreamOase.value:
+				self.grauzone.append(self.hauptListEntry("StreamOase", "streamoase"))
+			if config.mediaportal.showMEHD.value:
+				self.grauzone.append(self.hauptListEntry("My-Entertainment", "mehd"))
+			if config.mediaportal.showM4k.value:
+				self.grauzone.append(self.hauptListEntry("Movie4k", "movie4k"))
+			if config.mediaportal.showKinox.value:
+				self.grauzone.append(self.hauptListEntry("Kinox", "kinox"))
+			if config.mediaportal.showCinestream.value:
+				self.grauzone.append(self.hauptListEntry("Cinestream", "cinestream"))
+			if config.mediaportal.showKinoKiste.value:
+				self.grauzone.append(self.hauptListEntry("KinoKiste", "kinokiste"))
+			if config.mediaportal.showIStream.value:
+				self.grauzone.append(self.hauptListEntry("IStream", "istream"))
+			if config.mediaportal.showBs.value:
+				self.grauzone.append(self.hauptListEntry("Burning-Series", "burningseries"))
+			if config.mediaportal.showBaskino.value:
+				self.grauzone.append(self.hauptListEntry("Baskino", "baskino"))
+			if config.mediaportal.showprimewire.value:
+				self.grauzone.append(self.hauptListEntry("PrimeWire", "primewire"))
+			if config.mediaportal.showM4kWatchlist.value:
+				self.grauzone.append(self.hauptListEntry("Movie4k Watchlist", "movie4kwatchlist"))
+			if config.mediaportal.showKinoxWatchlist.value:
+				self.grauzone.append(self.hauptListEntry("Kinox Watchlist", "kinoxwatchlist"))
+			if config.mediaportal.showDdlme.value:
+				self.grauzone.append(self.hauptListEntry("ddl.me", "ddl_me"))
+			if config.mediaportal.showMovie25.value:
+				self.grauzone.append(self.hauptListEntry("Movie25", "movie25"))
+			if config.mediaportal.showWatchseries.value:
+				self.grauzone.append(self.hauptListEntry("Watchseries", "watchseries"))
+			#if config.mediaportal.showViewster.value:
+			#	self.grauzone.append(self.hauptListEntry("Viewster", "viewster"))
+			if config.mediaportal.showVibeo.value:
+				self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
+			if config.mediaportal.movie2k.value:
+				self.grauzone.append(self.hauptListEntry("Movie2k.tl", "movie2k"))
+			if config.mediaportal.showMoovizon.value:
+				self.grauzone.append(self.hauptListEntry("Moovizon", "moovizon"))
 
 		if len(self.porn) < 1:
 			self['Porn'].hide()
@@ -1446,8 +1446,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(wissenListeScreen)
 		elif auswahl == "Movie2k.tl":
 			self.session.open(movie2kGenreScreen)
-
-		# mediatheken
 		elif auswahl == "VOXNOW":
 			self.session.open(VOXnowGenreScreen)
 		elif auswahl == "RTLNOW":
@@ -1485,7 +1483,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
 
-		# porn
+		# Porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
 		elif auswahl == "Ah-Me":
@@ -1694,30 +1692,37 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		self.plugin_liste = []
 
-		# kinder
-		if config.mediaportal.showKinderKino.value:
-			self.plugin_liste.append(("KinderKino", "kinderkino", "Mediathek"))
-		if config.mediaportal.showtivi.value:
-			self.plugin_liste.append(("Tivi", "tivi", "Mediathek"))
-		if config.mediaportal.showkika.value:
-			self.plugin_liste.append(("KIKA+", "kika", "Mediathek"))
+		# Sport
+		if config.mediaportal.showLaola1.value:
+			self.plugin_liste.append(("Laola1", "laola1", "Sport"))
+		if config.mediaportal.showNhl.value:
+			self.plugin_liste.append(("NHL", "nhl", "Sport"))
+		if config.mediaportal.showSpobox.value:
+			self.plugin_liste.append(("Spobox", "spobox", "Sport"))
+		if config.mediaportal.showRan.value:
+			self.plugin_liste.append(("Ran.de", "ran", "Sport"))
+		if config.mediaportal.showsport1fm.value:
+			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
 
-		# Grauzone
-		if (config.mediaportal.showgrauzone.value == False and config.mediaportal.filter.value == 'Grauzone'):
-			config.mediaportal.filter.value = 'ALL'
+
+		# Music
+		if config.mediaportal.showDeluxemusic.value:
+			self.plugin_liste.append(("Deluxemusic", "deluxemusic", "Music"))
+		if config.mediaportal.showNuna.value:
+			self.plugin_liste.append(("Nuna", "nuna", "Music"))
+		if config.mediaportal.showMyvideoTop100.value:
+			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Music"))
+		if config.mediaportal.showMTVdeCharts.value:
+			self.plugin_liste.append(("MTV.de Charts", "mtvdecharts", "Music"))
+		if config.mediaportal.showMusicChannels.value:
+			self.plugin_liste.append(("MUSIC-Channels", "musicchannels", "Music"))
+		if config.mediaportal.showRadio.value:
+			self.plugin_liste.append(("Radio.de", "radiode", "Music"))
+		if config.mediaportal.showAllMusicHouse.value:
+			self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Music"))
+		if config.mediaportal.showputpattv.value:
+			self.plugin_liste.append(("putpat.tv", "putpattv", "Music"))
 		if config.mediaportal.showgrauzone.value:
-			if config.mediaportal.showMEHD.value:
-				self.plugin_liste.append(("My-Entertainment", "mehd", "Grauzone"))
-			if config.mediaportal.showM4k.value:
-				self.plugin_liste.append(("Movie4k", "movie4k", "Grauzone"))
-			if config.mediaportal.showIStream.value:
-				self.plugin_liste.append(("IStream", "istream", "Grauzone"))
-			if config.mediaportal.showSzeneStreams.value:
-				self.plugin_liste.append(("SzeneStreams", "szenestreams", "Grauzone"))
-			if config.mediaportal.showmlehd.value:
-				self.plugin_liste.append(("MLE-HD", "mlehd", "Grauzone"))
-			if config.mediaportal.showDdlme.value:
-				self.plugin_liste.append(("ddl.me", "ddl_me", "Grauzone"))
 			if config.mediaportal.showSongsto.value:
 				self.plugin_liste.append(("Songs.to", "songsto", "Music"))
 			if config.mediaportal.showCanna.value:
@@ -1728,47 +1733,14 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("80s & 90s Music", "eighties", "Music"))
 			if config.mediaportal.showMusicstreamcc.value:
 				self.plugin_liste.append(("Musicstream.cc", "musicstreamcc", "Music"))
-			if config.mediaportal.showMovie25.value:
-				self.plugin_liste.append(("Movie25", "movie25", "Grauzone"))
-			if config.mediaportal.showWatchseries.value:
-				self.plugin_liste.append(("Watchseries", "watchseries", "Grauzone"))
-			if config.mediaportal.showVibeo.value:
-				self.plugin_liste.append(("Vibeo", "vibeo", "Grauzone"))
-			if config.mediaportal.showBaskino.value:
-				self.plugin_liste.append(("Baskino", "baskino", "Grauzone"))
-			if config.mediaportal.showKinox.value:
-				self.plugin_liste.append(("Kinox", "kinox", "Grauzone"))
-			if config.mediaportal.showStreamOase.value:
-				self.plugin_liste.append(("StreamOase", "streamoase", "Grauzone"))
-			if config.mediaportal.showCinestream.value:
-				self.plugin_liste.append(("Cinestream", "cinestream", "Grauzone"))
-			if config.mediaportal.showKinoKiste.value:
-				self.plugin_liste.append(("KinoKiste", "kinokiste", "Grauzone"))
-			if config.mediaportal.showBs.value:
-				self.plugin_liste.append(("Burning-Series", "burningseries", "Grauzone"))
-			#if config.mediaportal.showViewster.value:
-			#	self.plugin_liste.append(("Viewster", "viewster", "Mediathek"))
-			if config.mediaportal.showprimewire.value:
-				self.plugin_liste.append(("PrimeWire", "primewire", "Grauzone"))
-			if config.mediaportal.showMoovizon.value:
-				self.plugin_liste.append(("Moovizon", "moovizon", "Grauzone"))
-			if config.mediaportal.movie2k.value:
-				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
 
-			# Watchlisten - Grauzone
-			if config.mediaportal.showM4kWatchlist.value:
-				self.plugin_liste.append(("Movie4k Watchlist", "movie4kwatchlist", "Grauzone"))
-			if config.mediaportal.showKinoxWatchlist.value:
-				self.plugin_liste.append(("Kinox Watchlist", "kinoxwatchlist", "Grauzone"))
-
+		# Fun
 		if config.mediaportal.showDoku.value:
 			self.plugin_liste.append(("Doku.me", "doku", "Fun"))
 		if config.mediaportal.showSportBild.value:
 			self.plugin_liste.append(("SportBild", "sportbild", "Fun"))
 		if config.mediaportal.showAutoBild.value:
 			self.plugin_liste.append(("AutoBild", "autobild", "Fun"))
-		if config.mediaportal.showLaola1.value:
-			self.plugin_liste.append(("Laola1", "laola1", "Sport"))
 		if config.mediaportal.showFocus.value:
 			self.plugin_liste.append(("Focus", "focus", "Fun"))
 		if config.mediaportal.showCczwei.value:
@@ -1777,8 +1749,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Filmtrailer", "trailer", "Fun"))
 		if config.mediaportal.showDsc.value:
 			self.plugin_liste.append(("Dreamscreencast", "dreamscreencast", "Fun"))
-		if config.mediaportal.showNhl.value:
-			self.plugin_liste.append(("NHL", "nhl", "Sport"))
 		if config.mediaportal.show4Players.value:
 			self.plugin_liste.append(("4Players", "4players", "Fun"))
 		if config.mediaportal.showGIGA.value:
@@ -1797,10 +1767,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("DOKUh", "dokuh", "Fun"))
 		if config.mediaportal.showDokuHouse.value:
 			self.plugin_liste.append(("DokuHouse", "dokuhouse", "Fun"))
-		if config.mediaportal.showAllMusicHouse.value:
-			self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Music"))
-		if config.mediaportal.showputpattv.value:
-			self.plugin_liste.append(("putpat.tv", "putpattv", "Music"))
 		if config.mediaportal.showRofl.value:
 			self.plugin_liste.append(("Rofl.to", "rofl", "Fun"))
 		if config.mediaportal.showFail.value:
@@ -1809,10 +1775,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("FilmOn", "filmon", "Fun"))
 		if config.mediaportal.showTvkino.value:
 			self.plugin_liste.append(("TV-Kino", "tvkino", "Fun"))
-		if config.mediaportal.showRadio.value:
-			self.plugin_liste.append(("Radio.de", "radiode", "Music"))
-		if config.mediaportal.showSpobox.value:
-			self.plugin_liste.append(("Spobox", "spobox", "Sport"))
 		if config.mediaportal.showLiveLeak.value:
 			self.plugin_liste.append(("LiveLeak", "liveleak", "Fun"))
 		if config.mediaportal.showDokuStream.value:
@@ -1827,46 +1789,35 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("CAR-Channels", "carchannels", "Fun"))
 		if config.mediaportal.showGameChannels.value:
 			self.plugin_liste.append(("GAME-Channels", "gamechannels", "Fun"))
-		if config.mediaportal.showMusicChannels.value:
-			self.plugin_liste.append(("MUSIC-Channels", "musicchannels", "Music"))
 		if config.mediaportal.showUserChannels.value:
 			self.plugin_liste.append(("USER-Channels", "userchannels", "Fun"))
 		if config.mediaportal.showYoutube.value:
 			self.plugin_liste.append(("YouTube", "youtube", "Fun"))
-		if config.mediaportal.showClipfish.value:
-			self.plugin_liste.append(("Clipfish", "clipfish", "Mediathek/Fun/Music"))
-		if config.mediaportal.showRan.value:
-			self.plugin_liste.append(("Ran.de", "ran", "Sport"))
 		if config.mediaportal.showTeledunet.value:
 			self.plugin_liste.append(("Teledunet", "teledunet", "Fun"))
 		if config.mediaportal.showGEOde.value:
 			self.plugin_liste.append(("GEO.de", "geo_de", "Fun"))
-		if config.mediaportal.showDeluxemusic.value:
-			self.plugin_liste.append(("Deluxemusic", "deluxemusic", "Music"))
-		if config.mediaportal.showNuna.value:
-			self.plugin_liste.append(("Nuna", "nuna", "Music"))
-		if config.mediaportal.showMyvideoTop100.value:
-			self.plugin_liste.append(("Myvideo Top 100", "myvideotop100", "Music"))
-		if config.mediaportal.showMTVdeCharts.value:
-			self.plugin_liste.append(("MTV.de Charts", "mtvdecharts", "Music"))
 		if config.mediaportal.showWrestlingnetwork.value:
 			self.plugin_liste.append(("Wrestlingnetwork", "wrestlingnetwork", "Fun"))
 		if config.mediaportal.showretrotv.value:
 			self.plugin_liste.append(("retro-tv", "retrotv", "Fun"))
 		if config.mediaportal.showgalileovl.value:
 			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Fun"))
-		if config.mediaportal.showsport1fm.value:
-			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
-		if config.mediaportal.showmyspass.value:
-			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
 		if config.mediaportal.wissen.value:
 			self.plugin_liste.append(("Wissen.de", "wissen", "Fun"))
-
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Fun"))
 
-		### mediatheken
+		# Mediatheken
+		if config.mediaportal.showClipfish.value:
+			self.plugin_liste.append(("Clipfish", "clipfish", "Mediathek/Fun/Music"))
+		if config.mediaportal.showKinderKino.value:
+			self.plugin_liste.append(("KinderKino", "kinderkino", "Mediathek"))
+		if config.mediaportal.showtivi.value:
+			self.plugin_liste.append(("Tivi", "tivi", "Mediathek"))
+		if config.mediaportal.showkika.value:
+			self.plugin_liste.append(("KIKA+", "kika", "Mediathek"))
 		if config.mediaportal.showMyvideo.value:
 			self.plugin_liste.append(("MyVideo", "myvideo", "Mediathek"))
 		if config.mediaportal.showNetzKino.value:
@@ -1891,8 +1842,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("SRF Player", "srf", "Mediathek"))
 		if config.mediaportal.showARD.value:
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
+		if config.mediaportal.showmyspass.value:
+			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
 
-		### porn
+		# Porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
 			config.mediaportal.filter.value = 'ALL'
 		if config.mediaportal.showporn.value:
@@ -1971,6 +1924,54 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 					self.plugin_liste.append(("XXXSaVe", "xxxsave", "Porn"))
 			if config.mediaportal.showyouporn.value:
 				self.plugin_liste.append(("YouPorn", "youporn", "Porn"))
+
+		# Grauzone
+		if (config.mediaportal.showgrauzone.value == False and config.mediaportal.filter.value == 'Grauzone'):
+			config.mediaportal.filter.value = 'ALL'
+		if config.mediaportal.showgrauzone.value:
+			if config.mediaportal.showMEHD.value:
+				self.plugin_liste.append(("My-Entertainment", "mehd", "Grauzone"))
+			if config.mediaportal.showM4k.value:
+				self.plugin_liste.append(("Movie4k", "movie4k", "Grauzone"))
+			if config.mediaportal.showIStream.value:
+				self.plugin_liste.append(("IStream", "istream", "Grauzone"))
+			if config.mediaportal.showSzeneStreams.value:
+				self.plugin_liste.append(("SzeneStreams", "szenestreams", "Grauzone"))
+			if config.mediaportal.showmlehd.value:
+				self.plugin_liste.append(("MLE-HD", "mlehd", "Grauzone"))
+			if config.mediaportal.showDdlme.value:
+				self.plugin_liste.append(("ddl.me", "ddl_me", "Grauzone"))
+			if config.mediaportal.showMovie25.value:
+				self.plugin_liste.append(("Movie25", "movie25", "Grauzone"))
+			if config.mediaportal.showWatchseries.value:
+				self.plugin_liste.append(("Watchseries", "watchseries", "Grauzone"))
+			if config.mediaportal.showVibeo.value:
+				self.plugin_liste.append(("Vibeo", "vibeo", "Grauzone"))
+			if config.mediaportal.showBaskino.value:
+				self.plugin_liste.append(("Baskino", "baskino", "Grauzone"))
+			if config.mediaportal.showKinox.value:
+				self.plugin_liste.append(("Kinox", "kinox", "Grauzone"))
+			if config.mediaportal.showStreamOase.value:
+				self.plugin_liste.append(("StreamOase", "streamoase", "Grauzone"))
+			if config.mediaportal.showCinestream.value:
+				self.plugin_liste.append(("Cinestream", "cinestream", "Grauzone"))
+			if config.mediaportal.showKinoKiste.value:
+				self.plugin_liste.append(("KinoKiste", "kinokiste", "Grauzone"))
+			if config.mediaportal.showBs.value:
+				self.plugin_liste.append(("Burning-Series", "burningseries", "Grauzone"))
+			#if config.mediaportal.showViewster.value:
+			#	self.plugin_liste.append(("Viewster", "viewster", "Grauzone"))
+			if config.mediaportal.showprimewire.value:
+				self.plugin_liste.append(("PrimeWire", "primewire", "Grauzone"))
+			if config.mediaportal.showMoovizon.value:
+				self.plugin_liste.append(("Moovizon", "moovizon", "Grauzone"))
+			if config.mediaportal.movie2k.value:
+				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
+		# Watchlisten - Grauzone
+			if config.mediaportal.showM4kWatchlist.value:
+				self.plugin_liste.append(("Movie4k Watchlist", "movie4kwatchlist", "Grauzone"))
+			if config.mediaportal.showKinoxWatchlist.value:
+				self.plugin_liste.append(("Kinox Watchlist", "kinoxwatchlist", "Grauzone"))
 
 		# Plugin Sortierung
 		if config.mediaportal.sortplugins != "default":
