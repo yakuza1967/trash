@@ -14,6 +14,7 @@ from mtvdelink import MTVdeLink
 from coverhelper import CoverHelper
 from Components.Pixmap import MovingPixmap
 
+is_avSetupScreen = False
 try:
 	from Plugins.SystemPlugins.Videomode.plugin import VideoSetup
 	from Plugins.SystemPlugins.Videomode.VideoHardware import video_hw
@@ -21,6 +22,15 @@ except:
 	VideoSetupPresent = False
 else:
 	VideoSetupPresent = True
+
+if not VideoSetupPresent:
+	try:
+		from Plugins.SystemPlugins.Videomode.plugin import avSetupScreen
+	except:
+		VideoSetupPresent = False
+	else:
+		VideoSetupPresent = True
+		is_avSetupScreen = True
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/mediainfo/plugin.pyo'):
 	from Plugins.Extensions.mediainfo.plugin import mediaInfo
@@ -894,7 +904,10 @@ class SimplePlayerMenu(Screen):
 
 	def openSetup(self):
 		if VideoSetupPresent:
-			self.session.open(VideoSetup, video_hw)
+			if is_avSetupScreen:
+				self.session.open(avSetupScreen)
+			else:
+				self.session.open(VideoSetup, video_hw)
 		self.close([5, ''])
 
 	def openMainmenu(self, id, name):
