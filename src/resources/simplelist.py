@@ -86,7 +86,7 @@ class simplelistGenreScreen(Screen):
 			self.keyLocked = True
 			self.filelist.append(("Keine Movieliste gefunden.", "dump"))
 		self.chooseMenuList.setList(map(simplelistListEntry, self.filelist))
-	
+
 	def globalList(self):
 		self.ltype = 'sl_glob_playlist'
 		self['ContentTitle'].setText("Global Playlist")
@@ -107,7 +107,7 @@ class simplelistGenreScreen(Screen):
 		idx = self['genreList'].getSelectedIndex()
 		SimplePlaylistIO.delEntry('mp_global_pl_01', self.filelist, idx)
 		self.chooseMenuList.setList(map(simplelistListEntry, self.filelist))
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -123,7 +123,7 @@ class simplelistGenreScreen(Screen):
 						title += sep + t[x]
 						sep = ' - '
 					title = title.split('.ts')[0]
-					
+
 			self.session.open(SimplePlayer, [(title, sref_play)], showPlaylist=False, ltype=self.ltype)
 		else:
 			idx = self['genreList'].getSelectedIndex()
