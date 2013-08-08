@@ -1,6 +1,7 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer, SimplePlaylistIO
 from Components.FileList import FileList
+from Screens.MovieSelection import MovieSelection
 
 def simplelistGenreListEntry(entry):
 	return [entry,
@@ -57,6 +58,9 @@ class simplelistGenreScreen(Screen):
 		self['F4'] = Label("Löschen")
 		self['F4'].hide()
 
+		self.last_videodir = config.movielist.last_videodir.value
+		config.movielist.last_videodir.value = self.filelist_path
+		self.last_selection = None
 		self.filelist = []
 		self.ltype = ''
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -69,6 +73,8 @@ class simplelistGenreScreen(Screen):
 	def loadFileList(self):
 		self.ltype = 'sl_movies'
 		self['F4'].hide()
+		self.session.openWithCallback(self.getSelection, MovieSelection, selectedmovie=self.last_selection)
+		"""
 		self['ContentTitle'].setText("%s" % self.filelist_path)
 		self.filelist_raw = FileList(self.filelist_path, matchingPattern = "(?i)^.*\.(mp2|mp3|ogg|ts|wav|wave|m3u|pls|e2pls|mpg|vob|avi|divx|m4v|mkv|mp4|m4a|dat|flac|mov|m2ts|flv|dts|3gp|3g2|mts)", useServiceRef = True, additionalExtensions = "4098:m3u 4098:e2pls 4098:pls").getFileList()
 		self.filelist = []
@@ -86,6 +92,19 @@ class simplelistGenreScreen(Screen):
 			self.keyLocked = True
 			self.filelist.append(("Keine Movieliste gefunden.", "dump"))
 		self.chooseMenuList.setList(map(simplelistListEntry, self.filelist))
+		"""
+
+	def getSelection(self, current):
+		print "getSelection:",current
+		if not current:
+			self.globalList()
+		else:
+			self.last_selection = current
+			url = current.getPath()
+			fn = current.getName()
+			#print fn
+			#print url
+			self.session.openWithCallback(self.loadFileList, SimplePlayer, [(fn, url)], showPlaylist=False, ltype=self.ltype)
 
 	def globalList(self):
 		self.ltype = 'sl_glob_playlist'
@@ -111,6 +130,7 @@ class simplelistGenreScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
+		"""
 		if self.ltype == 'sl_movies':
 			title = self['genreList'].getCurrent()[0][0]
 			sref_play = self['genreList'].getCurrent()[0][1]
@@ -128,6 +148,10 @@ class simplelistGenreScreen(Screen):
 		else:
 			idx = self['genreList'].getSelectedIndex()
 			self.session.open(SimplePlayer, [], playIdx=idx, playList2=self.filelist, plType='global', ltype=self.ltype, playAll=True)
+		"""
+		idx = self['genreList'].getSelectedIndex()
+		self.session.open(SimplePlayer, [], playIdx=idx, playList2=self.filelist, plType='global', ltype=self.ltype, playAll=True)
 
 	def keyCancel(self):
+		config.movielist.last_videodir.value = self.last_videodir
 		self.close()
