@@ -240,6 +240,10 @@ class get_stream_link:
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vidx, link).addErrback(self.errorload)
 
+			elif re.match('.*?mixturecloud.com', data, re.S):
+				link = data
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mixturecloud).addErrback(self.errorload)
+				
 			else:
 				message = self.session.open(MessageBox, _("No supported Stream Hoster, try another one !"), MessageBox.TYPE_INFO, timeout=5)
 		else:
@@ -253,7 +257,16 @@ class get_stream_link:
 		if self.showmsgbox:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
-
+	def mixturecloud(self, data):
+		file = re.findall("'file': '(.*?)'", data, re.S)
+		streamer = re.findall("'streamer':'(.*?)'", data, re.S)
+		if file and streamer:
+			stream_url = "%s&file=%s" % (streamer[0], file[0])
+			print stream_url
+			self._callback(stream_url)
+		else:
+			self.stream_not_found()
+	
 	def vidx(self, data, url):
 		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
 		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
