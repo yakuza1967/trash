@@ -412,32 +412,32 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 	def Key1(self):
 		self.isNumberSeek = True
 		self.initSeek()
-		self.numberKeySeek(-config.seek.selfdefined_13.value)
+		self.numberKeySeek(-int(config.seek.selfdefined_13.value))
 
 	def Key3(self):
 		self.isNumberSeek = True
 		self.initSeek()
-		self.numberKeySeek(config.seek.selfdefined_13.value)
+		self.numberKeySeek(int(config.seek.selfdefined_13.value))
 
 	def Key4(self):
 		self.isNumberSeek = True
 		self.initSeek()
-		self.numberKeySeek(-config.seek.selfdefined_46.value)
+		self.numberKeySeek(-int(config.seek.selfdefined_46.value))
 
 	def Key6(self):
 		self.isNumberSeek = True
 		self.initSeek()
-		self.numberKeySeek(config.seek.selfdefined_46.value)
+		self.numberKeySeek(int(config.seek.selfdefined_46.value))
 
 	def Key7(self):
 		self.isNumberSeek = True
 		self.initSeek()
-		self.numberKeySeek(-config.seek.selfdefined_79.value)
+		self.numberKeySeek(-int(config.seek.selfdefined_79.value))
 
 	def Key9(self):
 		self.isNumberSeek = True
 		self.initSeek()
-		self.numberKeySeek(config.seek.selfdefined_79.value)
+		self.numberKeySeek(int(config.seek.selfdefined_79.value))
 
 	def handleLeave(self, how):
 		print "handleLeave:"
