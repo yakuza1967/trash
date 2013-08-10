@@ -1,7 +1,10 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer, SimplePlaylistIO
 from Components.FileList import FileList
-from Screens.MovieSelection import MovieSelection
+if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/SerienFilm/MovieSelection.pyo'):
+	from Plugins.Extensions.SerienFilm.MovieSelection import MovieSelection
+else:
+	from Screens.MovieSelection import MovieSelection
 
 def simplelistGenreListEntry(entry):
 	return [entry,
@@ -68,6 +71,7 @@ class simplelistGenreScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 
+		self.onClose.append(self._onClose)
 		self.onLayoutFinish.append(self.globalList)
 
 	def loadFileList(self):
@@ -152,6 +156,8 @@ class simplelistGenreScreen(Screen):
 		idx = self['genreList'].getSelectedIndex()
 		self.session.open(SimplePlayer, [], playIdx=idx, playList2=self.filelist, plType='global', ltype=self.ltype, playAll=True)
 
-	def keyCancel(self):
+	def _onClose(self):
 		config.movielist.last_videodir.value = self.last_videodir
+	
+	def keyCancel(self):
 		self.close()
