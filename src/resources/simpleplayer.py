@@ -779,7 +779,7 @@ class SimplePlaylist(Screen):
 
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
-		if self.listEntryPar:
+		if self.plType != 'global' and self.listEntryPar:
 			self.chooseMenuList.l.setItemHeight(self.listEntryPar[3])
 		else:
 			self.chooseMenuList.l.setItemHeight(25)
@@ -806,7 +806,7 @@ class SimplePlaylist(Screen):
 		#self.updateTimer.start(1000, True)
 
 	def playListEntry(self, entry):
-		if self.listEntryPar:
+		if self.plType != 'global' and self.listEntryPar:
 			return [entry,
 				(eListboxPythonMultiContent.TYPE_TEXT, self.listEntryPar[0], self.listEntryPar[1], self.listEntryPar[2], self.listEntryPar[3], self.listEntryPar[4], RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[self.listEntryPar[6]]+self.listEntryPar[5]+entry[self.listEntryPar[7]])
 				]
