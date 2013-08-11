@@ -56,18 +56,18 @@ class megaskanksGenreScreen(Screen):
 
 	def layoutFinished(self):
 		self.keyLocked = True
-		url = "http://xxxpornvideos.eu"
+		url = "http://www.megaskanks.com"
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
 	def genreData(self, data):
-		phCat = re.findall('cat-item-([0-9]+)"><a\shref="(.*?)"\stitle=".*?">(.*?)</a>', data, re.S)
+		phCat = re.findall('cat-item-([0-9]+)"><a\shref="(.*?)"\stitle=".*?">(.*?)</a>\s\((.*?)\)', data, re.S)
 		if phCat:
-			for (phID, phUrl, phTitle) in phCat:
+			for (phID, phUrl, phTitle, phCount) in phCat:
 				if phID != "1" and phID != "857" and phID != "906":
 					phUrl = phUrl + "page/"
-					self.genreliste.append((decodeHtml(phTitle), phUrl))
+					self.genreliste.append((decodeHtml(phTitle), phUrl, phCount))
 			self.genreliste.sort()
-			self.genreliste.insert(0, ("Newest", "http://xxxpornvideos.eu/page/"))
+			self.genreliste.insert(0, ("Newest", "http://www.megaskanks.com/page/", None))
 			self.genreliste.insert(0, ("--- Search ---", "callSuchen", None))
 			self.chooseMenuList.setList(map(megaskanksGenreListEntry, self.genreliste))
 			self.keyLocked = False
@@ -84,7 +84,8 @@ class megaskanksGenreScreen(Screen):
 
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
-			self.session.open(megaskanksFilmScreen, streamGenreLink, streamGenreName)
+			count = self['genreList'].getCurrent()[0][2]
+			self.session.open(megaskanksFilmScreen, streamGenreLink, streamGenreName, count)
 
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
@@ -94,7 +95,8 @@ class megaskanksGenreScreen(Screen):
 			self.suchString = callback.replace(' ', '+')
 			streamGenreLink = '%s' % (self.suchString)
 			streamGenreName = "--- Search ---"
-			self.session.open(megaskanksFilmScreen, streamGenreLink, streamGenreName)
+			count = None
+			self.session.open(megaskanksFilmScreen, streamGenreLink, streamGenreName, count)
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -121,10 +123,11 @@ class megaskanksGenreScreen(Screen):
 
 class megaskanksFilmScreen(Screen):
 
-	def __init__(self, session, phCatLink, phCatName):
+	def __init__(self, session, phCatLink, phCatName, phCount):
 		self.session = session
 		self.phCatLink = phCatLink
 		self.phCatName = phCatName
+		self.phCount = phCount
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXFilmScreen.xml"
@@ -170,30 +173,42 @@ class megaskanksFilmScreen(Screen):
 		self['name'].setText('Bitte warten...')
 		self.filmliste = []
 		if self.phCatName == "--- Search ---":
-			url = "http://xxxpornvideos.eu/page/%s/?s=%s" % (str(self.page), self.phCatLink)
+			url = "http://www.megaskanks.com/page/%s/?s=%s" % (str(self.page), self.phCatLink)
 		else:
 			url = "%s%s/" % (self.phCatLink, str(self.page))
 		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
 
 	def loadData(self, data):
-		lastp = re.search('class=\'pages\'>.*?of\s(.*?)</span>', data, re.S)
-		if lastp:
-			lastp = lastp.group(1)
-			lastp = lastp.replace(',','')
-			print lastp
-			self.lastpage = int(lastp)
+		if self.phCount:
+			self.lastpage = int(round((float(self.phCount) / 15) + 0.5))
 		else:
-			self.lastpage = 1
+			lastp = re.search('class=\'pages\'>.*?of\s(.*?)</span>', data, re.S)
+			if lastp:
+				lastp = lastp.group(1)
+				lastp = lastp.replace(',','')
+				self.lastpage = int(lastp)
+			else:
+				self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
-		phMovies = re.findall('post_header.*?<h2><a\shref="(.*?)"\stitle="(.*?)".*?img.*?src=["|\'](.*?)["|\'].*?postmetadata', data, re.S|re.I)
-		if phMovies:
-			for (phUrl, phTitle, phImage) in phMovies:
-				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
-			self.chooseMenuList.setList(map(megaskanksFilmListEntry, self.filmliste))
-			self.chooseMenuList.moveToIndex(0)
-			self.keyLocked = False
-			self.showInfos()
+		
+		if self.phCatName == "--- Search ---":
+			phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?PostMetadataFooter', data, re.S|re.I)
+			if phMovies:
+				for (phUrl, phTitle) in phMovies:
+					phTitle = phTitle.strip()
+					self.filmliste.append((decodeHtml(phTitle), phUrl, None))
+		else:
+			phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?img.*?src=["|\'](.*?)["|\'].*?PostMetadataFooter', data, re.S|re.I)
+			if phMovies:
+				for (phUrl, phTitle, phImage) in phMovies:
+					if not re.search('PostHeaderIcon', phImage):
+						phTitle = phTitle.strip()
+						self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
+		self.chooseMenuList.setList(map(megaskanksFilmListEntry, self.filmliste))
+		self.chooseMenuList.moveToIndex(0)
+		self.keyLocked = False
+		self.showInfos()
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -339,8 +354,8 @@ class megaskanksStreamListeScreen(Screen):
 
 	def loadPageData(self, data):
 		print "daten bekommen"
-		parse = re.search('putlocker.png(.*?)id="respond"', data, re.S)
-		streams = re.findall('<p\sstyle=.*?>(http://.*?(allanalpass|putlocker|flashx).*?)</a>\n{0,1}</p>', parse.group(1), re.S|re.I)
+		parse = re.search('PostHeaderIcon.png(.*?)PostMetadataFooter', data, re.S)
+		streams = re.findall('href="(http://.*?(allanalpass|putlocker|flashx|jpg|netload|megaskanks|rapid|uploaded).*?)"', parse.group(1), re.S|re.I)
 		if streams:
 			for (stream, hostername) in streams:
 				if re.match('.*?(allanalpass|putlocker|flashx)', hostername, re.S|re.I):
