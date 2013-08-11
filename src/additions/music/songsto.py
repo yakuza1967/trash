@@ -6,15 +6,19 @@ from Plugins.Extensions.MediaPortal.resources.songstolink import SongstoLink
 
 def SongstoListEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
 class showSongstoGenre(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/showSongstoGenre.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/showSongstoGenre.xml"
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
+
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -27,17 +31,19 @@ class showSongstoGenre(Screen):
 			"cancel": self.keyCancel
 		}, -1)
 
-		self["title"] = Label("Songs.to Music Player - Auswahl")
-		self["coverArt"] = Pixmap()
-		self["songtitle"] = Label ("")
-		self["artist"] = Label ("")
-		self["album"] = Label ("")
+		self["title"] = Label("Songs.to Music Player")
+		self['ContentTitle'] = Label('Music Tops')
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
+		self['F2'] = Label("")
+		self['F3'] = Label("")
+		self['F4'] = Label("")
 
 		self.streamList = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
-		self["streamlist"] = self.streamMenuList
+		self["genreList"] = self.streamMenuList
 
 		self.keyLocked = False
 		self.playing = False
@@ -67,8 +73,8 @@ class showSongstoGenre(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		scName = self['streamlist'].getCurrent()[0][0]
-		scUrl = self['streamlist'].getCurrent()[0][1]
+		scName = self['genreList'].getCurrent()[0][0]
+		scUrl = self['genreList'].getCurrent()[0][1]
 		if scName == "Songs Top 500":
 			print scName, "showAll"
 			self.session.open(showSongstoAll, scUrl, scName)
@@ -101,15 +107,13 @@ class showSongstoAll(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
-			"cancel" : self.keyCancel,
-			"right" : self.keyRight,
-			"left" : self.keyLeft
+			"cancel" : self.keyCancel
 		}, -1)
 
 		self["title"] = Label("Songs.to Music Player")
 		self['ContentTitle'] = Label(self.scGuiName)
 		self['name'] = Label("Auswahl:")
-		self['F1'] = Label("")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
@@ -143,21 +147,11 @@ class showSongstoAll(Screen):
 	def streamListEntry(self, entry):
 		title = entry[1] + " - " + entry[0]
 		return [entry,
-			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 770, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
+			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 830, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
 			]
 
 	def dataError(self, error):
 		printl(error,self,"E")
-
-	def keyLeft(self):
-		if self.keyLocked:
-			return
-		self["genreList"].pageUp()
-
-	def keyRight(self):
-		if self.keyLocked:
-			return
-		self["genreList"].pageDown()
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -192,15 +186,13 @@ class showSongstoTop(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
-			"cancel" : self.keyCancel,
-			"right" : self.keyRight,
-			"left" : self.keyLeft
+			"cancel" : self.keyCancel
 		}, -1)
 
 		self["title"] = Label("Songs.to Music Player")
 		self['ContentTitle'] = Label(self.scGuiName)
 		self['name'] = Label("Auswahl:")
-		self['F1'] = Label("")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
@@ -230,7 +222,7 @@ class showSongstoTop(Screen):
 	def streamListEntry(self, entry):
 		title = entry[1] + " - " + entry[0]
 		return [entry,
-			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 770, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
+			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 830, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
 			]
 
 	def scDataPost(self, data):
@@ -239,16 +231,6 @@ class showSongstoTop(Screen):
 		
 	def dataError(self, error):
 		printl(error,self,"E")
-
-	def keyLeft(self):
-		if self.keyLocked:
-			return
-		self["genreList"].pageUp()
-
-	def keyRight(self):
-		if self.keyLocked:
-			return
-		self["genreList"].pageDown()
 
 	def keyOK(self):
 		if self.keyLocked:

@@ -9,7 +9,7 @@ MSCC_siteEncoding = 'utf-8'
 
 def show_MSCC_GenreListEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1])
+		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 830, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1])
 		]
 
 class show_MSCC_Genre(Screen):
@@ -44,7 +44,7 @@ class show_MSCC_Genre(Screen):
 		self['title'] = Label(MSCC_Version)
 		self['ContentTitle'] = Label(self.ctitle)
 		self['name'] = Label("Auswahl:")
-		self['F1'] = Label("")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
@@ -138,7 +138,7 @@ class show_MSCC_ListScreen(Screen):
 		self['title'] = Label(MSCC_Version)
 		self['ContentTitle'] = Label(self.ctitle)
 		self['name'] = Label("Auswahl:")
-		self['F1'] = Label("")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
