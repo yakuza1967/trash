@@ -64,13 +64,13 @@ class paradisehillGenreScreen(Screen):
 
 	def genreData(self, data):
 		parse = re.search('<h2>Categories</h2>(.*?)<div class="sep"></div>', data, re.S)
-		phCat = re.findall('<div\sclass="item_zag.*?<a\shref="(.*?)"\stitle="(.*?)"', parse.group(1), re.S)
+		phCat = re.findall('<div\sclass="item_zag.*?<a\shref="(.*?)"\stitle="(.*?)".*?Films:(.*?)</div', parse.group(1), re.S)
 		if phCat:
-			for (phUrl, phTitle) in phCat:
+			for (phUrl, phTitle, phCount) in phCat:
 				phUrl = phUrl + "?page="
-				self.genreliste.append((phTitle, phUrl))
+				self.genreliste.append((phTitle, phUrl, phCount))
 			self.genreliste.sort()
-			self.genreliste.insert(0, ("Newest", "/en/?page="))
+			self.genreliste.insert(0, ("Newest", "/en/?page=", None))
 			self.genreliste.insert(0, ("--- Search ---", "callSuchen", None))
 			self.chooseMenuList.setList(map(paradisehillGenreListEntry, self.genreliste))
 			self.keyLocked = False
@@ -86,28 +86,31 @@ class paradisehillGenreScreen(Screen):
 			self.suchString = callback.replace(' ', '+')
 			paradisehillUrl = '%s' % (self.suchString)
 			paradisehillGenre = "--- Search ---"
-			self.session.open(paradisehillFilmListeScreen, paradisehillGenre, paradisehillUrl)
+			count = None
+			self.session.open(paradisehillFilmListeScreen, paradisehillGenre, paradisehillUrl, count)
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		paradisehillGenre = self['genreList'].getCurrent()[0][0]
 		paradisehillUrl = self['genreList'].getCurrent()[0][1]
+		count = self['genreList'].getCurrent()[0][2]
 		print paradisehillGenre, paradisehillUrl
 		if paradisehillGenre == "--- Search ---":
 			self.suchen()
 		else:
-			self.session.open(paradisehillFilmListeScreen, paradisehillGenre, paradisehillUrl)
+			self.session.open(paradisehillFilmListeScreen, paradisehillGenre, paradisehillUrl, count)
 
 	def keyCancel(self):
 		self.close()
 
 class paradisehillFilmListeScreen(Screen):
 
-	def __init__(self, session, genreName, genreLink):
+	def __init__(self, session, genreName, genreLink, count):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
+		self.count = count
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
@@ -172,12 +175,15 @@ class paradisehillFilmListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		lastpparse = re.search('class="pagi">(.*?)</div>', data, re.S)
-		lastp = re.findall('.*[\/|>](\d+)[\/|<]', lastpparse.group(1), re.S)
-		if lastp:
-			self.lastpage = int(lastp[-1])
+		if self.count:
+			self.lastpage = int(round((float(self.count) / 24) + 0.5))
 		else:
-			self.lastpage = 1
+			lastpparse = re.search('class="pagi">(.*?)</div>', data, re.S)
+			lastp = re.findall('.*[\/|>](\d+)[\/|<]', lastpparse.group(1), re.S)
+			if lastp:
+				self.lastpage = int(lastp[-1])
+			else:
+				self.lastpage = 1
 		self['page'].setText("%d/%d" % (self.page,self.lastpage))
 		movies = re.findall('<div class="cat_item">.*?<a href="(.*?)"\s{0,2}title=".*?"\s{0,2}>(.*?)<.*?<img src="(.*?)"', data, re.S)
 		if movies:
