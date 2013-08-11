@@ -56,8 +56,8 @@ class showSongstoGenre(Screen):
 			("Metal-Rock Top 15", "http://songs.to/json/songlist.php?charts=music_album_mrc"),
 			("Schlager Top 30", "http://songs.to/json/songlist.php?charts=music_schlager_de"),
 			("Singles Jahr 2011", "http://songs.to/json/songlist.php?charts=music_year2011_de"),
-			("Singles Jahr 2012", "http://songs.to/json/songlist.php?charts=music_year2012_de")]
-			#("Album Top 50", "http://songs.to/json/songlist.php?charts=music_album_de")]
+			("Singles Jahr 2012", "http://songs.to/json/songlist.php?charts=music_year2012_de"),
+			("Album Top 50", "http://songs.to/json/songlist.php?charts=music_album_de")]
 
 		for (scName, scUrl) in scGenre:
 			self.streamList.append((scName, scUrl))
@@ -126,7 +126,11 @@ class showSongstoAll(Screen):
 
 	def layoutFinished(self):
 		self.keyLocked = True
-		getPage(self.scLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.scData).addErrback(self.dataError)
+		if self.scGuiName != "Songs Top 500":
+			print "data:",self.scLink
+			self.scData(self.scLink)
+		else:
+			getPage(self.scLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.scData).addErrback(self.dataError)
 
 	def scData(self, data):
 		findSongs = re.findall('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)".*?"cover":"(.*?)"', data, re.S)
@@ -229,6 +233,10 @@ class showSongstoTop(Screen):
 			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 770, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
 			]
 
+	def scDataPost(self, data):
+		self.keyLocked = False
+		self.session.open(showSongstoAll, data, self.artist + ' - ' + self.album)
+		
 	def dataError(self, error):
 		printl(error,self,"E")
 
@@ -246,8 +254,17 @@ class showSongstoTop(Screen):
 		if self.keyLocked:
 			return
 
-		idx = self["genreList"].getSelectedIndex()
-		self.session.open(SongstoPlayer, self.streamList, 'songstotop', int(idx), self.scGuiName)
+		if self.scGuiName == "Album Top 50":
+			self.keyLocked = True
+			self.artist = self['genreList'].getCurrent()[0][1]
+			self.album = self['genreList'].getCurrent()[0][0]
+			url = "http://songs.to/json/songlist.php?quickplay=1"
+			dataPost = "data=%7B%22data%22%3A%5B%7B%22artist%22%3A%22"+self.artist+"%22%2C%20%22album%22%3A%22"+self.album+"%22%2C%20%22title%22%3A%22%22%7D%5D%7D"
+			#print "datapost:",dataPost
+			getPage(url, method='POST', postdata=dataPost, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.scDataPost).addErrback(self.dataError)
+		else:
+			idx = self["genreList"].getSelectedIndex()
+			self.session.open(SongstoPlayer, self.streamList, 'songstotop', int(idx), self.scGuiName)
 
 	def keyCancel(self):
 		self.close()
