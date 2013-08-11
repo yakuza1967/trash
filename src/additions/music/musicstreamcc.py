@@ -16,7 +16,7 @@ class show_MSCC_Genre(Screen):
 
 	R_COMP_01 = re.compile('="list_td_right"><a href="(.*?)".*?<img alt="(.*?)"')
 
-	def __init__(self, session, url='/index.php?pwd=&d=0', ctitle="Album Auswahl"):
+	def __init__(self, session, url='/index.php?pwd=&d=0', ctitle="Musikalben"):
 		self.session = session
 		self.genre_url = url
 		self.ctitle = ctitle
@@ -43,7 +43,7 @@ class show_MSCC_Genre(Screen):
 
 		self['title'] = Label(MSCC_Version)
 		self['ContentTitle'] = Label(self.ctitle)
-		self['name'] = Label("")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -87,7 +87,7 @@ class show_MSCC_Genre(Screen):
 		url = self['genreList'].getCurrent()[0][0]
 
 		if '(Sammlung ->)' in album:
-			self.session.open(show_MSCC_Genre, url, 'Auswahl aus %s' % album)
+			self.session.open(show_MSCC_Genre, url, 'Album: %s' % album)
 		else:
 			self.session.open(show_MSCC_ListScreen, url, album)
 
@@ -96,7 +96,7 @@ class show_MSCC_Genre(Screen):
 
 def show_MSCC_ListEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+entry[1])
+		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 830, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+entry[1])
 		]
 
 class show_MSCC_ListScreen(Screen):
@@ -137,7 +137,7 @@ class show_MSCC_ListScreen(Screen):
 
 		self['title'] = Label(MSCC_Version)
 		self['ContentTitle'] = Label(self.ctitle)
-		self['name'] = Label("")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
