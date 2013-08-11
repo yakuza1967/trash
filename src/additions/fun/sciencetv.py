@@ -213,20 +213,13 @@ class ScienceTvPlayer(SimplePlayer):
 	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None):
 		print "ScienceTvPlayer:"
 
-		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle)
+		SimplePlayer.__init__(self, session, playList, playIdx, playAll, listTitle, listEntryPar=[20, 0, 860, 50, 0, '', 0, 1])
 
 	def getVideo(self):
 		stvLink = "http://www.science-tv.com/inc/mod/video/play.php/vid,%s/q,mp4/typ,ondemand/file.mp4"\
 						% self.playList[self.playIdx][2]
 		stvTitle = self.playList[self.playIdx][1]
 		self.playStream(stvTitle, stvLink)
-
-	def openPlaylist(self):
-		if self.playLen > 0:
-			if self.plType == 'local':
-				self.session.openWithCallback(self.cb_Playlist, ScienceTvPlaylist, self.playList, self.playIdx, listTitle=self.listTitle)
-			else:
-				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList2, self.playIdx, listTitle=self.listTitle, plType=self.plType)
 
 class ScienceTvPlayer2(SimplePlayer):
 
@@ -255,16 +248,3 @@ class ScienceTvPlayer2(SimplePlayer):
 		if playing == True:
 			reactor.callLater(7, self.getVideo)
 			self.session.open(MessageBox, _("Bitte warten..."), MessageBox.TYPE_INFO, timeout=7)
-
-class ScienceTvPlaylist(SimplePlaylist):
-
-	def __init__(self, session, playList, playIdx, listTitle=None, plType='local'):
-
-		SimplePlaylist.__init__(self, session, playList, playIdx, listTitle, plType)
-
-		self.chooseMenuList.l.setItemHeight(50)
-
-	def playListEntry(self, entry):
-		return [entry,
-			(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 50, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+entry[1])
-			]

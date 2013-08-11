@@ -12,12 +12,17 @@ class SongstoLink:
 		self.imgurl = ''
 
 	def getLink(self, cb_play, cb_err, sc_title, sc_artist, sc_album, token, imgurl):
+		#print sc_title
+		#print sc_artist
+		#print sc_album
+		#print token
+		#print imgurl
 		self._callback = cb_play
 		self._errback = cb_err
 		self.imgurl = imgurl
 		if token != '':
 			scStream = self._baseurl+token
-			print "hash: ",token
+			#print "hash: ",token
 			self._callback(sc_title, scStream, sc_album, sc_artist, imgurl)
 		else:
 			title = urllib2.quote(sc_title.encode("utf8"))
@@ -27,18 +32,27 @@ class SongstoLink:
 			getPage(url, method='POST', postdata=dataPost, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.scDataPost).addErrback(cb_err)
 
 	def scDataPost(self, data):
-		findSongs = re.findall('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)"', data)
-		found = False
-		if findSongs:
-			print findSongs
-			(scHash, scTitle, scArtist, scAlbum) = findSongs[0]
-
+		m = re.search('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)".*?"cover":"(.*?)"', data)
+		if m:
+			(scHash, scTitle, scArtist, scAlbum, scCover) = (m.group(1), m.group(2), m.group(3), m.group(4), m.group(5))
+			
 			if scHash:
-				found = True
-				print "hash: ",scHash
+				#print "hash: ",scHash
 				scStream = self._baseurl+scHash
-				print scHash
-				self._callback(scTitle, scStream, scAlbum, scArtist, self.imgurl)
-
-		if not found:
-			self._errback('scHash not found!')
+				self._callback(scTitle, scStream, scAlbum, scArtist, scCover)
+			else:
+				self._errback('scHash not found!')
+		else:
+			m = re.search('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)"', data)
+			if m:
+				(scHash, scTitle, scArtist, scAlbum) = (m.group(1), m.group(2), m.group(3), m.group(4))
+	
+				if scHash:
+					found = True
+					#print "hash: ",scHash
+					scStream = self._baseurl+scHash
+					self._callback(scTitle, scStream, scAlbum, scArtist, self.imgurl)
+				else:
+					self._errback('scHash not found!')
+			else:
+				self._errback('Song not found!')					

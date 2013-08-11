@@ -210,7 +210,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
-	def __init__(self, session, playList, playList2=[], playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True):
+	def __init__(self, session, playList, playList2=[], playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True, listEntryPar=None):
 
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
@@ -275,6 +275,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		else:
 			self.playLen = len(playList2)
 
+		self.listEntryPar=listEntryPar
 		self.returning = False
 		self.pl_entry = ['', '', '', '', '', '', '', '', '']
 		self.plType = plType
@@ -558,9 +559,9 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			self.pl_event.genEvent()
 
 			if self.plType == 'local':
-				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList, self.playIdx, listTitle=self.listTitle, plType=self.plType, title_inr=self.title_inr, queue=self.playlistQ, mp_event=self.pl_event)
+				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList, self.playIdx, listTitle=self.listTitle, plType=self.plType, title_inr=self.title_inr, queue=self.playlistQ, mp_event=self.pl_event, listEntryPar=self.listEntryPar)
 			else:
-				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList2, self.playIdx, listTitle=None, plType=self.plType, title_inr=0, queue=self.playlistQ, mp_event=self.pl_event)
+				self.session.openWithCallback(self.cb_Playlist, SimplePlaylist, self.playList2, self.playIdx, listTitle=None, plType=self.plType, title_inr=0, queue=self.playlistQ, mp_event=self.pl_event, listEntryPar=self.listEntryPar)
 		elif not self.playLen:
 			self.session.open(MessageBox, _("Keine Einträge in der Playlist vorhanden!"), MessageBox.TYPE_INFO, timeout=5)
 
@@ -600,6 +601,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			if data[0] == 1:
 				self.setPlaymode()
 				self.configSaver()
+				self.showCover(self.pl_entry[6])
 			elif data[0] == 2:
 				self.addToPlaylist()
 
@@ -657,6 +659,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 
 	def showCover(self, cover):
 		#print "showCover:", cover
+		if config.mediaportal.sp_infobar_cover_off.value:
+			self.hideSPCover()
+			self["Cover"].hide()
+			return
 		if self.coverBGisHidden:
 			self.showSPCover()
 		self._Cover.getCover(cover)
@@ -722,7 +728,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 
 class SimplePlaylist(Screen):
 
-	def __init__(self, session, playList, playIdx, listTitle=None, plType='local', title_inr=0, queue=None, mp_event=None):
+	def __init__(self, session, playList, playIdx, listTitle=None, plType='local', title_inr=0, queue=None, mp_event=None, listEntryPar=None):
 		self.session = session
 
 		self.plugin_path = mp_globals.pluginPath
@@ -752,6 +758,7 @@ class SimplePlaylist(Screen):
 		self.title_inr = title_inr
 		self.playlistQ = queue
 		self.event = mp_event
+		self.listEntryPar = listEntryPar
 
 		self["title"] = Label("")
 		self["coverArt"] = Pixmap()
@@ -772,7 +779,10 @@ class SimplePlaylist(Screen):
 
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
-		self.chooseMenuList.l.setItemHeight(25)
+		if self.listEntryPar:
+			self.chooseMenuList.l.setItemHeight(self.listEntryPar[3])
+		else:
+			self.chooseMenuList.l.setItemHeight(25)
 		self['streamlist'] = self.chooseMenuList
 
 		self.onClose.append(self.resetEvent)
@@ -796,9 +806,14 @@ class SimplePlaylist(Screen):
 		#self.updateTimer.start(1000, True)
 
 	def playListEntry(self, entry):
-		return [entry,
-			(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[self.title_inr])
-			]
+		if self.listEntryPar:
+			return [entry,
+				(eListboxPythonMultiContent.TYPE_TEXT, self.listEntryPar[0], self.listEntryPar[1], self.listEntryPar[2], self.listEntryPar[3], self.listEntryPar[4], RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[self.listEntryPar[6]]+self.listEntryPar[5]+entry[self.listEntryPar[7]])
+				]
+		else:
+			return [entry,
+				(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[self.title_inr])
+				]
 
 	def showPlaylist(self):
 		print 'showPlaylist:'
@@ -857,6 +872,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Behavior in stop movie', config.mediaportal.sp_on_movie_stop))
 		self.list.append(getConfigListEntry('Behavior on movie end', config.mediaportal.sp_on_movie_eof))
 		self.list.append(getConfigListEntry('Seekbar sensibility', config.mediaportal.sp_seekbar_sensibility))
+		self.list.append(getConfigListEntry('Infobar cover always off', config.mediaportal.sp_infobar_cover_off))
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{

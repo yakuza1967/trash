@@ -1,7 +1,8 @@
 ﻿#	-*-	coding:	utf-8	-*-
 
 from Plugins.Extensions.MediaPortal.resources.imports import *
-from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayerMenu, SimplePlaylistIO
+from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.songstolink import SongstoLink
 
 def SongstoListEntry(entry):
 	return [entry,
@@ -49,13 +50,14 @@ class showSongstoGenre(Screen):
 		scGenre = [("Songs Top 500", "http://songs.to/json/songlist.php?top=all"),
 			("Singles Top 100", "http://songs.to/json/songlist.php?charts=music_single_de"),
 			("Dance Top 50", "http://songs.to/json/songlist.php?charts=music_dance_de"),
-			("Black Top 40", "http://songs.to/json/songlist.php?charts=music_black_de"),
-			("Singles US Top 40", "http://songs.to/json/songlist.php?charts=music_single_us"),
+			("Black Top 20", "http://songs.to/json/songlist.php?charts=music_black_de"),
+			("Singles US Top 20", "http://songs.to/json/songlist.php?charts=music_single_us"),
 			("Singles UK Top 40", "http://songs.to/json/songlist.php?charts=music_single_uk"),
 			("Metal-Rock Top 15", "http://songs.to/json/songlist.php?charts=music_album_mrc"),
 			("Schlager Top 30", "http://songs.to/json/songlist.php?charts=music_schlager_de"),
 			("Singles Jahr 2011", "http://songs.to/json/songlist.php?charts=music_year2011_de"),
 			("Singles Jahr 2012", "http://songs.to/json/songlist.php?charts=music_year2012_de")]
+			#("Album Top 50", "http://songs.to/json/songlist.php?charts=music_album_de")]
 
 		for (scName, scUrl) in scGenre:
 			self.streamList.append((scName, scUrl))
@@ -77,37 +79,36 @@ class showSongstoGenre(Screen):
 	def keyCancel(self):
 		self.close()
 
-class showSongstoAll(Screen, InfoBarBase, InfoBarSeek):
+class showSongstoAll(Screen):
 
 	def __init__(self, session, link, name):
 		self.session = session
 		self.scLink = link
 		self.scGuiName = name
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultPlaylistScreen.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultPlaylistScreen.xml"
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
+
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
 
 		Screen.__init__(self, session)
-		InfoBarBase.__init__(self)
-		InfoBarSeek.__init__(self)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
-			"input_date_time" : self.openMenu,
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
 
-		self["title"] = Label("Songs.to Music Player %s" % self.scGuiName)
-		self["coverArt"] = Pixmap()
-		self["songtitle"] = Label ("")
-		self["artist"] = Label ("")
-		self["album"] = Label ("")
+		self["title"] = Label("Songs.to Music Player")
+		self['ContentTitle'] = Label(self.scGuiName)
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -117,11 +118,9 @@ class showSongstoAll(Screen, InfoBarBase, InfoBarSeek):
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
-		self["streamlist"] = self.streamMenuList
+		self["genreList"] = self.streamMenuList
 
 		self.keyLocked = False
-		self.playing = False
-		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
 
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -133,150 +132,70 @@ class showSongstoAll(Screen, InfoBarBase, InfoBarSeek):
 		findSongs = re.findall('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)".*?"cover":"(.*?)"', data, re.S)
 		if findSongs:
 			for (scHash,scTitle,scArtist,scAlbum,scCover) in findSongs:
-				self.streamList.append((scTitle, scArtist, scAlbum, scCover, scHash))
+				self.streamList.append((decodeHtml(scTitle), decodeHtml(scArtist), scAlbum, scCover, scHash))
 			self.streamMenuList.setList(map(self.streamListEntry, self.streamList))
 			self.keyLocked = False
 
 	def streamListEntry(self, entry):
 		title = entry[1] + " - " + entry[0]
 		return [entry,
-			(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, decodeHtml(title))
+			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 770, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
 			]
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
-	def scRead(self, stationIconLink):
-		downloadPage(stationIconLink, "/tmp/scIcon.jpg").addCallback(self.scCoverShow)
-
-	def scCoverShow(self, picData):
-		if fileExists("/tmp/scIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/scIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-
-	def doEofInternal(self, playing):
-		print "ENDEEEEE"
-		self['streamlist'].down()
-		self.keyOK()
-
-	def lockShow(self):
-		pass
-
-	def unlockShow(self):
-		pass
-
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageUp()
+		self["genreList"].pageUp()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageDown()
-
-	def openMenu(self):
-		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')
-
-	def cb_Menu(self, data):
-		print "cb_Menu:"
-		if data != []:
-			if data[0] == 2 and self.playing:
-				scArtist = self['streamlist'].getCurrent()[0][1]
-				scTitle = self['streamlist'].getCurrent()[0][0]
-				url = ''
-				ltype = 'songsto'
-				token = self['streamlist'].getCurrent()[0][4]
-				album = self['streamlist'].getCurrent()[0][2]
-				imgurl = "http://songs.to/covers/"+self['streamlist'].getCurrent()[0][3]
-				entry = [scTitle, url, scArtist, album, ltype, token, imgurl]
-
-				res = SimplePlaylistIO.addEntry(data[1], entry)
-				if res == 1:
-					self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
-				elif res == 0:
-					self.session.open(MessageBox, _("Eintrag schon vorhanden"), MessageBox.TYPE_INFO, timeout=5)
-				else:
-					self.session.open(MessageBox, _("Fehler!"), MessageBox.TYPE_INFO, timeout=5)
+		self["genreList"].pageDown()
 
 	def keyOK(self):
 		if self.keyLocked:
 			print self.keyLocked
 			return
-		scTitle = self['streamlist'].getCurrent()[0][0]
-		if scTitle:
-			self["songtitle"].setText(scTitle)
 
-		scArtist = self['streamlist'].getCurrent()[0][1]
-		if scArtist:
-			self["artist"].setText(scArtist)
-
-		scAlbum = self['streamlist'].getCurrent()[0][2]
-		if scAlbum:
-			self["album"].setText(scAlbum)
-
-		scHash = self['streamlist'].getCurrent()[0][4]
-		if scHash:
-			#scStream = "http://s.songs.to/data.php?id="+scHash
-			#print scHash
-			scStream = "http://s.songs.to/data.php?id="+scHash
-			print scStream
-			sref = eServiceReference(0x1001, 0, scStream)
-			self.session.nav.playService(sref)
-			self.playing = True
-
-		scCover = self['streamlist'].getCurrent()[0][3]
-		if scCover:
-			scCoverUrl = "http://songs.to/covers/"+scCover
-			self.scRead(scCoverUrl)
+		idx = self["genreList"].getSelectedIndex()
+		self.session.open(SongstoPlayer, self.streamList, 'songstoall', int(idx), self.scGuiName)
 
 	def keyCancel(self):
-		if self.playing:
-			self.session.nav.stopService()
-			self.session.nav.playService(self.lastservice)
-			self.playing = False
 		self.close()
 
-class showSongstoTop(Screen, InfoBarBase, InfoBarSeek):
+class showSongstoTop(Screen):
 
 	def __init__(self, session, link, name):
 		self.session = session
 		self.scLink = link
 		self.scGuiName = name
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultPlaylistScreen.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultPlaylistScreen.xml"
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
+
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
 
 		Screen.__init__(self, session)
-		InfoBarSeek.__init__(self)
-		InfoBarBase.__init__(self)
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
-			"input_date_time" : self.openMenu,
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
 			"right" : self.keyRight,
 			"left" : self.keyLeft
 		}, -1)
 
-		self["title"] = Label("Songs.to Music Player - %s" % self.scGuiName)
-		self["coverArt"] = Pixmap()
-		self["songtitle"] = Label ("")
-		self["artist"] = Label ("")
-		self["album"] = Label ("")
+		self["title"] = Label("Songs.to Music Player")
+		self['ContentTitle'] = Label(self.scGuiName)
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -286,11 +205,9 @@ class showSongstoTop(Screen, InfoBarBase, InfoBarSeek):
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.streamMenuList.l.setItemHeight(25)
-		self["streamlist"] = self.streamMenuList
+		self["genreList"] = self.streamMenuList
 
 		self.keyLocked = False
-		self.playing = False
-		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
 
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -301,140 +218,61 @@ class showSongstoTop(Screen, InfoBarBase, InfoBarSeek):
 	def scDataGet(self, data):
 		findSongs = re.findall('name1":"(.*?)","name2":"(.*?)"', data, re.S)
 		if findSongs:
-			for (scTitle,scArtist) in findSongs:
-				self.streamList.append((scTitle, scArtist))
+			for (scArtist, scTitle) in findSongs:
+				self.streamList.append((decodeHtml(scTitle), decodeHtml(scArtist)))
 			self.streamMenuList.setList(map(self.streamListEntry, self.streamList))
 			self.keyLocked = False
 
 	def streamListEntry(self, entry):
 		title = entry[1] + " - " + entry[0]
 		return [entry,
-			(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, decodeHtml(title))
+			(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 770, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, title)
 			]
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
-	def scRead(self, stationIconLink):
-		downloadPage(stationIconLink, "/tmp/scIcon.jpg").addCallback(self.scCoverShow)
-
-	def scCoverShow(self, picData):
-		if fileExists("/tmp/scIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/scIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
-
-	def doEofInternal(self, playing):
-		print "ENDEEEEE"
-		self['streamlist'].down()
-		self.keyOK()
-
-	def lockShow(self):
-		pass
-
-	def unlockShow(self):
-		pass
-
-	def openMenu(self):
-		self.session.openWithCallback(self.cb_Menu, SimplePlayerMenu, 'extern')
-
-	def cb_Menu(self, data):
-		print "cb_Menu:"
-		if data != []:
-			if data[0] == 2 and self.playing:
-				scArtist = self['streamlist'].getCurrent()[0][0]
-				scTitle = self['streamlist'].getCurrent()[0][1]
-				url = ''
-				ltype = 'songsto'
-				token = ''
-				album = self["album"].getText()
-				entry = [scTitle, url, scArtist, album, ltype, token, '']
-
-				res = SimplePlaylistIO.addEntry(data[1], entry)
-				if res == 1:
-					self.session.open(MessageBox, _("Eintrag hinzugefügt"), MessageBox.TYPE_INFO, timeout=5)
-				elif res == 0:
-					self.session.open(MessageBox, _("Eintrag schon vorhanden"), MessageBox.TYPE_INFO, timeout=5)
-				else:
-					self.session.open(MessageBox, _("Fehler!"), MessageBox.TYPE_INFO, timeout=5)
-
 	def keyLeft(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageUp()
+		self["genreList"].pageUp()
 
 	def keyRight(self):
 		if self.keyLocked:
 			return
-		self['streamlist'].pageDown()
+		self["genreList"].pageDown()
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		scArtist = self['streamlist'].getCurrent()[0][0]
-		scTitle = self['streamlist'].getCurrent()[0][1]
-		title = urllib2.quote(scTitle.encode("utf8"))
-		artist = urllib2.quote(scArtist.encode("utf8"))
-		url = "http://songs.to/json/songlist.php?quickplay=1"
-		dataPost = "data=%7B%22data%22%3A%5B%7B%22artist%22%3A%22"+artist+"%22%2C%20%22album%22%3A%22%22%2C%20%22title%22%3A%22"+title+"%22%7D%5D%7D"
-		getPage(url, method='POST', postdata=dataPost, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.scDataPost).addErrback(self.dataError)
 
-	def scDataPost(self, data):
-		print data
-		print "drin."
-		self.found = False
-		findSongs = re.findall('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)".*?"cover":"(.*?)"', data)
-		if findSongs:
-			print findSongs
-			(scHash, scTitle, scArtist, scAlbum, scCover) = findSongs[0]
-
-			if scTitle:
-				self["songtitle"].setText(scTitle)
-			if scArtist:
-				self["artist"].setText(scArtist)
-			if scAlbum:
-				self["album"].setText(scAlbum)
-			if scHash:
-				scStream = "http://s.songs.to/data.php?id="+scHash
-				print scHash
-				sref = eServiceReference(0x1001, 0, scStream)
-				self.session.nav.playService(sref)
-				self.playing = True
-				self.found = True
-			if scCover:
-				scCoverUrl = "http://songs.to/covers/"+scCover
-				self.scRead(scCoverUrl)
-
-		if not self.found:
-			findSongs = re.findall('"hash":"(.*?)","title":"(.*?)","artist":"(.*?)","album":"(.*?)"', data)
-			if findSongs:
-				print findSongs
-				(scHash, scTitle, scArtist, scAlbum) = findSongs[0]
-
-				if scTitle:
-					self["songtitle"].setText(scTitle)
-				if scArtist:
-					self["artist"].setText(scArtist)
-				if scAlbum:
-					self["album"].setText(scAlbum)
-				if scHash:
-					scStream = "http://s.songs.to/data.php?id="+scHash
-					print scHash
-					sref = eServiceReference(0x1001, 0, scStream)
-					self.session.nav.playService(sref)
-					self.playing = True
+		idx = self["genreList"].getSelectedIndex()
+		self.session.open(SongstoPlayer, self.streamList, 'songstotop', int(idx), self.scGuiName)
 
 	def keyCancel(self):
-		if self.playing:
-			self.session.nav.stopService()
-			self.session.nav.playService(self.lastservice)
-			self.playing = False
 		self.close()
+
+class SongstoPlayer(SimplePlayer):
+
+	def __init__(self, session, playList, songsto_type, playIdx=0, listTitle=None):
+		print "SongstoPlayer:"
+		self.songsto_type = songsto_type
+
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=True, listTitle=listTitle, ltype='songsto', cover=True, autoScrSaver=True, listEntryPar=[20, 0, 860, 25, 0, ' - ', 1, 0])
+
+		self.onLayoutFinish.append(self.getVideo)
+
+	def getVideo(self):
+		sc_artist = self.playList[self.playIdx][1]
+		sc_title = self.playList[self.playIdx][self.title_inr]
+		if self.songsto_type == 'songstotop':
+			sc_album = ''
+			token = ''
+			imgurl = ''
+		else:
+			sc_album = self.playList[self.playIdx][2]
+			token = self.playList[self.playIdx][4]
+			imgurl = self.playList[self.playIdx][3]
+			imgurl = "http://songs.to/covers/"+imgurl
+
+		SongstoLink(self.session).getLink(self.playStream, self.dataError, sc_title, sc_artist, sc_album, token, imgurl)

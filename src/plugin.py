@@ -54,6 +54,7 @@ config.mediaportal.sp_scrsaver = ConfigSelection(default = "off", choices = [("o
 config.mediaportal.sp_on_movie_stop = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service"))])
 config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = [("ask", _("Ask user")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end"))])
 config.mediaportal.sp_seekbar_sensibility = ConfigInteger(default = 10, limits = (1,50))
+config.mediaportal.sp_infobar_cover_off = ConfigYesNo(default = False)
 
 # Sport
 from additions.sport.ran import *
