@@ -115,15 +115,14 @@ class bsSerien(Screen, ConfigListScreen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		serien_raw = re.findall('<ul id=\'serSeries\'>(.*?)</ul>', data, re.S)
-		if serien_raw:
-			serien = re.findall('<li><a.*?href="(.*?)">(.*?)</a></li>', serien_raw[0], re.S)
-			if serien:
-				for (bsUrl,bsTitle) in serien:
-					bsUrl = "http://www.burning-seri.es/" + bsUrl
-					self.streamList.append((decodeHtml(bsTitle),bsUrl))
-					self.streamMenuList.setList(map(bsListEntry, self.streamList))
-				self.keyLocked = False
+		serien_raw = re.search("id='serSeries'>(.*?)</ul>", data, re.S)
+		serien = re.findall('href="(.*?)">(.*?)</a></li>', serien_raw.group(1), re.S)
+		if serien:
+			for (bsUrl,bsTitle) in serien:
+				bsUrl = "http://www.burning-seri.es/" + bsUrl
+				self.streamList.append((decodeHtml(bsTitle),bsUrl))
+				self.streamMenuList.setList(map(bsListEntry, self.streamList))
+			self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
