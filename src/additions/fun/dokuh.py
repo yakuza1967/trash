@@ -6,7 +6,7 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-DOKUH_Version = "DOKUh.de v0.99"
+DOKUH_Version = "DOKUh.de v1.00"
 
 DOKUH_siteEncoding = 'utf-8'
 
@@ -898,12 +898,15 @@ class DOKUHStreams(Screen, ConfigListScreen):
 			if m:
 				v = m.group(1)
 				self.streamListe.append((self.dokuName,v,None,"",None))
-				self.keyLocked	= False
-			else:
-				print "No dokus found !"
-				self.streamListe.append(("No streams found!","","","",""))
 
-		self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
+		if len(self.streamListe) > 0:
+			self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
+			self.keyLocked	= False
+		else:
+			print "No dokus found !"
+			self.streamListe.append(("No streams found!","","","",""))
+			self.streamMenuList.setList(map(DOKUHStreamListEntry, self.streamListe))
+			
 		self.loadPic()
 
 	def getHandlung(self, desc):

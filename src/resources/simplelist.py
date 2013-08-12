@@ -6,14 +6,9 @@ if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/SerienFilm/MovieSelect
 else:
 	from Screens.MovieSelection import MovieSelection
 
-def simplelistGenreListEntry(entry):
-	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
-		]
-
 def simplelistListEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 830, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
 class simplelistGenreScreen(Screen):
@@ -54,7 +49,7 @@ class simplelistGenreScreen(Screen):
 		self.keyLocked = True
 		self['title'] = Label("SimpleList")
 		self['ContentTitle'] = Label("%s" % self.filelist_path)
-		self['name'] = Label("")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("FileList")
 		self['F3'] = Label("GlobalList")
