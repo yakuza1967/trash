@@ -89,6 +89,7 @@ class Radiode(Screen):
 				if data:
 					(stationName, stationLink, stationImage, stationDesc) = data[0]
 					if list == "streamlist":
+						stationImage = 'http://radio.de/images/broadcasts/' + stationImage
 						self.streamList.append((stationName, stationLink, stationImage, stationDesc))
 					else:
 						self.playList.append((stationName, stationLink, stationImage, stationDesc))
