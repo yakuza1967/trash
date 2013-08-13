@@ -367,9 +367,9 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		skins = []
 		for skin in os.listdir("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/"):
 			if os.path.isdir(os.path.join("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/", skin)) and skin != "simpleplayer":
-				skins.append(skin)		
+				skins.append(skin)
 		config.mediaportal.skin.setChoices(skins)
-			
+
 		## Allgemein
 		self.configlist.append(getConfigListEntry("----- Allgemein -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Automatic Update Check:", config.mediaportal.autoupdate))
