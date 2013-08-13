@@ -28,7 +28,13 @@ config.mediaportal.pincode = ConfigPIN(default = 0000)
 config.mediaportal.showporn = ConfigYesNo(default = False)
 config.mediaportal.showgrauzone = ConfigYesNo(default = False)
 config.mediaportal.pingrauzone = ConfigYesNo(default = False)
-config.mediaportal.skin = ConfigSelection(default = "tec", choices = [("tec", _("tec")),("liquidblue", _("liquidblue")), ("original", _("original"))])
+
+skins = []
+for skin in os.listdir("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/"):
+	if os.path.isdir(os.path.join("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/", skin)) and skin != "simpleplayer":
+		skins.append(skin)
+config.mediaportal.skin = ConfigSelection(default = "tec", choices = skins)
+
 config.mediaportal.ansicht = ConfigSelection(default = "wall", choices = [("liste", _("Liste")),("wall", _("Wall"))])
 config.mediaportal.selektor = ConfigSelection(default = "blue", choices = [("blue", _("blau")),("green", _(u"gr\xfcn")),("red", _("rot")),("turkis", _(u"t\xfcrkis"))])
 config.mediaportal.useRtmpDump = ConfigYesNo(default = False)
