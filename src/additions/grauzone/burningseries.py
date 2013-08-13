@@ -467,8 +467,8 @@ class bsStreams(Screen, ConfigListScreen):
 			if streams:
 				for (bsUrl,bsStream) in streams:
 					bsUrl = "http://www.burning-seri.es/" + bsUrl
-					if re.match('.*?(Ecostream|Sockshare|streamclou|Putlocker|Filenuke|MovShare|Novamov|DivxStage|UploadC|NowVideo|VideoWeed|FileNuke|BitShare|putme|limevideo|stream2k|played|putlocker|sockshare|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)',bsStream,re.I):
-						self.streamList.append((bsStream,bsUrl))
+					#if re.match('.*?(Ecostream|Sockshare|streamclou|Putlocker|Filenuke|MovShare|Novamov|DivxStage|UploadC|NowVideo|VideoWeed|FileNuke|BitShare|putme|limevideo|stream2k|played|putlocker|sockshare|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)',bsStream,re.I):
+					self.streamList.append((bsStream,bsUrl))
 				self.streamMenuList.setList(map(bsListEntry, self.streamList))
 				self.keyLocked = False
 
@@ -525,13 +525,17 @@ class bsStreams(Screen, ConfigListScreen):
 		self.session.open(SimplePlayer, [(self.streamname, link, self.coverUrl)], showPlaylist=False, ltype='burningseries', cover=True)
 
 	def findStream(self, data):
-		if re.match(".*?<iframe.*?src=",data, re.S|re.I):
-			test = re.findall('<iframe.*?src=["|\'](http://.*?)["|\']', data, re.S|re.I)
+		test = re.findall('<a href="(.*?)" target="_blank"><span class="icon link_go"></span> Link zum Originalvideo</a>', data)
+		if test:
+			print test
+			get_stream_link(self.session).check_link(test[0], self.got_link, False)
 		else:
-			test = re.findall('<a target=["|\']_blank["|\'] href=["|\'](http://.*?)["|\']', data, re.S|re.I)
-		print test
-
-		get_stream_link(self.session).check_link(test[0], self.got_link, False)
+			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster..."), MessageBox.TYPE_INFO, timeout=3)
+				
+		#if re.match(".*?<iframe.*?src=",data, re.S|re.I):
+		#	test = re.findall('<iframe.*?src=["|\'](http://.*?)["|\']', data, re.S|re.I)
+		#else:
+		#	test = re.findall('<a target=["|\']_blank["|\'] href=["|\'](http://.*?)["|\']', data, re.S|re.I)
 
 	def got_link(self, stream_url):
 		if stream_url == None:

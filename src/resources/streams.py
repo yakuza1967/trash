@@ -68,6 +68,11 @@ class get_stream_link:
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
+				
+			elif re.match('.*?nowvideo.ch', data, re.S):
+				link = data
+				#print link
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
 
 			elif re.match('.*?http://www.uploadc.com', data, re.S):
 				link = data
@@ -863,8 +868,8 @@ class get_stream_link:
 		ar = re.search('url=(.+?)&title', data)
 		if ar:
 			stream_url = ar.group(1)
-			print stream_url
-			self._callback(stream_url)
+			print urllib2.unquote(stream_url)
+			self._callback(urllib2.unquote(stream_url))
 		else:
 			self.stream_not_found()
 
