@@ -95,7 +95,6 @@ class kxMain(Screen):
 		}, -1)
 
 		self['title'] = Label("Kinox.to")
-		self['leftContentTitle'] = Label("M e n u")
 		self['stationIcon'] = Pixmap()
 		self['name'] = Label("Genre auswahl")
 
