@@ -248,7 +248,20 @@ class get_stream_link:
 			elif re.match('.*?mixturecloud.com', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mixturecloud).addErrback(self.errorload)
-				
+
+			elif re.match('.*?allmyvideos.net', data, re.S):
+				link = data
+				if re.match('.*?allmyvideos.net/embed', link, re.S):
+					print "1"
+					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.allmyvids).addErrback(self.errorload)
+				else:
+					print "2"
+					id = re.findall('allmyvideos.net/(.*?)$', link)
+					if id:
+						new_link = "http://allmyvideos.net/embed-%s.html" % id[0]
+						getPage(new_link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.allmyvids).addErrback(self.errorload)
+					else:
+						self.stream_not_found()
 			else:
 				message = self.session.open(MessageBox, _("No supported Stream Hoster, try another one !"), MessageBox.TYPE_INFO, timeout=5)
 		else:
@@ -262,6 +275,15 @@ class get_stream_link:
 		if self.showmsgbox:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
+	def allmyvids(self, data):
+		print "drin"
+		stream_url = re.findall('"file" : "(.*?)"', data)
+		if stream_url:
+			print stream_url
+			self._callback(stream_url[0])
+		else:
+			self.stream_not_found()
+		 
 	def mixturecloud(self, data):
 		file = re.findall("'file': '(.*?)'", data, re.S)
 		streamer = re.findall("'streamer':'(.*?)'", data, re.S)
