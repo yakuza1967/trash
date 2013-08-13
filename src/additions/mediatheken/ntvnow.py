@@ -64,7 +64,7 @@ class NTVnowGenreScreen(Screen):
 						url = "http://www.n-tvnow.de/" + url
 						self.genreliste.append((title,url,image,handlung))
 			self.genreliste = list(set(self.genreliste))
-			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
+			self.genreliste.sort(key=lambda t : t[0].lower())
 			self.chooseMenuList.setList(map(NTVnowGenreListEntry, self.genreliste))
 			self.keyLocked = False
 			self.loadPic()

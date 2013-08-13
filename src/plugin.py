@@ -28,7 +28,13 @@ config.mediaportal.pincode = ConfigPIN(default = 0000)
 config.mediaportal.showporn = ConfigYesNo(default = False)
 config.mediaportal.showgrauzone = ConfigYesNo(default = False)
 config.mediaportal.pingrauzone = ConfigYesNo(default = False)
-config.mediaportal.skin = ConfigSelection(default = "tec", choices = ["tec"])
+
+skins = []
+for skin in os.listdir("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/"):
+	if os.path.isdir(os.path.join("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/", skin)) and skin != "simpleplayer":
+		skins.append(skin)
+config.mediaportal.skin = ConfigSelection(default = "tec", choices = skins)
+
 config.mediaportal.ansicht = ConfigSelection(default = "wall", choices = [("liste", _("Liste")),("wall", _("Wall"))])
 config.mediaportal.selektor = ConfigSelection(default = "blue", choices = [("blue", _("blau")),("green", _(u"gr\xfcn")),("red", _("rot")),("turkis", _(u"t\xfcrkis"))])
 config.mediaportal.useRtmpDump = ConfigYesNo(default = False)
@@ -400,7 +406,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.sport.append(getConfigListEntry("Laola1", config.mediaportal.showLaola1))
 		self.sport.append(getConfigListEntry("Sport1.fm", config.mediaportal.showsport1fm))
 		self.sport.append(getConfigListEntry("Ran.de", config.mediaportal.showRan))
-		self.sport.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.sport.sort(key=lambda t : t[0].lower())
 
 		### Music
 		self.music.append(getConfigListEntry("AllMusicHouse", config.mediaportal.showAllMusicHouse))
@@ -416,7 +422,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.music.append(getConfigListEntry("Musicstream.cc", config.mediaportal.showMusicstreamcc))
 			self.music.append(getConfigListEntry("Songs.to", config.mediaportal.showSongsto))
 			self.music.append(getConfigListEntry("OnlineMusicRecorder.com ", config.mediaportal.showomr))
-		self.music.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.music.sort(key=lambda t : t[0].lower())
 
 		### Fun
 		self.fun.append(getConfigListEntry("Rofl.to", config.mediaportal.showRofl))
@@ -458,7 +464,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.fun.append(getConfigListEntry("Wissen", config.mediaportal.wissen))
 		if astModule:
 			self.fun.append(getConfigListEntry("HeiseVideo", config.mediaportal.showHeiseVideo))
-		self.fun.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.fun.sort(key=lambda t : t[0].lower())
 
 		### Mediatheken
 		self.mediatheken.append(getConfigListEntry("ARD Mediathek", config.mediaportal.showARD))
@@ -477,7 +483,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.mediatheken.append(getConfigListEntry("VOXNOW", config.mediaportal.showVoxnow))
 		self.mediatheken.append(getConfigListEntry("ZDF Mediathek", config.mediaportal.showZDF))
 		self.mediatheken.append(getConfigListEntry("MySpass", config.mediaportal.showmyspass))
-		self.mediatheken.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.mediatheken.sort(key=lambda t : t[0].lower())
 
 		### Porn
 		self.porn.append(getConfigListEntry("4Tube", config.mediaportal.show4tube))
@@ -516,7 +522,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.porn.append(getConfigListEntry("G-Stream-XXX", config.mediaportal.showgstreaminxxx))
 			self.porn.append(getConfigListEntry("PornKino", config.mediaportal.showpornkino))
 			self.porn.append(getConfigListEntry("XXXSaVe", config.mediaportal.showxxxsave))
-		self.porn.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.porn.sort(key=lambda t : t[0].lower())
 
 		### Grauzone
 		if config.mediaportal.showgrauzone.value:
@@ -539,7 +545,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			#self.grauzone.append(getConfigListEntry("Viewster", config.mediaportal.showViewster))
-			self.grauzone.sort(key=lambda t : tuple(t[0][0].lower()))
+			self.grauzone.sort(key=lambda t : t[0].lower())
 
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
 		for x in self.sport:
@@ -1029,10 +1035,10 @@ class haupt_Screen(Screen, ConfigListScreen):
 		else:
 			self['Grauzone'].setText("Grauzone")
 
-		self.mediatheken.sort(key=lambda t : tuple(t[0][0].lower()))
-		self.grauzone.sort(key=lambda t : tuple(t[0][0].lower()))
-		self.funsport.sort(key=lambda t : tuple(t[0][0].lower()))
-		self.porn.sort(key=lambda t : tuple(t[0][0].lower()))
+		self.mediatheken.sort(key=lambda t : t[0][0].lower())
+		self.grauzone.sort(key=lambda t : t[0][0].lower())
+		self.funsport.sort(key=lambda t : t[0][0].lower())
+		self.porn.sort(key=lambda t : t[0][0].lower())
 
 		self["mediatheken"].setList(self.mediatheken)
 		self["mediatheken"].l.setItemHeight(44)
@@ -2222,7 +2228,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 
 		# Sortieren nach abcde..
 		elif config.mediaportal.sortplugins.value == "abc":
-			self.plugin_liste.sort(key=lambda t : tuple(t[0].lower()))
+			self.plugin_liste.sort(key=lambda t : t[0].lower())
 
 		elif config.mediaportal.sortplugins.value == "user":
 			self.plugin_liste.sort(key=lambda x: int(x[4]))

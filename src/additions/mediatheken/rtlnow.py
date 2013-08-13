@@ -84,7 +84,7 @@ class RTLnowGenreScreen(Screen):
 						url = "http://rtl-now.rtl.de/" + url
 						self.genreliste.append((title,url,image,handlung))
 			self.genreliste = list(set(self.genreliste))
-			self.genreliste.sort(key=lambda t : tuple(t[0].lower()))
+			self.genreliste.sort(key=lambda t : t[0].lower())
 			self.chooseMenuList.setList(map(RTLnowGenreListEntry, self.genreliste))
 			self.keyLocked = False
 			self.loadPic()
