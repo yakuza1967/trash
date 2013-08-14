@@ -1,5 +1,7 @@
 #	-*-	coding:	utf-8	-*-
 
+from Components.config import config
+from Screens.MessageBox import MessageBox
 from simpleplayer import SimplePlayer
 from youtubelink import YoutubeLink
 
@@ -15,4 +17,14 @@ class YoutubePlayer(SimplePlayer):
 		dhTitle = self.playList[self.playIdx][self.title_inr]
 		dhVideoId = self.playList[self.playIdx][2]
 		imgurl =  self.playList[self.playIdx][3]
-		YoutubeLink(self.session).getLink(self.playStream, self.dataError, dhTitle, dhVideoId, imgurl=imgurl)
+		YoutubeLink(self.session).getLink(self.playStream, self.ytError, dhTitle, dhVideoId, imgurl=imgurl)
+
+	def ytError(self, error):
+		self.msg = "Title: %s\n%s" % (self.playList[self.playIdx][self.title_inr], error)
+		if config.mediaportal.sp_show_errors.value:
+			self.session.openWithCallback(self.ytError2, MessageBox, str(self.msg), MessageBox.TYPE_INFO, timeout=10)
+		else:
+			self.dataError(self.msg)
+			
+	def ytError2(self, res):
+		self.dataError(self.msg)

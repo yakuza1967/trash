@@ -206,12 +206,12 @@ class SimpleSeekHelper:
 		if self.seekBarLocked:
 			self.seekExit()
 
-class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
+class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarServiceNotifications, InfoBarPVRState, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
 	def __init__(self, session, playList, playList2=[], playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True, listEntryPar=None):
-
+		from enigma import eServiceMP3
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
 		self.session = session
@@ -246,7 +246,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		SimpleSeekHelper.__init__(self)
 		InfoBarMenu.__init__(self)
 		InfoBarNotifications.__init__(self)
-		#InfoBarServiceNotifications.__init__(self)
+		InfoBarServiceNotifications.__init__(self)
 		InfoBarBase.__init__(self)
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
@@ -254,6 +254,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 
 		self.allowPiP = False
 		InfoBarSeek.__init__(self)
+		InfoBarPVRState.__init__(self)
 
 		self.skinName = 'MediaPortal SimplePlayer'
 		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -306,7 +307,55 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		self.configSaver()
 		self.onClose.append(self.playExit)
 		self.onFirstExecBegin.append(self.showIcon)
-		self.onLayoutFinish.append(self.playVideo)
+		self.onFirstExecBegin.append(self.playVideo)
+		
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
+			{
+				eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
+				eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
+				eServiceMP3.evPluginError: self.__evPluginError,
+				eServiceMP3.evStreamingSrcError: self.__evStreamingSrcError
+			})
+
+	def __evAudioDecodeError(self):
+		if not config.mediaportal.sp_show_errors.value:
+			return
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
+		print "[__evAudioDecodeError] audio-codec %s can't be decoded by hardware" % (sTagAudioCodec)
+		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagAudioCodec, type = MessageBox.TYPE_INFO,timeout = 10 )
+
+	def __evVideoDecodeError(self):
+		if not config.mediaportal.sp_show_errors.value:
+			return
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
+		print "[__evVideoDecodeError] video-codec %s can't be decoded by hardware" % (sTagVideoCodec)
+		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagVideoCodec, type = MessageBox.TYPE_INFO,timeout = 10 )
+
+	def __evPluginError(self):
+		if not config.mediaportal.sp_show_errors.value:
+			return
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		print "[__evPluginError]" , message
+		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 10 )
+
+	def __evStreamingSrcError(self):
+		if not config.mediaportal.sp_show_errors.value:
+			return
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		print "[__evStreamingSrcError]", message
+		self.session.open(MessageBox, _("Streaming error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 10 )
 
 	def playVideo(self):
 		print "playVideo:"
@@ -860,7 +909,7 @@ class SimplePlaylist(Screen):
 		return SimplePlayerSummary
 
 class SimpleConfig(ConfigListScreen, Screen):
-	skin = '\n\t\t<screen position="center,center" size="460,200" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="440,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+	skin = '\n\t\t<screen position="center,center" size="460,250" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="440,240" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -873,6 +922,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Behavior on movie end', config.mediaportal.sp_on_movie_eof))
 		self.list.append(getConfigListEntry('Seekbar sensibility', config.mediaportal.sp_seekbar_sensibility))
 		self.list.append(getConfigListEntry('Infobar cover always off', config.mediaportal.sp_infobar_cover_off))
+		self.list.append(getConfigListEntry('Show errors', config.mediaportal.sp_show_errors))
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{
