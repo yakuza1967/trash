@@ -18,7 +18,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-DDLME_Version = "ddl.me v0.94 (experimental)"
+DDLME_Version = "ddl.me v0.95 (experimental)"
 
 DDLME_siteEncoding = 'utf-8'
 
@@ -839,13 +839,10 @@ class DDLMEStreams(Screen, ConfigListScreen):
 
 	def parseData(self, data):
 		print "parseData:"
-		mdesc = re.search('class=\'detailCover\'.*?\'>(.*?)</p>', data)
+		mdesc = re.search('class=\'detailCover\'.*?jpg\'.*?> (.*?)<br><br>', data, re.S)
 		if mdesc:
 			#print "Descr. found"
-			desc = mdesc.group(1)
-			m = re.search('<br><br>', desc)
-			if m:
-				desc = desc[m.end():].strip()
+			desc = mdesc.group(1).strip()
 			desc = decodeHtml(desc)
 		else:
 			desc = "Keine weiteren Info's !"
