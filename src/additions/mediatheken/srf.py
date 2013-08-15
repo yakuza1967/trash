@@ -54,7 +54,7 @@ class SRFGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		sendungen = re.findall('<img\sclass="az_thumb"\ssrc="(.*?)"\swidth="\d+"\sheight="\d+"\salt="(.*?)"\s/></a><h3><a\sclass="sendung_name"\shref="(/player/tv/.*?)">.*?</a></h3>.*?az_description">(.*?)</p>', data, re.S)
+		sendungen = re.findall('<img\sclass="az_thumb.*?data-src2x="(.*?)".*?alt="(.*?)"\s/></a><h3><a\sclass="sendung_name"\shref="(/player/tv/.*?)">.*?</a></h3>.*?az_description">(.*?)</p>', data, re.S)
 		if sendungen:
 			self.genreliste = []
 			for (image, title, url, handlung) in sendungen:
