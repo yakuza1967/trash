@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def ZDFGenreListEntry(entry):
 	return [entry,
@@ -143,21 +144,7 @@ class ZDFSubGenreScreen(Screen):
 		self['name'].setText(streamName)
 		streamHandlung = self['List'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(streamHandlung))
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		CoverHelper(self['Pic']).getCover(streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -260,21 +247,7 @@ class ZDFFilmeListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamHandlung = self['List'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(streamHandlung))
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		CoverHelper(self['Pic']).getCover(streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -289,7 +262,7 @@ class ZDFFilmeListeScreen(Screen):
 
 	def get_xml(self, data):
 		print "xml data"
-		stream = re.findall('basetype="h264_aac_mp4_http_na_na".*?<quality>veryhigh</quality>.*?<url>(http://rodl.zdf.de.*?mp4)</url>', data, re.S)
+		stream = re.findall('basetype="h264_aac_mp4.*?".*?<quality>veryhigh</quality>.*?<url>(http://[nrodl|rodl].*?zdf.de.*?.mp4)</url>', data, re.S)
 		if stream:
 			playlist = []
 			playlist.append((self.streamName, stream[0]))
