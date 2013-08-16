@@ -351,7 +351,7 @@ class ARDFilmeListeScreen(Screen):
 						Q0P = d
 
 			if len(Q0P) > 0:
-				if "flashmedia.radiobremen.de" or "fc-ondemand.radiobremen.de" in Q0H:
+				if "flashmedia.radiobremen.de" in Q0H or "fc-ondemand.radiobremen.de" in Q0H:
 					host = Q0H.split('mediabase/')[0]
 					playpath1 = Q0H.split('/mediabase/')[1]
 					playpath2 = Q0P[4:]
@@ -368,22 +368,6 @@ class ARDFilmeListeScreen(Screen):
 			elif len(Q1P) > 0:
 				host = Q1H
 				playpath = Q1P
-
-			#
-			# Broadcaster erkennen. Derzeit nur fuer SWR und SR.
-			#
-			ard = "mvideos.daserste.de"
-			br = "cdn-storage.br.de"
-			hr = "www.hr.gl-systemhaus.de"
-			mdr = "x4100mp4"
-			ndr = "media.ndr.de"
-			rb = "httpmedia.radiobremen.de"
-			rbb = "http-stream.rbb-online.de"
-			sr = "sr.fcod"
-			swr = "ios-ondemand.swr.de"
-			ts = "media.tagesschau.de"
-			wdr = "http-ras.wdr.de"
-			#
 
 			self.keyLocked = False
 			self['name'].setText("Folgen Auswahl")
