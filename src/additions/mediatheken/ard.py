@@ -1,9 +1,7 @@
-#
-# ARD-Mediathek von chroma_key
-#
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def ARDGenreListEntry(entry):
 	return [entry,
@@ -121,24 +119,17 @@ class ARDSubGenreScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		# chroma_key: Beispiel-URL fuer Smartphones... http://m.ardmediathek.de/Sendungen-A-Z?pageId=13932746 .... Auf der koennte man zwar wesentlich leichter aufbauen, da man hier auch die hoechste Qualitaet leichter
-		# er-parsen kann, aber leider werden auch deutlich weniger Clips hierfuer gehostet ..... Beispiel... http://m.ardmediathek.de/coldmirror?docId=10017896&pageId=13932914
-		# chroma_key: Der RSS-Feed ist super, hat scheinbar gleichviele Treffer wie die hier verwendeten Links, und hat dafuer sogar ausfuehrliche Inhaltsangaben (Metadaten, die bei dem, hier Verwendeten
-		# fehlen) doch leider fehlt den RSS-Feeds ein Vorschau-Bildchen, sowie die Duration.....Beispiel...  url = "http://www.ardmediathek.de/export/rss/id=10017896" (id ist die docId)
-		# chroma_key: URL fuer eine spaetere, einzubauende Suchfunktion (wenn man zb nach "coca cola" suchen wuerde)... http://www.ardmediathek.de/suche?s=coca+cola
 		self.keyLocked = True
 		url = "http://www.ardmediathek.de/ard/servlet/ajax-cache/3474820/view=list/initial=%s/index.html" % (self.streamGenreLink)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		sendungen = re.findall('<img src="(.*?)".*?<a href=".*?documentId=(.*?)".*?data-xtclib=".*?">\n\s+(.*?)\n\s+</a>.*?<span class="mt-count">(.*?)</span>.*?<span class="mt-channel">(.*?)</span>', data, re.S)
+		sendungen = re.findall('<a\shref=".*?documentId=(.*?)".*?data-xtclib=".*?">\n\s+(.*?)\n\s+</a>.*?<span\sclass="mt-count">(.*?)</span>.*?<span\sclass="mt-channel">(.*?)</span>', data, re.S)
 		if sendungen:
-			for (image,id,title,ausgaben,sender) in sendungen:
-				image = image.replace('bild-xs16x9','bild-s16x9')
-				image = "http://www.ardmediathek.de%s" % image
+			for (id,title,ausgaben,sender) in sendungen:
 				url = "http://www.ardmediathek.de/ard/servlet/ajax-cache/3516962/view=list/documentId=%s" %id
 				zusatzinfo = "%s - %s" % (sender,ausgaben)
-				self.genreliste.append((decodeHtml(title),url,image,zusatzinfo))
+				self.genreliste.append((decodeHtml(title),url,id,zusatzinfo))
 		else:
 			self.genreliste.append(('Keine Sendungen mit diesem Buchstaben vorhanden.', None, None, None))
 		self.chooseMenuList.setList(map(ARDGenreListEntry, self.genreliste))
@@ -149,28 +140,18 @@ class ARDSubGenreScreen(Screen):
 		printl(error,self,"E")
 
 	def loadPic(self):
-		streamPic = self['List'].getCurrent()[0][2]
-		if streamPic == None:
-			return
+		id = self['List'].getCurrent()[0][2]
+		url = 'http://www.ardmediathek.de/sendung/?documentId=%s' %id
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.gotPic).addErrback(self.dataError)
+
+	def gotPic(self, data):
+		pic = re.search('name="gsaimg512"\scontent="(.*?)"/>', data)
+		if pic:
+			CoverHelper(self['Pic']).getCover(pic.group(1))
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamHandlung = self['List'].getCurrent()[0][3]
 		self['handlung'].setText(streamHandlung)
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -262,11 +243,9 @@ class ARDFilmeListeScreen(Screen):
 				seite = "Seite:\t%s%s" % (a,b)
 		else:
 			seite = "Seite:\t1 von 1"
-		folgen = re.findall('img src="(.*?)".*?<a href="(.*?)".*?xtclib=".*?">(.*?)</a>.*?aus: (.*?)</p>.*?"mt-airtime">(.*?)</span>.*?>(.*?)</span>', data, re.S)
+		folgen = re.findall('<a\shref="(.*?)".*?xtclib=".*?">(.*?)</a>.*?aus:\s(.*?)</p>.*?"mt-airtime">(.*?)</span>.*?>(.*?)</span>', data, re.S)
 		if folgen:
-			for (image,url,title,sendung,airtime,sender) in folgen:
-				image = image.replace('bild-s16x9','bild-m16x9')
-				image = "http://www.ardmediathek.de%s" % image
+			for (url,title,sendung,airtime,sender) in folgen:
 				if airtime:
 					if len(airtime) == 0:
 						date = "Keine Angabe"
@@ -278,7 +257,7 @@ class ARDFilmeListeScreen(Screen):
 					date = airtime[:8]
 					dur = airtime[9:]
 				handlung = "Sendung:\t%s\nClip vom:\t%s\nBroadcaster:\t%s\nDauer:\t>> %s <<\n\n%s" % (decodeHtml(sendung),date,sender,dur,seite)
-				self.filmliste.append((decodeHtml(title),url,handlung,image))
+				self.filmliste.append((decodeHtml(title),url,handlung))
 		else:
 			self.filmliste.append(('Keine Folgen gefunden.', None, None, None))
 		self.chooseMenuList.setList(map(ARDFilmListEntry, self.filmliste))
@@ -286,28 +265,20 @@ class ARDFilmeListeScreen(Screen):
 		self.loadPic()
 
 	def loadPic(self):
-		streamPic = self['List'].getCurrent()[0][3]
-		if streamPic == None:
-			return
+		url = self['List'].getCurrent()[0][1]
+		url = "http://www.ardmediathek.de%s" % url
+		print url
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.gotPic).addErrback(self.dataError)
+
+	def gotPic(self, data):
+		print data
+		pic = re.search('name="gsaimg512"\scontent="(.*?)"/>', data)
+		if pic:
+			CoverHelper(self['Pic']).getCover(pic.group(1))
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamHandlung = self['List'].getCurrent()[0][2]
 		self['handlung'].setText(streamHandlung)
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -394,7 +365,6 @@ class ARDFilmeListeScreen(Screen):
 				playlist = []
 				playlist.append((self.streamName, playpath))
 				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='ard')
-
 
 	def keyLeft(self):
 		if self.keyLocked:
