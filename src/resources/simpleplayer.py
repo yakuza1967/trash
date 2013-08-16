@@ -211,7 +211,15 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 	ALLOW_SUSPEND = True
 
 	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True, listEntryPar=None, playList2=[]):
-		from enigma import eServiceMP3
+		try:
+			from enigma import eServiceMP3
+		except:
+			is_eServiceMP3 = False
+			print "No MP3 service"
+		else:
+			is_eServiceMP3 = True
+			print "MP3 service imported"
+			
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
 		self.session = session
@@ -309,13 +317,14 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		self.onFirstExecBegin.append(self.showIcon)
 		self.onFirstExecBegin.append(self.playVideo)
 		
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
-				eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
-				eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
-				eServiceMP3.evPluginError: self.__evPluginError,
-				eServiceMP3.evStreamingSrcError: self.__evStreamingSrcError
-			})
+		if is_eServiceMP3:
+			self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
+				{
+					eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
+					eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
+					eServiceMP3.evPluginError: self.__evPluginError,
+					eServiceMP3.evStreamingSrcError: self.__evStreamingSrcError
+				})
 
 	def __evAudioDecodeError(self):
 		if not config.mediaportal.sp_show_errors.value:
