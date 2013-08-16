@@ -351,7 +351,7 @@ class ARDFilmeListeScreen(Screen):
 						Q0P = d
 
 			if len(Q0P) > 0:
-				if "flashmedia.radiobremen.de" in Q0H:
+				if "flashmedia.radiobremen.de" or "fc-ondemand.radiobremen.de" in Q0H:
 					host = Q0H.split('mediabase/')[0]
 					playpath1 = Q0H.split('/mediabase/')[1]
 					playpath2 = Q0P[4:]
