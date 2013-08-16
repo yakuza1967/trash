@@ -585,7 +585,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			elif ltype == 'myvideo':
 				token = self.playList2[self.playIdx][6]
 				MyvideoLink(self.session).getLink(self.playStream, self.dataError, titel, url, token, imgurl)
-			elif ltype == 'songsto':
+			elif ltype == 'songsto' and not url:
 				token = self.playList2[self.playIdx][6]
 				SongstoLink(self.session).getLink(self.playStream, self.dataError, titel, artist, album, token, imgurl)
 			elif ltype == 'canna':
