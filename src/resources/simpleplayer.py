@@ -210,7 +210,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
-	def __init__(self, session, playList, playList2=[], playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True, listEntryPar=None):
+	def __init__(self, session, playList, playIdx=0, playAll=False, listTitle=None, plType='local', title_inr=0, cover=False, ltype='', autoScrSaver=False, showPlaylist=True, listEntryPar=None, playList2=[]):
 		from enigma import eServiceMP3
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
