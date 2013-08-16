@@ -286,7 +286,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		self.cover = cover
 		self.ltype = ltype
 		self.playlistQ = Queue.Queue(0)
-		self.pl_status = (0, '', '', '', '')
+		self.pl_status = (0, '', '', '', '', '')
 		self.pl_event = SimpleEvent()
 		self['spcoverframe'] = Pixmap()
 		self['spcoverfg'] = Pixmap()
