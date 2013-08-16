@@ -72,7 +72,6 @@ class gronkhGenreScreen(Screen):
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
-		print phImage
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
 		else:

@@ -236,7 +236,6 @@ class putpattvFilmScreen(Screen):
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][3]
-		print phImage
 		if not phImage == None:
 			downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
 		else:

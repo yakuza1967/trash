@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def netzKinoGenreListEntry(entry):
 	return [entry,
@@ -130,23 +131,8 @@ class netzKinoFilmeScreen(Screen):
 	def showInfos(self):
 		nkTitle = self['genreList'].getCurrent()[0][0]
 		nkImage = self['genreList'].getCurrent()[0][1]
-		print nkImage
 		self['name'].setText(nkTitle)
-		downloadPage(nkImage, "/tmp/nkIcon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/nkIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/nkIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(nkImage)
 
 	def keyLeft(self):
 		if self.keyLocked:

@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 Sbox = [
     0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,
@@ -296,33 +297,8 @@ class pornhubGenreScreen(Screen):
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
-		print phImage
 		if not phImage == None:
-			downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
-		else:
-			self.ShowCoverNone()
-
-	def ShowCover(self, picData):
-		picPath = "/tmp/phIcon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		if fileExists(picPath):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+			CoverHelper(self['coverArt']).getCover(phImage)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -443,25 +419,10 @@ class pornhubFilmScreen(Screen):
 		phRuntime = self['genreList'].getCurrent()[0][3]
 		phViews = self['genreList'].getCurrent()[0][4]
 		phAdded = self['genreList'].getCurrent()[0][5]
-		print phImage
 		self['name'].setText(phTitle)
 		self['views'].setText(phViews)
 		self['runtime'].setText(phRuntime)
-		downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/phIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/phIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(phImage)
 
 	def keyOK(self):
 		if self.keyLocked:

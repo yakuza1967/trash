@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def xhamsterGenreListEntry(entry):
 	return [entry,
@@ -198,26 +199,9 @@ class xhamsterFilmScreen(Screen):
 		ptTitle = self['genreList'].getCurrent()[0][0]
 		ptImage = self['genreList'].getCurrent()[0][1]
 		ptRuntime = self['genreList'].getCurrent()[0][3]
-		self.ptRead(ptImage)
 		self['name'].setText(ptTitle)
 		self['runtime'].setText(ptRuntime)
-
-	def ptRead(self, stationIconLink):
-		downloadPage(stationIconLink, "/tmp/xhIcon.jpg").addCallback(self.ptCoverShow)
-
-	def ptCoverShow(self, picData):
-		if fileExists("/tmp/xhIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/xhIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(ptImage)
 
 	def dataError(self, error):
 		printl(error,self,"E")
