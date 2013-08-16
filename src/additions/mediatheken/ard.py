@@ -145,13 +145,13 @@ class ARDSubGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.gotPic).addErrback(self.dataError)
 
 	def gotPic(self, data):
-		pic = re.search('name="gsaimg512"\scontent="(.*?)"/>', data)
-		if pic:
-			CoverHelper(self['Pic']).getCover(pic.group(1))
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamHandlung = self['List'].getCurrent()[0][3]
 		self['handlung'].setText(streamHandlung)
+		pic = re.search('name="gsaimg512"\scontent="(.*?)"/>', data)
+		if pic:
+			CoverHelper(self['Pic']).getCover(pic.group(1))
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -271,14 +271,13 @@ class ARDFilmeListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.gotPic).addErrback(self.dataError)
 
 	def gotPic(self, data):
-		print data
-		pic = re.search('name="gsaimg512"\scontent="(.*?)"/>', data)
-		if pic:
-			CoverHelper(self['Pic']).getCover(pic.group(1))
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamHandlung = self['List'].getCurrent()[0][2]
 		self['handlung'].setText(streamHandlung)
+		pic = re.search('name="gsaimg512"\scontent="(.*?)"/>', data)
+		if pic:
+			CoverHelper(self['Pic']).getCover(pic.group(1))
 
 	def keyOK(self):
 		if self.keyLocked:
