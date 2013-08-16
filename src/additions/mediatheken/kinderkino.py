@@ -1,7 +1,7 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
-import json
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def kinderKinoListEntry(entry):
 	return [entry,
@@ -79,21 +79,7 @@ class kinderKinoScreen(Screen):
 		kkPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(kkTitle)
 		self['page'].setText(str(self.page))
-		downloadPage(kkPicLink, "/tmp/kkPic.jpg").addCallback(self.roflCoverShow)
-
-	def roflCoverShow(self, data):
-		if fileExists("/tmp/kkPic.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kkPic.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		CoverHelper(self['Pic']).getCover(kkPicLink)
 
 	def keyPageDown(self):
 		print "PageDown"

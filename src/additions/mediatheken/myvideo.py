@@ -1,6 +1,7 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.myvideolink import MyvideoLink
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def myVideoGenreListEntry(entry):
 	return [entry,
@@ -136,21 +137,7 @@ class myVideoFilmScreen(Screen):
 		self['name'].setText(myTitle)
 		self['page'].setText(str(self.page))
 		self['handlung'].setText(myHandlung)
-		downloadPage(myPicLink, "/tmp/myPic.jpg").addCallback(self.roflCoverShow)
-
-	def roflCoverShow(self, data):
-		if fileExists("/tmp/myPic.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/myPic.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		CoverHelper(self['Pic']).getCover(myPicLink)
 
 	def keyPageDown(self):
 		print "PageDown"

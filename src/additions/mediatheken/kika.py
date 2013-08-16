@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def kikaListEntry(entry):
 	return [entry,
@@ -141,7 +142,6 @@ class kikaFilmListeScreen(Screen):
 	def loadPageData(self, data):
 		kiVideos = re.findall('href="(\?id=.*?programm=.*?)".*?<img alt="" src="..(.*?)".*?</label><br />(.*?)<br /><br />Sendedatum:.(.*?)<br />', data, re.S)
 		if kiVideos:
-			print "ja"
 			self.filmliste = []
 			for (url,image,title,datum) in kiVideos:
 				url = "http://kikaplus.net/clients/kika/kikaplus/index.php%s" % url.replace('&amp;','&')
@@ -149,27 +149,14 @@ class kikaFilmListeScreen(Screen):
 				self.filmliste.append((title,datum,url,image))
 			self.chooseMenuList.setList(map(kikaListEntry, self.filmliste))
 			self.keyLocked = False
+			self.loadPic()
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def loadPic(self):
 		streamPic = self['liste'].getCurrent()[0][3]
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def keyLeft(self):
 		if self.keyLocked:
