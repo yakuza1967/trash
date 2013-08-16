@@ -326,6 +326,11 @@ class ARDFilmeListeScreen(Screen):
 		printl(error,self,"E")
 
 	def get_Link(self, data):
+		fsk = re.search('class="fsk">(.*?)</div>', data, re.S)
+		if fsk:
+			message = self.session.open(MessageBox, _(fsk.group(1)), MessageBox.TYPE_INFO, timeout=5)
+			self.keyLocked = False
+			return
 		qualitycheck = re.findall('mediaCollection.addMediaStream\((.*?),\s+(.*?),\s+"(.*?)",\s+"(.*?)",.*?\)', data, re.S)
 		if qualitycheck:
 			Q0P = ""
@@ -345,10 +350,11 @@ class ARDFilmeListeScreen(Screen):
 					if d[-4:] == ".mp4":
 						Q1H = c
 						Q1P = d
-				elif int(a+b) >= 0:
-					if re.search(".mp4", d, re.S):
-						Q0H = c
-						Q0P = d
+				elif int(a+b) >= 1:
+					if not re.search(".mp4.csmil", d, re.S):
+						if re.search(".mp4", d, re.S):
+							Q0H = c
+							Q0P = d
 
 			if len(Q0P) > 0:
 				if "flashmedia.radiobremen.de" in Q0H or "fc-ondemand.radiobremen.de" in Q0H:
