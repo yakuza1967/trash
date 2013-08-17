@@ -54,7 +54,7 @@
   <widget source="global.CurrentTime" render="Label" position="1136,575" size=" 70,24" font="mediaportal;24" transparent="1" backgroundColor="#00000000">
   <convert type="ClockToText">Default</convert>
 </widget>
-  <eLabel text="RES:" position="1013,630" size="42,17" font="mediaportal; 16" backgroundColor="#00000000" foregroundColor="grey" transparent="1" />
+  <eLabel text="RES:" position="1013,630" size="42,17" font="mediaportal; 16" backgroundColor="#00000000" foregroundColor="#00bbbbbb" transparent="1" />
   <widget source="session.CurrentService" render="Label" position="1045,630" size="40,17" backgroundColor="#00000000" transparent="1" font="mediaportal; 16" halign="right">
     <convert type="ServiceInfo">VideoWidth</convert>
   </widget>
