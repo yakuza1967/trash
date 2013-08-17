@@ -7,7 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-CF_Version = "Clipfish.de v0.97 (experimental)"
+CF_Version = "Clipfish.de v0.98 (experimental)"
 
 CF_siteEncoding = 'utf-8'
 
@@ -45,6 +45,7 @@ class ClipfishPlayer(SimplePlayer):
 
 		if m:
 			url = m.group(1)
+			#print "url:",url
 			if url[0:4] != "http":
 				url = "http://www.clipfish.de" + url
 
@@ -535,7 +536,10 @@ class CF_FilmListeScreen(Screen):
 						url = m1.group(1)
 						img = m1.group(3)
 
-					self.musicListe.append((title, "%s%s" % (self.baseUrl, url), img))
+					if url[0:4] != "http":
+						url = "%s%s" % (self.baseUrl, url)
+
+					self.musicListe.append((title, url, img))
 			else:
 				a = l
 
