@@ -982,8 +982,7 @@ class SimplePlayerMenu(Screen):
 			self.liste.append(('Open local playlist', 4))
 		if VideoSetupPresent:
 			self.liste.append(('A/V Settings', 5))
-		else:
-			self.liste.append(('E2 Mainmenu', 6))
+		self.liste.append(('Mainmenu', 6))
 		self['menu'] = MenuList(self.liste)
 
 	def openConfig(self):
