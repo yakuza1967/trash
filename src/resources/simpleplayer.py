@@ -270,6 +270,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		self.skinName = 'MediaPortal SimplePlayer'
 		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
 
+		self.isTSVideo = False
 		self.showGlobalPlaylist = True
 		self.showPlaylist = showPlaylist
 		self.scrSaver = ''
@@ -371,6 +372,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 
 	def playVideo(self):
 		print "playVideo:"
+		self.isTSVideo = False
 		if self.seekBarLocked:
 			self.cancelSeek()
 		self.resetMySpass()
@@ -394,8 +396,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 
 		if url.endswith('.ts'):
 			sref = eServiceReference(0x0001, 0, url)
+			self.isTSVideo = True
 		else:
 			sref = eServiceReference(0x1001, 0, url)
+			self.isTSVideo = False
 
 		pos = title.find('. ', 0, 5)
 		if pos > 0:
@@ -456,7 +460,9 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			self.playRandom(config.mediaportal.sp_on_movie_stop.value)
 
 	def seekFwd(self):
-		if self.seekBarShown and not self.seekBarLocked:
+		if self.isTSVideo:
+			InfoBarSeek.seekFwd(self)
+		elif self.seekBarShown and not self.seekBarLocked:
 			self.initSeek()
 		elif self.seekBarLocked:
 			self.seekRight()
@@ -464,7 +470,9 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			self.playNextStream(config.mediaportal.sp_on_movie_stop.value)
 
 	def seekBack(self):
-		if self.seekBarShown and not self.seekBarLocked:
+		if self.isTSVideo:
+			InfoBarSeek.seekBack(self)
+		elif self.seekBarShown and not self.seekBarLocked:
 			self.initSeek()
 		elif self.seekBarLocked:
 			self.seekLeft()
