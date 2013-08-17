@@ -182,9 +182,10 @@ class extremetubeFilmScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadData).addErrback(self.dataError)
 
 	def loadData(self, data):
-		lastp = re.search('class="pagination.*href=".*?page=(.*?)"></a>', data, re.S)
+		lastparse = re.search('class="pagination(.*?)</ul>', data, re.S)
+		lastp = re.findall('<li.*?paginator.*?(\d+).*?/li>', lastparse.group(1), re.S)
 		if lastp:
-			lastp = lastp.group(1)
+			lastp = lastp[-1]
 			print lastp
 			self.lastpage = int(lastp)
 		else:

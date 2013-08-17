@@ -68,7 +68,7 @@ class get_stream_link:
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
-				
+
 			elif re.match('.*?nowvideo.ch', data, re.S):
 				link = data
 				#print link
@@ -283,7 +283,7 @@ class get_stream_link:
 			self._callback(stream_url[0])
 		else:
 			self.stream_not_found()
-		 
+
 	def mixturecloud(self, data):
 		file = re.findall("'file': '(.*?)'", data, re.S)
 		streamer = re.findall("'streamer':'(.*?)'", data, re.S)
@@ -293,7 +293,7 @@ class get_stream_link:
 			self._callback(stream_url)
 		else:
 			self.stream_not_found()
-	
+
 	def vidx(self, data, url):
 		op = re.findall('type="hidden" name="op".*?value="(.*?)"', data, re.S)
 		id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
