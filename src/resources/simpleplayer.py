@@ -163,6 +163,7 @@ class SimpleSeekHelper:
 			self.percent = 100.0
 
 	def numberKeySeek(self, val):
+		#print "numberKeySeek:"
 		pts = int(float(self.length[1]) / 100.0 * self.percent) + val * 90000
 		self.percent = pts * 100 / float(self.length[1])
 		if self.percent < 0.0:
@@ -171,7 +172,8 @@ class SimpleSeekHelper:
 			self.percent = 100.0
 
 		self.seekOK()
-		self.doShow()
+		if config.usage.show_infobar_on_skip.value:
+			self.doShow()
 
 	def doMySpassSeekTo(self, seekpos):
 		service = self.session.nav.getCurrentService()
@@ -232,6 +234,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			self.skin = f.read()
 			f.close()
 
+		self.setActionPrio()
 		self["actions"] = ActionMap(["WizardActions",'MediaPlayerSeekActions',"EPGSelectActions",'MoviePlayerActions','ColorActions','InfobarActions'],
 		{
 			"leavePlayer": self.leavePlayer,
@@ -249,7 +252,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			"seekdef:7": self.Key7,
 			"seekdef:9": self.Key9
 
-		}, -2)
+		}, self.action_prio)
 
 		SimpleSeekHelper.__init__(self)
 		InfoBarMenu.__init__(self)
@@ -784,6 +787,12 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		print "createSummary"
 		return SimplePlayerSummary
 
+	def setActionPrio(self):
+		if config.mediaportal.sp_use_number_seek.value:
+			self.action_prio = -2
+		else:
+			self.action_prio = -1
+
 class SimplePlaylist(Screen):
 
 	def __init__(self, session, playList, playIdx, listTitle=None, plType='local', title_inr=0, queue=None, mp_event=None, listEntryPar=None):
@@ -932,6 +941,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Seekbar sensibility', config.mediaportal.sp_seekbar_sensibility))
 		self.list.append(getConfigListEntry('Infobar cover always off', config.mediaportal.sp_infobar_cover_off))
 		self.list.append(getConfigListEntry('Show errors', config.mediaportal.sp_show_errors))
+		self.list.append(getConfigListEntry('Use SP number seek', config.mediaportal.sp_use_number_seek))
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{

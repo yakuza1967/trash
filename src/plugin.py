@@ -62,6 +62,7 @@ config.mediaportal.sp_on_movie_eof = ConfigSelection(default = "ask", choices = 
 config.mediaportal.sp_seekbar_sensibility = ConfigInteger(default = 10, limits = (1,50))
 config.mediaportal.sp_infobar_cover_off = ConfigYesNo(default = False)
 config.mediaportal.sp_show_errors = ConfigYesNo(default = False)
+config.mediaportal.sp_use_number_seek = ConfigYesNo(default = True)
 
 # Sport
 from additions.sport.ran import *
