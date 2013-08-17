@@ -37,9 +37,9 @@ class show_HSC_Genre(Screen):
 
 
 		self['title'] = Label(HSC_Version)
-		self['ContentTitle'] = Label("Channel Auswahl")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['ContentTitle'] = Label("Hörspiel Channels")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")

@@ -38,8 +38,8 @@ class scienceTvGenreScreen(Screen):
 
 		self['title'] = Label(STV_Version)
 		self['ContentTitle'] = Label("M e n ü")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")

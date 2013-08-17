@@ -57,14 +57,13 @@ class show_HSH_Genre(Screen):
 			"up"	: self.keyUp,
 			"down"	: self.keyDown,
 			"left"	: self.keyLeft,
-			"right"	: self.keyRight,
-			"red"	: self.keyRed
+			"right"	: self.keyRight
 		}, -1)
 
 		self['title'] = Label(HSH_Version)
-		self['ContentTitle'] = Label("Hörspiel Auswahl")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['ContentTitle'] = Label("Hörspiel Genres")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
@@ -147,9 +146,6 @@ class show_HSH_Genre(Screen):
 		print "HörspielHouse.de:"
 		self.setMenu(0, True)
 		self.keyLocked = False
-
-	def keyRed(self):
-		pass
 
 	def keyUp(self):
 		self['genreList'].up()

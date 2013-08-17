@@ -221,7 +221,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		else:
 			is_eServiceMP3 = True
 			print "MP3 service imported"
-			
+
 		Screen.__init__(self, session)
 		print "SimplePlayer:"
 		self.session = session
@@ -320,7 +320,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		self.onClose.append(self.playExit)
 		self.onFirstExecBegin.append(self.showIcon)
 		self.onFirstExecBegin.append(self.playVideo)
-		
+
 		if is_eServiceMP3:
 			self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 				{
@@ -822,7 +822,8 @@ class SimplePlaylist(Screen):
 		self["actions"] = ActionMap(["OkCancelActions",'MediaPlayerSeekActions',"EPGSelectActions",'ColorActions','InfobarActions'],
 		{
 			'cancel':	self.exit,
-			'red':		self.red,
+			'red':		self.exit,
+			'blue':		self.deleteEntry,
 			'ok': 		self.ok
 		}, -2)
 
@@ -842,12 +843,12 @@ class SimplePlaylist(Screen):
 		self["artist"] = Label ("")
 		self["album"] = Label ("")
 		if self.plType == 'global':
-			self['F1'] = Label("Löschen")
+			self['F4'] = Label("Löschen")
 		else:
-			self['F1'] = Label("")
+			self['F4'] = Label("")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
-		self['F4'] = Label("")
+		self['F1'] = Label("Exit")
 
 		#self.updateTimer = eTimer()
 		#self.updateTimer.callback.append(self.updateStatus)
@@ -911,7 +912,7 @@ class SimplePlaylist(Screen):
 		print "getCover:", url
 		self._Cover.getCover(url)
 
-	def red(self):
+	def deleteEntry(self):
 		if self.plType == 'global':
 			idx = self['streamlist'].getSelectedIndex()
 			self.close([idx,'del',self.playList])

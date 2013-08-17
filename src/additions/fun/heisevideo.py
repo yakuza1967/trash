@@ -40,9 +40,9 @@ class HeiseTvGenreScreen(Screen):
 
 
 		self['title'] = Label(HTV_Version)
-		self['ContentTitle'] = Label("Auswahl")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['ContentTitle'] = Label("Genres")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")

@@ -125,14 +125,13 @@ class show_CF_Genre(Screen):
 			"up"	: self.keyUp,
 			"down"	: self.keyDown,
 			"left"	: self.keyLeft,
-			"right"	: self.keyRight,
-			"red"	: self.keyRed
+			"right"	: self.keyRight
 		}, -1)
 
 		self['title'] = Label(CF_Version)
-		self['ContentTitle'] = Label("Genre Auswahl")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['ContentTitle'] = Label("Genres")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
@@ -238,9 +237,6 @@ class show_CF_Genre(Screen):
 		print "Clipfish.de:"
 		self.setMenu(0, True)
 		self.keyLocked = False
-
-	def keyRed(self):
-		pass
 
 	def keyUp(self):
 		self['genreList'].up()

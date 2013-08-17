@@ -39,9 +39,9 @@ class show_CAR_Genre(Screen):
 
 
 		self['title'] = Label(CAR_Version)
-		self['ContentTitle'] = Label("Channel Auswahl")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['ContentTitle'] = Label("Car Channels")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")

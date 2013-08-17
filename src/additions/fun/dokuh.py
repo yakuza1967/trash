@@ -57,14 +57,13 @@ class showDOKUHGenre(Screen):
 			"up"	: self.keyUp,
 			"down"	: self.keyDown,
 			"right"	: self.keyRight,
-			"left"	: self.keyLeft,
-			"red"	: self.keyRed
+			"left"	: self.keyLeft
 		}, -1)
 
 		self['title'] = Label(DOKUH_Version)
-		self['ContentTitle'] = Label("Genre Auswahl")
-		self['name'] = Label("")
-		self['F1'] = Label("")
+		self['ContentTitle'] = Label("Doku Genres")
+		self['name'] = Label("Auswahl:")
+		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
@@ -330,9 +329,6 @@ class showDOKUHGenre(Screen):
 		self['genreList'].pageUp()
 		self.menuIdx[self.menuLevel] = self['genreList'].getSelectedIndex()
 		self.setGenreStrTitle()
-
-	def keyRed(self):
-		pass
 
 	def keyUp(self):
 		self['genreList'].up()

@@ -33,8 +33,7 @@ class myvideoTop100GenreScreen(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
-			"cancel": self.keyCancel,
-			"red": self.keyCancel
+			"cancel": self.keyCancel
 		}, -1)
 
 		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
@@ -42,8 +41,8 @@ class myvideoTop100GenreScreen(Screen):
 
 		self.keyLocked = True
 		self['title'] = Label("myvideo.de")
-		self['ContentTitle'] = Label("Charts:")
-		self['name'] = Label("")
+		self['ContentTitle'] = Label("Charts")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
