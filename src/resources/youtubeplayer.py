@@ -21,10 +21,4 @@ class YoutubePlayer(SimplePlayer):
 
 	def ytError(self, error):
 		self.msg = "Title: %s\n%s" % (self.playList[self.playIdx][self.title_inr], error)
-		if config.mediaportal.sp_show_errors.value:
-			self.session.openWithCallback(self.ytError2, MessageBox, str(self.msg), MessageBox.TYPE_INFO, timeout=10)
-		else:
-			self.dataError(self.msg)
-			
-	def ytError2(self, res):
-		self.dataError(self.msg)
+		self.session.openWithCallback(self.dataError, MessageBox, str(self.msg), MessageBox.TYPE_INFO, timeout=10)

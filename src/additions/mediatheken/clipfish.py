@@ -7,7 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-CF_Version = "Clipfish.de v0.98 (experimental)"
+CF_Version = "Clipfish.de v0.99 (experimental)"
 
 CF_siteEncoding = 'utf-8'
 
@@ -46,7 +46,7 @@ class ClipfishPlayer(SimplePlayer):
 		if m:
 			url = m.group(1)
 			#print "url:",url
-			if url[0:4] != "http":
+			if url[:4] != "http":
 				url = "http://www.clipfish.de" + url
 
 			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getXml).addErrback(self.dataError)
@@ -145,7 +145,7 @@ class show_CF_Genre(Screen):
 		self.genreSelected = False
 		self.menuListe = []
 		self.baseUrl = "http://www.clipfish.de"
-		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre", "/special/spielfilme/genre"]
+		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre"]
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -160,11 +160,12 @@ class show_CF_Genre(Screen):
 			("Videos", ""),
 			("Musikvideo-Charts", ""),
 			("Musikvideos", ""),
+			("Die besten Musikvideos aus den 70ern, 80er...", ""),
 			("Spielfilme", "")
 			],
 			[None,
 			[
-			#("Eure Empfehlungen", "/28/%s"),
+			("Eure Empfehlungen", "/28/%s"),
 			("Anime & Cartoons", "/2/%s"),
 			("Auto", "/3/%s"),
 			("Comedy & Humor", "/1/%s"),
@@ -196,6 +197,14 @@ class show_CF_Genre(Screen):
 			("Rock / Alternative", "/119/rock-alternative"),
 			("Schlager", "/38/schlager")
 			],[
+			("1960er", "1960&special_id=275&list_type=beste"),
+			("1970er", "1970&special_id=275&list_type=beste"),
+			("1980er", "1980&special_id=275&list_type=beste"),
+			("1990er", "1990&special_id=275&list_type=beste"),
+			("2000er", "2000&special_id=275&list_type=beste"),
+			("2010er", "2010&special_id=275&list_type=beste")
+			],
+			[
 			("Action", "/1/action/neu/%d/#1"),
 			("SciFi", "/43/science-fiction/neu/%d/#43"),
 			("Drama", "/37/drama/neu/%d/#37"),
@@ -211,6 +220,7 @@ class show_CF_Genre(Screen):
 			]
 			],
 			[
+			[None],
 			[None],
 			[None],
 			[None],
@@ -454,6 +464,7 @@ class CF_FilmListeScreen(Screen):
 		self.genreSpielfilme = re.match('.*?Spielfilm', self.genreName)
 		self.genreMusicCharts = re.match('.*?-Charts', self.genreName)
 		self.genreSearch = re.match('.*?Suche...', self.genreName)
+		self.genreSpecial = re.match('.*?Die besten Musikvideos', self.genreName)
 
 		self.setGenreStrTitle()
 
@@ -474,7 +485,7 @@ class CF_FilmListeScreen(Screen):
 		if self.genreVideos:
 			link = self.genreLink % 'neu'
 			url = "%s/%d/" % (link, self.page)
-		elif self.genreSpielfilme:
+		elif self.genreSpielfilme or self.genreSpecial:
 			url = self.genreLink % self.page
 		elif self.genreMusicCharts or self.genreSearch:
 			url = self.genreLink
@@ -536,7 +547,7 @@ class CF_FilmListeScreen(Screen):
 						url = m1.group(1)
 						img = m1.group(3)
 
-					if url[0:4] != "http":
+					if url[:4] != "http":
 						url = "%s%s" % (self.baseUrl, url)
 
 					self.musicListe.append((title, url, img))
