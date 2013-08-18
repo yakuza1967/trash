@@ -145,7 +145,7 @@ class show_CF_Genre(Screen):
 		self.genreSelected = False
 		self.menuListe = []
 		self.baseUrl = "http://www.clipfish.de"
-		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre"]
+		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special"]
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -161,7 +161,9 @@ class show_CF_Genre(Screen):
 			("Musikvideo-Charts", ""),
 			("Musikvideos", ""),
 			("Die besten Musikvideos aus den 70ern, 80er...", ""),
-			("Spielfilme", "")
+			("Spielfilme", ""),
+			("Kino-Trailer", ""),
+			("Kino-Magazine", "")
 			],
 			[None,
 			[
@@ -217,15 +219,14 @@ class show_CF_Genre(Screen):
 			("Asian", "/71/asian/neu/%d/#71"),
 			("Erotik", "/25/erotik/neu/%d/#25"),
 			("Komödie", "/29/komoedie/neu/%d/#29")
-			]
 			],
+			None,
 			[
-			[None],
-			[None],
-			[None],
-			[None],
-			[None],
-			[None]
+			("Daniele Rizzo - Alle Videos", "/daniele-rizzo/home/neu/%d/"),
+			("Der ehrliche Dennis - Alle Videos", "/der-ehrliche-dennis/home/neu/%d/"),
+			("Seen - Die aktuellen Kino- und DVD-Filme", "/seen/home/neu/%d/"),
+			("Kino und Co. - Alle Videos", "/kino-und-co/home/neu/%d/")
+			]
 			]
 			]
 
@@ -460,11 +461,11 @@ class CF_FilmListeScreen(Screen):
 		self.page = 0
 		self.pages = 0;
 		self.genreSpecials = False
-		self.genreVideos = re.match('.*?Videos', self.genreName)
-		self.genreSpielfilme = re.match('.*?Spielfilm', self.genreName)
+		self.genreVideos = re.match('Videos', self.genreName)
+		self.genreSpielfilme = re.match('Spielfilm', self.genreName)
 		self.genreMusicCharts = re.match('.*?-Charts', self.genreName)
-		self.genreSearch = re.match('.*?Suche...', self.genreName)
-		self.genreSpecial = re.match('.*?Die besten Musikvideos', self.genreName)
+		self.genreSearch = re.match('Suche...', self.genreName)
+		self.genreSpecial = re.match('.*?/special', self.genreLink)
 
 		self.setGenreStrTitle()
 
