@@ -43,6 +43,7 @@ config.mediaportal.storagepath = ConfigText(default="/media/hdd/mediaportal/tmp/
 config.mediaportal.autoplayThreshold = ConfigInteger(default = 50, limits = (1,100))
 config.mediaportal.filter = ConfigSelection(default = "ALL", choices = [("ALL", ("ALL")), ("Mediathek", ("Mediathek")), ("Grauzone", ("Grauzone")), ("Fun", ("Fun")), ("Sport", ("Sport")), ("Music", ("Music")), ("Porn", ("Porn"))])
 config.mediaportal.youtubeprio = ConfigSelection(default = "1", choices = [("0", _("Low")),("1", _("Medium")),("2", _("High"))])
+config.mediaportal.videoquali_others = ConfigSelection(default = "1", choices = [("0", _("Low")),("1", _("Medium")),("2", _("High"))])
 config.mediaportal.pornpin = ConfigYesNo(default = True)
 config.mediaportal.setuppin = ConfigYesNo(default = False)
 config.mediaportal.watchlistpath = ConfigText(default="/etc/enigma2/", fixed_size=False)
@@ -398,7 +399,8 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.configlist.append(getConfigListEntry("RTMPDump verwenden:", config.mediaportal.useRtmpDump))
 		self.configlist.append(getConfigListEntry("RTMPDump Cachepath:", config.mediaportal.storagepath))
 		self.configlist.append(getConfigListEntry("Autoplay Threshold [%]:", config.mediaportal.autoplayThreshold))
-		self.configlist.append(getConfigListEntry("YouTube Video Quality Priority:", config.mediaportal.youtubeprio))
+		self.configlist.append(getConfigListEntry("Videoqualität (Youtube):", config.mediaportal.youtubeprio))
+		self.configlist.append(getConfigListEntry("Videoqualität (andere Anbieter):", config.mediaportal.videoquali_others))
 		self.configlist.append(getConfigListEntry("Watchlist/Playlist/Userchan path:", config.mediaportal.watchlistpath))
 		self.configlist.append(getConfigListEntry("Grauzone aktivieren:", config.mediaportal.showgrauzone))
 
