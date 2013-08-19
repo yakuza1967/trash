@@ -145,7 +145,7 @@ class show_CF_Genre(Screen):
 		self.genreSelected = False
 		self.menuListe = []
 		self.baseUrl = "http://www.clipfish.de"
-		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special"]
+		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special", "/special"]
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -163,7 +163,8 @@ class show_CF_Genre(Screen):
 			("Die besten Musikvideos aus den 70ern, 80er...", ""),
 			("Spielfilme", ""),
 			("Kino-Trailer", ""),
-			("Kino-Magazine", "")
+			("Kino-Magazine", ""),
+			("News", "")
 			],
 			[None,
 			[
@@ -226,6 +227,12 @@ class show_CF_Genre(Screen):
 			("Der ehrliche Dennis - Alle Videos", "/der-ehrliche-dennis/home/neu/%d/"),
 			("Seen - Die aktuellen Kino- und DVD-Filme", "/seen/home/neu/%d/"),
 			("Kino und Co. - Alle Videos", "/kino-und-co/home/neu/%d/")
+			],
+			[
+			("News und Lifestyle - Alle Videos", "/news/aktuelles/neu/%d/"),
+			("Alle VIP-Videos", "/news/vip/neu/%d/"),
+			("Regional News - alle Videos", "/regional-news/home/neu/%d/"),
+			("Neues von Daaruum", "/daaruum/home/neu/%d/")
 			]
 			]
 			]
