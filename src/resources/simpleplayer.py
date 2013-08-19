@@ -940,7 +940,7 @@ class SimplePlaylist(Screen):
 		return SimplePlayerSummary
 
 class SimpleConfig(ConfigListScreen, Screen):
-	skin = '\n\t\t<screen position="center,center" size="460,250" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="440,240" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+	skin = '\n\t\t<screen position="center,center" size="500,300" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="480,290" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -948,7 +948,8 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list = []
 		self.list.append(getConfigListEntry('Random Play', config.mediaportal.sp_randomplay))
 		self.list.append(getConfigListEntry('Screensaver', config.mediaportal.sp_scrsaver))
-		self.list.append(getConfigListEntry('Youtube VideoPrio', config.mediaportal.youtubeprio))
+		self.list.append(getConfigListEntry('VideoQuali (Youtube)', config.mediaportal.youtubeprio))
+		self.list.append(getConfigListEntry('VideoQuali (others)', config.mediaportal.videoquali_others))
 		self.list.append(getConfigListEntry('Behavior in stop movie', config.mediaportal.sp_on_movie_stop))
 		self.list.append(getConfigListEntry('Behavior on movie end', config.mediaportal.sp_on_movie_eof))
 		self.list.append(getConfigListEntry('Seekbar sensibility', config.mediaportal.sp_seekbar_sensibility))

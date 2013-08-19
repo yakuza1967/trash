@@ -173,7 +173,6 @@ class HeiseTvListScreen(Screen):
 		self.reiter_ofs = 0
 		self.page = 0
 		self.pages = 0
-		self.videoPrio = int(config.mediaportal.videoquali_others.value)
 		self.videoPrioS = ['L','M','H']
 		self.setVideoPrio()
 		self.keyLocked = True
