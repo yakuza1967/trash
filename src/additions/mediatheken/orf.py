@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
@@ -61,7 +62,7 @@ class ORFGenreScreen(Screen):
 			for (url,title) in sendungen:
 				url = "http://tvthek.orf.at%s" % url
 				self.genreliste.append((decodeHtml(title),url))
-			self.genreliste.sort()
+			self.genreliste.sort(key=lambda t : t[0].lower())
 			self.chooseMenuList.setList(map(ORFGenreListEntry, self.genreliste))
 			self.keyLocked = False
 
@@ -145,9 +146,21 @@ class ORFFilmeListeScreen(Screen):
 	def dataError(self, error):
 		printl(error,self,"E")
 
+	def format_date(self,date_string):
+		wochentage=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag']
+		monate=['Jänner','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+		date=datetime.datetime.strptime(date_string,'%d.%m.%Y')
+		return "%s, %02d. %s %d" % (wochentage[date.weekday()],date.day,monate[date.month-1],date.year)
+
 	def loadPageData(self, data):
 		self.filmliste = []
-		folgen = re.findall('<li.*?><a href="#" class="nolink">(.*?)</a>.*?<li><a href="(.*?)">(.*?)</a></li>', data, re.S)
+		folgen =  []
+		aktuelle_folge = re.search('<title>(.*?)\s-\s(.*?)\s(.*?)\sUhr\s-\sORF\sTVthek</title>', data, re.S).groups()
+		aktuelle_folge_url = re.search('<a\sclass="tab"\shref="(.*?)"\stitle', data, re.S).groups()
+
+		folgen.append((self.format_date(aktuelle_folge[1]),aktuelle_folge_url[0],aktuelle_folge[0]+", "+aktuelle_folge[2]+" Uhr"))
+		folgen.extend(re.findall('<li.*?><a\shref="\#"\sclass="nolink">(.*?)</a>.*?<li><a\shref="(.*?)">(.*?)</a></li>', data, re.S))
+
 		if folgen:
 			for (datum,url,title) in folgen:
 				url = "http://tvthek.orf.at%s" % url
@@ -164,11 +177,11 @@ class ORFFilmeListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_xml).addErrback(self.dataError)
 
 	def get_xml(self, data):
-			xml = re.findall("ORF.flashXML = '.*?Items(.*?)'", data, re.S)
-			if xml:
-				data = urllib.unquote(xml[0])
-				self.session.open(ORFStreamListeScreen, data)
-
+		xml = re.findall("ORF.flashXML = '.*?Items(.*?)'", data, re.S)
+		if xml:
+			data = urllib.unquote(xml[0])
+			self.session.open(ORFStreamListeScreen, data)
+		
 	def keyCancel(self):
 		self.close()
 
@@ -205,8 +218,10 @@ class ORFStreamListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		print "hole daten"
-		folgen = re.findall('<Title><!\[CDATA\[(.*?)\]\]></Title>.*?<VideoUrl\squality="Q4A"><!\[CDATA\[(.*?mp4)\]\]>', self.data_raw, re.S)
+		if int(config.mediaportal.videoquali_others.value) == 2:
+			folgen = re.findall('<Title><!\[CDATA\[(.*?)\]\]></Title>.*?<VideoUrl\squality="Q6A"><!\[CDATA\[(.*?mp4)\]\]>', self.data_raw, re.S)
+		else:
+			folgen = re.findall('<Title><!\[CDATA\[(.*?)\]\]></Title>.*?<VideoUrl\squality="Q4A"><!\[CDATA\[(.*?mp4)\]\]>', self.data_raw, re.S)
 		if folgen:
 			self.streamliste = []
 			for (title,rtmp_link) in folgen:
@@ -224,11 +239,7 @@ class ORFStreamListeScreen(Screen):
 			movieinfo = [url,title]
 			self.session.open(PlayRtmpMovie, movieinfo, title)
 		else:
-			final = "%s" % url
-			print final
-			playlist = []
-			playlist.append((title, final))
-			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='orf')
+			self.session.open(SimplePlayer, self.streamliste, playIdx=self['List'].getSelectedIndex(), playAll=True, showPlaylist=False, ltype='orf')
 
 	def keyCancel(self):
 		self.close()
