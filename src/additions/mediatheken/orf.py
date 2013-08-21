@@ -181,7 +181,7 @@ class ORFFilmeListeScreen(Screen):
 		if xml:
 			data = urllib.unquote(xml[0])
 			self.session.open(ORFStreamListeScreen, data)
-		
+
 	def keyCancel(self):
 		self.close()
 
