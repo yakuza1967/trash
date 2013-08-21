@@ -2,30 +2,37 @@ import re
 
 class cJsUnpacker:
 
-    def unpackByString(self, sJavascript):
-        aSplit = sJavascript.split(";',")
-        p = str(aSplit[0])
+	def unpackByString(self, sJavascript):
 
-        aSplit = aSplit[1].split(",")
-        a = int(aSplit[0])
-        c = int(aSplit[1])
-        k = aSplit[2].split(".")[0].replace("'", '').split('|')
-        e = ''
-        d = ''
+		aSplit = sJavascript.split(";',")
+		if len(aSplit) == 1:
+			print "packed type 2"
+			aSplit = sJavascript.split(";}',")
+		else:
+			print "packed type 1"
 
-        sUnpacked = str(self.__unpack(p, a, c, k, e, d))
-        return sUnpacked.replace('\\', '')
+		p = str(aSplit[0])
 
-    def __unpack(self, p, a, c, k, e, d):
-        while (c > 1):
-            c = c -1
-            if (k[c]):
-                p = re.sub('\\b' + str(self.__itoa(c, a)) +'\\b', k[c], p)
-        return p
+		aSplit = aSplit[1].split(",")
+		a = int(aSplit[0])
+		c = int(aSplit[1])
+		k = aSplit[2].split(".")[0].replace("'", '').split('|')
+		e = ''
+		d = ''
 
-    def __itoa(self, num, radix):
-        result = ""
-        while num > 0:
-            result = "0123456789abcdefghijklmnopqrstuvwxyz"[num % radix] + result
-            num /= radix
-        return result
+		sUnpacked = str(self.__unpack(p, a, c, k, e, d))
+		return sUnpacked.replace('\\', '')
+
+	def __unpack(self, p, a, c, k, e, d):
+		while (c > 1):
+			c = c -1
+			if (k[c]):
+				p = re.sub('\\b' + str(self.__itoa(c, a)) +'\\b', k[c], p)
+		return p
+
+	def __itoa(self, num, radix):
+		result = ""
+		while num > 0:
+			result = "0123456789abcdefghijklmnopqrstuvwxyz"[num % radix] + result
+			num /= radix
+		return result
