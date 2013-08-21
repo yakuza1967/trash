@@ -122,7 +122,6 @@ class get_stream_link:
 
 			elif re.search('yesload.tv', data, re.S):
 				link = data
-				aage = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload, link).addErrback(self.errorload)
 
 			elif re.search('faststream', data, re.S):
@@ -811,40 +810,23 @@ class get_stream_link:
 				'usr_login': ""})
 
 			print info
-			aage = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'
-			#getPage(url, method='POST', postdata=info, headers={'referer': url}).addCallback(self.yesload_data).addErrback(self.errorload)
-			reactor.callLater(11, self.yesload_getPage, url, method='POST', postdata=info, headers={'referer': url})
-			message = self.session.open(MessageBox, _("Stream startet in 11 sec."), MessageBox.TYPE_INFO, timeout=11)
+			reactor.callLater(10, self.yesload_getPage, url, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'})
+			message = self.session.open(MessageBox, _("Stream startet in 10 sec."), MessageBox.TYPE_INFO, timeout=10)
 		else:
 			self.stream_not_found()
 
 	def yesload_getPage(self, *args, **kwargs):
-		print "CAAAAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAATTTTTTTEEEEEEEEEEEERRRRRRRRRRRRR"
 		getPage(*args, **kwargs).addCallback(self.yesload_data).addErrback(self.errorload)
 
 	def yesload_data(self, data):
 		print "unpack javascript"
-		print data
-		get_packedjava = re.findall("<script type=.text.javascript.>(eval.function(.*?)</script>", data, re.S|re.DOTALL)
-		print get_packedjava
+		get_packedjava = re.findall("<script\stype=\'text\/javascript\'>eval\(function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
-			print get_packedjava[0]
 			sJavascript = get_packedjava[0]
 			sUnpacked = cJsUnpacker().unpackByString(sJavascript)
-			print sUnpacked
 			if sUnpacked:
-				print "joooooooooooooooooooooo"
-				if re.search('type="video/divx', sUnpacked):
-					print "DDIIIIIIIIIVVVXXX"
-					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
-					if stream_url:
-						print stream_url[0]
-						self._callback(stream_url[0])
-					else:
-						self.stream_not_found()
-				elif re.search("'file'", sUnpacked):
-					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
-					stream_url = re.findall("'file','(.*?)'", sUnpacked)
+				if re.search("file:", sUnpacked):
+					stream_url = re.search('file:"(.*?)"', sUnpacked).groups()
 					if stream_url:
 						self._callback(stream_url[0])
 					else:
