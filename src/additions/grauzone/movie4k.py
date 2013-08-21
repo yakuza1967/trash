@@ -1424,44 +1424,56 @@ class m4kStreamListeScreen(Screen):
 			self.session.open(m4kPartListeScreen, streamLink, self.streamName)
 		else:
 			print "Search streamlink..."
-
-			link = re.search('<a\starget="_blank"\shref="(.*?)"', data, re.S)
+			print "1"
+			link = re.search('<a\starget="_blank"\shref="(.*?)"><img\sborder=0\ssrc="http://img.movie4k.to/img/click_link.jpg"', data, re.S|re.I)
 			if link:
 				print link.group(1)
 				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 				return
-
-			link = re.search('<div\sid="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S)
+			print "2"
+			link = re.search('<iframe\swidth=".*?"\sheight=".*?"\sframeborder="0"\ssrc="(.*?)"\sscrolling="no"></iframe>', data, re.S|re.I)
 			if link:
 				print link.group(1)
 				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 				return
-
-			link = re.search('<div\sid="emptydiv"><script type="text/javascript"\ssrc=["|\'](.*?)["|\']>', data, re.S)
+			print "3"
+			link = re.search('<iframe\ssrc="(.*?)"\sframeborder=0\smarginwidth=0\smarginheight=0\sscrolling=no\swidth=.*?height=.*?></iframe>', data, re.S|re.I)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+			print "4"
+			link = re.search("<iframe\sstyle=.*?src='(.*?)'\sscrolling='no'></iframe>", data, re.S|re.I)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+			print "5"
+			link = re.search('<div\sid="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S|re.I)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+			print "6"
+			link = re.search('<div\sid="emptydiv"><script type="text/javascript"\ssrc=["|\'](.*?)["|\']>', data, re.S|re.I)
 			if link:
 				print link.group(1).replace('?embed','')
 				get_stream_link(self.session).check_link(link.group(1).replace('?embed',''), self.got_link, False)
 				return
-
-			link = re.search('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S)
+			print "7"
+			link = re.search('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S|re.I)
 			if link:
 				print link.group(1)
 				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 				return
-
-			link = re.search('<param\sname="movie"\svalue="(.*?)"', data, re.S)
+			print "8"
+			link = re.search('<param\sname="movie"\svalue="(.*?)"', data, re.S|re.I)
 			if link:
 				print link.group(1)
 				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 				return
-
-			link = re.search('<iframe\ssrc="(.*?)"\swidth=".*?" height=".*?"\sframeborder="0"\sscrolling="no">', data, re.S)
-			if link:
-				print link.group(1)
-				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
-				return
-
-			link = re.search('<IFRAME\sSRC="(.*?)"\sFRAMEBORDER=0\sMARGINWIDTH=0\sMARGINHEIGHT=0\sSCROLLING=NO\sWIDTH=.*?HEIGHT=.*?></IFRAME>', data, re.S)
+			print "9"
+			link = re.search('<iframe\ssrc="(.*?)"\swidth=".*?"\sheight=".*?"\sframeborder="0"\sscrolling="no"></iframe>', data, re.S|re.I)
 			if link:
 				print link.group(1)
 				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
@@ -1571,43 +1583,57 @@ class m4kPartListeScreen(Screen):
 		getPage(streamLinkPart, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink).addErrback(self.dataError)
 
 	def get_streamlink(self, data):
-		link = re.search('<a\starget="_blank"\shref="(.*?)"', data, re.S)
+		print "Search streamlink..."
+		print "1"
+		link = re.search('<a\starget="_blank"\shref="(.*?)"><img\sborder=0\ssrc="http://img.movie4k.to/img/click_link.jpg"', data, re.S|re.I)
 		if link:
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 			return
-
-		link = re.search('<div\sid="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S)
+		print "2"
+		link = re.search('<iframe\swidth=".*?"\sheight=".*?"\sframeborder="0"\ssrc="(.*?)"\sscrolling="no"></iframe>', data, re.S|re.I)
 		if link:
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 			return
-
-		link = re.search('<div\sid="emptydiv"><script type="text/javascript"\ssrc=["|\'](.*?)["|\']>', data, re.S)
+		print "3"
+		link = re.search('<iframe\ssrc="(.*?)"\sframeborder=0\smarginwidth=0\smarginheight=0\sscrolling=no\swidth=.*?height=.*?></iframe>', data, re.S|re.I)
+		if link:
+			print link.group(1)
+			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
+		print "4"
+		link = re.search("<iframe\sstyle=.*?src='(.*?)'\sscrolling='no'></iframe>", data, re.S|re.I)
+		if link:
+			print link.group(1)
+			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
+		print "5"
+		link = re.search('<div\sid="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S|re.I)
+		if link:
+			print link.group(1)
+			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
+		print "6"
+		link = re.search('<div\sid="emptydiv"><script type="text/javascript"\ssrc=["|\'](.*?)["|\']>', data, re.S|re.I)
 		if link:
 			print link.group(1).replace('?embed','')
 			get_stream_link(self.session).check_link(link.group(1).replace('?embed',''), self.got_link, False)
 			return
-
-		link = re.search('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S)
+		print "7"
+		link = re.search('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S|re.I)
 		if link:
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 			return
-
-		link = re.search('<param\sname="movie"\svalue="(.*?)"', data, re.S)
+		print "8"
+		link = re.search('<param\sname="movie"\svalue="(.*?)"', data, re.S|re.I)
 		if link:
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
 			return
-
-		link = re.search('<iframe\ssrc="(.*?)" width=".*?"\sheight=".*?"\sframeborder="0"\sscrolling="no">', data, re.S)
-		if link:
-			print link.group(1)
-			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
-			return
-
-		link = re.search('<IFRAME\sSRC="(.*?)"\sFRAMEBORDER=0\sMARGINWIDTH=0\sMARGINHEIGHT=0\sSCROLLING=NO\sWIDTH=.*?HEIGHT=.*?></IFRAME>', data, re.S)
+		print "9"
+		link = re.search('<iframe\ssrc="(.*?)"\swidth=".*?"\sheight=".*?"\sframeborder="0"\sscrolling="no"></iframe>', data, re.S|re.I)
 		if link:
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
