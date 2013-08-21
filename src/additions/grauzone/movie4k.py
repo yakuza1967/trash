@@ -1334,15 +1334,15 @@ class m4kStreamListeScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['filmList'] = self.chooseMenuList
 
-		self.onLayoutFinish.append(self.loadPage2)
+		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		print "link:", self.streamGenreLink
 		#self.tw_agent_hlp.getRedirectedUrl(self.loadPage2, self.dataError, self.streamGenreLink)
-		#self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, self.streamGenreLink, True)
+		self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, self.streamGenreLink, True)
 
-	def loadPage2(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+	def loadPage2(self, url):
+		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		print "error:", error
@@ -1354,7 +1354,7 @@ class m4kStreamListeScreen(Screen):
 			if hoster:
 				for url,datum,hostername,quali in hoster:
 					url = "%s%s" % ("http://www.movie4k.to/", url)
-					#print hostername, url
+					print hostername, url
 					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|fastsream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, datum, hostername, quali.replace('Movie quality ','').replace('\\','')))
 
@@ -1371,7 +1371,7 @@ class m4kStreamListeScreen(Screen):
 			if hoster:
 				for url,hostername in hoster:
 					url = "%s%s" % ("http://www.movie4k.to/", url)
-					#print hostername, url
+					print hostername, url
 					if re.match('.*?(putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|fastsream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', hostername, re.S|re.I):
 						self.filmliste.append((url, hostername))
 
@@ -1415,12 +1415,7 @@ class m4kStreamListeScreen(Screen):
 			return
 		streamLink = self['filmList'].getCurrent()[0][0]
 		print self.streamName, streamLink
-		#self.tw_agent_hlp.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
-		getPage(streamLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, streamLink).addErrback(self.dataError)
-
-	#def keyOK2(self, url):
-		#self.tw_agent_hlp.getWebPage(self.get_streamlink, self.dataError, url, False, url)
-		#getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink, url).addErrback(self.dataError)
+		self.tw_agent_hlp.getWebPage(self.get_streamlink, self.dataError, streamLink, True, streamLink)
 
 	def get_streamlink(self, data, streamLink):
 		print "get_streamlink: ", len(data)
@@ -1429,23 +1424,50 @@ class m4kStreamListeScreen(Screen):
 			self.session.open(m4kPartListeScreen, streamLink, self.streamName)
 		else:
 			print "Search streamlink..."
-			link_found = False
 
-			if re.match('.*?http://img.movie4k.to/img/click_link.jpg', data, re.S):
-				link = re.findall('<a\starget="_blank"\shref="(.*?)"><img\sborder=0\ssrc="http://img.movie4k.to/img/click_link.jpg"', data, re.S)
-				if link:
-					link_found = True
-					print link
-					get_stream_link(self.session).check_link(link[0], self.got_link, False)
-			else:
-				link = re.findall('<iframe.*?src="(.*?)".*?></iframe><br>', data, re.I)
-				if link:
-					link_found = True
-					print link
-					get_stream_link(self.session).check_link(link[0], self.got_link, False)
+			link = re.search('<a\starget="_blank"\shref="(.*?)"', data, re.S)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
 
-			if not link_found:
-				message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
+			link = re.search('<div\sid="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+
+			link = re.search('<div\sid="emptydiv"><script type="text/javascript"\ssrc=["|\'](.*?)["|\']>', data, re.S)
+			if link:
+				print link.group(1).replace('?embed','')
+				get_stream_link(self.session).check_link(link.group(1).replace('?embed',''), self.got_link, False)
+				return
+
+			link = re.search('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+
+			link = re.search('<param\sname="movie"\svalue="(.*?)"', data, re.S)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+
+			link = re.search('<iframe\ssrc="(.*?)"\swidth=".*?" height=".*?"\sframeborder="0"\sscrolling="no">', data, re.S)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+
+			link = re.search('<IFRAME\sSRC="(.*?)"\sFRAMEBORDER=0\sMARGINWIDTH=0\sMARGINHEIGHT=0\sSCROLLING=NO\sWIDTH=.*?HEIGHT=.*?></IFRAME>', data, re.S)
+			if link:
+				print link.group(1)
+				get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+				return
+
+			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
 	def got_link(self, stream_url):
 		if stream_url == None:
