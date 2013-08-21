@@ -153,8 +153,8 @@ class get_stream_link:
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.check_istream_link).addErrback(self.errorload)
 
-			#elif re.search('http:/.*?flashx.tv', data, re.S):
-			elif re.search('http:/disabled', data, re.S):
+			elif re.search('http:/.*?flashx.tv', data, re.S):
+			#elif re.search('http:/disabled', data, re.S):
 				print "flashx.tv link check:"
 				link = data
 				#print link
