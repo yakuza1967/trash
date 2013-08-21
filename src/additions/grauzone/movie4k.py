@@ -1399,12 +1399,12 @@ class m4kStreamListeScreen(Screen):
 	def loadPic(self):
 		print "link:", self.streamGenreLink
 		#self.tw_agent_hlp.getRedirectedUrl(self.loadPic2, self.dataError, self.streamGenreLink)
-		self.tw_agent_hlp.getWebPage(self.showHandlung, self.dataError, self.streamGenreLink, True)
+		self.tw_agent_hlp.getWebPage(self.showPic, self.dataError, self.streamGenreLink, True)
 
 	def loadPic2(self, url):
 		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
 
-	def showHandlung(self, data):
+	def showPic(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
 		self.coverUrl = image[0]
 		CoverHelper(self['coverArt']).getCover(image[0])
@@ -1571,52 +1571,49 @@ class m4kPartListeScreen(Screen):
 		getPage(streamLinkPart, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink).addErrback(self.dataError)
 
 	def get_streamlink(self, data):
-		link_found = False
-
 		link = re.search('<a\starget="_blank"\shref="(.*?)"', data, re.S)
 		if link:
-			link_found = True
-			print link
+			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
 
 		link = re.search('<div\sid="emptydiv"><iframe.*?src=["|\'](.*?)["|\']', data, re.S)
 		if link:
-			link_found = True
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
 
 		link = re.search('<div\sid="emptydiv"><script type="text/javascript"\ssrc=["|\'](.*?)["|\']>', data, re.S)
 		if link:
-			link_found = True
 			print link.group(1).replace('?embed','')
 			get_stream_link(self.session).check_link(link.group(1).replace('?embed',''), self.got_link, False)
+			return
 
 		link = re.search('<object\sid="vbbplayer".*?src=["|\'](.*?)["|\']', data, re.S)
 		if link:
-			link_found = True
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
 
 		link = re.search('<param\sname="movie"\svalue="(.*?)"', data, re.S)
 		if link:
-			link_found = True
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
 
 		link = re.search('<iframe\ssrc="(.*?)" width=".*?"\sheight=".*?"\sframeborder="0"\sscrolling="no">', data, re.S)
 		if link:
-			link_found = True
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
 
 		link = re.search('<IFRAME\sSRC="(.*?)"\sFRAMEBORDER=0\sMARGINWIDTH=0\sMARGINHEIGHT=0\sSCROLLING=NO\sWIDTH=.*?HEIGHT=.*?></IFRAME>', data, re.S)
 		if link:
-			link_found = True
 			print link.group(1)
 			get_stream_link(self.session).check_link(link.group(1), self.got_link, False)
+			return
 
-		if not link_found:
-			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
+		message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
 	def got_link(self, stream_url):
 		if stream_url == None:
