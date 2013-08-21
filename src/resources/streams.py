@@ -27,89 +27,90 @@ class get_stream_link:
 		self._callback = got_link
 		self.showmsgbox = showmsgbox
 		if data:
-			if re.match(".*?http://www.putlocker.com/(file|embed)/", data, re.S):
+			if re.search("http://www.putlocker.com/(file|embed)/", data, re.S):
 				link = data.replace('file','embed')
 				#print "ok:", link
 				if link:
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.streamPutlockerSockshare, link, "putlocker").addErrback(self.errorload)
 
-			elif re.match(".*?http://www.sockshare.com/(file|embed)/", data, re.S):
+			elif re.search("http://www.sockshare.com/(file|embed)/", data, re.S):
 				link = data.replace('file','embed')
 				#print link
 				if link:
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.streamPutlockerSockshare, link, "sockshare").addErrback(self.errorload)
 
-			elif re.match(".*?http://streamcloud.eu/", data, re.S):
+			elif re.search("http://streamcloud.eu/", data, re.S):
 				#link = re.findall("(http://streamcloud.eu/.*?)'", data, re.S)
 				link = data
 				if link:
+					print "getPage:",link
 					getPage(link, cookies=ck, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.streamcloud).addErrback(self.errorload)
 
-			elif re.match('.*?http://xvidstage.com', data, re.S):
+			elif re.search('http://xvidstage.com', data, re.S):
 				link = data
 				#print "xvidstage"
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.xvidstage_post, link).addErrback(self.errorload)
 
-			elif re.match('.*?http://filenuke.com', data, re.S):
+			elif re.search('http://filenuke.com', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.filenuke, link).addErrback(self.errorload)
 
-			elif re.match('.*?http://movreel.com/', data, re.S):
+			elif re.search('http://movreel.com/', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movreel_data, link).addErrback(self.errorload)
 
-			elif re.match('.*?http://xvidstream.net/', data, re.S):
+			elif re.search('http://xvidstream.net/', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.xvidstream).addErrback(self.errorload)
 
-			elif re.match('.*?http://(www|embed).nowvideo.eu', data, re.S):
+			elif re.search('http://(www|embed).nowvideo.eu', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
 
-			elif re.match('.*?nowvideo.ch', data, re.S):
+			elif re.search('nowvideo.ch', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
 
-			elif re.match('.*?http://www.uploadc.com', data, re.S):
+			elif re.search('http://www.uploadc.com', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.uploadc, link).addErrback(self.errorload)
 
-			elif re.match('.*?http://vreer.com', data, re.S):
+			elif re.search('http://vreer.com', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vreer, link).addErrback(self.errorload)
 
-			elif re.match('.*?http://www.monsteruploads.eu', data, re.S):
+			elif re.search('http://www.monsteruploads.eu', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.monsteruploads, link).addErrback(self.errorload)
 
-			elif re.match('.*?flashstream.in', data, re.S):
+			elif re.search('flashstream.in', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashstream).addErrback(self.errorload)
 
-			elif re.match('.*?ginbig.com', data, re.S):
+			elif re.search('ginbig.com', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.ginbig_flashstream, link).addErrback(self.errorload)
 
-			elif re.match('.*?videoweed.es', data, re.S):
+			elif re.search('videoweed.es', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.videoweed).addErrback(self.errorload)
 
-			elif re.match('.*?novamov.com', data, re.S):
+			elif re.search('novamov.com', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.novamov).addErrback(self.errorload)
 
-			elif re.match('.*?.movshare.net', data, re.S):
+			elif re.search('.movshare.net', data, re.S):
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link).addErrback(self.errorload)
@@ -119,12 +120,12 @@ class get_stream_link:
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.divxstage).addErrback(self.errorload)
 
-			elif re.match('.*?yesload.tv', data, re.S):
+			elif re.search('yesload.tv', data, re.S):
 				link = data
 				aage = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6'
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.yesload, link).addErrback(self.errorload)
 
-			elif re.match('.*?faststream', data, re.S):
+			elif re.search('faststream', data, re.S):
 				link = data
 				#print link
 				if re.search('faststream.in/embed', data, re.S):
@@ -132,85 +133,88 @@ class get_stream_link:
 				else:
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.faststream, link).addErrback(self.errorload)
 
-			elif re.match('.*?primeshare', data, re.S):
+			elif re.search('primeshare', data, re.S):
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.primeshare, link).addErrback(self.errorload)
 
-			elif re.match('.*?http://vidstream.us', data, re.S):
+			elif re.search('http://vidstream.us', data, re.S):
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vidstream_us).addErrback(self.errorload)
 
-			elif re.match('.*?http://vidstream.in', data, re.S):
+			elif re.search('http://vidstream.in', data, re.S):
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vidstream_in, link).addErrback(self.errorload)
 
-			elif re.match('.*?video.istream.ws/embed', data, re.S):
+			elif re.search('video.istream.ws/embed', data, re.S):
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.check_istream_link).addErrback(self.errorload)
 
-			elif re.match('.*?http:/.*?flashx.tv', data, re.S):
-			#elif re.match('.*?http:/disabled', data, re.S):
+			#elif re.search('http:/.*?flashx.tv', data, re.S):
+			elif re.search('http:/disabled', data, re.S):
+				print "flashx.tv link check:"
 				link = data
 				#print link
-				hash = re.findall('http://flashx.tv/video/(.*?)/', link)
+				hash = re.search('http://flashx.tv/video/(.*?)/', link)
 				if hash:
-					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashx_tv3b).addErrback(self.errorload)
-				elif re.match('.*?embed.php\?hash=', link) or re.match('.*?embed_player.php\?hash=', link) or re.match('.*?embed_player.php\?vid=', link) or re.match('.*?embed.php\?vid=', link):
+					#print "Hash:",hash.group(1)
+					self.tw_agent_hlp.getWebPage(self.flashx_tv3b, self.stream_not_found, link, True)
+					#getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.flashx_tv3b).addErrback(self.errorload)
+				elif re.search('embed.php\?hash=', link) or re.search('embed_player.php\?hash=', link) or re.search('embed_player.php\?vid=', link) or re.search('embed.php\?vid=', link):
 					self.flashx_tv3(link)
-				elif re.match('.*?player/fxtv.php.hash=', link):
+				elif re.search('player/fxtv.php.hash=', link):
 					self.tw_agent_hlp.getRedirectedUrl(self.check_link, self.stream_not_found, link, self._callback, False)
 				else:
 					print "flashx_tv link not found: ",link
 					self.stream_not_found()
 
-			elif re.match('.*?putme.org', data, re.S):
+			elif re.search('putme.org', data, re.S):
 				link = data
 				#print link
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.putme_org, link).addErrback(self.errorload)
 
-			elif re.match('.*?divxmov.net', data, re.S):
+			elif re.search('divxmov.net', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.divxmov).addErrback(self.errorload)
 
-			elif re.match('.*?sharesix.com/', data, re.S):
+			elif re.search('sharesix.com/', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.sharesix).addErrback(self.errorload)
 
-			elif re.match('.*?http://bitshare.com', data, re.S):
+			elif re.search('http://bitshare.com', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.bitshare).addErrback(self.errorload)
 
-			elif re.match('.*?userporn.com', data, re.S):
+			elif re.search('userporn.com', data, re.S):
 				link = data
 				#print link
 				self.userporn_tv(link)
 
-			elif re.match('.*?ecostream.tv', data, re.S):
+			elif re.search('ecostream.tv', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.errorload)
 
-			elif re.match('.*?http://played.to', data, re.S):
+			elif re.search('http://played.to', data, re.S):
 				link = data
 				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.played, link).addErrback(self.errorload)
 
-			elif re.match('.*?stream2k.com', data, re.S):
+			elif re.search('stream2k.com', data, re.S):
 				link = data
 				getPage(link, headers={'referer':link}).addCallback(self.stream2k).addErrback(self.errorload)
 
-			elif re.match('.*?limevideo.net', data, re.S):
+			elif re.search('limevideo.net', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.lmv, link).addErrback(self.errorload)
 
-			elif re.match('.*?videomega.tv', data, re.S):
+			elif re.search('videomega.tv', data, re.S):
 				link = data
-				if re.match('.*?iframe.php', link):
+				if re.search('iframe.php', link):
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.videomega).addErrback(self.errorload)
 				else:
 					id = link.split('ref=')
@@ -220,38 +224,38 @@ class get_stream_link:
 					else:
 						self.stream_not_found()
 
-			elif re.match('.*?vk.com', data, re.S):
+			elif re.search('vk.com', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vkme).addErrback(self.errorload)
 
-			elif re.match('.*?mightyupload.com/embed', data, re.S):
+			elif re.search('mightyupload.com/embed', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)
 
-			elif re.match('.*?mightyupload.com', data, re.S):
+			elif re.search('mightyupload.com', data, re.S):
 				link = data
 				id = link.split('/')
 				url = "http://www.mightyupload.com/embed-%s.html" % id[3]
 				print url
 				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mightyupload).addErrback(self.errorload)
 
-			elif re.match('.*?http://youwatch.org', data, re.S):
+			elif re.search('http://youwatch.org', data, re.S):
 				link = data
 				id = link.split('org/')
 				url = "http://youwatch.org/embed-%s.html" % id[1]
 				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.youwatch).addErrback(self.errorload)
 
-			elif re.match('.*?vidx.to', data, re.S):
+			elif re.search('vidx.to', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.vidx, link).addErrback(self.errorload)
 
-			elif re.match('.*?mixturecloud.com', data, re.S):
+			elif re.search('mixturecloud.com', data, re.S):
 				link = data
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.mixturecloud).addErrback(self.errorload)
 
-			elif re.match('.*?allmyvideos.net', data, re.S):
+			elif re.search('allmyvideos.net', data, re.S):
 				link = data
-				if re.match('.*?allmyvideos.net/embed', link, re.S):
+				if re.search('allmyvideos.net/embed', link, re.S):
 					print "1"
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.allmyvids).addErrback(self.errorload)
 				else:
@@ -345,7 +349,7 @@ class get_stream_link:
 			if sUnpacked:
 				print "unpacked"
 				print sUnpacked
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -353,7 +357,7 @@ class get_stream_link:
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match(".*?file", sUnpacked):
+				elif re.search("file", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -421,7 +425,7 @@ class get_stream_link:
 			if sUnpacked:
 				print "unpacked"
 				print sUnpacked
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -429,7 +433,7 @@ class get_stream_link:
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match(".*?file", sUnpacked):
+				elif re.search("file", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -540,7 +544,7 @@ class get_stream_link:
 			if sUnpacked:
 				print "unpacked"
 				print sUnpacked
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -548,7 +552,7 @@ class get_stream_link:
 						self._callback(stream_url[0].replace('0://','http://'))
 					else:
 						self.stream_not_found()
-				elif re.match(".*?file", sUnpacked):
+				elif re.search("file", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -608,7 +612,7 @@ class get_stream_link:
 			if sUnpacked:
 				print "unpacked"
 				print sUnpacked
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -617,7 +621,7 @@ class get_stream_link:
 					else:
 						self.stream_not_found()
 
-				elif re.match(".*?file:", sUnpacked):
+				elif re.search("file:", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("file:'(.*?)'", sUnpacked)
 					if stream_url:
@@ -626,7 +630,7 @@ class get_stream_link:
 					else:
 						self.stream_not_found()
 
-				elif re.match('.*?value="src=', sUnpacked):
+				elif re.search('value="src=', sUnpacked):
 					stream_url = re.findall('value="src=(.*?flv)&', sUnpacked)
 					if stream_url:
 						print stream_url[0]
@@ -671,9 +675,10 @@ class get_stream_link:
 			self.stream_not_found()
 
 	def flashx_tv3b(self, data):
-		stream_url = re.findall('id="normal_player_cont">.*?src="(.*?)"', data, re.S)
+		print "flashx_tv3b:"
+		stream_url = re.search('id="normal_player_cont">.*?src="(.*?)"', data, re.S)
 		if stream_url:
-			self.flashx_tv3(stream_url[0])
+			self.flashx_tv3(stream_url.group(1))
 		else:
 			self.stream_not_found()
 
@@ -706,7 +711,7 @@ class get_stream_link:
 			sJavascript = get_packedjava[1]
 			sUnpacked = cJsUnpacker().unpackByString(sJavascript)
 			if sUnpacked:
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -714,7 +719,7 @@ class get_stream_link:
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match(".*?'file'", sUnpacked):
+				elif re.search("'file'", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("'file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -829,7 +834,7 @@ class get_stream_link:
 			print sUnpacked
 			if sUnpacked:
 				print "joooooooooooooooooooooo"
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -837,7 +842,7 @@ class get_stream_link:
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match(".*?'file'", sUnpacked):
+				elif re.search("'file'", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("'file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -939,7 +944,7 @@ class get_stream_link:
 			sJavascript = get_packedjava[1]
 			sUnpacked = cJsUnpacker().unpackByString(sJavascript)
 			if sUnpacked:
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -947,7 +952,7 @@ class get_stream_link:
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match(".*?'file'", sUnpacked):
+				elif re.search("'file'", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("'file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -988,7 +993,7 @@ class get_stream_link:
 			self.stream_not_found()
 
 	def monsteruploads(self, data, url):
-		if not re.match('.*?eval\(function\(p\,a\,c\,k\,e\,d', data, re.S):
+		if not re.search('eval\(function\(p\,a\,c\,k\,e\,d', data, re.S):
 			id = re.findall('type="hidden" name="id".*?value="(.*?)"', data, re.S)
 			fname = re.findall('type="hidden" name="fname".*?value="(.*?)"', data, re.S)
 			referer = re.findall('type="hidden" name="referer".*?value="(.*?)"', data, re.S)
@@ -1026,14 +1031,14 @@ class get_stream_link:
 			sJavascript = get_packedjava[1]
 			sUnpacked = cJsUnpacker().unpackByString(sJavascript)
 			if sUnpacked:
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
 						print stream_url[0]
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match('.*?playlist:.*?http://www.monsteruploads.eu', sUnpacked):
+				elif re.search('playlist:.*?http://www.monsteruploads.eu', sUnpacked):
 					stream_url = re.findall("playlist:.'(.*?)'", sUnpacked)
 					if stream_url:
 						print stream_url[0]
@@ -1060,7 +1065,7 @@ class get_stream_link:
 			self.stream_not_found()
 
 	def vreer_post(self, data):
-		if re.match('.*?video.flv', data, re.S):
+		if re.search('video.flv', data, re.S):
 			stream_url = re.findall('file:."(.*?)"', data, re.S)
 			if stream_url:
 				print stream_url[0]
@@ -1185,7 +1190,7 @@ class get_stream_link:
 			if sUnpacked:
 				print "unpacked"
 				print sUnpacked
-				if re.match('.*?type="video/divx', sUnpacked):
+				if re.search('type="video/divx', sUnpacked):
 					print "DDIIIIIIIIIVVVXXX"
 					stream_url = re.findall('type="video/divx"src="(.*?)"', sUnpacked)
 					if stream_url:
@@ -1193,7 +1198,7 @@ class get_stream_link:
 						self._callback(stream_url[0])
 					else:
 						self.stream_not_found()
-				elif re.match(".*?file", sUnpacked):
+				elif re.search("file", sUnpacked):
 					print "FFFFFFFFLLLLLLLLLLLVVVVVVVV"
 					stream_url = re.findall("file','(.*?)'", sUnpacked)
 					if stream_url:
@@ -1207,9 +1212,9 @@ class get_stream_link:
 			self.stream_not_found()
 
 	def streamPutlockerSockshare(self, data, url, provider):
-		if re.match('.*?File Does not Exist', data, re.S):
+		if re.search('File Does not Exist', data, re.S):
 			message = self.session.open(MessageBox, "File Does not Exist, or Has Been Removed", MessageBox.TYPE_INFO, timeout=5)
-		elif re.match('.*?Encoding to enable streaming is in progresss', data, re.S):
+		elif re.search('Encoding to enable streaming is in progresss', data, re.S):
 			message = self.session.open(MessageBox, "Encoding to enable streaming is in progresss. Try again soon.", MessageBox.TYPE_INFO, timeout=5)
 		else:
 			print "provider:", provider
@@ -1277,7 +1282,7 @@ class get_stream_link:
 		if stream_url:
 			print stream_url
 			self._callback(stream_url[0])
-		elif re.match('.*?This video is encoding now', data, re.S):
+		elif re.search('This video is encoding now', data, re.S):
 			self.session.open(MessageBox, _("This video is encoding now. Please check back later."), MessageBox.TYPE_INFO, timeout=10)
 		else:
 			self.stream_not_found()
