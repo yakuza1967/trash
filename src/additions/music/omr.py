@@ -13,6 +13,9 @@ def omrListEntry(entry):
 
 kekse = {}
 
+config.mediaportal.omr_username = ConfigText(default="username", fixed_size=False)
+config.mediaportal.omr_password = ConfigText(default="password", fixed_size=False)
+
 class showPlaylist(GUIComponent, object):
 	GUI_WIDGET = eListbox
 	
@@ -54,6 +57,44 @@ class showPlaylist(GUIComponent, object):
 	def getSelectedIndex(self):
 		return self.l.getCurrentSelectionIndex()
 
+		
+class omrSetupScreen(Screen, ConfigListScreen):
+
+	skin = """
+		<screen position="center,center" size="450,80" title="OMR Setup">
+			<ePixmap position="15,4" size="16,16" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/username.png" alphatest="blend" />
+			<ePixmap position="15,29" size="16,16" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/password.png" alphatest="blend" />
+			<widget name="config" position="50,0" size="400,50" scrollbarMode="showOnDemand" />
+		</screen>"""		
+
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.session = session
+		
+		self.list = []
+		ConfigListScreen.__init__(self, self.list)
+		
+		self.list.append(getConfigListEntry("Username:", config.mediaportal.omr_username))
+		self.list.append(getConfigListEntry("Password:", config.mediaportal.omr_password))
+
+		self["config"].setList(self.list)
+
+		self["setupActions"] = ActionMap(["SetupActions"],
+		{
+			"ok":		self.saveConfig,
+			"cancel":	self.exit
+		}, -1)
+
+	def saveConfig(self):
+		print "save"
+		for x in self["config"].list:
+			x[1].save()
+		configfile.save()
+		self.close(True)
+	
+	def exit(self):
+		self.close(False)
+
 class omrGenreScreen(Screen):
 
 	def __init__(self, session):
@@ -75,7 +116,8 @@ class omrGenreScreen(Screen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
-			"red": self.keyCancel
+			"red": self.keyCancel,
+			"yellow": self.setup
 		}, -1)
 
 		self.keyLocked = True
@@ -86,9 +128,8 @@ class omrGenreScreen(Screen):
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
-		self['F3'] = Label("")
+		self['F3'] = Label("Setup")
 		self['F4'] = Label("")
-		self['F3'].hide()
 		self['F4'].hide()
 
 		self.genreliste = []
@@ -100,7 +141,8 @@ class omrGenreScreen(Screen):
 		self.onLayoutFinish.append(self.startlogin)
 
 	def startlogin(self):
-		url = "http://www.onlinemusicrecorder.com/login.php?e=mediaportalAPI@squizzy.de&p=version470"
+		url = "http://www.onlinemusicrecorder.com/login.php?e=%s&p=%s" % (config.mediaportal.omr_username.value, config.mediaportal.omr_password.value)
+		print url
 		getPage(url, cookies=kekse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.read_login).addErrback(self.error)
 		
 	def read_login(self, data):
@@ -143,14 +185,20 @@ class omrGenreScreen(Screen):
 		self.chooseMenuList.setList(map(omrGenreListEntry, self.genreliste))
 		self.keyLocked = False
 
+	def setup(self):
+		self.session.openWithCallback(self.setupCallback, omrSetupScreen)
+		
+	def setupCallback(self, close):
+		if close:
+			self.startlogin()
+	
 	def error(self, error):
 		print error
 	
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
-		print 
+
 		if self.login == False:
 			message = self.session.open(MessageBox, _("Login ERROR."), MessageBox.TYPE_INFO, timeout=5)
 			return
