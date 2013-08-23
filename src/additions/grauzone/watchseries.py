@@ -419,7 +419,7 @@ class watchseriesEpisodeListeScreen(Screen):
 		if eps:
 			self.filmliste = []
 			for url in eps:
-				epinfo = re.findall('_s(\d)_e(\d).html', url)
+				epinfo = re.findall('_s(\d+)_e(\d+).html', url)
 				if epinfo:
 					(episode,season) = epinfo[0]
 					print episode, season, url
@@ -502,7 +502,7 @@ class watchseriesStreamListeScreen(Screen):
 			self.filmliste.append(("There are no links available for this episode", "No supported streams found."))
 			self.chooseMenuList.setList(map(watchseriesHosterListEntry, self.filmliste))
 		else:
-			streams = re.findall('</td></tr><tr.*?><td><span>(.*?)</span></td><td> <a target="_blank" href="(/open/cale/.*?)"', data, re.S)
+			streams = re.findall('<tr><td><span>(.*?)</span></td><td><a target="_blank" href="(/open/cale/.*?)"', data, re.S)			
 			print streams
 			if streams:
 				self.filmliste = []
