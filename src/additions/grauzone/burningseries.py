@@ -45,7 +45,6 @@ class bsMain(Screen, ConfigListScreen):
 
 		self['title'] = Label("Burning-seri.es")
 		self['leftContentTitle'] = Label("M e n u")
-		self['stationIcon'] = Pixmap()
 		self['name'] = Label("")
 
 		self.streamList = []

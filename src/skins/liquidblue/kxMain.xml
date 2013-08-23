@@ -12,6 +12,5 @@
     <!-- select screen -->
     <widget name="title" position="913,356" size="328,100" backgroundColor="#26181d20" transparent="1" zPosition="1" font="mediaportal;24" valign="center" halign="center" foregroundColor="#00ffffff" />
     <widget name="streamlist" position="55,190" size="850,500" backgroundColor="#26181d20" scrollbarMode="showOnDemand" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/sel.png" foregroundColorSelected="#ffffff" foregroundColor="#00bbbbbb" />
-<!--    <widget name="stationIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/no_coverArt.png" position="917,439" size="320,200" transparent="1" alphatest="blend" /> -->
     <widget name="name" position="95,106" size="850,60" foregroundColor="#00ffffff" backgroundColor="#26181d20" transparent="1" font="mediaportal;26" valign="center" halign="center" />
   </screen>
