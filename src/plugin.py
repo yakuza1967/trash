@@ -1997,8 +1997,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.sort_plugins_file = "/etc/enigma2/mp_pluginliste"
 			if not fileExists(self.sort_plugins_file):
 				print "Erstelle Wall-Pluginliste."
-				os.system("touch "+self.sort_plugins_file)
-
+				#os.system("touch "+self.sort_plugins_file)
+				open(self.sort_plugins_file,"w").close()
+				
 			pluginliste_leer = os.path.getsize(self.sort_plugins_file)
 			if pluginliste_leer == 0:
 				print "1st time - Schreibe Wall-Pluginliste."

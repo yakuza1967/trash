@@ -1109,7 +1109,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		self.mLang = self['filmList'].getCurrent()[0][3]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
+			open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist","a")
 			if self.mLang == "us_ger_small":
@@ -1261,7 +1261,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 				mTitle = cname[0]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
+			open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist","a")
 			print mUrl, mTitle
@@ -1486,7 +1486,7 @@ class m4kStreamListeScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watched"):
-				os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watched")
+				open(config.mediaportal.watchlistpath.value+"mp_m4k_watched","w").close()
 
 			self.update_liste = []
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_m4k_watched")
@@ -1699,7 +1699,7 @@ class m4kEpisodenListeScreen(Screen):
 		self.watched_liste = []
 		self.mark_last_watched = []
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watched"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watched")
+			open(config.mediaportal.watchlistpath.value+"mp_m4k_watched","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watched"):
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_m4k_watched")
 			if not leer == 0:
@@ -2125,7 +2125,7 @@ class m4kSerienABCListe(Screen):
 
 		if season_link:
 			if not fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
-				os.system("touch "+config.mediaportal.watchlistpath.value+"mp_m4k_watchlist")
+				open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist","w").close()
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist"):
 				writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_m4k_watchlist","a")
 				if self.mLang == "http://img.movie4k.to/img/us_ger_small.png":

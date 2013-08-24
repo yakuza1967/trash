@@ -145,7 +145,7 @@ class bsSerien(Screen, ConfigListScreen):
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			print "Erstelle Burning-Series Watchlist."
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watchlist")
+			open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","w").close()
 
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","a")
@@ -194,7 +194,7 @@ class bsWatchlist(Screen, ConfigListScreen):
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			print "Erstelle Burning-Series Watchlist."
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watchlist")
+			open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","w").close()
 
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watchlist"):
 			readStations = open(config.mediaportal.watchlistpath.value+"mp_bs_watchlist","r")
@@ -362,7 +362,7 @@ class bsEpisoden(Screen, ConfigListScreen):
 		self.watched_liste = []
 		self.mark_last_watched = []
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watched"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watched")
+			open(config.mediaportal.watchlistpath.value+"mp_bs_watched","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watched"):
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_bs_watched")
 			if not leer == 0:
@@ -494,7 +494,7 @@ class bsStreams(Screen, ConfigListScreen):
 	def playfile(self, link):
 		print link
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_bs_watched"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_bs_watched")
+			open(config.mediaportal.watchlistpath.value+"mp_bs_watched","w").close()
 
 		self.update_liste = []
 		leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_bs_watched")

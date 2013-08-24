@@ -168,7 +168,7 @@ class cannaPlaylist(Screen, InfoBarBase, InfoBarSeek):
 
 	def loadPlaylist(self):
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
+			open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","w").close()
 
 		leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_canna_playlist")
 		if not leer == 0:
@@ -442,7 +442,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
+			open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","w").close()
 
 		if not self.checkPlaylist(cannaName):
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
@@ -455,7 +455,7 @@ class cannaMusicListeScreen(Screen, InfoBarBase, InfoBarSeek):
 
 	def checkPlaylist(self, song):
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
+			open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","w").close()
 			return False
 		else:
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_canna_playlist")
@@ -758,7 +758,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 		cannaUrl = self['streamlist'].getCurrent()[0][1]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
+			open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","w").close()
 
 		if not self.checkPlaylist(cannaName):
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
@@ -771,7 +771,7 @@ class cannaMusicListeScreen2(Screen, InfoBarBase, InfoBarSeek):
 
 	def checkPlaylist(self, song):
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_canna_playlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_canna_playlist")
+			open(config.mediaportal.watchlistpath.value+"mp_canna_playlist","w").close()
 			return False
 		else:
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_canna_playlist")

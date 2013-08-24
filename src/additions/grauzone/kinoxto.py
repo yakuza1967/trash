@@ -766,7 +766,7 @@ class kxNeuesteSerien(Screen):
 		muLang = self['streamlist'].getCurrent()[0][2]
 
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watchlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_kx_watchlist")
+			open(config.mediaportal.watchlistpath.value+"mp_kx_watchlist","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watchlist"):
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_kx_watchlist","a")
 			writePlaylist.write('"%s" "%s" "%s" "0"\n' % (muTitle, muID, muLang))
@@ -987,7 +987,7 @@ class kxSerienABCpage(Screen):
 		muID = self['streamlist'].getCurrent()[0][1]
 		muLang = self['streamlist'].getCurrent()[0][4]
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watchlist"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_kx_watchlist")
+			open(config.mediaportal.watchlistpath.value+"mp_kx_watchlist","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watchlist"):
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_kx_watchlist","a")
 			writePlaylist.write('"%s" "%s" "%s" "0"\n' % (muTitle, muID, muLang))
@@ -1047,7 +1047,7 @@ class kxEpisoden(Screen):
 		self.watched_liste = []
 		self.mark_last_watched = []
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watched"):
-			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_kx_watched")
+			open(config.mediaportal.watchlistpath.value+"mp_kx_watched","w").close()
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watched"):
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_kx_watched")
 			if not leer == 0:
@@ -1414,7 +1414,7 @@ class kxStreams(Screen):
 		if stream_url != None:
 			print stream_url
 			if not fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watched"):
-				os.system("touch "+config.mediaportal.watchlistpath.value+"mp_kx_watched")
+				open(config.mediaportal.watchlistpath.value+"mp_kx_watched","w").close()
 
 			self.update_liste = []
 			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_kx_watched")

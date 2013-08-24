@@ -78,7 +78,7 @@ class Radiode(Screen):
 		else:
 			self.playList = []
 			if not fileExists(config.mediaportal.watchlistpath.value+"mp_radiode_playlist"):
-				os.system("touch "+config.mediaportal.watchlistpath.value+"mp_radiode_playlist")
+				open(config.mediaportal.watchlistpath.value+"mp_radiode_playlist","w").close()
 			if fileExists(config.mediaportal.watchlistpath.value+"mp_radiode_playlist"):
 				path = config.mediaportal.watchlistpath.value+"mp_radiode_playlist"
 
