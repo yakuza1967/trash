@@ -63,8 +63,7 @@ class show_MSCC_Genre(Screen):
 		getPage(self.base_url + self.genre_url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		#liste = re.findall('="list_td_right"><a href="(.*?)".*?<img alt="(.*?)"', data)
-		liste = re.findall(self.R_COMP_01, data)
+		liste = self.R_COMP_01.findall(data)
 		if liste:
 			for (u, a) in liste:
 				self.genreliste.append((decodeHtml(u), decodeHtml(a)))
