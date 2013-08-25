@@ -338,9 +338,11 @@ class CheckPathes:
 		res, msg = SimplePlaylistIO.checkPath(config.mediaportal.watchlistpath.value, '', True)
 		if not res:
 			self.session.openWithCallback(self._callback, MessageBox, msg, MessageBox.TYPE_ERROR)
-		res, msg = SimplePlaylistIO.checkPath(config.mediaportal.storagepath.value, '', True)
-		if not res:
-			self.session.openWithCallback(self._callback, MessageBox, msg, MessageBox.TYPE_ERROR)
+		
+		if config.mediaportal.useRtmpDump.value or config.mediaportal.useHttpDump.value:
+			res, msg = SimplePlaylistIO.checkPath(config.mediaportal.storagepath.value, '', True)
+			if not res:
+				self.session.openWithCallback(self._callback, MessageBox, msg, MessageBox.TYPE_ERROR)
 
 	def _callback(self, answer):
 		if self.cb:
