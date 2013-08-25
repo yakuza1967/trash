@@ -235,11 +235,11 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			f.close()
 
 		self.setActionPrio()
-		self["actions"] = ActionMap(["WizardActions",'MediaPlayerSeekActions',"EPGSelectActions",'MoviePlayerActions','ColorActions','InfobarActions'],
+		self["actions"] = ActionMap(["WizardActions",'MediaPlayerSeekActions',"EPGSelectActions",'MoviePlayerActions','ColorActions','InfobarActions',"MenuActions"],
 		{
 			"leavePlayer": self.leavePlayer,
 			"info":		self.openMediainfo,
-			"input_date_time": self.openMenu,
+			"menu":		self.openMenu,
 			"up": 		self.openPlaylist,
 			"down":		self.randomNow,
 			"back":		self.leavePlayer,
