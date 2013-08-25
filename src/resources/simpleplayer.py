@@ -338,7 +338,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		currPlay = self.session.nav.getCurrentService()
 		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
 		print "[__evAudioDecodeError] audio-codec %s can't be decoded by hardware" % (sTagAudioCodec)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagAudioCodec, type = MessageBox.TYPE_INFO,timeout = 10 )
+		self.session.open(MessageBox, _("This STB can't decode %s streams!") % sTagAudioCodec, type = MessageBox.TYPE_INFO,timeout = 10 )
 
 	def __evVideoDecodeError(self):
 		if not config.mediaportal.sp_show_errors.value:
@@ -348,7 +348,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		currPlay = self.session.nav.getCurrentService()
 		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
 		print "[__evVideoDecodeError] video-codec %s can't be decoded by hardware" % (sTagVideoCodec)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagVideoCodec, type = MessageBox.TYPE_INFO,timeout = 10 )
+		self.session.open(MessageBox, _("This STB can't decode %s streams!") % sTagVideoCodec, type = MessageBox.TYPE_INFO,timeout = 10 )
 
 	def __evPluginError(self):
 		if not config.mediaportal.sp_show_errors.value:
@@ -950,7 +950,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Screensaver', config.mediaportal.sp_scrsaver))
 		self.list.append(getConfigListEntry('VideoQuali (Youtube)', config.mediaportal.youtubeprio))
 		self.list.append(getConfigListEntry('VideoQuali (others)', config.mediaportal.videoquali_others))
-		self.list.append(getConfigListEntry('Behavior in stop movie', config.mediaportal.sp_on_movie_stop))
+		self.list.append(getConfigListEntry('Behavior on movie stop', config.mediaportal.sp_on_movie_stop))
 		self.list.append(getConfigListEntry('Behavior on movie end', config.mediaportal.sp_on_movie_eof))
 		self.list.append(getConfigListEntry('Seekbar sensibility', config.mediaportal.sp_seekbar_sensibility))
 		self.list.append(getConfigListEntry('Infobar cover always off', config.mediaportal.sp_infobar_cover_off))
