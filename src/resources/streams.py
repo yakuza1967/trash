@@ -265,6 +265,11 @@ class get_stream_link:
 						getPage(new_link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.allmyvids).addErrback(self.errorload)
 					else:
 						self.stream_not_found()
+						
+			elif re.search('promptfile.com', data, re.S):
+				link = data
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.promptfile, link).addErrback(self.errorload)
+
 			else:
 				message = self.session.open(MessageBox, _("No supported Stream Hoster, try another one !"), MessageBox.TYPE_INFO, timeout=5)
 		else:
@@ -278,6 +283,21 @@ class get_stream_link:
 		if self.showmsgbox:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=5)
 
+	def promptfile(self, data, url):
+		chash = re.findall('type="hidden" name="chash" value="(.*?)"', data, re.S)
+		if chash:
+			dataPost = {'chash': chash[0]}
+			getPage(url, method='POST', postdata=urlencode(dataPost), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.promptfilePost).addErrback(self.errorload)
+		else:
+			self.stream_not_found()
+			
+	def promptfilePost(self, data):
+		stream_url = re.findall("url: '(.*?)'", data, re.S)
+		if stream_url:
+			self._callback(stream_url[0])
+		else:
+			self.stream_not_found()
+		
 	def allmyvids(self, data):
 		print "drin"
 		stream_url = re.findall('"file" : "(.*?)"', data)
