@@ -7,7 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-CF_Version = "Clipfish.de v0.99 (experimental)"
+CF_Version = "Clipfish.de v1.00"
 
 CF_siteEncoding = 'utf-8'
 
@@ -145,7 +145,7 @@ class show_CF_Genre(Screen):
 		self.genreSelected = False
 		self.menuListe = []
 		self.baseUrl = "http://www.clipfish.de"
-		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special", "/special"]
+		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special", "/special", "/special", "/special", "/special", "/special"]
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -164,7 +164,11 @@ class show_CF_Genre(Screen):
 			("Spielfilme", ""),
 			("Kino-Trailer", ""),
 			("Kino-Magazine", ""),
-			("News", "")
+			("News", ""),
+			("Comedy", ""),
+			("Promi Familien Duell", ""),
+			("DSDS", ""),
+			("Das Supertalent", "")
 			],
 			[None,
 			[
@@ -233,6 +237,31 @@ class show_CF_Genre(Screen):
 			("Alle VIP-Videos", "/news/vip/neu/%d/"),
 			("Regional News - alle Videos", "/regional-news/home/neu/%d/"),
 			("Neues von Daaruum", "/daaruum/home/neu/%d/")
+			],
+			[
+			("Y-Titty - Videos", "/y-titty/home/neu/%d/"),
+			("Neues von FreshTorge", "/freshaltefolie/home/neu/%d/"),
+			("Neues von den Lochis", "/dielochis/home/neu/%d/"),
+			("Digges Ding Comedy - Alle Videos", "/digges-ding-comedy/home/neu/%d/"),
+			("ApeCrime - Alle Videos", "/ape-crime/home/neu/%d/")
+			],
+			[
+			("Alle Videos", "/familien-duell/home/neu/%d/")
+			],
+			[
+			("DSDS 2013 - News", "/dsds/news/neu/%d/"),
+			("DSDS Musikvideos", "/musikvideos/dsds/neu/%d/"),
+			("Alle Videos aus den DSDS-Liveshows 2013", "/special/dsds/liveshow/neu/%d/"),
+			("DSDS Recall 2013 - Alle Videos", "/dsds/recall/neu/%d/"),
+			("DSDS 2013 Alle Casting-Videos", "/dsds/casting/neu/%d/"),
+			("DSDS 2012 - Alle Videos", "/dsds/2012/neu/%d/"),
+			("DSDS 8 - Videos", "/dsds/dsds-8/neu/%d/"),
+			("DSDS 7 - Videos", "/dsds/dsds-7/neu/%d/")
+			],
+			[
+			("Supertalent 2012 Backstage - Alle Videos", "/supertalent/supertalent-backstage/neu/%d/"),
+			("Das Supertalent 2012 - Alle Videos", "/supertalent/videos/neu/%d/"),
+			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011/neu/%d/")
 			]
 			]
 			]
