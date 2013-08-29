@@ -163,8 +163,7 @@ class mlehdFilmListeScreen(Screen):
 		if lastpage:
 			self['page'].setText(lastpage[0])
 
-		#movies = re.findall('<div class="chipsetl1data">.*?<a href="(http://www.mle-hd.se/.*?)" rel="bookmark" title="Permanent Link to (.*?)" class="img1">.*?<img.*?src="(http://www.mle-hd.se/wp-content/uploads/.*?)"', data, re.S)
-		movies = re.findall('<div class="entry ">.*?<a href="(http://www.mle-hd.se/.*?)" title="(.*?)" class="opacity"><img.*?src="(http://www.mle-hd.se/wp-content/uploads/.*?)"', data, re.S)
+		movies = re.findall('<div class="entry.*?<a href="(http://mle-hd.se/.*?)" title="(.*?)" class="opacity"><img.*?src="(http://mle-hd.se/.*?)"', data, re.S)
 		if movies:
 			self.filmliste = []
 			for (url,title,image) in movies:
