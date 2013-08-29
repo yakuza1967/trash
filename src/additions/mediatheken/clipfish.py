@@ -221,6 +221,7 @@ class show_CF_Genre(Screen):
 			("Western", "/11/western/neu/%d/#11"),
 			("Klassiker", "/9/klassiker/neu/%d/#9"),
 			("Horror", "/27/horror/neu/%d/#27"),
+			("Thriller", "/41/thriller/neu/%d/#41"),
 			("Asian", "/71/asian/neu/%d/#71"),
 			("Erotik", "/25/erotik/neu/%d/#25"),
 			("Komödie", "/29/komoedie/neu/%d/#29"),
@@ -601,9 +602,9 @@ class CF_FilmListeScreen(Screen):
 			print "Music videos found: ",menu_len
 
 			if not self.pages:
-				m1 = re.search('class="cf-page-stepper">(.*?)</div>', data, re.S)
+				m1 = re.search('<div class="pager">(.*?)</div>', data, re.S)
 				if m1:
-					m2 = re.findall('">(\d*?)</a>', m1.group(1))
+					m2 = re.findall('".*?>(\d*?)</a>', m1.group(1))
 
 				if m1 and m2:
 					pages = 0
