@@ -1,6 +1,4 @@
-#
 # ARD-Mediathek von chroma_key
-#
 # v0.3
 #
 # GenreFlags (self.gF):
@@ -14,8 +12,6 @@
 # 8 = Reportage & Doku (TV)
 # 9 = Film-Highlights (TV)
 # 10 = Einzelne Sender (TV+Radio)
-#
-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
@@ -27,7 +23,6 @@ textTrigger = 0
 mainLink = "http://www.ardmediathek.de"
 tDef = "Keine Informationen/Angaben"
 isWeg = "Leider nicht (mehr) auf den ARD-Servern vorhanden!"
-#iDef = "Inhaltsangaben zu Sendungen- und Clips angezeigen mit \'INFO\' !"
 helpText = "\n\nTipp:\nBei allen gefundenen Inhalten ist die 'INFO'-Taste belegt."
 suchDef = decodeHtml("\nDiese Auswahl ist f&uuml;r die ARD-Server rechenintensiv,\nund kann daher einige Sekunden dauern...")
 alienFound = "Kann nicht abgespielt werden! Entweder sind die Inhalte nicht mehr vorhanden, oder die Stream-Links werden auf Seiten \
@@ -91,7 +86,7 @@ class ARDGenreScreen(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -142,9 +137,7 @@ class ARDGenreScreen(Screen):
 	def keyDown(self):
 		self['List'].down()
 
-	def keyCancel(self):	# Beim Verlassen /tmp/ aufraeumen...
-		if fileExists("/tmp/Icon.jpg"):
-			os.remove("/tmp/Icon.jpg")
+	def keyCancel(self):
 		self.close()
 
 class ARDPreSelect(Screen):
@@ -246,9 +239,9 @@ class ARDPreSelect(Screen):
 			self.genreliste.append(("Tagesschau", "44", "dummy", "dummy"))
 			self.chooseMenuList.setList(map(ARDBody, self.genreliste))
 			self.keyLocked = False
-			
+
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -364,7 +357,7 @@ class ARDPreSelectSender(Screen):
 		self.keyLocked = False
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -565,7 +558,7 @@ class ARDPostSelect(Screen):
 		self.loadPic()
 
 	def dataError(self,error):
-		print error
+		printl(error,self,"E")
 
 	def loadPic(self):
 		url = self['List'].getCurrent()[0][3]
@@ -589,13 +582,10 @@ class ARDPostSelect(Screen):
 			streamHandlung = itxt
 		elif textTrigger == 0:
 			streamHandlung = self['List'].getCurrent()[0][2]
-			#streamHandlung += "\n\n\n%s" % iDef
 		self['handlung'].setText(streamHandlung)
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		if streamPic:
-			#downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataError)
-			#CoverHelper(self['Pic']).getCover(streamPic.group(1))
 			CoverHelper(self['Pic']).getCover(streamPic)
 
 	def keyOK(self):
@@ -720,7 +710,7 @@ class ARDStreamScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		self.keyLocked = True
@@ -771,20 +761,17 @@ class ARDStreamScreen(Screen):
 		if ergebnis:
 			for (itxt,streamPic) in ergebnis:
 				if not itxt or len(itxt) == 0:
-					itxt = tDef					
+					itxt = tDef
 				else:
 					itxt = decodeHtml(itxt)
 		if textTrigger == 1:
 			streamHandlung = itxt
 		elif textTrigger == 0:
 			streamHandlung = self['List'].getCurrent()[0][2]
-			#streamHandlung += "\n\n\n%s" % iDef
 		self['handlung'].setText(streamHandlung)
 		streamName = self['List'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		if streamPic:
-			#downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover).addErrback(self.dataError)
-			#CoverHelper(self['Pic']).getCover(streamPic.group(1))
 			CoverHelper(self['Pic']).getCover(streamPic)
 
 	def keyOK(self):
@@ -801,12 +788,12 @@ class ARDStreamScreen(Screen):
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_Link).addErrback(self.dataError)
 
 	def dataError(self, error):
-		print error
+		printl(error,self,"E")
 
 	def get_Link(self, data):
 		self.keyLocked = True
 		fsk = re.search('class="fsk">(.*?)</div>', data, re.S)
-		if fsk:	# PopUp-Meldung, wenn jugendgeschuetzter Stream nur deswegen nicht aufrufbar, da noch nicht 20:00 Uhr; thx an dhwz
+		if fsk:
 			message = self.session.open(MessageBox, _(fsk.group(1)), MessageBox.TYPE_INFO, timeout=7)
 			self.keyLocked = False
 			return
@@ -922,13 +909,15 @@ class ARDStreamScreen(Screen):
 					else:
 						final = "%s playpath=%s" % (host, playpath)
 						playlist = []
-						playlist.append(("Via rtmp: "+self.streamName, final))
-						self.session.open(ARDMediathekPlayer, playlist)
+						playlist.append((self.streamName, final))
+						print "Via rtmp: "+self.streamName
+						self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='ard')
 				else:
 					playpath = htP
 					playlist = []
-					playlist.append(("Via http: "+self.streamName, playpath))
-					self.session.open(ARDMediathekPlayer, playlist)
+					playlist.append((self.streamName, playpath))
+					print "Via http: "+self.streamName
+					self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='ard')
 			else:
 				message = self.session.open(MessageBox, _("\n' "+self.streamName+" '\n\n"+alienFound), MessageBox.TYPE_INFO, timeout=15)
 				self.keyLocked = False
@@ -987,14 +976,3 @@ class ARDStreamScreen(Screen):
 		global textTrigger
 		textTrigger = 0
 		self.close()
-
-class ARDMediathekPlayer(SimplePlayer):
-
-	def __init__(self, session, playList):
-		print "ARDMediathekPlayer:"
-		SimplePlayer.__init__(self, session, playList, showPlaylist=False, ltype='ard')
-
-	def getVideo(self):
-		title = self.playList[self.playIdx][0]
-		url = self.playList[self.playIdx][1]
-		self.playStream(title, url)
