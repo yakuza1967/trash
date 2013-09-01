@@ -5,13 +5,13 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-HTV_Version = "heiseVIDEO v0.92"
+HTV_Version = "heiseVIDEO v0.93"
 
 HTV_siteEncoding = 'utf-8'
 
 def heiseTvGenreListEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[1])
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[4])
 		]
 
 class HeiseTvGenreScreen(Screen):
@@ -59,7 +59,7 @@ class HeiseTvGenreScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		self.genreliste.append((0, 'Bitte warten...', '', ''))
+		self.genreliste.append((0, 'Bitte warten...', '', '', ''))
 		self.chooseMenuList.setList(map(heiseTvGenreListEntry, self.genreliste))
 		getPage(self.baseUrl+'/video', headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.buildMenu).addErrback(self.dataError)
 
@@ -71,25 +71,28 @@ class HeiseTvGenreScreen(Screen):
 			list = re.findall('href="#(reiter.*?)">(.*?)</a></li>', m.group(1), re.S)
 			if list:
 				for r, n in list:
+					nm = decodeHtml(n)
 					m2 = re.search('<a href="(\?teaser=.*?);.*?into=%s' % r, data)
 					if m2:
-						self.genreliste.append((1, n, '/video/%s;offset=%%d;into=%s&hajax=1' % (m2.group(1), r), ''))
+						self.genreliste.append((1, n, '/video/%s;offset=%%d;into=%s&hajax=1' % (m2.group(1), r), '', nm))
 					else:
-						self.genreliste.append((4, n, '/video', r))
+						self.genreliste.append((4, n, '/video', r, nm))
 
 		list = re.findall('<section class="kasten video.*?<h3><span></span>(.*?)</h3>', data, re.S)
 		if list:
 			for x in list:
 				if not [1 for item in self.genreliste if item[1] == x]:
-					self.genreliste.append((3, x, '/video', ''))
+					nm = decodeHtml(x)
+					self.genreliste.append((3, '', '/video', '', nm))
 
 		m = re.search('<section id="cttv_archiv">(.*?)</section>', data, re.S)
 		if m:
 			list = re.findall('data-jahr="(.*?)"', m.group(1), re.S)
 			if list:
 				for j in list:
+					nm = "c't-TV Archiv %s" % j
 					url = '/video/includes/cttv_archiv_json.pl?jahr=%s&rubrik=%s' % (j, self.data_rubrikid)
-					self.genreliste.append((2, "c't-TV Archiv %s" % j, url, ''))
+					self.genreliste.append((2, '', url, '', nm))
 
 		self.chooseMenuList.setList(map(heiseTvGenreListEntry, self.genreliste))
 		self.keyLocked = False
@@ -103,7 +106,7 @@ class HeiseTvGenreScreen(Screen):
 			return
 
 		genreID = self['genreList'].getCurrent()[0][0]
-		genre = self['genreList'].getCurrent()[0][1]
+		genre = self['genreList'].getCurrent()[0][4]
 		stvLink = self['genreList'].getCurrent()[0][2]
 		m_reiter = self['genreList'].getCurrent()[0][3]
 		self.session.open(HeiseTvListScreen, self.baseUrl, genreID, stvLink, genre, m_reiter)
