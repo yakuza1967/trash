@@ -340,8 +340,8 @@ class show_CF_Genre(Screen):
 		if callback != None:
 			self.param_qr = callback.strip()
 			if len(self.param_qr) > 0:
-				qr = urllib.quote(self.param_qr)
-				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+'/'+qr+'/video/neu/%d'
+				qr = self.param_qr.replace(' ', '+')
+				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+'/'+qr+'/video/bestertreffer/%d'
 				self.session.open(CF_FilmListeScreen, genreurl, self.genreTitle)
 
 	def setMenu(self, levelIncr, menuInit=False):
