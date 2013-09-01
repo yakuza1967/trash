@@ -7,7 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-CF_Version = "Clipfish.de v1.00"
+CF_Version = "Clipfish.de v1.01"
 
 CF_siteEncoding = 'utf-8'
 
@@ -341,7 +341,7 @@ class show_CF_Genre(Screen):
 			self.param_qr = callback.strip()
 			if len(self.param_qr) > 0:
 				qr = urllib.quote(self.param_qr)
-				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+'/'+qr
+				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+'/'+qr+'/video/neu/%d'
 				self.session.open(CF_FilmListeScreen, genreurl, self.genreTitle)
 
 	def setMenu(self, levelIncr, menuInit=False):
@@ -495,7 +495,7 @@ class CF_FilmListeScreen(Screen):
 		self.eventL = threading.Event()
 		self.keyLocked = True
 		self.musicListe = []
-		self.keckse = {}
+		self.kekse = {}
 		self.page = 0
 		self.pages = 0;
 		self.genreSpecials = False
@@ -524,9 +524,9 @@ class CF_FilmListeScreen(Screen):
 		if self.genreVideos:
 			link = self.genreLink % 'neu'
 			url = "%s/%d/" % (link, self.page)
-		elif self.genreSpielfilme or self.genreSpecial:
+		elif self.genreSpielfilme or self.genreSpecial or self.genreSearch:
 			url = self.genreLink % self.page
-		elif self.genreMusicCharts or self.genreSearch:
+		elif self.genreMusicCharts:
 			url = self.genreLink
 		else:
 			url = "%s/beste/%d/#" % (self.genreLink, self.page)
@@ -548,7 +548,7 @@ class CF_FilmListeScreen(Screen):
 
 		#self.eventL.clear()
 		print url
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(url, agent=std_headers, cookies=self.kekse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		self.eventL.clear()
@@ -565,7 +565,7 @@ class CF_FilmListeScreen(Screen):
 			if self.genreMusicCharts:
 				mg = re.search('intern cf-left-col50-left">(.*?)"cf-charts-text">', data[a:], re.S)
 			elif self.genreSearch:
-				mg = re.search('"cf-search-list-item-image">(.*?)</li>', data[a:], re.S)
+				mg = re.search('"cf-search-list-item-image.*?">(.*?)</li>', data[a:], re.S)
 			else:
 				mg = re.search('<li id="cf-video-item_(.*?)</li>', data[a:], re.S)
 
