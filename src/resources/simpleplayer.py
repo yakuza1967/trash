@@ -379,6 +379,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		if self.plType == 'global':
 			self.getVideo2()
 		else:
+			self.cover2 = False
 			self.getVideo()
 
 	def dataError(self, error):

@@ -7,7 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-CF_Version = "Clipfish.de v1.01"
+CF_Version = "Clipfish.de v1.02"
 
 CF_siteEncoding = 'utf-8'
 
@@ -31,10 +31,10 @@ Stream Auswahl:
 
 class ClipfishPlayer(SimplePlayer):
 
-	def __init__(self, session, playList, genreVideos, playIdx=0, playAll=False, listTitle=None):
+	def __init__(self, session, playList, genreVideos, playIdx=0, playAll=False, listTitle=None, showCover=False):
 		print "ClipfishPlayer:"
 		self.genreVideos = genreVideos
-		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle)
+		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, cover=showCover)
 
 	def getVid(self, data):
 		print "getVid: "
@@ -660,13 +660,19 @@ class CF_FilmListeScreen(Screen):
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
+		if self.genreSpielfilme:
+			showCover = True
+		else:
+			showCover = False
+
 		self.session.open(
 			ClipfishPlayer,
 			self.musicListe,
 			self.genreVideos,
 			self['liste'].getSelectedIndex(),
 			playAll = True,
-			listTitle = self.genreName
+			listTitle = self.genreName,
+			showCover = showCover
 			)
 
 	def keyUp(self):
