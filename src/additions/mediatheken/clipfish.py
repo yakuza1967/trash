@@ -145,7 +145,7 @@ class show_CF_Genre(Screen):
 		self.genreSelected = False
 		self.menuListe = []
 		self.baseUrl = "http://www.clipfish.de"
-		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/%d/#111", "/special", "/special", "/special", "/special", "/special", "/special"]
+		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special", "/special", "/special", "/special", "/special", "/special"]
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -229,41 +229,41 @@ class show_CF_Genre(Screen):
 			],
 			None,
 			[
-			("Daniele Rizzo - Alle Videos", "/daniele-rizzo/home/%d/"),
-			("Der ehrliche Dennis - Alle Videos", "/der-ehrliche-dennis/home/%d/"),
-			("Seen - Die aktuellen Kino- und DVD-Filme", "/seen/home/%d/"),
-			("Kino und Co. - Alle Videos", "/kino-und-co/home/%d/")
+			("Daniele Rizzo - Alle Videos", "/daniele-rizzo/home/neu/%d/"),
+			("Der ehrliche Dennis - Alle Videos", "/der-ehrliche-dennis/home/neu/%d/"),
+			("Seen - Die aktuellen Kino- und DVD-Filme", "/seen/home/neu/%d/"),
+			("Kino und Co. - Alle Videos", "/kino-und-co/home/neu/%d/")
 			],
 			[
-			("News und Lifestyle - Alle Videos", "/news/aktuelles/%d/"),
-			("Alle VIP-Videos", "/news/vip/%d/"),
-			("Regional News - alle Videos", "/regional-news/home/%d/"),
-			("Neues von Daaruum", "/daaruum/home/%d/")
+			("News und Lifestyle - Alle Videos", "/news/aktuelles/neu/%d/"),
+			("Alle VIP-Videos", "/news/vip/neu/%d/"),
+			("Regional News - alle Videos", "/regional-news/home/neu/%d/"),
+			("Neues von Daaruum", "/daaruum/home/neu/%d/")
 			],
 			[
-			("Y-Titty - Videos", "/y-titty/home/%d/"),
-			("Neues von FreshTorge", "/freshaltefolie/home/%d/"),
-			("Neues von den Lochis", "/dielochis/home/%d/"),
-			("Digges Ding Comedy - Alle Videos", "/digges-ding-comedy/home/%d/"),
-			("ApeCrime - Alle Videos", "/ape-crime/home/%d/")
+			("Y-Titty - Videos", "/y-titty/home/neu/%d/"),
+			("Neues von FreshTorge", "/freshaltefolie/home/neu/%d/"),
+			("Neues von den Lochis", "/dielochis/home/neu/%d/"),
+			("Digges Ding Comedy - Alle Videos", "/digges-ding-comedy/home/neu/%d/"),
+			("ApeCrime - Alle Videos", "/ape-crime/home/neu/%d/")
 			],
 			[
-			("Alle Videos", "/familien-duell/home/%d/")
+			("Alle Videos", "/familien-duell/home/neu/%d/")
 			],
 			[
-			("DSDS 2013 - News", "/dsds/news/%d/"),
-			("DSDS Musikvideos", "/musikvideos/dsds/%d/"),
-			("Alle Videos aus den DSDS-Liveshows 2013", "/special/dsds/liveshow/%d/"),
-			("DSDS Recall 2013 - Alle Videos", "/dsds/recall/%d/"),
-			("DSDS 2013 Alle Casting-Videos", "/dsds/casting/%d/"),
-			("DSDS 2012 - Alle Videos", "/dsds/2012/%d/"),
-			("DSDS 8 - Videos", "/dsds/dsds-8/%d/"),
-			("DSDS 7 - Videos", "/dsds/dsds-7/%d/")
+			("DSDS 2013 - News", "/dsds/news/neu/%d/"),
+			("DSDS Musikvideos", "/musikvideos/dsds/neu/%d/"),
+			("Alle Videos aus den DSDS-Liveshows 2013", "/special/dsds/liveshow/neu/%d/"),
+			("DSDS Recall 2013 - Alle Videos", "/dsds/recall/neu/%d/"),
+			("DSDS 2013 Alle Casting-Videos", "/dsds/casting/neu/%d/"),
+			("DSDS 2012 - Alle Videos", "/dsds/2012/neu/%d/"),
+			("DSDS 8 - Videos", "/dsds/dsds-8/neu/%d/"),
+			("DSDS 7 - Videos", "/dsds/dsds-7/neu/%d/")
 			],
 			[
-			("Supertalent 2012 Backstage - Alle Videos", "/supertalent/supertalent-backstage/%d/"),
-			("Das Supertalent 2012 - Alle Videos", "/supertalent/videos/%d/"),
-			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011/%d/")
+			("Supertalent 2012 Backstage - Alle Videos", "/supertalent/supertalent-backstage/neu/%d/"),
+			("Das Supertalent 2012 - Alle Videos", "/supertalent/videos/neu/%d/"),
+			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011/neu/%d/")
 			]
 			]
 			]
@@ -521,15 +521,20 @@ class CF_FilmListeScreen(Screen):
 
 	def loadPage(self):
 		print "loadPage:"
+		if self.page == 0:
+			page = 1
+		else:
+			page = self.page
+			
 		if self.genreVideos:
 			link = self.genreLink % 'neu'
-			url = "%s/%d/" % (link, self.page)
+			url = "%s/%d/" % (link, page)
 		elif self.genreSpielfilme or self.genreSpecial or self.genreSearch:
-			url = self.genreLink % self.page
+			url = self.genreLink % page
 		elif self.genreMusicCharts:
 			url = self.genreLink
 		else:
-			url = "%s/beste/%d/#" % (self.genreLink, self.page)
+			url = "%s/beste/%d/#" % (self.genreLink, page)
 
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
