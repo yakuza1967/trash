@@ -674,7 +674,8 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			if data[0] == 1:
 				self.setPlaymode()
 				self.configSaver()
-				self.showCover(self.pl_entry[6])
+				if self.cover or self.cover2:
+					self.showCover(self.pl_entry[6])
 			elif data[0] == 2:
 				self.addToPlaylist()
 
