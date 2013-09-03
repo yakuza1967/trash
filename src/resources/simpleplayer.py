@@ -716,10 +716,13 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			self.pl_entry[5] = self.playList[self.playIdx][2]
 		elif self.pl_entry[4] == 'mtv':
 			url = self.playList[self.playIdx][1]
+		elif self.pl_entry[4] == 'putpattv' and self.pl_entry[5]:
+			url = self.playList[self.playIdx][1]
+			self.pl_entry[5] = self.playList[self.playIdx][2]
 		else:
 			url = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
 
-			if re.match('.*?(putpattv|/myspass)', url, re.I):
+			if re.search('(putpat.tv|/myspass)', url, re.I):
 				self.session.open(MessageBox, _("Fehler: URL ist nicht persistent !"), MessageBox.TYPE_INFO, timeout=5)
 				return
 
