@@ -716,7 +716,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			self.pl_entry[5] = self.playList[self.playIdx][2]
 		elif self.pl_entry[4] == 'mtv':
 			url = self.playList[self.playIdx][1]
-		elif self.pl_entry[4] == 'putpattv' and self.pl_entry[5]:
+		elif self.pl_entry[4] == 'putpattv' and self.playList[self.playIdx][2]:
 			url = self.playList[self.playIdx][1]
 			self.pl_entry[5] = self.playList[self.playIdx][2]
 		else:
