@@ -1,10 +1,16 @@
 import math
 import re
 import urllib2
-from urllib import unquote
+from urllib import unquote, urlencode
 from urllib2 import urlopen, Request, HTTPError, URLError
+import datetime
+import Cookie
+import time
+from debuglog import printlog as printl
 
-class Flashx(object):
+class UrllibHelper(object):
+
+	DEBUGLEVEL = 0
 
 	headers = [
 		('Accept', ('text/html,application/xhtml+xml,'
@@ -12,12 +18,85 @@ class Flashx(object):
 		('User-Agent', ('Mozilla/5.0 (Windows NT 6.1; WOW64) '
 						'AppleWebKit/537.36 (KHTML, like Gecko) '
 						'Chrome/27.0.1453.15 Safari/537.36')),
-		('Accept-Language', 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4'),
-		('Referer', 'http://play.flashx.tv')
+		('Accept-Language', 'de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4')
 	]
 
+	handlers = [
+		urllib2.HTTPHandler(debuglevel=DEBUGLEVEL),
+		#urllib2.HTTPCookieProcessor(cj)
+    ]
+
+	def __init__(self, referrer=None):
+		self.referer = referrer
+		self.cookie = Cookie.SimpleCookie()
+		self.rcookie = None
+		self.opener = urllib2.build_opener(*self.handlers)
+		self.opener.addheaders = self.headers
+
+	def setCookie(self, name, value, expires=None, path=None, domain=None, secure=None):
+		self.cookie[name] = value
+		if expires:
+			expiration = datetime.datetime.now() + datetime.timedelta(minutes=int(expires))
+			self.cookie[name]['expires'] = expiration.strftime("%a, %d-%b-%Y %H:%M:%S")
+		if path:
+			self.cookie[name]['path'] = path
+		if domain:
+			self.cookie[name]['domain'] = domain
+		if secure:
+			self.cookie[name]['secure'] = secure
+
+	def joinCookies(self):
+		ck = ''
+		if self.rcookie:
+			ck = self.rcookie[0]
+			for s in self.rcookie[1:]:
+				ck += '\r\n%s' % s
+		if self.cookie:
+			if ck:
+				ck += '\r\n'
+			ck += self.cookie.output(header='').strip()
+		return ck
+
+	def getData(self, url, postdata=None, headers=None):
+
+		data = None
+		if not url:
+			printl("No URL given", self, "E")
+			return data
+
+		if postdata:
+			postdata = urlencode(postdata)
+		request = Request(url, data=postdata)
+		if headers:
+			for header, val in headers:
+				request.add_header(header, val)
+		if self.referer:
+			request.add_header('Referer', self.referer)
+		ck = self.joinCookies()
+		if ck:
+			request.add_header('Cookie', ck)
+		try:
+			response = self.opener.open(request)
+			data = response.read()
+			printl("Data length: %s" % len(data), self)
+		except HTTPError, error:
+			printl('HTTPError: %s' % error, self, "E")
+		except URLError, error:
+			printl('URLError: %s' % error, self, "E")
+		except ValueError, error:
+			printl('ValueError: %s' % error, self, "E")
+		except:
+			printl('Unknown error', self, "E")
+		else:
+			self.referer = url
+			self.rcookie = response.info().getheaders('Set-Cookie')
+
+		return data
+
+class Flashx(UrllibHelper):
+
 	def __init__(self):
-		self.cookie = None
+		UrllibHelper.__init__(self)
 
 	def __c(self, c):
 		d = ""
@@ -66,36 +145,36 @@ class Flashx(object):
 		html = self.__x(x, t)
 		return html
 
-	def __getData(self, url, decode=False, referer=None):
-		data = None
+	def __parseCKS(self, data):
+		m = re.findall('Set_Cookie\((.*?)\);', data)
+		if m:
+			for p in m:
+				pars = p.split(',')
+				arg1 = pars[0].strip().replace("'","")
+				arg2 = pars[1].strip().replace("'","")
+				if 'referrer' in arg2:
+					arg2 = ''
+				arg3 = pars[2].strip().replace("'","")
+				arg4 = pars[3].strip().replace("'","")
+				arg5 = pars[4].strip().replace("'","")
+				arg6 = pars[5].strip().replace("'","")
+				self.setCookie(arg1,arg2,arg3,arg4,arg5,arg6)
 
-		request = Request(url)
-		for header in self.headers:
-			request.add_header(*header)
-		if referer:
-			request.add_header('Referer', referer)
-		if self.cookie:
-			request.add_header('Cookie', self.cookie)
-		try:
-			response = urlopen(request)
-			if response.headers.get('Set-Cookie'):
-				self.cookie = response.headers.get('Set-Cookie')
-			data = response.read()
-		except HTTPError, error:
-			print 'HTTPError: %s' % error
-		except URLError, error:
-			print 'URLError: %s' % error
+	def __getData(self, url, decode=False, postdata=None):
+		if not url:
+			printl("No URL given", self, "E")
+			return None
 
-		if not decode:
-			return data
-		if data != None:
-			js = re.findall('<script language=javascript>c="(.*?)";.*?x\("(.*?)"', data)
-			if js:
-				c = js[0][0]
-				x = js[0][1]
-				html = self.__decodeX(c,x)
-				newurl=resp.geturl()
-				return html
+		data = self.getData(url, postdata)
+		if data:
+			self.__parseCKS(data)
+
+			if decode:
+				js = re.findall('<script language=javascript>c="(.*?)";.*?x\("(.*?)"', data)
+				if js:
+					c = js[0][0]
+					x = js[0][1]
+					data = self.__decodeX(c,x)
 
 		return data
 
@@ -103,18 +182,25 @@ class Flashx(object):
 		html = self.__getData(url, False)
 		vidUrl = None
 		if html:
-			js = re.findall('class="auto-style6".*?<a href="(.*?)"', html, re.S)
+			js = re.search('class="auto-style6".*?<a href="(.*?)"', html, re.S)
 			if js:
-				html = self.__getData(js[0], False, url)
-				if html:
-					referer = js[0]
-					js = re.findall('player.swf\?config=(.*?)"', html)
-					if js:
-						html = self.__getData('http://play.flashx.tv/player/soy.php', referer=referer)
-						html = self.__getData(js[0], referer=referer)
-						if html:
-							js = re.findall('<file>(.*?)</file>', html)
-							if js:
-								vidUrl = js[0]
+				m = re.search('<form action=.*?="id" value="(.*?)">.*?="sec" value="(.*?)">', html, re.S)
+				if m:
+					pdata = {}
+					pdata['id'] = m.group(1)
+					pdata['sec'] = m.group(2)
+					url = 'http://play.flashx.tv/player/view.php'
+					html = self.__getData(url, postdata=pdata)
+					if html:
+						js = re.search('player.swf\?config=(.*?)"', html)
+						if js:
+							url = 'http://play.flashx.tv/nuevo/player/player.swf'
+							self.__getData(url)
+							html = self.__getData(js.group(1))
+							if html:
+								js = re.search('<file>(.*?)</file>', html)
+								if js:
+									vidUrl = js.group(1)
 
 		return vidUrl
+
