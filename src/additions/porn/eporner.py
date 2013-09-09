@@ -191,7 +191,7 @@ class epornerFilmScreen(Screen):
 			self.lastpage = 0
 		self['page'].setText(str(self.page+1) + ' / ' + str(self.lastpage))
 		if self.phCatLink == "http://www.eporner.com/top_rated//":
-			phMovies = re.findall('<div\sclass="mbtit"><a\shref="(.*?)"\stitle="(.*?)".*?src="(.*?)".*?<span>.*?<\/span>\s(.*?)<\/div>', data, re.S)
+			phMovies = re.findall('<div\sclass="mbtit".*?><a\shref="(.*?)"\stitle="(.*?)".*?src="(.*?)".*?<span>.*?<\/span>\s(.*?)<\/div>', data, re.S)
 			if phMovies:
 				Views = []
 				for (phUrl, phTitle, phImage, phRuntime) in phMovies:
@@ -201,7 +201,7 @@ class epornerFilmScreen(Screen):
 				self.keyLocked = False
 				self.showInfos()
 		else:
-			phMovies = re.findall('<div\sclass="mbtit"><a\shref="(.*?)"\stitle="(.*?)".*?src="(.*?)".*?<span>.*?<\/span>\s(.*?)<\/div>.*?eye.png.*?<\/span>\s(.*?)<\/div>', data, re.S)
+			phMovies = re.findall('<div\sclass="mbtit".*?><a\shref="(.*?)"\stitle="(.*?)".*?src="(.*?)".*?<span>.*?<\/span>\s(.*?)<\/div>.*?eye.png.*?<\/span>\s(.*?)<\/div>', data, re.S)
 			if phMovies:
 				for (phUrl, phTitle, phImage, phRuntime, phViews) in phMovies:
 					self.filmliste.append((decodeHtml(phTitle), phUrl, phImage, phRuntime, phViews))
