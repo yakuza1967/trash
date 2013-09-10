@@ -32,6 +32,7 @@ class simplelistGenreScreen(Screen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
+			"menu": self.keyMenu,
 			"red": self.keyCancel,
 			"green": self.loadFileList,
 			"yellow": self.globalList,
@@ -56,6 +57,7 @@ class simplelistGenreScreen(Screen):
 		self['F4'] = Label("Löschen")
 		self['F4'].hide()
 
+		self.last_pl_number = config.mediaportal.sp_pl_number.value
 		self.last_videodir = config.movielist.last_videodir.value
 		config.movielist.last_videodir.value = self.filelist_path
 		self.last_selection = None
@@ -67,7 +69,7 @@ class simplelistGenreScreen(Screen):
 		self['genreList'] = self.chooseMenuList
 
 		self.onClose.append(self._onClose)
-		self.onLayoutFinish.append(self.globalList)
+		self.onFirstExecBegin.append(self.globalList)
 
 	def loadFileList(self):
 		self.ltype = 'sl_movies'
@@ -107,24 +109,34 @@ class simplelistGenreScreen(Screen):
 
 	def globalList(self):
 		self.ltype = 'sl_glob_playlist'
-		self['ContentTitle'].setText("Global Playlist")
-
-		self.filelist = SimplePlaylistIO.getPL('mp_global_pl_01')
+		self['ContentTitle'].setText("Global Playlist-%02d" % config.mediaportal.sp_pl_number.value)
+		self['F4'].show()
+		self.filelist == []
+		self.filelist = SimplePlaylistIO.getPL('mp_global_pl_%02d' % config.mediaportal.sp_pl_number.value)
 		if self.filelist == []:
 			self.keyLocked = True
 			self['F4'].hide()
-			self.filelist.append(("Keine globale Playlist gefunden.", "dump"))
+			self.filelist.append(("Keine Einträge gefunden.", "dump"))
 		else:
 			self['F4'].show()
-			self.chooseMenuList.setList(map(simplelistListEntry, self.filelist))
 			self.keyLocked = False
+		self.chooseMenuList.setList(map(simplelistListEntry, self.filelist))
 
 	def deleteEntry(self):
 		if self.ltype != 'sl_glob_playlist' or not len(self.filelist):
 			return
 		idx = self['genreList'].getSelectedIndex()
-		SimplePlaylistIO.delEntry('mp_global_pl_01', self.filelist, idx)
+		SimplePlaylistIO.delEntry('mp_global_pl_%02d' % config.mediaportal.sp_pl_number.value, self.filelist, idx)
 		self.chooseMenuList.setList(map(simplelistListEntry, self.filelist))
+
+	def keyMenu(self):
+		self.session.openWithCallback(self.cb_Menu, SimplelistConfig)
+
+	def cb_Menu(self):
+		print "cb_menu:",config.mediaportal.sp_pl_number.value
+		if config.mediaportal.sp_pl_number.value != self.last_pl_number and self.ltype == 'sl_glob_playlist':
+			self.last_pl_number = config.mediaportal.sp_pl_number.value
+			self.globalList()
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -153,6 +165,22 @@ class simplelistGenreScreen(Screen):
 
 	def _onClose(self):
 		config.movielist.last_videodir.value = self.last_videodir
-	
+
 	def keyCancel(self):
 		self.close()
+
+class SimplelistConfig(ConfigListScreen, Screen):
+	skin = '\n\t\t<screen position="center,center" size="500,300" title="MP SimpleList Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="480,290" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.session = session
+		self.list = []
+		self.list.append(getConfigListEntry('Glob. playlist number', config.mediaportal.sp_pl_number))
+		ConfigListScreen.__init__(self, self.list)
+		self['setupActions'] = ActionMap(['SetupActions'],
+		{
+			'ok': 		self.keySave,
+			'cancel': 	self.keyCancel
+		},-2)
+

@@ -293,7 +293,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		self.pl_entry = ['', '', '', '', '', '', '', '', '']
 		self.plType = plType
 		self.playList2 = playList2
-		self.pl_name = 'mp_global_pl_01'
+		self.pl_name = 'mp_global_pl_%02d' % config.mediaportal.sp_pl_number.value
 		self.title_inr = title_inr
 		self.cover = cover
 		self.ltype = ltype
@@ -387,7 +387,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		if config.mediaportal.sp_show_errors.value:
 			self.session.openWithCallback(self.dataError2, MessageBox, str(self.msg), MessageBox.TYPE_INFO, timeout=10)
 		printl(error,self,"E")
-		
+
 	def dataError2(self, res):
 		self.playNextStream(config.mediaportal.sp_on_movie_eof.value)
 
@@ -906,7 +906,7 @@ class SimplePlaylist(Screen):
 		if self.listTitle:
 			self['title'].setText("MP Playlist - %s" % self.listTitle)
 		else:
-			self['title'].setText("MP %s Playlist" % self.plType)
+			self['title'].setText("MP %s Playlist-%02d" % (self.plType, config.mediaportal.sp_pl_number.value))
 
 		self.chooseMenuList.setList(map(self.playListEntry, self.playList))
 
@@ -951,6 +951,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 		self.session = session
 		self.list = []
+		self.list.append(getConfigListEntry('Glob. playlist number', config.mediaportal.sp_pl_number))
 		self.list.append(getConfigListEntry('Random Play', config.mediaportal.sp_randomplay))
 		self.list.append(getConfigListEntry('Screensaver', config.mediaportal.sp_scrsaver))
 		self.list.append(getConfigListEntry('VideoQuali (Youtube)', config.mediaportal.youtubeprio))
@@ -969,7 +970,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		},-2)
 
 class SimplePlayerMenu(Screen):
-	skin = '\n\t\t<screen position="center,center" size="300,200" title="MP Player Menü">\n\t\t\t<widget name="menu" position="10,10" size="290,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+	skin = '\n\t\t<screen position="center,center" size="350,200" title="MP Player Menü">\n\t\t\t<widget name="menu" position="10,10" size="340,190" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
 	def __init__(self, session, pltype, showPlaylist=True):
 		Screen.__init__(self, session)
@@ -985,9 +986,9 @@ class SimplePlayerMenu(Screen):
 		if pltype != 'extern':
 			self.liste.append(('Configuration', 1))
 		if pltype in ('local', 'extern') :
-			self.liste.append(('Add service to global playlist', 2))
+			self.liste.append(('Add service to global playlist-%02d' % config.mediaportal.sp_pl_number.value, 2))
 			if showPlaylist and pltype == 'local':
-				self.liste.append(('Open global playlist', 3))
+				self.liste.append(('Open global playlist-%02d' % config.mediaportal.sp_pl_number.value, 3))
 		elif showPlaylist:
 			self.liste.append(('Open local playlist', 4))
 		if VideoSetupPresent:
