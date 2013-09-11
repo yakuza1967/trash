@@ -277,9 +277,10 @@ class drtuberFilmScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getData, callback).addErrback(self.dataError, callback)
 
 	def getData(self, data, callback):
-		url = re.findall('video_file.*?(http.*?\.flv).*?\/video_file', data, re.S)
+		url = re.findall('video_file>.*?(http.*?\.flv.*?)<\/video_file', data, re.S)
 		if url:
 			url = str(url[0])
+			url = url.replace("&amp;","&")
 			callback(url)
 
 	def gotVideoPage(self, data):
