@@ -1665,40 +1665,46 @@ class kxStreams(Screen):
 			self.streamList = []
 			self.streamList.append(("Hoster", "nix", "Mirror", "Hits", "Date"))
 			for each in hosterdump:
-				if re.match('.*?Mirror', each):
-					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>(.*?)</b>\:.(.*?)<br /><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
+				if re.search('Mirror', each):
+					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>Mirror</b>\:.(.*?)<br /><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
 					if hosters:
-						(get_stream_url, hostername, hits, mirror, date)= hosters[0]
-						#get_stream_url = get_stream_url.replace('&amp;','&')
-						#print get_stream_url, hostername, mirror, hits.replace(',','').replace(' ',''), date
+						(get_stream_url, hostername, mirror, date)= hosters[0]
 						mirrors = re.findall('[0-9]/([0-9])', mirror)
 						if mirrors:
 							print "total", mirrors[0]
+							get_stream_url_m = ''
 							for i in range(1,int(mirrors[0])+1):
-								if re.match('.*?Season=', get_stream_url, re.S):
+								if re.search('Season=', get_stream_url, re.S):
 									details = re.findall('(.*?)&amp;Hoster=(.*?)&amp;Mirror=(.*?)&amp;Season=(.*?)&amp;Episode=(\d)', get_stream_url, re.S)
-									(dname, dhoster, dmirror, dseason, depisode) = details[0]
-									get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s&Season=%s&Episode=%s" %  (dname, dhoster, 'Mirror='+str(i), dseason, depisode)
+									if details:
+										(dname, dhoster, dmirror, dseason, depisode) = details[0]
+										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s&Season=%s&Episode=%s" %  (dname, dhoster, str(i), dseason, depisode)
+									else:
+										details = re.findall('(.*?)&amp;Hoster=(.*?)&amp;Season=(.*?)&amp;Episode=(\d)', get_stream_url, re.S)
+										(dname, dhoster, dseason, depisode) = details[0]
+										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Season=%s&Episode=%s" %  (dname, dhoster, dseason, depisode)
 								else:
 									details = re.findall('(.*?)&amp;Hoster=(.*?)&amp;Mirror=(\d)', get_stream_url, re.S)
 									if details:
 										(dname, dhoster, dmirror) = details[0]
-										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, 'Mirror='+str(i))
+										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, str(i))
 									else:
-										details = re.findall('(.*?)&amp;Hoster=(.*?)$', get_stream_url, re.S)
-										(dname, dhoster) = details[0]
-										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, 'Mirror='+str(i))
+										details = re.findall('(.*?)&amp;Hoster=(\d+)', get_stream_url, re.S)
+										if details:
+											(dname, dhoster) = details[0]
+											get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s" %  (dname, dhoster)
+
 								print get_stream_url_m
 								if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
-									self.streamList.append((hostername, get_stream_url_m, str(i)+"/"+mirrors[0], hits.replace(',','').replace(' ',''), date))
+									self.streamList.append((hostername, get_stream_url_m, str(i)+"/"+mirrors[0], '', date))
 				else:
-					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>Hits</b>\:.(.*\d+)<br /><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
+					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
 					if hosters:
-						(get_stream_url, hostername, hits, date)= hosters[0]
+						(get_stream_url, hostername, date)= hosters[0]
 						get_stream_url = "http://kinox.to/aGET/Mirror/%s" % get_stream_url.replace('&amp;','&')
-						print get_stream_url, hostername, "1", hits, date
+						print get_stream_url, hostername, "1", date
 						if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
-							self.streamList.append((hostername, get_stream_url, "1", hits, date))
+							self.streamList.append((hostername, get_stream_url, "1", '', date))
 
 			self.streamMenuList.setList(map(kxStreamListEntry, self.streamList))
 			self.keyLocked = False
@@ -1725,12 +1731,15 @@ class kxStreams(Screen):
 			self.session.open(kxParts, urls, self.stream_name)
 		else:
 			print "one parts only.."
+			stream = None
 			extern_stream_url = re.findall('<a href=.".*?(http.*?)"', data)
 			if extern_stream_url:
 				stream = extern_stream_url[0].replace('\\','')
 				if stream:
 					print stream
 					get_stream_link(self.session).check_link(stream, self.playfile)
+			if not stream:
+				self.session.open(MessageBox, _("No stream link found !"), MessageBox.TYPE_INFO, timeout=5)
 
 	def playfile(self, stream_url):
 		if stream_url != None:
@@ -1824,11 +1833,14 @@ class kxParts(Screen):
 
 	def parseData(self, data):
 		extern_stream_url = re.findall('<a href=."(.*?)"', data, re.S)
+		stream = None
 		if extern_stream_url:
 			stream = extern_stream_url[0].replace('\\','')
 			if stream:
 				print stream
 				get_stream_link(self.session).check_link(stream, self.playfile)
+		if not stream:
+			self.session.open(MessageBox, _("No stream link found !"), MessageBox.TYPE_INFO, timeout=5)
 
 	def playfile(self, stream_url):
 		if stream_url != None:
