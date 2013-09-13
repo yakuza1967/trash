@@ -369,19 +369,26 @@ class oasetvCDListeScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
 
 	def postData2(self, data):
-		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
-		if get_packedjava:
-			sUnpacked = cJsUnpacker().unpackByString(get_packedjava[1])
-		if sUnpacked:
-			stream_url = re.findall("'file','(.*?)'", sUnpacked)
+		if re.match('.*?file:', data, re.S):
+			stream_url = re.findall("file: '(.*?)'", data)
 			if stream_url:
 				print stream_url[0]
 				self.keyLocked = False
 				self.session.open(SimplePlayer, [(self.stream_name, stream_url[0], self.imageUrl)], showPlaylist=False, ltype='streamoase', cover=True)
+		else:
+			get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
+			if get_packedjava:
+				sUnpacked = cJsUnpacker().unpackByString(get_packedjava[1])
+			if sUnpacked:
+				stream_url = re.findall("'file','(.*?)'", sUnpacked)
+				if stream_url:
+					print stream_url[0]
+					self.keyLocked = False
+					self.session.open(SimplePlayer, [(self.stream_name, stream_url[0], self.imageUrl)], showPlaylist=False, ltype='streamoase', cover=True)
+				else:
+					message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
 			else:
 				message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
-		else:
-			message = self.session.open(MessageBox, _("Stream not found."), MessageBox.TYPE_INFO, timeout=3)
 
 	def dataError(self, error):
 		self.keyLocked = False
