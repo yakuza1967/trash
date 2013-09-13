@@ -119,6 +119,8 @@ class kxMain(Screen):
 		self.streamList.append(("Filme A-Z", "dump"))
 		self.streamList.append(("Serien A-Z","dump"))
 		self.streamList.append(("Neueste Serien", "http://kinox.to/Latest-Series.html"))
+		self.streamList.append(("Dokumentationen A-Z","dump"))
+		self.streamList.append(("Neueste Dokumentationen", "http://kinox.to/Latest-Documentations.html"))
 		self.streamList.append(("Watchlist","dump"))
 		self.streamMenuList.setList(map(kxMainListEntry, self.streamList))
 		self.keyLocked = False
@@ -144,6 +146,10 @@ class kxMain(Screen):
 			self.session.open(kxSerienABC, url)
 		elif auswahl == "Neueste Serien":
 			self.session.open(kxNeuesteSerien, url)
+		elif auswahl == "Dokumentationen A-Z":
+			self.session.open(kxDokuABC, url)	
+		elif auswahl == "Neueste Dokumentationen":
+			self.session.open(kxNeuesteDoku, url)	
 		elif auswahl == "Watchlist":
 			self.session.open(kxWatchlist)
 
@@ -800,6 +806,318 @@ class kxNeuesteSerien(Screen):
 	def keyCancel(self):
 		self.close()
 
+class kxDokuABC(Screen):
+
+	def __init__(self, session, kxGotLink):
+		self.kxGotLink = kxGotLink
+		self.session = session
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxABC.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxABC.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self['title'] = Label("Kinox.to")
+		self['leftContentTitle'] = Label("Dokumetation A-Z")
+		self['stationIcon'] = Pixmap()
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+
+		self.streamList = []
+		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.streamMenuList.l.setItemHeight(25)
+		self['streamlist'] = self.streamMenuList
+
+		self.keyLocked = True
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.streamList = []
+		abc = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9"]
+		for letter in abc:
+			self.streamList.append((letter))
+		self.streamMenuList.setList(map(kxLetterEntry, self.streamList))
+		self.keyLocked = False
+
+	def keyOK(self):
+		exist = self['streamlist'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+		auswahl = self['streamlist'].getCurrent()[0]
+		print auswahl
+		self.session.open(kxDokuABCpage, auswahl)
+
+	def keyCancel(self):
+		self.close()
+
+class kxDokuABCpage(Screen):
+
+	def __init__(self, session, letter):
+		self.letter = letter
+		self.session = session
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxABCpage.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxABCpage.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
+			"nextBouquet" : self.keyPageUp,
+			"prevBouquet" : self.keyPageDown
+		}, -1)
+
+		self['title'] = Label("Kinox.to")
+		self['leftContentTitle'] = Label("Dokumetation #%s" % self.letter)
+		self['stationIcon'] = Pixmap()
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("1")
+
+		self.streamList = []
+		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.streamMenuList.l.setItemHeight(25)
+		self['streamlist'] = self.streamMenuList
+
+		self.keyLocked = True
+		self.page = 1
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.streamList = []
+		#self.filmtype = "movie"
+		self.filmtype = "documentation"
+		url = "http://kinox.to/aGET/List/Page="+str(self.page)+"&Per_Page=10&url=%2FaGET%2FList%2F&dir=desc&sort=title&per_page=10&ListMode=cover&additional=%7B%22fType%22%3A%22"+self.filmtype+"%22%2C%22fLetter%22%3A%22"+self.letter+"%22%7D&iDisplayStart=0&iDisplayLength=10"
+		print url
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+
+	def parseData(self, data):
+		kxMovies = re.findall('title=."(.*?)" href=."(.*?)".*?<img.*?src=."(.*?)".*?<div class=."Descriptor.">(.*?)<./div>.*?src=.".*?lng.*?/(.*?).pn.*?" alt=."language.">', data, re.S)
+		if kxMovies:
+			for (kxTitle,kxUrl,kxImage,kxHandlung,kxLang) in kxMovies:
+				kxUrl = "http://kinox.to" + kxUrl.replace('\\','')
+				self.streamList.append((decodeHtml(kxTitle.replace('\\','')),kxUrl,kxImage.replace('\\',''),kxHandlung,kxLang))
+				self.streamMenuList.setList(map(kxListEntry, self.streamList))
+			self.keyLocked = False
+			self.showInfos()
+		else:
+			self['page'].setText("END")
+
+	def showInfos(self):
+		filmName = self['streamlist'].getCurrent()[0][0]
+		self['name'].setText(filmName)
+		self['page'].setText(str(self.page))
+		coverUrl = self['streamlist'].getCurrent()[0][2]
+		handlung = self['streamlist'].getCurrent()[0][3]
+		self['handlung'].setText(decodeHtml(handlung))
+		CoverHelper(self['stationIcon']).getCover(coverUrl)
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def keyOK(self):
+		exist = self['streamlist'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+		stream_name = self['streamlist'].getCurrent()[0][0]
+		auswahl = self['streamlist'].getCurrent()[0][1]
+		print auswahl
+		self.session.open(kxStreams, auswahl, stream_name)
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].pageUp()
+		self.showInfos()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].pageDown()
+		self.showInfos()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].up()
+		self.showInfos()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].down()
+		self.showInfos()
+
+	def keyPageDown(self):
+		print "PageDown"
+		if self.keyLocked:
+			return
+		if not self.page < 2:
+			self.page -= 1
+			self.loadPage()
+
+	def keyPageUp(self):
+		print "PageUP"
+		if self.keyLocked:
+			return
+		self.page += 1
+		self.loadPage()
+		
+	def keyCancel(self):
+		self.close()
+
+class kxNeuesteDoku(Screen):
+
+	def __init__(self, session, kxGotLink):
+		self.kxGotLink = kxGotLink
+		self.session = session
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kxNeuesteSerien.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kxNeuesteSerien.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
+			"green" : self.keyAdd
+		}, -1)
+
+		self.plugin_path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal"
+
+		self['title'] = Label("Kinox.to")
+		self['leftContentTitle'] = Label("Neueste Dukumentation")
+		self['stationIcon'] = Pixmap()
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self.keckse = {}
+
+		self.streamList = []
+		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.streamMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.streamMenuList.l.setItemHeight(25)
+		self['streamlist'] = self.streamMenuList
+
+		self.keyLocked = True
+		#self.page = 1
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.streamList = []
+		# bitte stehen lassen das ist fuer die cover ansicht. aktuell gibt es aber den fehler 500 da stimmt was bei kinox.t nicht.
+		#url = "http://kinox.to/aSET/ListMode/cover"
+		#getPage(url, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getKeckse).addErrback(self.dataError)
+		getPage(self.kxGotLink, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+
+	def getKeckse(self, data):
+		print self.keckse
+		getPage(self.kxGotLink, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+
+	def parseData(self, data):
+		#kxMovies = re.findall('<div class="Opt leftOpt Headlne"><a title=".*?" href="(.*?)"><h1>(.*?)</h1></a></div>.*?<div class="Thumb"><img style="width: 70px; height: 100px" src="(.*?)" /></div>.*?<div class="Descriptor">(.*?)</div>.*?src="/gr/sys/lng/(.*?).png"', data, re.S)
+		kxMovies = re.findall('<td class="Icon"><img width="16" height="11" src="/gr/sys/lng/(.*?).png" alt="language"></td>.*?<td class="Title"><a href="(.*?)" onclick="return false;">(.*?)</a>', data, re.S)
+		if kxMovies:
+			#for (kxUrl,kxTitle,kxImage,kxHandlung,kxLang) in kxMovies:
+			for (kxLang,kxUrl,kxTitle) in kxMovies:
+				kxUrl = "http://kinox.to" + kxUrl
+				self.streamList.append((decodeHtml(kxTitle),kxUrl,kxLang))
+				self.streamMenuList.setList(map(kxListEntry, self.streamList))
+			self.keyLocked = False
+			self.showInfos()
+
+	def showInfos(self):
+		filmName = self['streamlist'].getCurrent()[0][0]
+		self['name'].setText(filmName)
+		#coverUrl = self['streamlist'].getCurrent()[0][2]
+		#handlung = self['streamlist'].getCurrent()[0][3]
+		#self['handlung'].setText(decodeHtml(handlung))
+		#CoverHelper(self['stationIcon']).getCover(coverUrl)
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def keyOK(self):
+		exist = self['streamlist'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+		stream_name = self['streamlist'].getCurrent()[0][0]
+		auswahl = self['streamlist'].getCurrent()[0][1]
+		print auswahl
+		self.session.open(kxStreams, auswahl, stream_name)
+
+	def keyAdd(self):
+		exist = self['streamlist'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+		muTitle = self['streamlist'].getCurrent()[0][0]
+		muID = self['streamlist'].getCurrent()[0][1]
+		#muLang = self['streamlist'].getCurrent()[0][4]
+		muLang = self['streamlist'].getCurrent()[0][2]
+
+		if not fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watchlist"):
+			os.system("touch "+config.mediaportal.watchlistpath.value+"mp_kx_watchlist")
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_kx_watchlist"):
+			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_kx_watchlist","a")
+			writePlaylist.write('"%s" "%s" "%s" "0"\n' % (muTitle, muID, muLang))
+			writePlaylist.close()
+			message = self.session.open(MessageBox, _("Serie wurde zur watchlist hinzugefuegt."), MessageBox.TYPE_INFO, timeout=3)
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].pageUp()
+		self.showInfos()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].pageDown()
+		self.showInfos()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].up()
+		self.showInfos()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['streamlist'].down()
+		self.showInfos()
+		
+	def keyCancel(self):
+		self.close()
+
+
 class kxSerienABC(Screen):
 
 	def __init__(self, session, kxGotLink):
@@ -1348,7 +1666,7 @@ class kxStreams(Screen):
 			self.streamList.append(("Hoster", "nix", "Mirror", "Hits", "Date"))
 			for each in hosterdump:
 				if re.match('.*?Mirror', each):
-					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>Hits</b>\:.(.*?)<b>Mirror</b>\:.(.*?)<br /><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
+					hosters = re.findall('rel="(.*?)".*?<div class="Named">(.*?)</div>.*?<div class="Data"><b>(.*?)</b>\:.(.*?)<br /><b>Vom</b>\:.(.*\d+)</div>',each, re.S)
 					if hosters:
 						(get_stream_url, hostername, hits, mirror, date)= hosters[0]
 						#get_stream_url = get_stream_url.replace('&amp;','&')
@@ -1363,9 +1681,13 @@ class kxStreams(Screen):
 									get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s&Season=%s&Episode=%s" %  (dname, dhoster, 'Mirror='+str(i), dseason, depisode)
 								else:
 									details = re.findall('(.*?)&amp;Hoster=(.*?)&amp;Mirror=(\d)', get_stream_url, re.S)
-									(dname, dhoster, dmirror) = details[0]
-									get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, 'Mirror='+str(i))
-
+									if details:
+										(dname, dhoster, dmirror) = details[0]
+										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, 'Mirror='+str(i))
+									else:
+										details = re.findall('(.*?)&amp;Hoster=(.*?)$', get_stream_url, re.S)
+										(dname, dhoster) = details[0]
+										get_stream_url_m = "http://kinox.to/aGET/Mirror/%s&Hoster=%s&Mirror=%s" %  (dname, dhoster, 'Mirror='+str(i))
 								print get_stream_url_m
 								if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|BitShare)', hostername, re.S|re.I):
 									self.streamList.append((hostername, get_stream_url_m, str(i)+"/"+mirrors[0], hits.replace(',','').replace(' ',''), date))
