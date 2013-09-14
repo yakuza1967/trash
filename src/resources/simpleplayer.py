@@ -677,6 +677,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 				self.configSaver()
 				if self.cover or self.cover2:
 					self.showCover(self.pl_entry[6])
+				self.pl_name = 'mp_global_pl_%02d' % config.mediaportal.sp_pl_number.value
 			elif data[0] == 2:
 				self.addToPlaylist()
 
