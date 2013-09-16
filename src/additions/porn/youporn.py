@@ -181,7 +181,7 @@ class youpornCountryScreen(Screen):
 		getPage(url, headers={'Cookie': 'age_verified=1', 'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.genreData).addErrback(self.dataError)
 
 	def genreData(self, data):
-		parse = re.search('Popular\sby\sCountry(.*)class="nf-videos\snf-videosChannels', data, re.S)
+		parse = re.search('class="countryNameLocation">Popular\sby\sCountry(.*)</div>', data, re.S)
 		phCats = re.findall('<a\shref="(.*?)".*?/span>(.*?)</a>', parse.group(1), re.S)
 		if phCats:
 			for (phUrl, phTitle) in phCats:
