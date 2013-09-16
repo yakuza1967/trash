@@ -6,7 +6,7 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-DH_Version = "DokuHouse.de v0.98"
+DH_Version = "DokuHouse.de v0.99"
 
 DH_siteEncoding = 'utf-8'
 
@@ -91,7 +91,7 @@ class show_DH_Genre(Screen):
 			("*Specials", "/language"),
 			("Geschichte", "/geschichte"),
 			("Gesellschaft", "/gesellschaft"),
-			("Kriminalität", "/kriminalitat"),
+			("Kriminalität", "/kriminalitaet"),
 			("Medien", "/medien"),
 			("Politik", "/politik"),
 			("Technologie", "/technologie"),
@@ -101,32 +101,33 @@ class show_DH_Genre(Screen):
 			[
 			#subGenre_0 =
 			[
-			("Aktenzeichen XY", "/aktenzeichen-xy-spezial"),
-			("Ancient Aliens", "/ancient-aliens-spezial"),
+			("Aktenzeichen XY", "/aktenzeichen-xy"),
+			("Ancient Aliens", "/ancient-aliens"),
 			("Born To Kill", "/born-to-kill"),
-			("Crime 360", "/crime-360"),
-			("Da wird mir übel", "/da-wird-mir-ubel-spezial"),
-			("Damals in/nach der DDR", "/damals-in-der-ddr"),
-			("Die Deutschen", "/die-deutschen-spezial"),
+			#("Crime 360", "/crime-360"),
+			("Da wird mir übel", "/da-wird-mir-uebel"),
+			("Damals in der DDR", "/damals-in-der-ddr"),
 			("Der Kalte Krieg", "/der-kalte-krieg"),
-			("Die großen Kriminalfälle", "/die-grosen-kriminalfalle-spezial"),
-			("Die Stone-Skala", "/die-stone-skala-spezial"),
-			("Drogen im Visier", "/drogen-im-visier-special"),
+			("Die Deutschen", "/die-deutschen"),
+			("Die großen Kriminalfälle", "/die-grossen-kriminalfaelle"),
+			("Die Stone-Skala", "/die-stone-skala"),
+			("Drogen im Visier", "/drogen-im-visier"),
+			("Es muss nicht immer Sushi sein", "/es-muss-nicht-immer-sushi-sein"),
 			("Forensic Factor", "/forensic-factor"),
-			("Hotdokus", "/hotdokus"),
-			("Junior Docs", "/junior-docs-special"),
+			("Junior Docs", "/junior-docs"),
 			("Jurassic Fight Club", "/jurassic-fight-club"),
 			("Mayday Alarm im Cockpit", "/mayday-alarm-im-cockpit"),
-			("Medical Detectives", "/medical-detectives"),
+			#("Medical Detectives", "/medical-detectives"),
 			("Megafabriken", "/megafabriken"),
-			("Mysteriöse Todesfälle", "/mysteriose-todesfalle-spezial"),
+			#("Mysteriöse Todesfälle", "/mysteriose-todesfalle"),
 			("NCIS", "/ncis"),
-			("Nicht nachmachen!", "/nicht-nachmachen-spezial"),
+			("Nicht nachmachen!", "/nicht-nachmachen"),
 			("Spuren der Vergangenheit", "/spuren-der-vergangenheit"),
-			("UFO Jäger", "/ufo-jager"),
-			("Unser Universum", "/unser-universum-spezial"),
+			("Terra X", "/terra-x"),
+			("UFO Jäger", "/ufo-jaeger"),
+			("Unser Universum", "/unser-universum"),
 			("Wild Germany", "/wild-germany"),
-			("Wunder des Weltalls", "/wunder-des-weltalls-spezial")
+			("Wunder des Weltalls", "/wunder-des-weltalls")
 			],
 			#subGenre_1 =
 			[
@@ -146,22 +147,22 @@ class show_DH_Genre(Screen):
 			#subGenre_2 =
 			[
 			("Drogen", "/drogen"),
-			("Ernährung", "/ernahrung"),
+			("Ernährung", "/ernaehrung"),
 			("Gesundheit", "/gesundheit"),
 			("Konsum", "/konsum"),
 			("Lebensretter", "/lebensretter"),
 			("Menschen", "/menschen-gesellschaft"),
-			("Militär", "/militar"),
+			("Militär", "/militaer"),
 			("Religion", "/religion"),
-			("Sexualität", "/sexualitat"),
+			#("Sexualität", "/sexualitaet"),
 			("Sport", "/sport")
 			],
 			#subGenre_3 =
 			[
 			("Banden", "/banden"),
-			("Gesetzeshüter", "/gesetzeshuter"),
-			("Kriminalfälle", "/kriminalfalle-allgemein"),
-			("Serienmörder", "/serienmorder"),
+			("Gesetzeshüter", "/gesetzeshueter"),
+			("Kriminalfälle", "/kriminalfaelle-allgemein"),
+			("Serienmörder", "/serienmoerder"),
 			("Strafanstalten", "/strafanstalten")
 			],
 			#subGenre_4 =
@@ -174,11 +175,11 @@ class show_DH_Genre(Screen):
 			],
 			#subGenre_5 =
 			[
-			("9/11", "/911"),
+			("911", "/911"),
 			("Linksextremismus", "/linksextremismus"),
 			("Rechtsextremismus", "/rechtsextremismus"),
 			("Revolution", "/revolution"),
-			("Verschwörungen", "/verschworungen"),
+			("Verschwörungen", "/verschwoerungen"),
 			("Wirtschaft", "/wirtschaft")
 			],
 			#subGenre_6 =
@@ -197,9 +198,9 @@ class show_DH_Genre(Screen):
 			],
 			#subGenre_8 =
 			[
-			("Ägyptologie", "/agyptologie"),
-			("Archäologie", "/archaologie"),
-			("Astronomie", "/astronomie"),
+			("Ägyptologie", "/aegyptologie"),
+			("Archäologie", "/archaeologie"),
+			#("Astronomie", "/astronomie"),
 			("Evolution", "/evolution"),
 			("Hochkulturen", "/hochkulturen"),
 			("Medizin", "/medizin-wissenschaft"),
