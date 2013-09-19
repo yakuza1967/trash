@@ -65,6 +65,7 @@ config.mediaportal.sp_infobar_cover_off = ConfigYesNo(default = False)
 config.mediaportal.sp_show_errors = ConfigYesNo(default = False)
 config.mediaportal.sp_use_number_seek = ConfigYesNo(default = True)
 config.mediaportal.sp_pl_number = ConfigInteger(default = 1, limits = (1,99))
+config.mediaportal.sp_mi_key = ConfigSelection(default = "info", choices = [("info", _("EPG/INFO")),("displayHelp", _("HELP")),("showMovies", _("PVR/VIDEO"))])
 
 # Sport
 from additions.sport.ran import *

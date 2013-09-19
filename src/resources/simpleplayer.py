@@ -208,7 +208,7 @@ class SimpleSeekHelper:
 		if self.seekBarLocked:
 			self.seekExit()
 
-class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarServiceNotifications, InfoBarPVRState, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport):
+class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarServiceNotifications, InfoBarPVRState, InfoBarShowHide, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarSimpleEventView):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
@@ -235,10 +235,10 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 			f.close()
 
 		self.setActionPrio()
-		self["actions"] = ActionMap(["WizardActions",'MediaPlayerSeekActions',"EPGSelectActions",'MoviePlayerActions','ColorActions','InfobarActions',"MenuActions"],
+		self["actions"] = ActionMap(["WizardActions",'MediaPlayerSeekActions',"EPGSelectActions",'MoviePlayerActions','ColorActions','InfobarActions',"MenuActions","HelpActions"],
 		{
 			"leavePlayer": self.leavePlayer,
-			"info":		self.openMediainfo,
+			config.mediaportal.sp_mi_key.value: self.openMediainfo,
 			"menu":		self.openMenu,
 			"up": 		self.openPlaylist,
 			"down":		self.randomNow,
@@ -262,6 +262,8 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
+		#if config.mediaportal.sp_mi_key.value != 'info':
+		InfoBarSimpleEventView.__init__(self)
 
 		self.allowPiP = False
 		InfoBarSeek.__init__(self)
@@ -946,7 +948,7 @@ class SimplePlaylist(Screen):
 		return SimplePlayerSummary
 
 class SimpleConfig(ConfigListScreen, Screen):
-	skin = '\n\t\t<screen position="center,center" size="500,300" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="480,290" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+	skin = '\n\t\t<screen position="center,center" size="500,350" title="MP Player Konfiguration">\n\t\t\t<widget name="config" position="10,10" size="480,340" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -963,6 +965,7 @@ class SimpleConfig(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry('Infobar cover always off', config.mediaportal.sp_infobar_cover_off))
 		self.list.append(getConfigListEntry('Show errors', config.mediaportal.sp_show_errors))
 		self.list.append(getConfigListEntry('Use SP number seek', config.mediaportal.sp_use_number_seek))
+		self.list.append(getConfigListEntry('MediaInfo on key', config.mediaportal.sp_mi_key))
 		ConfigListScreen.__init__(self, self.list)
 		self['setupActions'] = ActionMap(['SetupActions'],
 		{
