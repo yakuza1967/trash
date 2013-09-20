@@ -88,8 +88,8 @@ from additions.music.eighties import *
 config.mediaportal.showEighties = ConfigYesNo(default = False)
 from additions.music.nuna import *
 config.mediaportal.showNuna = ConfigYesNo(default = True)
-from additions.music.allmusichouse import *
-config.mediaportal.showAllMusicHouse = ConfigYesNo(default = True)
+#from additions.music.allmusichouse import *
+#config.mediaportal.showAllMusicHouse = ConfigYesNo(default = True)
 from additions.music.putpattv import *
 config.mediaportal.showputpattv = ConfigYesNo(default = True)
 from additions.music.canna import *
@@ -417,7 +417,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.sport.sort(key=lambda t : t[0].lower())
 
 		### Music
-		self.music.append(getConfigListEntry("AllMusicHouse", config.mediaportal.showAllMusicHouse))
+		#self.music.append(getConfigListEntry("AllMusicHouse", config.mediaportal.showAllMusicHouse))
 		self.music.append(getConfigListEntry("Deluxemusic", config.mediaportal.showDeluxemusic))
 		self.music.append(getConfigListEntry("MTV.de Charts", config.mediaportal.showMTVdeCharts))
 		self.music.append(getConfigListEntry("MUSIC-Channels", config.mediaportal.showMusicChannels))
@@ -763,8 +763,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 		self.porn = []
 
 		# Fun/Music/Sport
-		if config.mediaportal.showAllMusicHouse.value:
-			self.funsport.append(self.hauptListEntry("AllMusicHouse", "allmusichouse"))
+		#if config.mediaportal.showAllMusicHouse.value:
+		#	self.funsport.append(self.hauptListEntry("AllMusicHouse", "allmusichouse"))
 		if config.mediaportal.showputpattv.value:
 			self.funsport.append(self.hauptListEntry("putpat.tv", "putpattv"))
 		if config.mediaportal.showLaola1.value:
@@ -1399,8 +1399,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(showDOKUHGenre)
 		elif auswahl == "DokuHouse":
 			self.session.open(show_DH_Genre)
-		elif auswahl == "AllMusicHouse":
-			self.session.open(show_AMH_Genre)
+		#elif auswahl == "AllMusicHouse":
+		#	self.session.open(show_AMH_Genre)
 		elif auswahl == "putpat.tv":
 			self.session.open(putpattvGenreScreen)
 		elif auswahl == "LiveLeak":
@@ -1739,8 +1739,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("MUSIC-Channels", "musicchannels", "Music"))
 		if config.mediaportal.showRadio.value:
 			self.plugin_liste.append(("Radio.de", "radiode", "Music"))
-		if config.mediaportal.showAllMusicHouse.value:
-			self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Music"))
+		#if config.mediaportal.showAllMusicHouse.value:
+		#	self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Music"))
 		if config.mediaportal.showputpattv.value:
 			self.plugin_liste.append(("putpat.tv", "putpattv", "Music"))
 		if config.mediaportal.showgrauzone.value:
@@ -2419,8 +2419,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(showDOKUHGenre)
 		elif auswahl == "DokuHouse":
 			self.session.open(show_DH_Genre)
-		elif auswahl == "AllMusicHouse":
-			self.session.open(show_AMH_Genre)
+		#elif auswahl == "AllMusicHouse":
+		#	self.session.open(show_AMH_Genre)
 		elif auswahl == "putpat.tv":
 			self.session.open(putpattvGenreScreen)
 		elif auswahl == "LiveLeak":

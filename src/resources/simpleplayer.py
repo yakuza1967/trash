@@ -262,7 +262,6 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
-		#if config.mediaportal.sp_mi_key.value != 'info':
 		InfoBarSimpleEventView.__init__(self)
 
 		self.allowPiP = False
@@ -522,16 +521,16 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 		if how == "ask":
 			if self.plType == 'local':
 				list = (
-					(_("Yes"), "quit"),
-					(_("Ja & Service zur glob. Playlist hinzufügen"), "add"),
-					(_("No"), "continue"),
-					(_("No, but restart from begin"), "restart")
+					(_("Ja"), "quit"),
+					("Ja & Service zur glob. Playlist-%02d hinzufügen" % config.mediaportal.sp_pl_number.value, "add"),
+					(_("Nein"), "continue"),
+					(_("Nein, aber von Anfang an neu beginnen"), "restart")
 				)
 			else:
 				list = (
-					(_("Yes"), "quit"),
-					(_("No"), "continue"),
-					(_("No, but restart from begin"), "restart")
+					(_("Ja"), "quit"),
+					(_("Nein"), "continue"),
+					(_("Nein, aber von Anfang an neu beginnen"), "restart")
 				)
 
 			from Screens.ChoiceBox import ChoiceBox
