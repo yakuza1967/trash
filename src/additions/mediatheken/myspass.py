@@ -61,7 +61,8 @@ class myspassGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		ganze = re.findall('class="showsAZName"><a\shref="(/myspass/shows/.*?)".*?>(.*?)</a></div>', data, re.S)
+		parse = re.search('FormatGruppe:\sABC(.*?)</div>', data, re.S)
+		ganze = re.findall('<a\shref="(/myspass/shows/.*?)"\sclass="showsAZName">(.*?)</a>', parse.group(1), re.S)
 		if ganze:
 			self.genreliste = []
 			for (link, name) in ganze:
@@ -136,13 +137,13 @@ class myspassStaffelListeScreen(Screen):
 		getPage(self.myspassUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		parse = re.search('class="episodeListSeasonList">(.*?)class="episodeListTable', data, re.S)
-		staffeln = re.findall('onclick="ajax.*?\'(getEpisodeListFromSeason.*?)\'.*?episodes.*?>(.*?)</a></li>', parse.group(1), re.S)
+		parse = re.search('\/\sGanze\sFolgen.*?class="episodeListSeasonList(.*?)</ul>', data, re.S)
+		staffeln = re.findall('data-maxpages="(.*?)".*?data-query="(.*?season=.*?)">.*?\);">.\t{0,5}\s{0,15}(.*?)</a></span>', parse.group(1), re.S)
 		if staffeln:
 			self.staffelliste = []
-			for (link, name) in staffeln:
-				link = "http://www.myspass.de/myspass/includes/php/ajax.php?action=%s&pageNumber=" % (link.replace('&amp;','&'))
-				self.staffelliste.append((decodeHtml(name), link))
+			for (pages, link, name) in staffeln:
+				link = "http://www.myspass.de/myspass/includes/php/ajax.php?v=2&ajax=true&action=%s&pageNumber=" % (link.replace('&amp;','&'))
+				self.staffelliste.append((decodeHtml(name), link, pages))
 			self.chooseMenuList.setList(map(myspassListEntry, self.staffelliste))
 			self.keyLocked = False
 
@@ -151,9 +152,10 @@ class myspassStaffelListeScreen(Screen):
 			return
 		myname = self['genreList'].getCurrent()[0][0]
 		myid = self['genreList'].getCurrent()[0][1]
+		mypages = self['genreList'].getCurrent()[0][2]
 
-		print myid, myname
-		self.session.open(myspassFolgenListeScreen, myname, myid)
+		print myid, myname, mypages
+		self.session.open(myspassFolgenListeScreen, myname, myid, mypages)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -163,10 +165,11 @@ class myspassStaffelListeScreen(Screen):
 
 class myspassFolgenListeScreen(Screen):
 
-	def __init__(self, session, myspassName, myspassUrl):
+	def __init__(self, session, myspassName, myspassUrl, myspassPages):
 		self.session = session
 		self.myspassName = myspassName
 		self.myspassUrl = myspassUrl
+		self.myspassPages = myspassPages
 
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
@@ -226,19 +229,14 @@ class myspassFolgenListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		lastp = re.findall("setPageByAjaxTextfield\(\'.*?\',\s\'(.*?)\'", data, re.S)
-		if lastp:
-			lastp = int(lastp[0])-1
-			print str(lastp)
-			self.lastpage = lastp
-		else:
-			self.lastpage = 0
+		self.lastpage = int(self.myspassPages)
 		self['page'].setText(str(self.page+1) + ' / ' + str(self.lastpage+1))
-		folgen = re.findall('class="episodeListInformation">.*?location.href=.*?--\/(.*?)\/.*?img\ssrc="(.*?)"\salt="(.*?)".*?\/h5>(.*?)</div>', data, re.S|re.I)
+		folgen = re.findall('class="episodeListInformation">.*?location.href=.*?--\/(.*?)\/.*?img\ssrc="(.*?)"\salt="(.*?)".*?\/h5>.*?"spacer5"></div>(.*?)<div', data, re.S|re.I)
 		if folgen:
 			for (id, image, title, description) in folgen:
 				link = "http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id=%s" % (id)
 				image = "http://www.myspass.de" + image
+				description = description.replace('\t','').replace('\n','')
 				self.folgenliste.append((decodeHtml(title), link, image, description))
 			self.chooseMenuList.setList(map(myspassListEntry, self.folgenliste))
 			self.keyLocked = False
