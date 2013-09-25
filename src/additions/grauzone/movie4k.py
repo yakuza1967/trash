@@ -11,6 +11,8 @@ if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
 else:
     TMDbPresent = False
 
+movie4kheader = {'Content-Type':'application/x-www-form-urlencoded'}
+
 def m4kGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
@@ -121,6 +123,7 @@ class m4kGenreScreen(Screen):
 			self.genreliste.append(("Letzte Updates (XXX)", "http://www.movie4k.to/xxx-updates.html"))
 			self.genreliste.append(('Pornos', 'http://www.movie4k.to/genres-xxx.html'))
 		else:
+			self.genreliste.append(("toggle language filter: ALL / deutsch /english", "deFilter"))
 			self.genreliste.append(("Kinofilme", "http://www.movie4k.to/index.php?lang=de"))
 			self.genreliste.append(("Videofilme", "http://www.movie4k.to/index.php?lang=de"))
 			self.genreliste.append(("Neue Updates (Filme)", "http://www.movie4k.to/movies-updates-"))
@@ -163,11 +166,22 @@ class m4kGenreScreen(Screen):
 		self.chooseMenuList.setList(map(m4kGenreListEntry, self.genreliste))
 
 	def keyOK(self):
+		global movie4kheader
 		streamGenreName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 
 		if streamGenreName == "Watchlist":
 			self.session.open(m4kWatchlist)
+		elif streamGenreName == "toggle language filter: ALL / deutsch /english":
+			if 'onlylanguage=de' in movie4kheader.values():
+				movie4kheader = {'Cookie':'onlylanguage=en', 'Content-Type':'application/x-www-form-urlencoded'}
+				self['name'].setText("Genre Auswahl / EN filter set")
+			elif 'onlylanguage=en' in movie4kheader.values():
+				movie4kheader = {'Content-Type':'application/x-www-form-urlencoded'}
+				self['name'].setText("Genre Auswahl / no filter set")
+			else:
+				movie4kheader = {'Cookie':'onlylanguage=de', 'Content-Type':'application/x-www-form-urlencoded'}
+				self['name'].setText("Genre Auswahl / DE filter set")
 		elif streamGenreName == "Kinofilme":
 			self.session.open(m4kKinoFilmeListeScreen, streamGenreLink)
 		elif streamGenreName == "Videofilme":
@@ -402,7 +416,7 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 	def loadPage(self):
 		url = self.searchUrl
 		sData = self.searchData
-		getPage(url,method='POST',postdata=urllib.urlencode({'search':sData}),headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(url,method='POST',postdata=urllib.urlencode({'search':sData}),headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -421,7 +435,7 @@ class m4kSucheAlleFilmeListeScreen(Screen):
 
 	def loadPic(self):
 		url = self['filmList'].getCurrent()[0][1]
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPicData).addErrback(self.dataError)
+		getPage(url, agent=std_headers, headers=movie4kheader).addCallback(self.loadPicData).addErrback(self.dataError)
 
 	def loadPicData(self, data):
 		filmdaten = re.findall('<div style="float:left">.*?<img src="(.*?)".*?<div class="moviedescription">(.*?)</div>', data, re.S)
@@ -545,10 +559,10 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 		url = ''
 		if self.streamGenreLink == 'http://www.movie4k.to/genres-xxx.html':
 			url = str(self.streamGenreLink)
-			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadXXXPageData).addErrback(self.dataError)
+			getPage(url, agent=std_headers, headers=movie4kheader).addCallback(self.loadXXXPageData).addErrback(self.dataError)
 		else:
 			url = '%s%s%s' % (self.streamGenreLink, self.page, '.html')
-			getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+			getPage(url, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -584,7 +598,7 @@ class m4kKinoAlleFilmeListeScreen(Screen):
 
 	def loadPic(self):
 		url = self['filmList'].getCurrent()[0][1]
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPicData).addErrback(self.dataError)
+		getPage(url, agent=std_headers, headers=movie4kheader).addCallback(self.loadPicData).addErrback(self.dataError)
 
 	def loadPicData(self, data):
 		filmdaten = re.findall('<div style="float:left">.*?<img src="(.*?)".*?<div class="moviedescription">(.*?)</div>', data, re.S)
@@ -713,7 +727,7 @@ class m4kKinoFilmeListeScreen(Screen):
 
 	def loadPage(self):
 		print self.streamGenreLink
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -734,7 +748,7 @@ class m4kKinoFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
-		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(streamUrl, agent=std_headers, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(streamPic)
 
@@ -825,7 +839,7 @@ class m4kVideoFilmeListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -846,7 +860,7 @@ class m4kVideoFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
-		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(streamUrl, agent=std_headers, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(streamPic)
 
@@ -937,7 +951,7 @@ class m4kupdateFilmeListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -958,7 +972,7 @@ class m4kupdateFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
-		getPage(streamUrl, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(streamUrl, agent=std_headers, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
@@ -1052,13 +1066,13 @@ class m4kTopSerienFilmeListeScreen(Screen):
 
 	def m4kcookie(self):
 		url = "http://www.movie4k.to/index.php?lang=de"
-		getPage(url, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getm4kcookie).addErrback(self.dataError)
+		getPage(url, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.getm4kcookie).addErrback(self.dataError)
 
 	def getm4kcookie(self, data):
 		self.loadPage()
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -1079,7 +1093,7 @@ class m4kTopSerienFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
-		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 		streamPic = self['filmList'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(streamPic)
 
@@ -1193,13 +1207,13 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 
 	def m4kcookie(self):
 		url = "http://www.movie4k.to/index.php?lang=de"
-		getPage(url, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getm4kcookie).addErrback(self.dataError)
+		getPage(url, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.getm4kcookie).addErrback(self.dataError)
 
 	def getm4kcookie(self, data):
 		self.loadPage()
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -1219,7 +1233,7 @@ class m4kSerienUpdateFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
-		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
@@ -1342,7 +1356,7 @@ class m4kStreamListeScreen(Screen):
 		self.tw_agent_hlp.getWebPage(self.loadPageData, self.dataError, self.streamGenreLink, True)
 
 	def loadPage2(self, url):
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(url, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		print "error:", error
@@ -1402,7 +1416,7 @@ class m4kStreamListeScreen(Screen):
 		self.tw_agent_hlp.getWebPage(self.showPic, self.dataError, self.streamGenreLink, True)
 
 	def loadPic2(self, url):
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(url, agent=std_headers, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 
 	def showPic(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
@@ -1580,7 +1594,7 @@ class m4kPartListeScreen(Screen):
 		streamLinkPart = self['filmList'].getCurrent()[0][1]
 		self.sname = "%s - Teil %s" % (self.streamName, streamPart)
 		print self.sname, streamLinkPart
-		getPage(streamLinkPart, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_streamlink).addErrback(self.dataError)
+		getPage(streamLinkPart, agent=std_headers, headers=movie4kheader).addCallback(self.get_streamlink).addErrback(self.dataError)
 
 	def get_streamlink(self, data):
 		print "Search streamlink..."
@@ -1690,7 +1704,7 @@ class m4kEpisodenListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -1770,7 +1784,7 @@ class m4kEpisodenListeScreen(Screen):
 				]
 
 	def loadPic(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
@@ -1871,7 +1885,7 @@ class m4kXXXUpdateFilmeListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamUrl = self['filmList'].getCurrent()[0][1]
-		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showHandlung).addErrback(self.dataError)
+		getPage(streamUrl, agent=std_headers, cookies=self.keckse, headers=movie4kheader).addCallback(self.showHandlung).addErrback(self.dataError)
 
 	def showHandlung(self, data):
 		image = re.findall('<meta property="og:image" content="(.*?)"', data, re.S)
@@ -2046,7 +2060,7 @@ class m4kSerienABCListe(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -2091,7 +2105,7 @@ class m4kSerienABCListe(Screen):
 		self.flag_stored = self.mLang.replace('http://img.movie4k.to/img/','').replace('.png','')
 		print self.flag_stored
 
-		getPage(self.mUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_final).addErrback(self.dataError)
+		getPage(self.mUrl, headers=movie4kheader).addCallback(self.get_final).addErrback(self.dataError)
 
 	def get_final(self, data):
 		print "final"
@@ -2107,7 +2121,7 @@ class m4kSerienABCListe(Screen):
 
 		if season_link:
 			print season_link
-			getPage(season_link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_final2).addErrback(self.dataError)
+			getPage(season_link, headers=movie4kheader).addCallback(self.get_final2).addErrback(self.dataError)
 		else:
 			message = self.session.open(MessageBox, _("No Link FOUND."), MessageBox.TYPE_INFO, timeout=3)
 
@@ -2208,7 +2222,7 @@ class m4kSerienABCListeStaffeln(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -2298,7 +2312,7 @@ class m4kSerienABCListeStaffelnFilme(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(self.streamGenreLink, agent=std_headers, headers=movie4kheader).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
