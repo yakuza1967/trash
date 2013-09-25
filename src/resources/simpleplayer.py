@@ -386,7 +386,7 @@ class SimplePlayer(Screen, SimpleSeekHelper, InfoBarMenu, InfoBarBase, InfoBarSe
 	def dataError(self, error):
 		print "dataError:"
 		if config.mediaportal.sp_show_errors.value:
-			self.session.openWithCallback(self.dataError2, MessageBox, str(self.msg), MessageBox.TYPE_INFO, timeout=10)
+			self.session.openWithCallback(self.dataError2, MessageBox, str(error), MessageBox.TYPE_INFO, timeout=10)
 		printl(error,self,"E")
 
 	def dataError2(self, res):
