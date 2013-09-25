@@ -3,9 +3,11 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
-MSCC_Version = "Musicstream.cc v0.92 (experimental)"
+MSCC_Version = "Musicstream.cc v0.93 (experimental)"
 
 MSCC_siteEncoding = 'utf-8'
+
+ms_cookies = {}
 
 def show_MSCC_GenreListEntry(entry):
 	return [entry,
@@ -60,7 +62,8 @@ class show_MSCC_Genre(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		getPage(self.base_url + self.genre_url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		#getPage(self.base_url + self.genre_url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		getPage(self.base_url + self.genre_url, cookies=ms_cookies, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
 		liste = self.R_COMP_01.findall(data)
@@ -100,7 +103,7 @@ def show_MSCC_ListEntry(entry):
 
 class show_MSCC_ListScreen(Screen):
 
-	R_COMP_01 = re.compile('="list_td_right">.*?/index.php.*?id=(.*?)\'.*?="file">(.*?)</span>')
+	R_COMP_01 = re.compile('javascript: flashwin\(\'playwin\', \'(.*?)\'.*?="file">(.*?)</span>')
 
 	def __init__(self, session, album_url, album):
 		print "showMusicstreamccList:"
@@ -157,7 +160,8 @@ class show_MSCC_ListScreen(Screen):
 		print "layoutFinished:"
 		url = self.baseUrl + self.album_url
 		print "url: ",url
-		getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		#getPage(url, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
+		getPage(url, cookies=ms_cookies, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
 		print "parseData:"
@@ -209,16 +213,42 @@ class MusicstreamccPlayer(SimplePlayer):
 	def __init__(self, session, playList, playIdx=0, playAll=True, listTitle=None):
 		print "MusicstreamccPlayer:"
 		self.base_url = 'http://musicstream.cc'
-		self.play_url = mp_globals.mscc_play_url
+		self.chachepath = config.mediaportal.storagepath.value
+		self.filescached = {}
 
 		SimplePlayer.__init__(self, session, playList, playIdx=playIdx, playAll=playAll, listTitle=listTitle, title_inr=1, ltype='musicstreamcc', autoScrSaver=True, cover=True)
 
 	def getVideo(self):
+		print "getVideo:"
+		url = self.base_url + self.playList[self.playIdx][3]
+		#print url
+		getPage(url, cookies=ms_cookies, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getV2).addErrback(self.dataError)
+		
+	def getV2(self, data):
+		print "getV2:",len(data)
+		m = re.search('/mediaplayer.swf\?file=(.*?)\'', data)
+		if m:
+			url = self.base_url + urllib.unquote(m.group(1))
+			#print url
+			getPage(url, cookies=ms_cookies, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getV3).addErrback(self.dataError)
+		else:
+			self.dataError('No SWF URL found:\n' + self.playList[self.playIdx][1])
+		
+	def getV3(self, data):
+		print "getV3:",len(data)
+		m = re.search('<location>(.*?)</location>', data)
+		if m:
+			url = m.group(1)
+			print url
+			self.playMP3(url, None)
+		else:
+			self.dataError('No Stream URL found:\n' + self.playList[self.playIdx][1])
+			
+	def playMP3(self, data, id):
+		print "playMP3:"
 		title = self.playList[self.playIdx][1]
 		album = self.playList[self.playIdx][2]
-		url = self.play_url % self.playList[self.playIdx][3]
 		img = self.base_url + self.playList[self.playIdx][4]
-
 		scArtist = ''
 		scAlbum = album
 		p = album.find(' - ')
@@ -231,6 +261,4 @@ class MusicstreamccPlayer(SimplePlayer):
 			scTitle = title[:p].strip()
 		else:
 			scTitle = title
-
-		self.playStream(scTitle, url, scAlbum, scArtist, img)
-
+		self.playStream(scTitle, data, scAlbum, scArtist, img)
