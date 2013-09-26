@@ -183,14 +183,14 @@ class myVideoFilmScreen(Screen):
 			return
 		mvUrl = self['List'].getCurrent()[0][1]
 		print mvUrl
-		id = re.findall('/watch/(.*?)/', mvUrl)
+		id = re.search('/watch/(\w+)', mvUrl)
 		if id:
-			url = "http://www.myvideo.de/dynamic/get_player_video_xml.php?ID=" + id[0]
+			url = "http://www.myvideo.de/dynamic/get_player_video_xml.php?ID=" + id.group(1)
 			kiTitle = self['List'].getCurrent()[0][0]
 			imgurl = self['List'].getCurrent()[0][2]
-			#MyvideoLink(self.session).getLink(self.playStream, self.dataError, kiTitle, url, id[0])
-
-			self.session.open(MyvideoPlayer, [(kiTitle, url, id[0], imgurl)])
+			self.session.open(MyvideoPlayer, [(kiTitle, url, id.group(1), imgurl)])
+		else:
+			printl('No ID found!', self, 'E')
 
 	def keyCancel(self):
 		self.close()
