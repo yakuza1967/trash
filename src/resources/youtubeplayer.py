@@ -20,5 +20,5 @@ class YoutubePlayer(SimplePlayer):
 		YoutubeLink(self.session).getLink(self.playStream, self.ytError, dhTitle, dhVideoId, imgurl=imgurl)
 
 	def ytError(self, error):
-		self.msg = "Title: %s\n%s" % (self.playList[self.playIdx][self.title_inr], error)
-		self.session.openWithCallback(self.dataError, MessageBox, str(self.msg), MessageBox.TYPE_INFO, timeout=10)
+		msg = "Title: %s\n%s" % (self.playList[self.playIdx][self.title_inr], error)
+		self.dataError(msg)
