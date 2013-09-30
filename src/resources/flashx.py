@@ -189,7 +189,7 @@ class Flashx(UrllibHelper):
 					pdata = {}
 					pdata['id'] = m.group(1)
 					pdata['sec'] = m.group(2)
-					url = 'http://play.flashx.tv/player/view.php'
+					url = 'http://play.flashx.tv/player/play.php'
 					html = self.__getData(url, postdata=pdata)
 					if html:
 						js = re.search('player.swf\?config=(.*?)"', html)
