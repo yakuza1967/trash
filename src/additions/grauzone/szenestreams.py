@@ -50,6 +50,8 @@ class SzeneStreamsGenreScreen(Screen):
 	def layoutFinished(self):
 		self.genreliste.append(("Kinofilme", "http://szene-streams.com/publ/aktuelle_kinofilme/1-"))
 		self.genreliste.append(("Last Added", "http://szene-streams.com/publ/0-"))
+		self.genreliste.append(("720p", "http://www.szene-streams.com/publ/720p/26-"))
+		self.genreliste.append(("HDRiP", "http://www.szene-streams.com/publ/hd/13-"))
 		self.genreliste.append(("Action", "http://www.szene-streams.com/publ/action/2-"))
 		self.genreliste.append(("Abenteuer", "http://www.szene-streams.com/publ/abenteuer/3-"))
 		self.genreliste.append(("Asia", "http://www.szene-streams.com/publ/asia/4-"))
@@ -71,7 +73,6 @@ class SzeneStreamsGenreScreen(Screen):
 		self.genreliste.append(("Thriller / Crime", "http://www.szene-streams.com/publ/thriller_crime/23-"))
 		self.genreliste.append(("Wsterm", "http://www.szene-streams.com/publ/western/25-"))
 		self.genreliste.append(("Zechentrick / Animation", "http://www.szene-streams.com/publ/zeichentrick_animation/24-"))
-		self.genreliste.append(("720p", "http://www.szene-streams.com/publ/720p/26-"))
 		self.chooseMenuList.setList(map(SzeneStreamsGenreListEntry, self.genreliste))
 
 	def keyOK(self):
