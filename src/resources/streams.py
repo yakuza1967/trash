@@ -185,7 +185,7 @@ class get_stream_link:
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.sharesix).addErrback(self.errorload)
 
-			elif re.search('http://bitshare.com', data, re.S):
+			elif re.search('http://.*?bitshare.com', data, re.S):
 				link = data
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.bitshare).addErrback(self.errorload)

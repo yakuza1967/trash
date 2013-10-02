@@ -184,12 +184,12 @@ class Flashx(UrllibHelper):
 		if html:
 			js = re.search('class="auto-style6".*?<a href="(.*?)"', html, re.S)
 			if js:
-				m = re.search('<form action=.*?="id" value="(.*?)">.*?="sec" value="(.*?)">', html, re.S)
+				m = re.search('<form action="(.*?)".*?="id" value="(.*?)">.*?="sec" value="(.*?)">', html, re.S)
 				if m:
 					pdata = {}
-					pdata['id'] = m.group(1)
-					pdata['sec'] = m.group(2)
-					url = 'http://play.flashx.tv/player/play.php'
+					pdata['id'] = m.group(2)
+					pdata['sec'] = m.group(3)
+					url = 'http://play.flashx.tv/player/%s' % m.group(1)
 					html = self.__getData(url, postdata=pdata)
 					if html:
 						js = re.search('player.swf\?config=(.*?)"', html)
