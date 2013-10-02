@@ -50,6 +50,9 @@ class SzeneStreamsGenreScreen(Screen):
 	def layoutFinished(self):
 		self.genreliste.append(("Kinofilme", "http://szene-streams.com/publ/aktuelle_kinofilme/1-"))
 		self.genreliste.append(("Last Added", "http://szene-streams.com/publ/0-"))
+		self.genreliste.append(("Suche", "http://www.szene-streams.com/publ/"))
+		self.genreliste.append(("720p", "http://www.szene-streams.com/publ/720p/26-"))
+		self.genreliste.append(("HDRiP", "http://www.szene-streams.com/publ/hd/13-"))
 		self.genreliste.append(("Action", "http://www.szene-streams.com/publ/action/2-"))
 		self.genreliste.append(("Abenteuer", "http://www.szene-streams.com/publ/abenteuer/3-"))
 		self.genreliste.append(("Asia", "http://www.szene-streams.com/publ/asia/4-"))
@@ -71,12 +74,21 @@ class SzeneStreamsGenreScreen(Screen):
 		self.genreliste.append(("Thriller / Crime", "http://www.szene-streams.com/publ/thriller_crime/23-"))
 		self.genreliste.append(("Wsterm", "http://www.szene-streams.com/publ/western/25-"))
 		self.genreliste.append(("Zechentrick / Animation", "http://www.szene-streams.com/publ/zeichentrick_animation/24-"))
-		self.genreliste.append(("720p", "http://www.szene-streams.com/publ/720p/26-"))
 		self.chooseMenuList.setList(map(SzeneStreamsGenreListEntry, self.genreliste))
 
 	def keyOK(self):
+		streamGenreName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
-		self.session.open(SzeneStreamsFilmeListeScreen, streamGenreLink)
+		
+		if streamGenreName == "Suche":
+			self.session.openWithCallback(self.searchCallback, VirtualKeyBoard, title = (_("Suchbegriff eingeben")), text = "")
+		else:
+			self.session.open(SzeneStreamsFilmeListeScreen, streamGenreLink)
+
+	def searchCallback(self, callbackStr):
+		if callbackStr is not None:
+			print callbackStr
+			self.session.open(SzeneStreamsSearchScreen, callbackStr)			
 
 	def keyCancel(self):
 		self.close()
@@ -223,6 +235,129 @@ class SzeneStreamsFilmeListeScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
+		
+class SzeneStreamsSearchScreen(Screen):
+
+	def __init__(self, session, streamSearch):
+		self.session = session
+		self.streamSearch = streamSearch
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/m4kdefaultPageListeScreen.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/m4kdefaultPageListeScreen.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
+			"red" : self.keyTMDbInfo
+		}, -1)
+
+		self['title'] = Label("Szene-Streams.com")
+		self['name'] = Label("Filme Auswahl - Search: %s" % self.streamSearch)
+		self['handlung'] = Label("")
+		self['coverArt'] = Pixmap()
+		self['page'] = Label("")
+
+		self.keyLocked = True
+		self.filmliste = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		print self.streamSearch
+		postString = {'a': "2", 'query': self.streamSearch}
+		print postString
+		getPage("http://www.szene-streams.com/publ/", method='POST', postdata=urlencode(postString), agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def loadPageData(self, data):
+		print "daten bekommen"
+		movies = re.findall('<div class="ImgWrapNews"><a href="(.*?.[jpg|png])".*?<a class="newstitl entryLink" href="(.*?)"><h2><b>(.*?)</b></h2></a>.*?<div class="MessWrapsNews2" style="height:110px;">(.*?)<', data, re.S)
+		if movies:
+			self.filmliste = []
+			for (image,url,title,h) in movies:
+				print title
+				self.filmliste.append((decodeHtml(title), url, image, h))
+			self.chooseMenuList.setList(map(SzeneStreamsFilmListEntry, self.filmliste))
+			self.keyLocked = False
+			self.loadPic()
+
+	def loadPic(self):
+		streamName = self['filmList'].getCurrent()[0][0]
+		self['name'].setText(streamName)
+		streamHandlung = self['filmList'].getCurrent()[0][3]
+		self['handlung'].setText(decodeHtml(streamHandlung.replace('\n','')))
+		streamPic = self['filmList'].getCurrent()[0][2]
+		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+
+	def ShowCover(self, picData):
+		if fileExists("/tmp/Icon.jpg"):
+			self['coverArt'].instance.setPixmap(gPixmapPtr())
+			self.scale = AVSwitch().getFramebufferScale()
+			self.picload = ePicLoad()
+			size = self['coverArt'].instance.size()
+			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
+			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
+				ptr = self.picload.getData()
+				if ptr != None:
+					self['coverArt'].instance.setPixmap(ptr)
+					self['coverArt'].show()
+					del self.picload
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+		streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		self.session.open(SzeneStreamsStreamListeScreen, streamLink, streamName)
+
+	def keyTMDbInfo(self):
+		if TMDbPresent:
+			title = self['filmList'].getCurrent()[0][0]
+			self.session.open(TMDbMain, title)
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageUp()
+		self.loadPic()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageDown()
+		self.loadPic()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['filmList'].up()
+		self.loadPic()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['filmList'].down()
+		self.loadPic()
+
+	def keyCancel(self):
+		self.close()
+
 
 class SzeneStreamsStreamListeScreen(Screen):
 

@@ -42,6 +42,7 @@ class oasetvGenreScreen(Screen):
 
 	def layoutFinished(self):
 		self.genreliste.append(("Neuesten", "http://stream-oase.tv/index.php/hd-oase/video/latest?start="))
+		self.genreliste.append(("Search", "http://stream-oase.tv/index.php/component/allvideoshare/search"))
 		self.genreliste.append(("Action", "http://stream-oase.tv/index.php/hd-oase/category/action?start="))
 		self.genreliste.append(("Abenteuer", "http://stream-oase.tv/index.php/hd-oase/category/abenteuer?start="))
 		self.genreliste.append(("Drama", "http://stream-oase.tv/index.php/hd-oase/category/drama?start="))
@@ -55,12 +56,20 @@ class oasetvGenreScreen(Screen):
 		self.chooseMenuList.setList(map(oasetvGenreListEntry, self.genreliste))
 
 	def keyOK(self):
+		streamName = self['genreList'].getCurrent()[0][0]
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
-		print streamGenreLink
-		self.session.open(oasetvFilmListeScreen, streamGenreLink)
+		print streamName, streamGenreLink
+		if streamName == "Search":
+			self.session.openWithCallback(self.searchCallback, VirtualKeyBoard, title = (_("Suchbegriff eingeben")), text = " ")
+		else:
+			self.session.open(oasetvFilmListeScreen, streamGenreLink)
 
 	def keyCancel(self):
 		self.close()
+		
+	def searchCallback(self, callbackStr):
+		if callbackStr is not None:
+			self.session.open(oasetvSearchListeScreen, callbackStr)
 
 def oaseFilmListEntry(entry):
 	return [entry,
@@ -240,6 +249,163 @@ class oasetvFilmListeScreen(Screen):
 	def keyCancel(self):
 		self.close()
 
+class oasetvSearchListeScreen(Screen):
+
+	def __init__(self, session, streamGenreLink):
+		self.session = session
+		self.streamGenreLink = streamGenreLink
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/m4kdefaultPageListeScreen.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/m4kdefaultPageListeScreen.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
+		}, -1)
+
+		self['title'] = Label("Stream-Oase.tv")
+		self['name'] = Label("Search - Film Auswahl")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.keyLocked = True
+		self.filmliste = []
+		self.keckse = {}
+		self.page = 0
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		url = "http://stream-oase.tv/index.php/component/allvideoshare/search"
+		print url
+		info = urlencode({'avssearch': self.streamGenreLink, 'search_btn': 'Go'})
+		print info
+		getPage(url, agent=std_headers, method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def loadPageData(self, data):
+		print "daten bekommen"
+		filme = re.findall('<div class="avs_thumb" style="width:86px;">.*?href="(/index.php/component/allvideoshare/.*?)">.*?class="image" src="(.*?)" width="86" height="125" title="Click to View : (.*?)"', data, re.S)
+		if filme:
+			self.filmliste = []
+			for (url,image,title) in filme:
+				url = "http://stream-oase.tv" + url
+				self.filmliste.append((decodeHtml(title), url, image))
+			self.chooseMenuList.setList(map(oaseFilmListEntry, self.filmliste))
+			self.keyLocked = False
+			self.loadPic()
+
+		if re.match('.*?title="Ende">Ende<', data, re.S):
+			totalpages = re.findall('\?start=(.*?\d)"', data, re.S)
+			if totalpages:
+				if int(self.page) == 0:
+					print totalpages[-1]
+					pagenr = "1 / %s" % totalpages[-1]
+					self['page'].setText(pagenr)
+				else:
+					print totalpages[-1]
+					pagenr = "%s / %s" % ((int(self.page) / 56) + 1, totalpages[-1])
+					self['page'].setText(pagenr)
+		else:
+			if int(self.page) == 0:
+				self['page'].setText("1")
+			else:
+				pagenr = (int(self.page) / 56) + 1
+				self['page'].setText(str(pagenr))
+
+	def loadPic(self):
+		streamName = self['filmList'].getCurrent()[0][0]
+		streamFilmLink = self['filmList'].getCurrent()[0][1]
+		self['name'].setText(streamName)
+		streamPic = self['filmList'].getCurrent()[0][2]
+		getPage(streamFilmLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageInfos).addErrback(self.dataError)
+		CoverHelper(self['coverArt']).getCover(streamPic)
+
+	def loadPageInfos(self, data):
+		if re.match('.*?<strong>Inhalt:</strong></p>\r\n<p>', data, re.S):
+			handlung = re.findall('<strong>Inhalt:</strong></p>\r\n<p>(.*?)</p>', data, re.S|re.I)
+			if handlung:
+				self['handlung'].setText(decodeHtml(handlung[0]))
+			else:
+				self['handlung'].setText("Keine Infos gefunden.")
+		else:
+			self['handlung'].setText("Keine Infos gefunden.")
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+		streamLink = self['filmList'].getCurrent()[0][1]
+		print streamLink
+		self.keyLocked = True
+		getPage(streamLink, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.findStream).addErrback(self.dataError)
+
+	def findStream(self, data):
+		stream_list = []
+		stream_name = self['filmList'].getCurrent()[0][0]
+		streamPic = self['filmList'].getCurrent()[0][2]
+		mighty = re.findall('(http://www.mightyupload.com/embed.*?)"', data, re.S)
+		if mighty:
+			print mighty[0]
+			stream_list.append(("MightyUpload", mighty[0]))
+
+		get_vidplay = re.findall('(http://vidplay.net/embed.*?)"', data, re.S)
+		if get_vidplay:
+			url = get_vidplay[0]
+			print url
+			stream_list.append(("vidplay", url))
+
+		get_wupfile = re.findall('(http://wupfile.com.*?)"', data, re.S)
+		if get_wupfile:
+			print get_wupfile[0]
+			stream_list.append(("Wupfile", get_wupfile[0]))
+
+		self.keyLocked = False
+		self.session.open(oasetvCDListeScreen, stream_list, stream_name, streamPic)
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageUp()
+		self.loadPic()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageDown()
+		self.loadPic()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['filmList'].up()
+		self.loadPic()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['filmList'].down()
+		self.loadPic()
+
+	def keyCancel(self):
+		self.close()
+		
 def oasetvCDListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])

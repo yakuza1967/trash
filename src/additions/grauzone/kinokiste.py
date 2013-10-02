@@ -25,7 +25,6 @@ class kinokisteGenreScreen(Screen):
 			"cancel": self.keyCancel
 		}, -1)
 
-
 		self['title'] = Label("KinoKiste")
 		self['name'] = Label("Genre Auswahl")
 		self['coverArt'] = Pixmap()
@@ -41,6 +40,7 @@ class kinokisteGenreScreen(Screen):
 	def layoutFinished(self):
 		self.genreliste.append(("Kinofilme", "http://kkiste.to/aktuelle-kinofilme/"))
 		self.genreliste.append(("Filmlisten", "http://kkiste.to/film-index/"))
+		self.genreliste.append(("Suche", "http://kkiste.to/search/?q="))
 
 		self.chooseMenuList.setList(map(kinokisteGenreListEntry, self.genreliste))
 
@@ -49,8 +49,17 @@ class kinokisteGenreScreen(Screen):
 		kkUrl = self['genreList'].getCurrent()[0][1]
 		if kkName == "Kinofilme":
 			self.session.open(kinokisteKinoScreen)
-		else:
+		elif kkName == "Filmlisten":
 			self.session.open(kinokisteFilmlistenScreen)
+		else:
+			self.session.openWithCallback(self.searchCallback, VirtualKeyBoard, title = (_("Suchbegriff eingeben")), text = "")
+			
+	def searchCallback(self, callbackStr):
+		if callbackStr is not None:
+			print callbackStr
+			url = "http://kkiste.to/search/?q=%s" % callbackStr
+			print url
+			self.session.open(kinokisteSearchScreen, url)
 
 	def keyCancel(self):
 		self.close()
@@ -241,6 +250,7 @@ class kinokistePartsScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 		self.keyLocked = False
+		self.kekse = {}
 
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -260,41 +270,62 @@ class kinokistePartsScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		kkLink = self['genreList'].getCurrent()[0][1]
-		print kkLink
+		self.kkLink = self['genreList'].getCurrent()[0][1]
+		print self.kkLink
 		self.keyLocked = True
-		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.dataError)
-
+		getPage(self.kkLink, cookies=self.kekse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.dataError)
+		
 	def eco_read(self, data):
-		post_url = re.findall('<form name="setss" method="post" action="(.*?)">', data, re.S)
-		if post_url:
-			info = urlencode({'': '1', 'sss': '1'})
-			print info
-			getPage(post_url[0], method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_post).addErrback(self.dataError)
+		print data
+		print "hole daten"
+		id = re.findall('<div id="play" data-id="(.*?)">', data, re.S)
+		if id:
+			postString = {'id': id[0]}
+			print postString
+			api_url = "http://www.ecostream.tv/xhr/video/get/"
+			getPage(api_url, method='POST', cookies=self.kekse, postdata=urlencode(postString), headers={'Content-Type': 'application/x-www-form-urlencoded', 'Referer': self.kkLink, 'X-Requested-With': 'XMLHttpRequest'}).addCallback(self.eco_data).addErrback(self.dataError)		
 
-	def eco_post(self, data):
-		url = "http://www.ecostream.tv/assets/js/common.js"
-		data2 = urllib.urlopen(url).read()
-		post_url = re.findall("url: '(http://www.ecostream.tv/.*?)\?s=", data2, re.S)
-		if post_url:
-			print post_url
-			sPattern = "var t=setTimeout\(\"lc\('([^']+)','([^']+)','([^']+)','([^']+)'\)"
-			r = re.findall(sPattern, data)
-			if r:
-				for aEntry in r:
-					sS = str(aEntry[0])
-					sK = str(aEntry[1])
-					sT = str(aEntry[2])
-					sKey = str(aEntry[3])
-
-				print "current keys:", sS, sK, sT, sKey
-				sNextUrl = post_url[0]+"?s="+sS+'&k='+sK+'&t='+sT+'&key='+sKey
-				print sNextUrl
-				info = urlencode({'s': sS, 'k': sK, 't': sT, 'key': sKey})
-				print info
-				getPage(sNextUrl, method='POST', postdata = info, headers={'Referer':'http://www.ecostream.tv', 'X-Requested-With':'XMLHttpRequest'}).addCallback(self.eco_final).addErrback(self.dataError)
-		else:
-			print "no post url.."
+	def eco_data(self, data):
+		print "hole stream"
+		stream_url = re.findall('"url":"(.*?)"', data, re.S)
+		if stream_url:
+			print stream_url
+			final_url = "http://www.ecostream.tv%s" % stream_url[0]
+			print final_url
+			part = self['genreList'].getCurrent()[0][0]
+			streamname = "%s - %s" % (self.stream_name, part)
+			self.session.open(SimplePlayer, [(streamname, final_url)], showPlaylist=False, ltype='kinokiste')			
+		
+#	def eco_read(self, data):
+#		post_url = re.findall('<form name="setss" method="post" action="(.*?)">', data, re.S)
+#		if post_url:
+#			info = urlencode({'': '1', 'sss': '1'})
+#			print info
+#			getPage(post_url[0], method='POST', postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_post).addErrback(self.dataError)
+#
+#	def eco_post(self, data):
+#		url = "http://www.ecostream.tv/assets/js/common.js"
+#		data2 = urllib.urlopen(url).read()
+#		post_url = re.findall("url: '(http://www.ecostream.tv/.*?)\?s=", data2, re.S)
+#		if post_url:
+#			print post_url
+#			sPattern = "var t=setTimeout\(\"lc\('([^']+)','([^']+)','([^']+)','([^']+)'\)"
+#			r = re.findall(sPattern, data)
+#			if r:
+#				for aEntry in r:
+#					sS = str(aEntry[0])
+#					sK = str(aEntry[1])
+#					sT = str(aEntry[2])
+#					sKey = str(aEntry[3])
+#
+#				print "current keys:", sS, sK, sT, sKey
+#				sNextUrl = post_url[0]+"?s="+sS+'&k='+sK+'&t='+sT+'&key='+sKey
+#				print sNextUrl
+#				info = urlencode({'s': sS, 'k': sK, 't': sT, 'key': sKey})
+#				print info
+#				getPage(sNextUrl, method='POST', postdata = info, headers={'Referer':'http://www.ecostream.tv', 'X-Requested-With':'XMLHttpRequest'}).addCallback(self.eco_final).addErrback(self.dataError)
+#		else:
+#			print "no post url.."
 
 	def eco_final(self, data):
 		part = self['genreList'].getCurrent()[0][0]
@@ -452,6 +483,75 @@ class kinokisteFilmLetterScreen(Screen):
 		kkLink = self['genreList'].getCurrent()[0][3]
 		print kkLink
 		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getParts).addErrback(self.dataError)
+
+	def getParts(self, data):
+		kkName = self['genreList'].getCurrent()[0][0]
+		streams = re.findall('<a href="(http://www.ecostream.tv/stream/.*?)"', data, re.S)
+		print streams
+		if streams:
+			self.session.open(kinokistePartsScreen, streams, kkName)
+
+	def keyCancel(self):
+		self.close()
+		
+class kinokisteSearchScreen(Screen):
+
+	def __init__(self, session, kkLink):
+		self.session = session
+		self.kkLink = kkLink
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinokisteFilmLetterScreen.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kinokisteFilmLetterScreen.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok" : self.keyOK,
+			"cancel" : self.keyCancel
+		}, -1)
+
+		self['title'] = Label("KinoKiste - Search")
+		self['name'] = Label("Film Auswahl")
+		self['page'] = Label("")
+		self['handlung'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.genreliste = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['genreList'] = self.chooseMenuList
+		self.keyLocked = True
+
+		self.onLayoutFinish.append(self.loadpage)
+
+	def loadpage(self):
+		self.genreliste = []
+		print self.kkLink
+		getPage(self.kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.pageData).addErrback(self.dataError)
+
+	def pageData(self, data):
+		kkMovies = re.findall('<li class="mbox list".*?<a href="(.*?)" title="Jetzt (.*?) Stream ansehen".*?<p class="year">(.*?)</p>\n<p class="genre">(.*?)</p>', data, re.S)
+		if kkMovies:
+			for (kkUrl,kkTitle,kkYear,kkGenre) in kkMovies:
+				kkUrl = "http://kkiste.to%s" % kkUrl
+				self.genreliste.append((kkTitle, kkYear, kkGenre, kkUrl))
+			self.chooseMenuList.setList(map(kinokisteFilmLetterListEntry, self.genreliste))
+			self.keyLocked = False
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+		kkLink2 = self['genreList'].getCurrent()[0][3]
+		print kkLink2
+		getPage(kkLink2, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getParts).addErrback(self.dataError)
 
 	def getParts(self, data):
 		kkName = self['genreList'].getCurrent()[0][0]
