@@ -40,6 +40,7 @@ class kinokisteGenreScreen(Screen):
 	def layoutFinished(self):
 		self.genreliste.append(("Kinofilme", "http://kkiste.to/aktuelle-kinofilme/"))
 		self.genreliste.append(("Filmlisten", "http://kkiste.to/film-index/"))
+		self.genreliste.append(("Genres", "http://kkiste.to/genres/"))
 		self.genreliste.append(("Suche", "http://kkiste.to/search/?q="))
 
 		self.chooseMenuList.setList(map(kinokisteGenreListEntry, self.genreliste))
@@ -51,6 +52,8 @@ class kinokisteGenreScreen(Screen):
 			self.session.open(kinokisteKinoScreen)
 		elif kkName == "Filmlisten":
 			self.session.open(kinokisteFilmlistenScreen)
+		elif kkName == "Genres":
+			self.session.open(kinokisteGenrelistenScreen)
 		else:
 			self.session.openWithCallback(self.searchCallback, VirtualKeyBoard, title = (_("Suchbegriff eingeben")), text = "")
 			
@@ -397,6 +400,225 @@ class kinokisteFilmlistenScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
+		
+class kinokisteGenrelistenScreen(Screen):
+
+	def __init__(self, session):
+		self.session = session
+		self.kkLink = "http://kkiste.to/genres/"
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/oldGenreScreen.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/oldGenreScreen.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self['title'] = Label("KinoKiste")
+		self['name'] = Label("Genre Auswahl")
+		self['coverArt'] = Pixmap()
+
+		self.genreliste = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['genreList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.layoutFinished)
+
+	def layoutFinished(self):
+		self.genreliste.append(("Abenteuer", "http://kkiste.to/abenteuer/"))
+		self.genreliste.append(("Action", "http://kkiste.to/action/"))
+		self.genreliste.append(("Animation", "http://kkiste.to/animation/"))
+		self.genreliste.append(("Biographie", "http://kkiste.to/biographie/"))
+		self.genreliste.append(("Bollywood", "http://kkiste.to/bollywood/"))
+		self.genreliste.append(("Dokumentation", "http://kkiste.to/dokumentation/"))
+		self.genreliste.append(("Drama", "http://kkiste.to/drama/"))
+		self.genreliste.append(("Familie", "http://kkiste.to/familie/"))
+		self.genreliste.append(("Fantasy", "http://kkiste.to/fantasy/"))
+		self.genreliste.append(("Geschichte", "http://kkiste.to/geschichte/"))
+		self.genreliste.append(("Horror", "http://kkiste.to/horror/"))
+		self.genreliste.append(("Klassiker", "http://kkiste.to/klassiker/"))
+		self.genreliste.append(("Komoedie", "http://kkiste.to/komoedie/"))	
+		self.genreliste.append(("Kriegsfilm", "http://kkiste.to/kriegsfilm/"))
+		self.genreliste.append(("Krimi", "http://kkiste.to/krimi/"))
+		self.genreliste.append(("Musik", "http://kkiste.to/musik/"))
+		self.genreliste.append(("Mystery", "http://kkiste.to/mystery/"))
+		self.genreliste.append(("Romantik", "http://kkiste.to/romantik/"))
+		self.genreliste.append(("Sci-Fi", "http://kkiste.to/sci-fi/"))		
+		self.genreliste.append(("Sport", "http://kkiste.to/sport/"))
+		self.genreliste.append(("Thriller", "http://kkiste.to/thriller/"))
+		self.genreliste.append(("Western", "http://kkiste.to/western/"))
+		
+		self.chooseMenuList.setList(map(kinokisteGenreListEntry, self.genreliste))
+
+	def keyOK(self):
+		kkLink = self['genreList'].getCurrent()[0][1]
+		print kkLink
+		self.session.open(kinokisteInGenreScreen, kkLink)
+
+	def keyCancel(self):
+		self.close()
+		
+def kinokisteInGenreListEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 500, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+		]
+
+class kinokisteInGenreScreen(Screen):
+
+	def __init__(self, session, kkLink):
+		self.session = session
+		self.kkLink = kkLink
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/kinokisteFilmLetterScreen.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/kinokisteFilmLetterScreen.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok" : self.keyOK,
+			"cancel" : self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
+			"nextBouquet" : self.keyPageUp,
+			"prevBouquet" : self.keyPageDown
+		}, -1)
+
+		self['title'] = Label("KinoKiste")
+		self['name'] = Label("Film Auswahl")
+		self['page'] = Label("1")
+		self['handlung'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.genreliste = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['genreList'] = self.chooseMenuList
+		self.keyLocked = True
+		self.page = 1
+
+		self.onLayoutFinish.append(self.loadpage)
+
+	def loadpage(self):
+		self.genreliste = []
+		self['page'].setText(str(self.page))
+		kkLink = "%s?page=%s" % (self.kkLink, str(self.page))
+		print kkLink
+		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.pageData).addErrback(self.dataError)
+
+	def pageData(self, data):
+		kkMovies = re.findall('<div class="mbox" >.*?<a href="(.*?)" title="Jetzt (.*?) Stream ansehen".*?<img src="(.*?)"', data, re.S)
+		if kkMovies:
+			for (kkUrl,kkTitle,kkImage) in kkMovies:
+				kkUrl = "http://kkiste.to%s" % kkUrl
+				self.genreliste.append((kkTitle, kkUrl, kkImage))
+			self.chooseMenuList.setList(map(kinokisteInGenreListEntry, self.genreliste))
+			self.keyLocked = False
+			self.showInfos()
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def showInfos(self):
+		kkTitle = self['genreList'].getCurrent()[0][0]
+		self['name'].setText(kkTitle)
+		kkUrl = self['genreList'].getCurrent()[0][1]
+		kkImage = self['genreList'].getCurrent()[0][2]
+		kkImageUrl = "%s" % kkImage
+		downloadPage(kkImageUrl.replace('_170_120','_145_215'), "/tmp/kkIcon.jpg").addCallback(self.kkCoverShow)
+		getPage(kkUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDescription).addErrback(self.dataError)
+
+	def getDescription(self, data):
+		ddDescription = re.findall('<meta name="description" content="(.*?)"', data, re.S)
+		if ddDescription:
+			self['handlung'].setText(decodeHtml(ddDescription[0]))
+		else:
+			self['handlung'].setText("Keine Infos gefunden.")
+
+	def kkCoverShow(self, picData):
+		if fileExists("/tmp/kkIcon.jpg"):
+			self['coverArt'].instance.setPixmap(gPixmapPtr())
+			self.scale = AVSwitch().getFramebufferScale()
+			self.picload = ePicLoad()
+			size = self['coverArt'].instance.size()
+			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
+			if self.picload.startDecode("/tmp/kkIcon.jpg", 0, 0, False) == 0:
+				ptr = self.picload.getData()
+				if ptr != None:
+					self['coverArt'].instance.setPixmap(ptr)
+					self['coverArt'].show()
+					del self.picload
+					
+	def keyPageDown(self):
+		print "PageDown"
+		if self.keyLocked:
+			return
+		if not self.page < 2:
+			self.page -= 1
+			self.loadpage()
+
+	def keyPageUp(self):
+		print "PageUP"
+		if self.keyLocked:
+			return
+		self.page += 1
+		self.loadpage()
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['genreList'].pageUp()
+		self.showInfos()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['genreList'].pageDown()
+		self.showInfos()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['genreList'].up()
+		self.showInfos()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['genreList'].down()
+		self.showInfos()
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+		kkLink = self['genreList'].getCurrent()[0][1]
+		print kkLink
+		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getParts).addErrback(self.dataError)
+
+	def getParts(self, data):
+		kkName = self['genreList'].getCurrent()[0][0]
+		streams = re.findall('<a href="(http://www.ecostream.tv/stream/.*?)"', data, re.S)
+		print streams
+		if streams:
+			self.session.open(kinokistePartsScreen, streams, kkName)
+
+	def keyCancel(self):
+		self.close()
 
 def kinokisteFilmLetterListEntry(entry):
 	return [entry,
@@ -562,3 +784,4 @@ class kinokisteSearchScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
+		
