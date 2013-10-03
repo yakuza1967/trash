@@ -302,6 +302,7 @@ class mlehdFilmAuswahlScreen(Screen):
 	def loadPageData(self, data):
 		print "drin"
 		if re.match('.*?mightyupload.com/embed', data, re.S):
+			print "mighty"
 			streamhoster = re.findall('<iframe SRC="(.*?)"', data, re.S)
 			if streamhoster:
 				print streamhoster
@@ -315,7 +316,21 @@ class mlehdFilmAuswahlScreen(Screen):
 				self.chooseMenuList.setList(map(mlehdGenreListEntry, self.filmliste))
 				self.keyLocked = False
 
+		elif re.match('.*?http://mle-hd.se/wp-content/plugins/proplayer/players/mlehd.png&amp;file=', data, re.S):
+			print "direkt file"
+			movies = re.findall('http://mle-hd.se/wp-content/plugins/proplayer/players/mlehd.png&amp;file=(http://.*?.ovh.net/.*?)&', data)
+			if movies:
+				self.filmliste = []
+				count = 0
+				for url in movies:
+					count += 1
+					print url
+					part = "Film %s" % count
+					self.filmliste.append((part,url))
+				self.chooseMenuList.setList(map(mlehdGenreListEntry, self.filmliste))
+				self.keyLocked = False
 		else:
+			print "andere"
 			movies = re.findall("file: '(.*?)\&sid", data, re.S)
 			if movies:
 				print movies
@@ -337,6 +352,8 @@ class mlehdFilmAuswahlScreen(Screen):
 
 		if re.match('.*?mightyupload.com/embed', link, re.S):
 			get_stream_link(self.session).check_link(link, self.got_link, False)
+		elif re.match('.*?ovh.net', link, re.S):
+			self.got_link(link)
 		else:
 			getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
 

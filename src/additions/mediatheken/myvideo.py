@@ -41,15 +41,16 @@ class myVideoGenreScreen(Screen):
 
 	def layoutFinished(self):
 		self.genreliste.append(("Alle Filme", "74594"))
+		self.genreliste.append(("Action", "74592"))
 		self.genreliste.append(("Comedy", "74588"))
 		self.genreliste.append(("Drama", "74589"))
-		self.genreliste.append(("Thriller", "74590"))
-		self.genreliste.append(("Horror", "74591"))
-		self.genreliste.append(("Action", "74592"))
-		self.genreliste.append(("Sci-Fi", "74593"))
-		self.genreliste.append(("Western", "75189"))
 		self.genreliste.append(("Dokumentation", "76116"))
+		self.genreliste.append(("Erotik", "78357"))
+		self.genreliste.append(("Horror", "74591"))
 		self.genreliste.append(("Konzerte", "75833"))
+		self.genreliste.append(("Sci-Fi", "74593"))
+		self.genreliste.append(("Thriller", "74590"))
+		self.genreliste.append(("Western", "75189"))
 		self.chooseMenuList.setList(map(myVideoGenreListEntry, self.genreliste))
 
 	def keyOK(self):
