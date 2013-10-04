@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def focusGenreListEntry(entry):
 	return [entry,
@@ -125,11 +126,8 @@ class focus(Screen):
 		Image = self['streamlist'].getCurrent()[0][1]
 		Link = self['streamlist'].getCurrent()[0][2]
 		self['name'].setText(Title)
-		self.ReadCover(Image)
-		getPage(Link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.handlungData).addErrback(self.dataError)
-
-	def ReadCover(self, stationIconLink):
-		downloadPage(stationIconLink, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		ImageUrl = "%s" % Image
+		CoverHelper(self['coverArt']).getCover(ImageUrl)
 
 	def handlungData(self, data):
 		handlung = re.findall('og:description"\scontent="(.*?)"', data, re.S)
@@ -137,20 +135,6 @@ class focus(Screen):
 			self['handlung'].setText(decodeHtml(handlung[0]))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def dataError(self, error):
 		printl(error,self,"E")
