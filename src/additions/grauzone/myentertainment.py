@@ -1,6 +1,7 @@
 #	-*-	coding:	utf-8	-*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 from Plugins.Extensions.MediaPortal.resources.yt_url import *
 from urllib import quote, urlencode
 import md5
@@ -32,7 +33,7 @@ def meListEntry(entry):
 		
 def meGenreEntry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 50, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
 
 class showMEHDGenre(Screen):
@@ -167,7 +168,7 @@ class showMEHDGenre(Screen):
 		self.genreListe.append(("Thriller", "http://10gbps.org/forum/list.php?r=category/42-HD-Thriller&page="))
 		self.genreListe.append(("Zeichentrick", "http://10gbps.org/forum/list.php?r=category/43-HD-Zeichentrick&page="))
 		self.genreListe.append(("Setup", "dump"))
-		self.chooseMenuList.setList(map(meListEntry, self.genreListe))
+		self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
 		self.keyLocked = False
 
 	def keyOK(self):
@@ -261,7 +262,7 @@ class meMovieScreen(Screen):
 				for enterLink,enterName,enterImdb,enterPic in search:
 					enterTitle = enterName.replace("HD:", "").strip() + ' (IMDB:' + enterImdb + ')' 
 					self.genreListe.append((enterTitle, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org'), enterImdb))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 				self.loadPic()
 				self.loadHandlung()
@@ -276,7 +277,7 @@ class meMovieScreen(Screen):
 				for enterLink,enterName,enterImdb,enterPic in search3D:
 					enterTitle = enterName.replace("HD:", "").strip() + ' (IMDB:' + enterImdb + ')' 
 					self.genreListe.append((enterTitle, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org')))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 				self.loadPic()
 				self.loadHandlung()
@@ -289,7 +290,7 @@ class meMovieScreen(Screen):
 				for enterLink,enterName,enterImdb,enterPic in searchHD:
 					enterTitle = enterName.replace("HD:", "").strip() + ' (IMDB:' + enterImdb + ')' 
 					self.genreListe.append((enterTitle, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org')))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 				self.loadPic()
 				self.loadHandlung()
@@ -304,7 +305,7 @@ class meMovieScreen(Screen):
 				for enterLink,enterName,enterImdb,enterPic in movies3D:
 					enterTitle = enterName.replace("HD:", "").strip() + ' (IMDB:' + enterImdb + ')' 
 					self.genreListe.append((enterTitle, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org')))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 				self.loadPic()
 				self.loadHandlung()
@@ -320,7 +321,7 @@ class meMovieScreen(Screen):
 				for enterLink,enterName,enterImdb,enterPic in movies3D:
 					enterTitle = enterName.replace("HD:", "").strip() + ' (IMDB:' + enterImdb + ')' 
 					self.genreListe.append((enterTitle, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org')))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 				self.loadPic()
 				self.loadHandlung()
@@ -333,7 +334,7 @@ class meMovieScreen(Screen):
 			if links:
 				for enterLink, enterName in links:
 					self.genreListe.append((enterName, enterLink, ""))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 			else:
 				self['handlung'].setText("Nichts gefunden...")
@@ -344,7 +345,7 @@ class meMovieScreen(Screen):
 			if result:
 				for enterLink, enterName, enterPic in result:
 					self.genreListe.append((enterName, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org')))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.loadHandlung()
 				self.loadPic()
 				self.keyLocked = False
@@ -365,7 +366,7 @@ class meMovieScreen(Screen):
 				for enterLink,enterName,enterImdb,enterPic in movies:
 					enterTitle = enterName.replace("HD:", "").strip() + ' (IMDB:' + enterImdb + ')' 
 					self.genreListe.append((enterTitle, enterLink, enterPic.replace('http://my-entertainment.biz','http://10gbps.org')))
-				self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
+				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
 				self.keyLocked = False
 				self.loadPic()
 				self.loadHandlung()
@@ -400,10 +401,9 @@ class meMovieScreen(Screen):
 
 	def loadPic(self):
 		streamName = self['filmList'].getCurrent()[0][0]
-		streamFilmLink = self['filmList'].getCurrent()[0][1]
-		self['name'].setText(self.enterAuswahlLabel)
 		self.streamPic = self['filmList'].getCurrent()[0][2]
-		downloadPage(self.streamPic, "/tmp/spIcon.jpg").addCallback(self.ShowCover)
+		self['name'].setText(self.enterAuswahlLabel)
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
 		
 	def loadHandlung(self):
 		streamFilmLink = self['filmList'].getCurrent()[0][1]
@@ -417,20 +417,6 @@ class meMovieScreen(Screen):
 			self['handlung'].setText(handlung.strip())
 		else:
 			self['handlung'].setText("Keine infos gefunden.")
-		
-	def ShowCover(self, picData):
-		if fileExists("/tmp/spIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/spIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyLeft(self):
 		if self.keyLocked:
