@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def baskinoMainListEntry(entry):
 	return [entry,
@@ -67,23 +68,9 @@ class baskino(Screen):
 		self['page'].setText("%s" % str(self.page))
 		coverUrl = self['List'].getCurrent()[0][2]
 		self.filmName = self['List'].getCurrent()[0][0]
-		self['name'].setText(self.filmName)
-		if coverUrl:
-			downloadPage(coverUrl, "/tmp/baIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/baIcon.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/baIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		self['name'].setText(self.filmName) 
+		ImageUrl = "%s" % coverUrl.replace('_170_120','_145_215')
+		CoverHelper(self['Pic']).getCover(ImageUrl)
 
 	def keyOK(self):
 		exist = self['List'].getCurrent()
