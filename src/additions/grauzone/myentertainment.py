@@ -92,7 +92,7 @@ class showMEHDGenre(Screen):
 		if self.username == "USERNAME" and self.password == "PASSWORD":
 			self.session.open(meSetupScreen)
 		else:		
-			self.loginUrl = 'http://10gbps.org/forum/login.php?do=login'
+			self.loginUrl = 'http://evonic.tv/forum/login.php?do=login'
 			loginData = {'vb_login_username': self.username, 'vb_login_password': self.password, 'do': 'login'}
 			getPage(self.loginUrl, method='POST', 
 					postdata=urlencode(loginData), cookies=ck,
@@ -120,7 +120,7 @@ class showMEHDGenre(Screen):
 			self['ContentTitle'].setText("Login fehlgeschlagen !")
 
 	def accountInfos(self, data):
-		statusUrl = 'http://10gbps.org/forum/payments.php'
+		statusUrl = 'http://evonic.tv/forum/payments.php'
 		getPage(statusUrl, method="GET",
 				headers={'Content-Type': 'application/x-www-form-urlencoded'},
 				followRedirect=True, timeout=30, cookies=ck).addCallback(self.accountInfosData).addErrback(self.dataError)	
@@ -144,29 +144,29 @@ class showMEHDGenre(Screen):
 		self.genreListe = []
 		self.genreListe.append(("Suche", "suche"))
 		#self.genreListe.append(("Sortiert nach IMDB-Bewertung", "imdb"))
-		self.genreListe.append(("Neueinsteiger", "http://10gbps.org/forum/content.php?r=1969-Aktuelle-HD-Filme&page="))
-		self.genreListe.append(("Aktuelle Filme", "http://10gbps.org/forum/list.php?r=category/169-Cineline&page="))
-		self.genreListe.append(("3D-Charts", "http://10gbps.org/forum/content.php?r=5440-3d-charts&page="))
-		self.genreListe.append(("3D", "http://10gbps.org/forum/content.php?r=4225-3d-filme&page="))
-		self.genreListe.append(("HD-Charts", "http://10gbps.org/forum/content.php?r=1989-HD-Charts&page="))
-		#self.genreListe.append(("HD-Serien", "http://10gbps.org/forum/content.php?r=5993-Serien&page="))
-		self.genreListe.append(("Alle HD Premium Streams", "http://10gbps.org/forum/content.php?r=1669-hd-filme&page="))
-		self.genreListe.append(("Abenteuer", "http://10gbps.org/forum/list.php?r=category/65-HD-Abenteuer&page="))
-		self.genreListe.append(("Action", "http://10gbps.org/forum/list.php?r=category/35-HD-Action&page="))
-		self.genreListe.append(("Biografie", "http://10gbps.org/forum/list.php?r=category/70-HD-Biografie&page="))
-		self.genreListe.append(("Collection", "http://10gbps.org/forum/content.php?r=3501-hd-collection&page="))
-		self.genreListe.append(("Doku", "http://10gbps.org/forum/list.php?r=category/64-HD-Doku&page="))
-		self.genreListe.append(("Drama", "http://10gbps.org/forum/list.php?r=category/36-HD-Drama&page="))
-		self.genreListe.append(("Fantasy", "http://10gbps.org/forum/list.php?r=category/37-HD-Fantasy&page="))
-		self.genreListe.append(("Horror", "http://10gbps.org/forum/list.php?r=category/38-HD-Horror&page="))
-		self.genreListe.append(("Komoedie", "http://10gbps.org/forum/list.php?r=category/39-HD-Kom%F6die&page="))
-		self.genreListe.append(("Kriegsfilm", "http://10gbps.org/forum/list.php?r=category/66-HD-Kriegsfilm&page="))		
-		self.genreListe.append(("Krimi", "http://10gbps.org/forum/list.php?r=category/56-HD-Krimi&page="))
-		self.genreListe.append(("Mystery", "http://10gbps.org/forum/list.php?r=category/62-HD-Mystery&page="))
-		self.genreListe.append(("Romanze", "http://10gbps.org/forum/list.php?r=category/40-HD-Romanze&page="))
-		self.genreListe.append(("SciFi", "http://10gbps.org/forum/list.php?r=category/41-HD-SciFi&page="))
-		self.genreListe.append(("Thriller", "http://10gbps.org/forum/list.php?r=category/42-HD-Thriller&page="))
-		self.genreListe.append(("Zeichentrick", "http://10gbps.org/forum/list.php?r=category/43-HD-Zeichentrick&page="))
+		self.genreListe.append(("Neueinsteiger", "http://evonic.tv/forum/content.php?r=1969-Aktuelle-HD-Filme&page="))
+		self.genreListe.append(("Cineline", "http://evonic.tv/forum/list.php?r=category/169-Cineline&page="))
+		self.genreListe.append(("3D-Charts", "http://evonic.tv/forum/content.php?r=5440-3d-charts&page="))
+		self.genreListe.append(("3D", "http://evonic.tv/forum/content.php?r=4225-3d-filme&page="))
+		self.genreListe.append(("HD-Charts", "http://evonic.tv/forum/content.php?r=1989-HD-Charts&page="))
+		#self.genreListe.append(("HD-Serien", "http://evonic.tv/forum/content.php?r=5993-Serien&page="))
+		self.genreListe.append(("Alle HD Premium Streams", "http://evonic.tv/forum/content.php?r=1669-hd-filme&page="))
+		self.genreListe.append(("Abenteuer", "http://evonic.tv/forum/list.php?r=category/65-HD-Abenteuer&page="))
+		self.genreListe.append(("Action", "http://evonic.tv/forum/list.php?r=category/35-HD-Action&page="))
+		self.genreListe.append(("Biografie", "http://evonic.tv/forum/list.php?r=category/70-HD-Biografie&page="))
+		self.genreListe.append(("Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
+		self.genreListe.append(("Doku", "http://evonic.tv/forum/list.php?r=category/64-HD-Doku&page="))
+		self.genreListe.append(("Drama", "http://evonic.tv/forum/list.php?r=category/36-HD-Drama&page="))
+		self.genreListe.append(("Fantasy", "http://evonic.tv/forum/list.php?r=category/37-HD-Fantasy&page="))
+		self.genreListe.append(("Horror", "http://evonic.tv/forum/list.php?r=category/38-HD-Horror&page="))
+		self.genreListe.append(("Komoedie", "http://evonic.tv/forum/list.php?r=category/39-HD-Kom%F6die&page="))
+		self.genreListe.append(("Kriegsfilm", "http://evonic.tv/forum/list.php?r=category/66-HD-Kriegsfilm&page="))		
+		self.genreListe.append(("Krimi", "http://evonic.tv/forum/list.php?r=category/56-HD-Krimi&page="))
+		self.genreListe.append(("Mystery", "http://evonic.tv/forum/list.php?r=category/62-HD-Mystery&page="))
+		self.genreListe.append(("Romanze", "http://evonic.tv/forum/list.php?r=category/40-HD-Romanze&page="))
+		self.genreListe.append(("SciFi", "http://evonic.tv/forum/list.php?r=category/41-HD-SciFi&page="))
+		self.genreListe.append(("Thriller", "http://evonic.tv/forum/list.php?r=category/42-HD-Thriller&page="))
+		self.genreListe.append(("Zeichentrick", "http://evonic.tv/forum/list.php?r=category/43-HD-Zeichentrick&page="))
 		self.genreListe.append(("Setup", "dump"))
 		self.chooseMenuList.setList(map(meGenreEntry, self.genreListe))
 		self.keyLocked = False
@@ -226,6 +226,7 @@ class meMovieScreen(Screen):
 		}, -1)
 
 		self.keyLocked = True
+		self.showStreams = False
 		self['title'] = Label("Filme Auswahl:")
 		self['name'] = Label("")
 		self['handlung'] = Label("")
@@ -243,7 +244,7 @@ class meMovieScreen(Screen):
 
 	def loadPage(self):
 		print self.enterAuswahlLink, self.enterAuswahlLabel
-		
+		self.showStreams = False
 		self.enterAuswahlLink = self.enterAuswahlLink + str(self.page)
 		getPage(self.enterAuswahlLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 		
@@ -376,28 +377,27 @@ class meMovieScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-
+			
 		streamLink = self['filmList'].getCurrent()[0][1]
 		self.streamName = self['filmList'].getCurrent()[0][0]
-		
 		print self.streamName, streamLink
-		
 		getPage(streamLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
-		
+
 	def getStream(self, data):
-		findStream = re.findall('"http://10gbps.org/server/Premium.*?"', data)
+		self.genreListe2 = []
+		
+		findStream = re.findall('"(http://10gbps.org/server/Premium.*?)"', data)
 		if findStream:
-			print "Anzahl der Streams:", len(findStream)
-			if len(findStream) == 1:
-				print findStream
-				getPage(findStream[0].replace('"',''), cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamUrl).addErrback(self.dataError)
-				
-	def getStreamUrl(self, data):
-		print "get Stream Url.."
-		stream_url = re.findall('src="(.*?)"', data, re.S)
-		if stream_url:
-			print stream_url
-			self.session.open(SimplePlayer, [(self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+			print "Premium", findStream
+			self.genreListe2.append(("Premium", findStream[0].replace('"','')))
+			
+		findStream2 = re.findall('"http://10gbps.org/server/Free-Member.php.mov=.*?"', data)
+		if findStream2:
+			print "Free", findStream2
+			self.genreListe2.append(("Free", findStream2[0].replace('"','')))
+
+		print self.genreListe2
+		self.session.open(meHosterScreen, self.streamName, self.genreListe2, self.streamPic)
 
 	def loadPic(self):
 		streamName = self['filmList'].getCurrent()[0][0]
@@ -465,6 +465,80 @@ class meMovieScreen(Screen):
 		else:
 			return
 
+	def dataError(self, error):
+		print error
+
+	def keyCancel(self):
+		self.close()
+
+class meHosterScreen(Screen):
+
+	def __init__(self, session, eName, eListe, streamPic):
+		self.session = session
+		self.eName = eName
+		self.eListe = eListe
+		self.streamPic = streamPic
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("Stream Auswahl:")
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.page = 1
+		self.genreListe = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.chooseMenuList.setList(map(meGenreEntry, self.eListe))
+		self.keyLocked = False
+	
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		print self.streamName, streamLink
+		getPage(streamLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamUrl).addErrback(self.dataError)		
+
+	def getStreamUrl(self, data):
+		print "get Stream Url.."
+		if self.streamName == "Premium":
+			stream_url = re.findall('src="(.*?)"', data, re.S)
+			if stream_url:
+				print stream_url
+				self.session.open(SimplePlayer, [(self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+		else:
+			print data
+			stream_url = re.findall('source src="(.*?)"', data, re.S)
+			print stream_url
+			self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+		
 	def dataError(self, error):
 		print error
 
