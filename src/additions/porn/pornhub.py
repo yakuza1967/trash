@@ -281,12 +281,12 @@ class pornhubGenreScreen(Screen):
 				phUrl = "http://www.pornhub.com" + phUrl + "&page="
 				self.filmliste.append((phTitle, phUrl, phImage))
 			self.filmliste.sort()
+			self.filmliste.insert(0, ("Pornstar Toplist", "http://www.pornhub.com/pornstars?o=mp&page=", None))
 			self.filmliste.insert(0, ("HD", "http://www.pornhub.com/video?c=38&page=", 'http://cdn1a.static.pornhub.phncdn.com/images/categories/38.jpg'))
 			self.filmliste.insert(0, ("Longest", "http://www.pornhub.com/video?o=lg&page=", None))
 			self.filmliste.insert(0, ("Top Rated", "http://www.pornhub.com/video?o=tr&page=", None))
 			self.filmliste.insert(0, ("Most Viewed", "http://www.pornhub.com/video?o=mv&page=", None))
 			self.filmliste.insert(0, ("Most Recent", "http://www.pornhub.com/video?o=mr&page=", None))
-			self.filmliste.insert(0, ("Pornstar Toplist", "http://www.pornhub.com/pornstars?o=mp&page=", None))
 			self.filmliste.insert(0, ("--- Search ---", "callSuchen", None))
 			self.chooseMenuList.setList(map(pornhubGenreListEntry, self.filmliste))
 			self.chooseMenuList.moveToIndex(0)
@@ -419,22 +419,7 @@ class pornhubPornstarScreen(Screen):
 
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
-		phImageUrl = "%s" % phImage
-		downloadPage(phImageUrl.replace('_170_120','_145_215'), "/tmp/kkIcon.jpg").addCallback(self.phCoverShow)
-
-	def phCoverShow(self, picData):
-		if fileExists("/tmp/kkIcon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/kkIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		CoverHelper(self['coverArt']).getCover(phImage)
 
 	def keyPageDown(self):
 		print "PageDown"
