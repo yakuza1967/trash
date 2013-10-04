@@ -1,6 +1,7 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.yt_url import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def mlehdGenreListEntry(entry):
 	return [entry,
@@ -58,7 +59,8 @@ class mlehdGenreScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		self.genreliste = [("Neuesten", "http://www.mle-hd.se/page/"),
+		self.genreliste = [("Suche", "http://mle-hd.se/page/"),
+							("Neuesten", "http://www.mle-hd.se/page/"),
 							("Abenteuer", "http://www.mle-hd.se/category/abenteuer/page/"),
 							("Action", "http://www.mle-hd.se/category/action/page/"),
 							("Animation-Zeichentrick", "http://www.mle-hd.se/category/animation-zeichentrick/page/"),
@@ -83,24 +85,33 @@ class mlehdGenreScreen(Screen):
 	def dataError(self, error):
 		printl(error,self,"E")
 
-
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		mlehdGenre = self['genreList'].getCurrent()[0][0]
-		mlehdUrl = self['genreList'].getCurrent()[0][1]
-		print mlehdGenre, mlehdUrl
-		self.session.open(mlehdFilmListeScreen, mlehdGenre, mlehdUrl)
+		self.mlehdGenre = self['genreList'].getCurrent()[0][0]
+		self.mlehdUrl = self['genreList'].getCurrent()[0][1]
+		print self.mlehdGenre, self.mlehdUrl
+		
+		if self.mlehdGenre == "Suche":
+			self.session.openWithCallback(self.callbackSuche, VirtualKeyBoard, title = (_("Suche..")), text = "")
+		else:
+			self.session.open(mlehdFilmListeScreen, self.mlehdGenre, self.mlehdUrl, "dump")
 
+	def callbackSuche(self, callback):
+		if callback is not None:
+			print callback
+			self.session.open(mlehdFilmListeScreen, self.mlehdGenre, self.mlehdUrl, callback)
+	
 	def keyCancel(self):
 		self.close()
 
 class mlehdFilmListeScreen(Screen):
 
-	def __init__(self, session, genreName, genreLink):
+	def __init__(self, session, genreName, genreLink, search):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
+		self.search = search
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
@@ -153,9 +164,14 @@ class mlehdFilmListeScreen(Screen):
 
 	def loadPage(self):
 		self.keyLocked = True
-		url = "%s%s" % (self.genreLink,str(self.page))
-		print url
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		if self.genreName == "Suche":
+			url = "%s%s/?s=%s" % (self.genreLink, str(self.page), self.search)
+			print url
+			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		else:
+			url = "%s%s" % (self.genreLink,str(self.page))
+			print url
+			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
 		print "drin"
@@ -178,23 +194,9 @@ class mlehdFilmListeScreen(Screen):
 		printl(error,self,"E")
 
 	def loadPic(self):
-		streamPic = self['liste'].getCurrent()[0][2]
-		print streamPic
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		self.streamPic = self['liste'].getCurrent()[0][2]
+		print self.streamPic
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
 
 	def keyPageDown(self):
 		print "PageDown"
@@ -241,17 +243,18 @@ class mlehdFilmListeScreen(Screen):
 		self.mlehdName = self['liste'].getCurrent()[0][0]
 		mlehdurl = self['liste'].getCurrent()[0][1]
 		print self.mlehdName, mlehdurl
-		self.session.open(mlehdFilmAuswahlScreen, self.mlehdName, mlehdurl)
+		self.session.open(mlehdFilmAuswahlScreen, self.mlehdName, mlehdurl, self.streamPic)
 
 	def keyCancel(self):
 		self.close()
 
 class mlehdFilmAuswahlScreen(Screen):
 
-	def __init__(self, session, genreName, genreLink):
+	def __init__(self, session, genreName, genreLink, genrePic):
 		self.session = session
 		self.genreLink = genreLink
 		self.genreName = genreName
+		self.genrePic = genrePic
 		self.plugin_path = mp_globals.pluginPath
 		self.skin_path =  mp_globals.pluginPath + "/skins"
 
@@ -297,6 +300,7 @@ class mlehdFilmAuswahlScreen(Screen):
 	def loadPage(self):
 		self.keyLocked = True
 		print self.genreLink
+		CoverHelper(self['coverArt']).getCover(self.genrePic)
 		getPage(self.genreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
@@ -362,14 +366,14 @@ class mlehdFilmAuswahlScreen(Screen):
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			title = self.genreName+" "+self.part
-			self.session.open(SimplePlayer, [(title, stream_url)], showPlaylist=False, ltype='mlehd')
+			self.session.open(SimplePlayer, [(title, stream_url, self.genrePic)], showPlaylist=False, ltype='mlehd', cover=True)
 
 	def getStream(self, data):
 		stream_url = re.findall('<location>(http://.*?)</location>', data, re.S)
 		if stream_url:
 			print stream_url
 			title = self.genreName+" "+self.part
-			self.session.open(SimplePlayer, [(title, stream_url[0])], showPlaylist=False, ltype='mlehd')
+			self.session.open(SimplePlayer, [(title, stream_url[0], self.genrePic)], showPlaylist=False, ltype='mlehd', cover=True)
 
 	def dataError(self, error):
 		printl(error,self,"E")
