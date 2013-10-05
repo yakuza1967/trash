@@ -842,6 +842,10 @@ class kinokisteFilmLetterScreen(Screen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok" : self.keyOK,
 			"cancel" : self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
 			"nextBouquet" : self.keyPageUp,
 			"prevBouquet" : self.keyPageDown
 		}, -1)
@@ -877,7 +881,23 @@ class kinokisteFilmLetterScreen(Screen):
 				self.genreliste.append((kkTitle, kkYear, kkGenre, kkUrl))
 			self.chooseMenuList.setList(map(kinokisteFilmLetterListEntry, self.genreliste))
 			self.keyLocked = False
+			self.loadpage2()
 
+	def loadpage2(self):
+		kkLink = self['genreList'].getCurrent()[0][3]
+		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showInfos).addErrback(self.dataError)	
+		
+	def showInfos(self, data):
+		ddDescription = re.findall('<meta name="description" content="(.*?)"', data, re.S)
+		kkCover = re.findall('<img src="(.*?)".*?alt=".*?>', data, re.S)
+		if ddDescription:
+			self['handlung'].setText(decodeHtml(ddDescription[0]))
+		else:
+			self['handlung'].setText("Keine Infos gefunden.")
+		kkImage = kkCover[0]
+		kkImageUrl = "%s" % kkImage.replace('_170_120','_145_215')
+		CoverHelper(self['coverArt']).getCover(kkImageUrl)
+		
 	def dataError(self, error):
 		printl(error,self,"E")
 
@@ -895,6 +915,30 @@ class kinokisteFilmLetterScreen(Screen):
 			return
 		self.page += 1
 		self.loadpage()
+		
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['genreList'].pageUp()
+		self.loadpage2()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['genreList'].pageDown()
+		self.loadpage2()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['genreList'].up()
+		self.loadpage2()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['genreList'].down()
+		self.loadpage2()
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -981,4 +1025,3 @@ class kinokisteSearchScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
