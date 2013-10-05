@@ -1,5 +1,6 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def galileovlGenreListEntry(entry):
 	return [entry,
@@ -158,21 +159,8 @@ class galileovlListeScreen(Screen):
 		streamPic = self['liste'].getCurrent()[0][3]
 		handlung = self['liste'].getCurrent()[0][2]
 		self['handlung'].setText(decodeHtml(handlung))
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		ImageUrl = "%s" % streamPic
+		CoverHelper(self['coverArt']).getCover(ImageUrl)
 
 	def keyLeft(self):
 		if self.keyLocked:

@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def retrotvListEntry(entry):
 	return [entry,
@@ -96,7 +97,8 @@ class retrotvFilmListeScreen(Screen):
 		streamUrl = self['liste'].getCurrent()[0][1]
 		streamPic = self['liste'].getCurrent()[0][2]
 		self['name'].setText(streamTitle)
-		downloadPage(streamPic, "/tmp/Icon.jpg").addCallback(self.ShowCover)
+		ImageUrl = "%s" % streamPic
+		CoverHelper(self['coverArt']).getCover(ImageUrl)
 		getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDescription).addErrback(self.dataError)
 
 	def getDescription(self, data):
@@ -105,20 +107,6 @@ class retrotvFilmListeScreen(Screen):
 			self['handlung'].setText(decodeHtml(ddDescription.group(1)))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-
-	def ShowCover(self, picData):
-		if fileExists("/tmp/Icon.jpg"):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Icon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))

@@ -1,6 +1,7 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.putpattvlink import PutpattvLink
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def putpattvGenreListEntry(entry):
 	return [entry,
@@ -78,32 +79,8 @@ class putpattvGenreScreen(Screen):
 		phTitle = self['genreList'].getCurrent()[0][0]
 		phImage = self['genreList'].getCurrent()[0][1]
 		phImage = 'http://files.putpat.tv/artwork/channelgraphics/%s/channelteaser_500.png' % phImage
-		if not phImage == None:
-			downloadPage(phImage, "/tmp/phIcon.jpg").addCallback(self.ShowCover)
-		else:
-			self.ShowCoverNone()
-
-	def ShowCover(self, picData):
-		picPath = "/tmp/phIcon.jpg"
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverNone(self):
-		picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
-		self.ShowCoverFile(picPath)
-
-	def ShowCoverFile(self, picPath):
-		if fileExists(picPath):
-			self['coverArt'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['coverArt'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode(picPath, 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['coverArt'].instance.setPixmap(ptr)
-					self['coverArt'].show()
-					del self.picload
+		ImageUrl = "%s" % phImage
+		CoverHelper(self['coverArt']).getCover(ImageUrl)
 
 	def keyOK(self):
 		if self.keyLocked:

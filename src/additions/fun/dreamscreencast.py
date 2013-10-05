@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def dreamscreencastListEntry(entry):
 	return [entry,
@@ -74,23 +75,9 @@ class dreamscreencast(Screen):
 
 	def getImage(self, data):
 		image = re.findall('<a rel="gallery" href="(.*?)"', data, re.S)
-		if image:
-			print image[0]
-			downloadPage(image[0], "/tmp/dscIcon.jpg").addCallback(self.showCover)
-
-	def showCover(self, picData):
-		if fileExists("/tmp/dscIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/dscIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+		streamPic = image[0]
+		ImageUrl = "%s" % streamPic
+		CoverHelper(self['stationIcon']).getCover(ImageUrl)
 
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()

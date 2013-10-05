@@ -1,4 +1,5 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def radiostreamListEntry(entry):
 	return [entry,
@@ -113,21 +114,8 @@ class Radiode(Screen):
 
 
 	def stationIconRead(self, stationIconLink):
-		downloadPage(stationIconLink, "/tmp/stationIcon.jpg").addCallback(self.statonIconShow)
-
-	def statonIconShow(self, picData):
-		if fileExists("/tmp/stationIcon.jpg"):
-			self['stationIcon'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['stationIcon'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/stationIcon.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['stationIcon'].instance.setPixmap(ptr)
-					self['stationIcon'].show()
-					del self.picload
+		ImageUrl = "%s" % stationIconLink
+		CoverHelper(self['stationIcon']).getCover(ImageUrl)
 
 	def keySwitchList(self):
 		if self.currentList == "streamlist":

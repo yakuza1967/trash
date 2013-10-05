@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def failListEntry(entry):
 	return [entry,
@@ -72,21 +73,8 @@ class failScreen(Screen):
 		flPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(flTitle)
 		self['page'].setText(str(self.page))
-		downloadPage(flPicLink, "/tmp/flPic.jpg").addCallback(self.roflCoverShow)
-
-	def roflCoverShow(self, data):
-		if fileExists("/tmp/flPic.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/flPic.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		ImageUrl = "%s" % flPicLink
+		CoverHelper(self['Pic']).getCover(ImageUrl)
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))

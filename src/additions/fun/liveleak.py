@@ -1,5 +1,6 @@
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def LiveLeakEntry(entry):
 	return [entry,
@@ -122,21 +123,8 @@ class LiveLeakClips(Screen):
 		llPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(llTitle)
 		self['page'].setText(str(self.page))
-		downloadPage(llPicLink, "/tmp/Pic.jpg").addCallback(self.ShowImage)
-
-	def ShowImage(self, data):
-		if fileExists("/tmp/Pic.jpg"):
-			self['Pic'].instance.setPixmap(gPixmapPtr())
-			self.scale = AVSwitch().getFramebufferScale()
-			self.picload = ePicLoad()
-			size = self['Pic'].instance.size()
-			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
-			if self.picload.startDecode("/tmp/Pic.jpg", 0, 0, False) == 0:
-				ptr = self.picload.getData()
-				if ptr != None:
-					self['Pic'].instance.setPixmap(ptr)
-					self['Pic'].show()
-					del self.picload
+		ImageUrl = "%s" % llPicLink
+		CoverHelper(self['Pic']).getCover(ImageUrl)
 
 	def keyPageDown(self):
 		print "PageDown"
