@@ -123,6 +123,7 @@ def decodeHtml(text):
 
 	text = text.replace('&#8230;','...')
 	text = text.replace('\u2026','...')
+	text = text.replace('&hellip;','...')
 	return text
 
 def iso8859_Decode(txt):
