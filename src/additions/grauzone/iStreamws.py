@@ -7,6 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.playhttpmovie import PlayHttpMovie
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.twagenthelper import TwAgentHelper
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
+from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 
 if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/TMDb/plugin.pyo'):
 	from Plugins.Extensions.TMDb.plugin import *
@@ -19,7 +20,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-IS_Version = "iStream.ws v1.14"
+IS_Version = "STREAMIT v0.90"
 
 IS_siteEncoding = 'utf-8'
 
@@ -87,46 +88,47 @@ class showIStreamGenre(Screen):
 		genreListe = []
 		if self.mode == "porn":
 			Genre = [
-				("All", "http://istream.ws/c/porn/page/"),
-				("German", "http://istream.ws/c/porn/deutsch/page/"),
-				("AbbyWinters", "http://istream.ws/c/clips/abbywinters/page/"),
-				("X-Art", "http://istream.ws/c/porn/x-art-porn/page/")]
+				("All", "http://streamit.ws/c/porn/page/")
+				#("German", "http://streamit.ws/c/porn/deutsch/page/"),
+				#("AbbyWinters", "http://streamit.ws/c/clips/abbywinters/page/"),
+				#("X-Art", "http://streamit.ws/c/porn/x-art-porn/page/")
+				]
 		else:
 			Genre = [
-				("Suche...", "http://istream.ws/?s=%s"),
-				("Kino", "http://istream.ws/c/filme/kino/page/"),
-				("Neue Filme", "http://istream.ws/page/"),
-				("Alle Filme", "http://istream.ws/c/filme/page/"),
-				("Abenteuer", "http://istream.ws/c/filme/abenteuer/page/"),
-				("Action", "http://istream.ws/c/filme/action/page/"),
-				("Adventure", "http://istream.ws/c/filme/adventure/page/"),
-				("Animation", "http://istream.ws/c/filme/animation/page/"),
-				("Anime", "http://istream.ws/c/filme/anime/page/"),
-				("Bollywood", "http://istream.ws/c/filme/bollywood/page/"),
-				("Comedy", "http://istream.ws/c/filme/comedy/page/"),
-				("Crime", "http://istream.ws/c/filme/crime/page/"),
-				("Dokumentation", "http://istream.ws/c/filme/dokumentation/page/"),
-				("Drama", "http://istream.ws/c/filme/drama/page/"),
-				("Family", "http://istream.ws/c/filme/family/page/"),
-				("Fantasy", "http://istream.ws/c/filme/fantasy/page/"),
-				("Historienfilm", "http://istream.ws/c/filme/historienfilm/page/"),
-				("History", "http://istream.ws/c/filme/history/page/"),
-				("Horror", "http://istream.ws/c/filme/horror/page/"),
-				("Kinderfilm", "http://istream.ws/c/filme/kinderfilm/page/"),
-				("Komödie", "http://istream.ws/c/filme/komodie/page/"),
-				("Kriegsfilm", "http://istream.ws/c/filme/kriegsfilm/page/"),
-				("Kurzfilm", "http://istream.ws/c/filme/kurzfilm/page/"),
-				("Martial Arts", "http://istream.ws/c/filme/martial-arts/page/"),
-				("Mystery", "http://istream.ws/c/filme/mystery/page/"),
-				("Romance", "http://istream.ws/c/filme/romance/page/"),
-				("Satire", "http://istream.ws/c/filme/satire/page/"),
-				("SciFi", "http://istream.ws/c/filme/science-ficton/page/"),
-				("Sitcom", "http://istream.ws/c/filme/sitcom/page/"),
-				("Sport", "http://istream.ws/c/filme/sport/page/"),
-				("Thriller", "http://istream.ws/c/filme/thriller/page/"),
-				("Trickfilm", "http://istream.ws/c/filme/trickfilm/page/"),
-				("War", "http://istream.ws/c/filme/war/page/"),
-				("Western", "http://istream.ws/c/filme/western/page/")]
+				("Suche...", "http://streamit.ws/?s=%s"),
+				("Kino", "http://streamit.ws/c/ckino/page/"),
+				("Neue Filme", "http://streamit.ws/c/filme/page/"),
+				#("Alle Filme", "http://streamit.ws/c/filme/page/"),
+				("Abenteuer", "http://streamit.ws/c/filme/abenteuer/page/"),
+				("Action", "http://streamit.ws/c/filme/action/page/"),
+				("Adventure", "http://streamit.ws/c/filme/adventure/page/"),
+				("Animation", "http://streamit.ws/c/filme/animation/page/"),
+				("Anime", "http://streamit.ws/c/filme/anime/page/"),
+				("Bollywood", "http://streamit.ws/c/filme/bollywood/page/"),
+				#("Comedy", "http://streamit.ws/c/filme/comedy/page/"),
+				("Crime", "http://streamit.ws/c/filme/crime/page/"),
+				("Dokumentation", "http://streamit.ws/c/filme/dokumentation/page/"),
+				("Drama", "http://streamit.ws/c/filme/drama/page/"),
+				("Family", "http://streamit.ws/c/filme/family/page/"),
+				("Fantasy", "http://streamit.ws/c/filme/fantasy/page/"),
+				#("Historienfilm", "http://streamit.ws/c/filme/historienfilm/page/"),
+				("History", "http://streamit.ws/c/filme/history/page/"),
+				("Horror", "http://streamit.ws/c/filme/horror/page/"),
+				#("Kinderfilm", "http://streamit.ws/c/filme/kinderfilm/page/"),
+				("Komödie", "http://streamit.ws/c/filme/komodie/page/"),
+				#("Kriegsfilm", "http://streamit.ws/c/filme/kriegsfilm/page/"),
+				#("Kurzfilm", "http://streamit.ws/c/filme/kurzfilm/page/"),
+				#("Martial Arts", "http://streamit.ws/c/filme/martial-arts/page/"),
+				("Mystery", "http://streamit.ws/c/filme/mystery/page/"),
+				("Romance", "http://streamit.ws/c/filme/romance/page/"),
+				#("Satire", "http://streamit.ws/c/filme/satire/page/"),
+				("SciFi", "http://streamit.ws/c/filme/sci-fi/page/"),
+				#("Sitcom", "http://streamit.ws/c/filme/sitcom/page/"),
+				("Sport", "http://streamit.ws/c/filme/sport/page/"),
+				("Thriller", "http://streamit.ws/c/filme/thriller/page/"),
+				#("Trickfilm", "http://streamit.ws/c/filme/trickfilm/page/"),
+				("War", "http://streamit.ws/c/filme/war/page/"),
+				("Western", "http://streamit.ws/c/filme/western/page/")]
 
 		for (Name,Url) in Genre:
 			self.genreListe.append((Name,Url))
@@ -257,8 +259,9 @@ class IStreamFilmListeScreen(Screen):
 		self.keckse = {}
 		self.page = 0
 		self.pages = 0;
-		self.neueFilme = re.match('.*?Neue Filme',self.genreName)
-		self.sucheFilme = re.match('.*?Videosuche',self.genreName)
+		self.neueFilme = re.search('Neue Filme',self.genreName)
+		self.sucheFilme = re.search('Videosuche',self.genreName)
+		self.pornFilme = re.search('/porn',self.genreLink)
 		self.setGenreStrTitle()
 
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -319,16 +322,16 @@ class IStreamFilmListeScreen(Screen):
 		print "loadPageData:",len(data)
 
 		self.filmListe = []
-		if not self.neueFilme:
-			filme = re.findall('<div class="cover">.*?<a href="(.*?)" rel=.*?title="(.*?)">.*?data-original="(.*?)"', data, re.S)
+		if not self.pornFilme:
+			filme = re.findall('<div class="voting".*?<a href="(.*?)".*?title="(.*?)">.*?<img src="(.*?)"', data, re.S)
 		else:
-			print "Parse new movies"
-			filme = re.findall('<div class="voting".*?<a href="(.*?)".*?title="(.*?)">.*?data-original="(.*?)"', data)
+			print "Parse porn movies"
+			filme = re.findall('<div class="cover">.*?<a href="(.*?)".*?title="(.*?)".*?<img src=([a-z0-9:./]+)', data, re.S)
 
 		if filme:
 			print "Movies found !"
 			if not self.pages:
-				m = re.findall('<span class=\'pages\'>Seite 1 von (.*?)</', data)
+				m = re.findall('<a class=\'page-numbers\'.*?>(.*?)</', data)
 				if m:
 					self.pages = int(m[0])
 				else:
@@ -625,6 +628,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
 			"red" 		: self.keyTxtPageUp,
 			"blue" 		: self.keyTxtPageDown,
+			"green" 	: self.keyTrailer,
 			"ok"    	: self.keyOK,
 			"info" 		: self.keyTMDbInfo,
 			"cancel"	: self.keyCancel
@@ -642,6 +646,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		self['F3'] = Label("")
 		self['F4'] = Label("Text+")
 
+		self.trailerId = None
 		self.tw_agent_hlp = TwAgentHelper()
 		self.streamListe = []
 		self.streamMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -660,21 +665,42 @@ class IStreamStreams(Screen, ConfigListScreen):
 
 	def parseData(self, data):
 		print "parseData:"
-		streams = re.findall('a class="hoster-button.*?href="(.*?)".*?title=".*?\[(.*?)\](.*?)"', data)
-		mdesc = re.search('class="desc">(.*?)<br />',data, re.S)
+		m = re.search('<div id="stream">(.*?)</div>',data, re.S)
+		if not m:
+			m = re.search('<strong><h2>Hoster:</h2></strong>(.*?)</div>',data, re.S)
+		if m:
+			streams = re.findall('\s\s<a href="(.*?)".*?value="(.*?)"', m.group(1), re.S)
+		else:
+			streams = None
+
+		m = re.search('href="http://www.youtube.com/(.*?)\?', data)
+		if m:
+			s = m.group(1).split('/')
+			try:
+				self.trailerId = m.group(1).split('/')[-1]
+			except:
+				pass
+			else:
+				self['F2'].setText('Trailer')
+
+		mdesc = re.search('\s{4}(.*?&hellip;)',data)
 		if mdesc:
 			print "Descr. found"
 			desc = mdesc.group(1).strip()
 		else:
 			desc = "Keine weiteren Info's !"
+		#print desc
 
 		self.streamListe = []
 		if streams:
 			print "Streams found"
-			for (isUrl,isStream,streamPart) in streams:
-				if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', isStream, re.S|re.I):
-					#print isUrl
-					#print isStream,streamPart
+			for (isUrl,isStream) in streams:
+				if re.search('(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', isStream, re.S|re.I):
+					streamPart = ''
+					isUrl = isUrl.replace('\n','')
+					isUrl = isUrl.replace('\r','')
+					print isUrl
+					print isStream,streamPart
 					self.streamListe.append((isStream,isUrl,streamPart))
 				else:
 					print "No supported hoster:"
@@ -708,6 +734,16 @@ class IStreamStreams(Screen, ConfigListScreen):
 			else:
 				self.session.open(SimplePlayer, [(title, stream_url, self.imageUrl)], cover=True, showPlaylist=False, ltype='istream.ws')
 
+	def keyTrailer(self):
+		if self.trailerId:
+			self.session.open(
+				YoutubePlayer,
+				[(self.filmName, '', self.trailerId, self.imageUrl)],
+				playAll = False,
+				showPlaylist=False,
+				showCover=True
+				)
+
 	def keyTMDbInfo(self):
 		if TMDbPresent:
 			self.session.open(TMDbMain, self.filmName)
@@ -719,12 +755,13 @@ class IStreamStreams(Screen, ConfigListScreen):
 			return
 		streamLink = self['liste'].getCurrent()[0][1]
 		self.tw_agent_hlp.getRedirectedUrl(self.keyOK2, self.dataError, streamLink)
+		#get_stream_link(self.session).check_link(streamLink, self.got_link)
 
 	def keyOK2(self, streamLink):
 		saveads = re.search('.*?saveads.org', streamLink, re.S)
 		if saveads:
 			id = re.search('url=(.*?)%3D', streamLink, re.S)
-			url = "http://istream.ws/go.php?url=" + id.group(1)
+			url = "http://streamit.ws/go.php?url=" + id.group(1)
 			self.tw_agent_hlp.getRedirectedUrl(self.keyOK3, self.dataError, url)
 		else:
 			get_stream_link(self.session).check_link(streamLink, self.got_link)

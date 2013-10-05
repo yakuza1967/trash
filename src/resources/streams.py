@@ -27,13 +27,13 @@ class get_stream_link:
 		self._callback = got_link
 		self.showmsgbox = showmsgbox
 		if data:
-			if re.search("http://www.putlocker.com/(file|embed)/", data, re.S):
+			if re.search("http://.*?putlocker.com/(file|embed)/", data, re.S):
 				link = data.replace('file','embed')
 				#print "ok:", link
 				if link:
 					getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.streamPutlockerSockshare, link, "putlocker").addErrback(self.errorload)
 
-			elif re.search("http://www.sockshare.com/(file|embed)/", data, re.S):
+			elif re.search("http://.*?sockshare.com/(file|embed)/", data, re.S | re.I):
 				link = data.replace('file','embed')
 				#print link
 				if link:

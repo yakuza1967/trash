@@ -302,9 +302,9 @@ from additions.grauzone.movie4k import *
 config.mediaportal.showM4k = ConfigYesNo(default = False)
 config.mediaportal.showM4kWatchlist = ConfigYesNo(default = False)
 config.mediaportal.showM4kPorn = ConfigYesNo(default = False)
-#from additions.grauzone.iStreamws import *
-#config.mediaportal.showIStream = ConfigYesNo(default = False)
-#config.mediaportal.showIStreamPorn = ConfigYesNo(default = False)
+from additions.grauzone.iStreamws import *
+config.mediaportal.showIStream = ConfigYesNo(default = False)
+config.mediaportal.showIStreamPorn = ConfigYesNo(default = False)
 from additions.grauzone.watchseries import *
 config.mediaportal.showWatchseries = ConfigYesNo(default = False)
 from additions.grauzone.szenestreams import *
@@ -523,7 +523,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.porn.append(getConfigListEntry("PORNMVZ", config.mediaportal.showpornmvz))
 			self.porn.append(getConfigListEntry("PornoStreams", config.mediaportal.showpornostreams))
 			self.porn.append(getConfigListEntry("MegaSkanks", config.mediaportal.showmegaskanks))
-			#self.porn.append(getConfigListEntry("IStream-XXX", config.mediaportal.showIStreamPorn))
+			self.porn.append(getConfigListEntry("STREAMIT-XXX", config.mediaportal.showIStreamPorn))
 			self.porn.append(getConfigListEntry("Movie4k-XXX", config.mediaportal.showM4kPorn))
 			self.porn.append(getConfigListEntry("ParadiseHill", config.mediaportal.showparadisehill))
 			self.porn.append(getConfigListEntry("Free Online Movies", config.mediaportal.showfreeomovie))
@@ -536,7 +536,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		if config.mediaportal.showgrauzone.value:
 			self.grauzone.append(getConfigListEntry("SzeneStreams", config.mediaportal.showSzeneStreams))
 			self.grauzone.append(getConfigListEntry("My-Entertainment", config.mediaportal.showMEHD))
-			#self.grauzone.append(getConfigListEntry("IStream", config.mediaportal.showIStream))
+			self.grauzone.append(getConfigListEntry("STREAMIT", config.mediaportal.showIStream))
 			self.grauzone.append(getConfigListEntry("Baskino", config.mediaportal.showBaskino))
 			self.grauzone.append(getConfigListEntry("KinoKiste", config.mediaportal.showKinoKiste))
 			self.grauzone.append(getConfigListEntry("Stream-Oase", config.mediaportal.showStreamOase))
@@ -942,8 +942,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.showgrauzone.value:
 				if config.mediaportal.showmegaskanks.value:
 					self.porn.append(self.hauptListEntry("MegaSkanks", "megaskanks"))
-				#if config.mediaportal.showIStreamPorn.value:
-				#	self.porn.append(self.hauptListEntry("IStream-XXX", "istreamporn"))
+				if config.mediaportal.showIStreamPorn.value:
+					self.porn.append(self.hauptListEntry("STREAMIT-XXX", "istreamporn"))
 				if config.mediaportal.showM4kPorn.value:
 					self.porn.append(self.hauptListEntry("Movie4k-XXX", "movie4kporn"))
 				if config.mediaportal.showparadisehill.value:
@@ -1006,8 +1006,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			#	self.grauzone.append(self.hauptListEntry("Cinestream", "cinestream"))
 			if config.mediaportal.showKinoKiste.value:
 				self.grauzone.append(self.hauptListEntry("KinoKiste", "kinokiste"))
-			#if config.mediaportal.showIStream.value:
-			#	self.grauzone.append(self.hauptListEntry("IStream", "istream"))
+			if config.mediaportal.showIStream.value:
+				self.grauzone.append(self.hauptListEntry("STREAMIT", "istream"))
 			if config.mediaportal.showBs.value:
 				self.grauzone.append(self.hauptListEntry("Burning-Series", "burningseries"))
 			if config.mediaportal.showBaskino.value:
@@ -1387,8 +1387,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(m4kGenreScreen, "default")
 		elif auswahl == "Movie4k Watchlist":
 			self.session.open(m4kWatchlist)
-		#elif auswahl == "IStream":
-		#	self.session.open(showIStreamGenre, "default")
+		elif auswahl == "STREAMIT":
+			self.session.open(showIStreamGenre, "default")
 		elif auswahl == "mahlzeit.tv":
 			self.session.open(mahlzeitMainScreen)
 		elif auswahl == "fiwitu.tv":
@@ -1533,9 +1533,9 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.pornscreen = hotshameGenreScreen
 		elif auswahl == "MegaSkanks":
 			self.pornscreen = megaskanksGenreScreen
-		#elif auswahl == "IStream-XXX":
-		#	self.pornscreen = showIStreamGenre
-		#	self.cat = "porn"
+		elif auswahl == "STREAMIT-XXX":
+			self.pornscreen = showIStreamGenre
+			self.cat = "porn"
 		elif auswahl == "Movie4k-XXX":
 			self.pornscreen = m4kGenreScreen
 			self.cat = "porn"
@@ -1900,8 +1900,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.showgrauzone.value:
 				if config.mediaportal.showmegaskanks.value:
 					self.plugin_liste.append(("MegaSkanks", "megaskanks", "Porn"))
-				#if config.mediaportal.showIStreamPorn.value:
-				#	self.plugin_liste.append(("IStream-XXX", "istreamporn", "Porn"))
+				if config.mediaportal.showIStreamPorn.value:
+					self.plugin_liste.append(("STREAMIT-XXX", "istreamporn", "Porn"))
 				if config.mediaportal.showM4kPorn.value:
 					self.plugin_liste.append(("Movie4k-XXX", "movie4kporn", "Porn"))
 				if config.mediaportal.showparadisehill.value:
@@ -1954,8 +1954,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("My-Entertainment", "mehd", "Grauzone"))
 			if config.mediaportal.showM4k.value:
 				self.plugin_liste.append(("Movie4k", "movie4k", "Grauzone"))
-			#if config.mediaportal.showIStream.value:
-			#	self.plugin_liste.append(("IStream", "istream", "Grauzone"))
+			if config.mediaportal.showIStream.value:
+				self.plugin_liste.append(("STREAMIT", "istream", "Grauzone"))
 			if config.mediaportal.showSzeneStreams.value:
 				self.plugin_liste.append(("SzeneStreams", "szenestreams", "Grauzone"))
 			if config.mediaportal.showmlehd.value:
@@ -2407,8 +2407,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(m4kGenreScreen, "default")
 		elif auswahl == "Movie4k Watchlist":
 			self.session.open(m4kWatchlist)
-		#elif auswahl == "IStream":
-		#	self.session.open(showIStreamGenre, "default")
+		elif auswahl == "STREAMIT":
+			self.session.open(showIStreamGenre, "default")
 		elif auswahl == "mahlzeit.tv":
 			self.session.open(mahlzeitMainScreen)
 		elif auswahl == "fiwitu.tv":
@@ -2555,9 +2555,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.pornscreen = hotshameGenreScreen
 		elif auswahl == "MegaSkanks":
 			self.pornscreen = megaskanksGenreScreen
-		#elif auswahl == "IStream-XXX":
-		#	self.pornscreen = showIStreamGenre
-		#	self.cat = "porn"
+		elif auswahl == "STREAMIT-XXX":
+			self.pornscreen = showIStreamGenre
+			self.cat = "porn"
 		elif auswahl == "Movie4k-XXX":
 			self.pornscreen = m4kGenreScreen
 			self.cat = "porn"
