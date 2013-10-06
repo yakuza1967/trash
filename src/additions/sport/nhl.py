@@ -144,7 +144,7 @@ class nhlFilmListeScreen(Screen):
 		if self.keyLocked:
 			return
 		streamname = self['filmList'].getCurrent()[0][0]
-		streamLink = self['filmList'].getCurrent()[0][1]
+		streamLink = self['filmList'].getCurrent()[0][1].replace('<![CDATA[','').replace(']]>','')
 		self.session.open(SimplePlayer, [(streamname, streamLink)], showPlaylist=False, ltype='nhl')
 
 	def keyLeft(self):
