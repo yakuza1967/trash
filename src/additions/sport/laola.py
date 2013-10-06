@@ -1,5 +1,6 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
+import random,string
 
 def laolaOverviewListEntry(entry):
 	return [entry,
@@ -60,6 +61,7 @@ class laolaVideosOverviewScreen(Screen):
 
 	def loadPage(self):
 		self.genreliste.append(("Live", "http://www.laola1.tv/de-de/calendar/0.html"))
+		self.genreliste.append(("Fussball", "http://www.laola1.tv/de-de/fussball/2.html"))
 		self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
 		self.keyLocked = False
 
@@ -70,7 +72,10 @@ class laolaVideosOverviewScreen(Screen):
 		auswahl = self['genreList'].getCurrent()[0][0]
 		link = self['genreList'].getCurrent()[0][1]
 		print auswahl, link
-		self.session.open(laolaLiveScreen, auswahl, link)
+		if auswahl == "Live":
+			self.session.open(laolaLiveScreen, auswahl, link)
+		else:
+			self.session.open(laolaSelectGenreScreen, auswahl, link)
 
 	def keyCancel(self):
 		self.close()
@@ -168,9 +173,114 @@ class laolaLiveScreen(Screen):
 			response=self.getUrl(m3u8_url)
 			match_sec_m3u8=re.compile('#EXT-X-STREAM-INF:(.+?)http(.+?)rebase=on', re.DOTALL).findall(response)
 			
-			stream_url = "http%s" % match_sec_m3u8[-1][1]
+			stream_url = "http%s" % match_sec_m3u8[-1][1]+'rebase=on'
 			print stream_url
 			self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')
+
+	def getUrl(self, url):
+		req = urllib2.Request(url)
+		req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+		response = urllib2.urlopen(req)
+		link=response.read()
+		response.close()
+		return link
+	
+	def keyCancel(self):
+		self.close()
+
+	def dataError(self, error):
+		printl(error,self,"E")
+		
+class laolaSelectGenreScreen(Screen):
+
+	def __init__(self, session, name, link):
+		print 'laolaLiveScreen'
+		self.session = session
+		self.lname = name
+		self.llink = link
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel,
+			"red": self.keyCancel
+		}, -1)
+
+		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
+		self.playing = False
+		self.keyLocked = True
+		self['title'] = Label("Laola1.tv - %s" % self.lname)
+		self['ContentTitle'] = Label("")
+		self['name'] = Label("")
+		self['F1'] = Label("Exit")
+		self['F2'] = Label("")
+		self['F3'] = Label("")
+		self['F4'] = Label("")
+		self['F3'].hide()
+		self['F4'].hide()
+
+		self.genreliste = []
+
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['genreList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+		
+	def char_gen(self, size=1, chars=string.ascii_uppercase):
+		return ''.join(random.choice(chars) for x in range(size))
+	
+	def loadPage(self):
+		print self.llink
+		getPage(self.llink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getEventData).addErrback(self.dataError)
+		
+	def getEventData(self, data):
+		self.genreliste = []
+		events = re.compile('<span class="category">(.+?)</span>.*?<span class="date">(.+?)</span>.*?<h2><div class="hdkenn_list"></div>(.+?)</h2></a>.*?<a href="/(.*?)">', re.S).findall(data)
+		if events:
+			for genre,time,desc,url in events:
+				print genre,time,desc,url
+				title = "%s - %s" % (time, genre)
+				url = "http://www.laola1.tv/%s" % url
+				self.genreliste.append((title, url, genre))
+			self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
+			self.keyLocked = False
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+			
+		self.auswahl = self['genreList'].getCurrent()[0][0]
+		url = self['genreList'].getCurrent()[0][1]
+		print self.auswahl, url
+		
+		response=self.getUrl(url)
+		match_player=re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
+
+		response=self.getUrl(match_player[0])
+		match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
+
+		response=self.getUrl(match_m3u8[0])
+		match_url=re.compile('url="(.+?)"', re.DOTALL).findall(response)
+		match_auth=re.compile('auth="(.+?)"', re.DOTALL).findall(response)
+		res_url=match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
+
+		stream_url = res_url+'?hdnea='+match_auth[0]+'&g='+self.char_gen(12)+'&hdcore=3.1.0'
+		print stream_url
+		self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')
 
 	def getUrl(self, url):
 		req = urllib2.Request(url)
