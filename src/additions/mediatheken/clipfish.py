@@ -7,7 +7,7 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-CF_Version = "Clipfish.de v1.03"
+CF_Version = "Clipfish.de v1.04"
 
 CF_siteEncoding = 'utf-8'
 
@@ -251,20 +251,20 @@ class show_CF_Genre(Screen):
 			("Alle Videos", "/familien-duell/home/neu/%d/")
 			],
 			[
-			("DSDS 2013 - News", "/dsds/news/%d/"),
-			("DSDS Musikvideos", "/musikvideos/dsds/%d/"),
-			("Alle Videos aus den DSDS-Liveshows 2013", "/special/dsds/liveshow/%d/"),
-			("DSDS Recall 2013 - Alle Videos", "/dsds/recall/%d/"),
-			("DSDS 2013 Alle Casting-Videos", "/dsds/casting/%d/"),
-			("DSDS 2012 - Alle Videos", "/dsds/2012/%d/"),
-			("DSDS 8 - Videos", "/dsds/dsds-8/%d/"),
-			("DSDS 7 - Videos", "/dsds/dsds-7/%d/")
+			("DSDS 2013 - News", "/dsds/news/neu/%d/"),
+			("DSDS Musikvideos", "/musikvideos/dsds/neu/%d/"),
+			("Alle Videos aus den DSDS-Liveshows 2013", "/special/dsds/liveshow/neu/%d/"),
+			("DSDS Recall 2013 - Alle Videos", "/dsds/recall/neu/%d/"),
+			("DSDS 2013 Alle Casting-Videos", "/dsds/casting/neu/%d/"),
+			("DSDS 2012 - Alle Videos", "/dsds/2012/neu/%d/"),
+			("DSDS 8 - Videos", "/dsds/dsds-8/neu/%d/"),
+			("DSDS 7 - Videos", "/dsds/dsds-7/neu/%d/")
 			],
 			[
-			("Das Supertalent 2013 - Alle Videos", "/supertalent/videos/%d/"),
+			("Das Supertalent 2013 - Alle Videos", "/supertalent/videos/neu/%d/"),
 			("Supertalent 2013 Backstage - Alle Videos", "/supertalent/supertalent-backstage/neu/%d/"),
-			("Das Supertalent 2012 - Alle Videos", "/supertalent/2012/%d/"),
-			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011/%d/")
+			("Das Supertalent 2012 - Alle Videos", "/supertalent/2012/neu/%d/"),
+			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011/neu/%d/")
 			]
 			]
 			]
