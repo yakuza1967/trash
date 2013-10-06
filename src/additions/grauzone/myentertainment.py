@@ -50,7 +50,9 @@ class showMEHDGenre(Screen):
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
-			"red": self.keyCancel
+			"red": self.keyCancel,
+			"green": self.loginSetup,
+			"menu": self.loginSetup
 		}, -1)
 
 		self.keyLocked = True
@@ -58,32 +60,29 @@ class showMEHDGenre(Screen):
 		self['ContentTitle'] = Label("Try Login..")
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
-		self['F2'] = Label("")
+		self['F2'] = Label("Setup")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
 		self['F3'].hide()
 		self['F4'].hide()
-		
-		# load username and pass
-		
-		self.username = config.entertain.userName.value
-		self.password = config.entertain.userPass.value
-		self.loginOK = False
-		
+
+		self.loginOK = False		
 		self.genreliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 
-		#self.onLayoutFinish.append(self.login)
 		self.onFirstExecBegin.append(self.login)
 		
 	def login(self):
+		self.username = config.entertain.userName.value
+		self.password = config.entertain.userPass.value
 		print "Login:", self.username, self.password
+		self['ContentTitle'].setText("Try Login..")
 		
 		if self.username == "USERNAME" and self.password == "PASSWORD":
-			self.session.open(meSetupScreen)
+			self.session.openWithCallback(callBackSetup, meSetupScree)
 		else:		
 			self.loginUrl = 'http://evonic.tv/forum/login.php?do=login'
 			loginData = {'vb_login_username': self.username, 'vb_login_password': self.password, 'do': 'login'}
@@ -110,6 +109,7 @@ class showMEHDGenre(Screen):
 					postdata=urlencode(loginData), headers={'Content-Type': 'application/x-www-form-urlencoded'},
 					followRedirect=True, timeout=30, cookies=ck).addCallback(self.loginDone).addErrback(self.dataError)
 		else:
+			self.loginOK = False
 			self['ContentTitle'].setText("Login fehlgeschlagen !")
 
 	def accountInfos(self, data):
@@ -127,15 +127,15 @@ class showMEHDGenre(Screen):
 			acci = "Benutzer: %s - %s: Registriert: %s -> %s" % (self.username, was, reg, bis)
 			print acci
 			self['ContentTitle'].setText(str(acci))
-	
-	def loginDone(self, data):
+		
+        def loginDone(self, data):
 		getPage(self.loginUrl, method="GET",
 				headers={'Content-Type': 'application/x-www-form-urlencoded'},
 				followRedirect=True, timeout=30, cookies=ck).addCallback(self.accountInfos).addErrback(self.dataError)
 					
 		self.genreListe = []
-		self.genreListe.append(("Setup", "dump"))
-		self.genreListe.append(("Suche", "suche"))
+		#self.genreListe.append(("Setup", "dump"))
+		#self.genreListe.append(("Suche", "suche"))                                
 		#self.genreListe.append(("Sortiert nach IMDB-Bewertung", "imdb"))
 		self.genreListe.append(("Neueinsteiger", "http://evonic.tv/forum/content.php?r=1969-Aktuelle-HD-Filme&page="))
 		self.genreListe.append(("Cineline", "http://evonic.tv/forum/list.php?r=category/169-Cineline&page="))
@@ -147,7 +147,7 @@ class showMEHDGenre(Screen):
 		self.genreListe.append(("Abenteuer", "http://evonic.tv/forum/list.php?r=category/65-HD-Abenteuer&page="))
 		self.genreListe.append(("Action", "http://evonic.tv/forum/list.php?r=category/35-HD-Action&page="))
 		self.genreListe.append(("Biografie", "http://evonic.tv/forum/list.php?r=category/70-HD-Biografie&page="))
-		self.genreListe.append(("Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
+		#self.genreListe.append(("Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
 		self.genreListe.append(("Doku", "http://evonic.tv/forum/list.php?r=category/64-HD-Doku&page="))
 		self.genreListe.append(("Drama", "http://evonic.tv/forum/list.php?r=category/36-HD-Drama&page="))
 		self.genreListe.append(("Fantasy", "http://evonic.tv/forum/list.php?r=category/37-HD-Fantasy&page="))
@@ -164,14 +164,14 @@ class showMEHDGenre(Screen):
 		self.keyLocked = False
 
 	def keyOK(self):
-		if not self.keyLocked:
+		if not self.keyLocked and self.loginOK:
 			enterAuswahlLabel = self['genreList'].getCurrent()[0][0]
 			enterAuswahlLink = self['genreList'].getCurrent()[0][1]
 			
 			print "Select:", enterAuswahlLabel, enterAuswahlLink
 			
 			if enterAuswahlLabel == "Setup":
-				self.session.open(meSetupScreen)
+				self.session.openWithCallback(callBackSetup, meSetupScree)
 			#	print 'suche...', enterAuswahlLink
 				#self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche.....")), text = self.searchTxt)
 			#elif enterAuswahlLink == "imdb":
@@ -182,6 +182,13 @@ class showMEHDGenre(Screen):
 		
 	def dataError(self, error):
 		print error
+		
+	def loginSetup(self):
+		self.session.openWithCallback(self.callBackSetup, meSetupScreen)
+		
+	def callBackSetup(self, answer):
+		if answer:
+			self.login()
 
 	def keyCancel(self):
 		self.close()
@@ -404,12 +411,12 @@ class meMovieScreen(Screen):
 	
 	def getStream(self, data):
 		self.genreListe2 = []
-		findStream = re.findall('"(http://10gbps.org/server/Premium.*?)"', data)
+		findStream = re.findall('"(http://evonic.tv/server/Premium.*?)"', data)
 		if findStream:
 			print "Premium", findStream
 			self.genreListe2.append(("Premium", findStream[0].replace('"','')))
 			
-		findStream2 = re.findall('"http://10gbps.org/server/Free-Member.php.mov=.*?"', data)
+		findStream2 = re.findall('"http://evonic.tv/server/Free-Member.php.mov=.*?"', data)
 		if findStream2:
 			print "Free", findStream2
 			self.genreListe2.append(("Free", findStream2[0].replace('"','')))
@@ -565,7 +572,7 @@ class meSerienScreen(Screen):
 			stream_url = re.findall('src="(.*?)"', data, re.S)
 			if stream_url:
 				print stream_url
-				self.session.open(SimplePlayer, [(self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
 		else:
 			print data
 			stream_url = re.findall('src="(.*?)"', data, re.S)
@@ -640,7 +647,7 @@ class meHosterScreen(Screen):
 			stream_url = re.findall('src="(.*?)"', data, re.S)
 			if stream_url:
 				print stream_url
-				self.session.open(SimplePlayer, [(self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
 		else:
 			print data
 			stream_url = re.findall('source src="(.*?)"', data, re.S)
@@ -656,11 +663,12 @@ class meHosterScreen(Screen):
 class meSetupScreen(Screen, ConfigListScreen):
 
 	skin = """
-		<screen position="center,center" size="450,80" title="Premium Setup">
+		<screen position="center,center" size="450,140" title="Premium Setup">
 			<ePixmap position="15,4" size="16,16" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/username.png" alphatest="blend" />
 			<ePixmap position="15,29" size="16,16" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/password.png" alphatest="blend" />
 			<widget name="config" position="50,0" size="400,50" scrollbarMode="showOnDemand" />
-		</screen>"""		
+		        <eLabel text="Nach 5 fehlerhaften Login Versuchen ist eine Anmeldung f\xc3\xbcr die n\xc3\xa4chsten 15 Minuten nicht mehr m\xc3\xb6glich." position="25,67" size="410,66" font="mediaportal;17" valign="center" halign="center" transparent="1" foregroundColor="#FF0000" />
+                </screen>"""		
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -671,7 +679,6 @@ class meSetupScreen(Screen, ConfigListScreen):
 		
 		self.list.append(getConfigListEntry("Username:", config.entertain.userName))
 		self.list.append(getConfigListEntry("Password:", config.entertain.userPass))
-
 		self["config"].setList(self.list)
 
 		self["setupActions"] = ActionMap(["SetupActions"],
@@ -688,4 +695,4 @@ class meSetupScreen(Screen, ConfigListScreen):
 		self.close(True)
 	
 	def exit(self):
-		self.close()
+		self.close(False)
