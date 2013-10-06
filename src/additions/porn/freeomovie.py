@@ -337,7 +337,7 @@ class freeomovieFilmAuswahlScreen(Screen):
 					disc = re.search('.*?(CD-1|CD1|CD-2|CD2|_a.avi|_b.avi|-a.avi|-b.avi|DISC1|DISC2).*?', stream, re.S|re.I)
 					if disc:
 						discno = disc.group(1)
-						discno = discno.replace('cd1','Teil 1').replace('cd2','Teil 2').discno.replace('CD1','Teil 1').replace('CD2','Teil 2').replace('CD-1','Teil 1').replace('CD-2','Teil 2').replace('_a.avi','Teil 1').replace('_b.avi','Teil 2')
+						discno = discno.replace('cd1','Teil 1').replace('cd2','Teil 2').replace('CD1','Teil 1').replace('CD2','Teil 2').replace('CD-1','Teil 1').replace('CD-2','Teil 2').replace('_a.avi','Teil 1').replace('_b.avi','Teil 2')
 						discno = discno.replace('-a.avi','Teil 1').replace('-b.avi','Teil 2').replace('DISC1','Teil 1').replace('DISC2','Teil 2').replace('Disc1','Teil 1').replace('Disc2','Teil 2')
 						hostername = hostername + ' (' + discno + ')'
 					self.filmliste.append((hostername, stream))
