@@ -82,7 +82,7 @@ class showMEHDGenre(Screen):
 		self['ContentTitle'].setText("Try Login..")
 		
 		if self.username == "USERNAME" and self.password == "PASSWORD":
-			self.session.openWithCallback(callBackSetup, meSetupScree)
+			self.session.openWithCallback(callBackSetup, meSetupScreen)
 		else:		
 			self.loginUrl = 'http://evonic.tv/forum/login.php?do=login'
 			loginData = {'vb_login_username': self.username, 'vb_login_password': self.password, 'do': 'login'}
@@ -171,7 +171,7 @@ class showMEHDGenre(Screen):
 			print "Select:", enterAuswahlLabel, enterAuswahlLink
 			
 			if enterAuswahlLabel == "Setup":
-				self.session.openWithCallback(callBackSetup, meSetupScree)
+				self.session.openWithCallback(callBackSetup, meSetupScreen)
 			#	print 'suche...', enterAuswahlLink
 				#self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche.....")), text = self.searchTxt)
 			#elif enterAuswahlLink == "imdb":
