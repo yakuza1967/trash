@@ -166,16 +166,15 @@ class SzeneStreamsFilmeListeScreen(Screen):
 		self['name'].setText(streamName)
 		streamHandlung = self['filmList'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(streamHandlung.replace('\n','')))
-		streamPic = self['filmList'].getCurrent()[0][2]
-		ImageUrl = "%s" % streamPic
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		self.streamPic = self['filmList'].getCurrent()[0][2]
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamName = self['filmList'].getCurrent()[0][0]
 		streamLink = self['filmList'].getCurrent()[0][1]
-		self.session.open(SzeneStreamsStreamListeScreen, streamLink, streamName)
+		self.session.open(SzeneStreamsStreamListeScreen, streamLink, streamName, self.streamPic)
 
 	def keyTMDbInfo(self):
 		if TMDbPresent:
@@ -290,16 +289,15 @@ class SzeneStreamsSearchScreen(Screen):
 		self['name'].setText(streamName)
 		streamHandlung = self['filmList'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(streamHandlung.replace('\n','')))
-		streamPic = self['filmList'].getCurrent()[0][2]
-		ImageUrl = "%s" % streamPic
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		self.streamPic = self['filmList'].getCurrent()[0][2]
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
 		streamName = self['filmList'].getCurrent()[0][0]
 		streamLink = self['filmList'].getCurrent()[0][1]
-		self.session.open(SzeneStreamsStreamListeScreen, streamLink, streamName)
+		self.session.open(SzeneStreamsStreamListeScreen, streamLink, streamName, self.streamPic)
 
 	def keyTMDbInfo(self):
 		if TMDbPresent:
@@ -336,10 +334,11 @@ class SzeneStreamsSearchScreen(Screen):
 
 class SzeneStreamsStreamListeScreen(Screen):
 
-	def __init__(self, session, streamFilmLink, streamName):
+	def __init__(self, session, streamFilmLink, streamName, streamPic):
 		self.session = session
 		self.streamFilmLink = streamFilmLink
 		self.streamName = streamName
+		self.streamPic = streamPic
 
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/m4kdefaultListeScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
@@ -371,6 +370,7 @@ class SzeneStreamsStreamListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
 		getPage(self.streamFilmLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
@@ -406,7 +406,7 @@ class SzeneStreamsStreamListeScreen(Screen):
 		if stream_url == None:
 			message = self.session.open(MessageBox, _("Stream not found, try another Stream Hoster."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			self.session.open(SimplePlayer, [(self.streamName, stream_url)], showPlaylist=False, ltype='szenestreams')
+			self.session.open(SimplePlayer, [(self.streamName, stream_url, self.streamPic)], showPlaylist=False, ltype='szenestreams', cover=True)
 
 	def keyCancel(self):
 		self.close()
