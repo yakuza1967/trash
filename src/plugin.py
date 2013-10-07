@@ -181,6 +181,8 @@ from additions.fun.wrestlingnetwork import *
 config.mediaportal.showWrestlingnetwork = ConfigYesNo(default = True)
 from additions.fun.wissen import *
 config.mediaportal.wissen = ConfigYesNo(default = True)
+from additions.fun.bild import *
+config.mediaportal.bildde = ConfigYesNo(default = True)
 
 # Mediatheken
 from additions.mediatheken.myvideo import *
@@ -470,6 +472,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.fun.append(getConfigListEntry("AutoBild", config.mediaportal.showAutoBild))
 		self.fun.append(getConfigListEntry("SportBild", config.mediaportal.showSportBild))
 		self.fun.append(getConfigListEntry("Wissen", config.mediaportal.wissen))
+		self.fun.append(getConfigListEntry("Bild.de", config.mediaportal.bildde))
 		if astModule:
 			self.fun.append(getConfigListEntry("HeiseVideo", config.mediaportal.showHeiseVideo))
 		self.fun.sort(key=lambda t : t[0].lower())
@@ -859,6 +862,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("Galileo-Videolexikon", "galileovl"))
 		if config.mediaportal.showsport1fm.value:
 			self.funsport.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
+		if config.mediaportal.bildde.value:
+			self.funsport.append(self.hauptListEntry("Bild.de", "no_icon"))
 		if config.mediaportal.showgrauzone.value:
 			if config.mediaportal.showMusicstreamcc.value:
 				self.funsport.append(self.hauptListEntry("Musicstream.cc", "musicstreamcc"))
@@ -1503,7 +1508,9 @@ class haupt_Screen(Screen, ConfigListScreen):
 		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
-
+		elif auswahl == "Bild.de":
+			self.session.open(bildFirstScreen)
+			
 		# Porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
@@ -1826,6 +1833,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Galileo-Videolexikon", "galileovl", "Fun"))
 		if config.mediaportal.wissen.value:
 			self.plugin_liste.append(("Wissen.de", "wissen", "Fun"))
+		if config.mediaportal.bildde.value:
+			self.plugin_liste.append(("Bild.de", "no_icon", "Fun"))
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Fun"))
@@ -2489,6 +2498,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(wissenListeScreen)
 		elif auswahl == "Movie2k.tl":
 			self.session.open(movie2kGenreScreen)
+		elif auswahl == "Bild.de":
+			self.session.open(bildFirstScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
