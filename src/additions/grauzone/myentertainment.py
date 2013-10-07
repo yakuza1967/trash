@@ -82,7 +82,7 @@ class showMEHDGenre(Screen):
 		self['ContentTitle'].setText("Try Login..")
 		
 		if self.username == "USERNAME" and self.password == "PASSWORD":
-			self.session.openWithCallback(callBackSetup, meSetupScreen)
+			self.session.openWithCallback(self.callBackSetup, meSetupScreen)
 		else:		
 			self.loginUrl = 'http://evonic.tv/forum/login.php?do=login'
 			loginData = {'vb_login_username': self.username, 'vb_login_password': self.password, 'do': 'login'}
@@ -134,11 +134,10 @@ class showMEHDGenre(Screen):
 				followRedirect=True, timeout=30, cookies=ck).addCallback(self.accountInfos).addErrback(self.dataError)
 					
 		self.genreListe = []
-		#self.genreListe.append(("Setup", "dump"))
-		#self.genreListe.append(("Suche", "suche"))                                
-		#self.genreListe.append(("Sortiert nach IMDB-Bewertung", "imdb"))
+		#self.genreListe.append(("Suche", "suche"))
 		self.genreListe.append(("Neueinsteiger", "http://evonic.tv/forum/content.php?r=1969-Aktuelle-HD-Filme&page="))
 		self.genreListe.append(("Cineline", "http://evonic.tv/forum/list.php?r=category/169-Cineline&page="))
+		self.genreListe.append(("HD-Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
 		self.genreListe.append(("HD-Serien", "http://evonic.tv/forum/content.php?r=5993-Serien&page="))
 		self.genreListe.append(("HD-Charts", "http://evonic.tv/forum/content.php?r=1989-HD-Charts&page="))
 		self.genreListe.append(("3D-Charts", "http://evonic.tv/forum/content.php?r=5440-3d-charts&page="))
@@ -147,7 +146,6 @@ class showMEHDGenre(Screen):
 		self.genreListe.append(("Abenteuer", "http://evonic.tv/forum/list.php?r=category/65-HD-Abenteuer&page="))
 		self.genreListe.append(("Action", "http://evonic.tv/forum/list.php?r=category/35-HD-Action&page="))
 		self.genreListe.append(("Biografie", "http://evonic.tv/forum/list.php?r=category/70-HD-Biografie&page="))
-		#self.genreListe.append(("Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
 		self.genreListe.append(("Doku", "http://evonic.tv/forum/list.php?r=category/64-HD-Doku&page="))
 		self.genreListe.append(("Drama", "http://evonic.tv/forum/list.php?r=category/36-HD-Drama&page="))
 		self.genreListe.append(("Fantasy", "http://evonic.tv/forum/list.php?r=category/37-HD-Fantasy&page="))
@@ -167,18 +165,9 @@ class showMEHDGenre(Screen):
 		if not self.keyLocked and self.loginOK:
 			enterAuswahlLabel = self['genreList'].getCurrent()[0][0]
 			enterAuswahlLink = self['genreList'].getCurrent()[0][1]
-			
+
 			print "Select:", enterAuswahlLabel, enterAuswahlLink
-			
-			if enterAuswahlLabel == "Setup":
-				self.session.openWithCallback(callBackSetup, meSetupScreen)
-			#	print 'suche...', enterAuswahlLink
-				#self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche.....")), text = self.searchTxt)
-			#elif enterAuswahlLink == "imdb":
-			#	print 'imdb....'
-			#	self.session.open(enterImdbListScreen, self.opener)
-			else:
-				self.session.open(meMovieScreen, enterAuswahlLink, enterAuswahlLabel)
+			self.session.open(meMovieScreen, enterAuswahlLink, enterAuswahlLabel)
 		
 	def dataError(self, error):
 		print error
@@ -252,6 +241,7 @@ class meMovieScreen(Screen):
 		self.genreListe = []
 		print 'loadPageData', self.enterAuswahlLink
 		if self.enterAuswahlLabel == "Aktuelle Filme":
+
 			print "Aktuelle Filme"
 			totalPages = re.findall('<span class="first_last"><a href=".*?page=(.*?)"', data, re.S)
 			if totalPages:
@@ -406,6 +396,8 @@ class meMovieScreen(Screen):
 		
 		if self.enterAuswahlLabel == "HD-Serien":
 			self.session.open(meSerienScreen, self.streamName, streamLink, self.streamPic)
+		elif self.enterAuswahlLabel == "HD-Collection":
+			self.session.open(meCollectionScreen, self.streamName, streamLink, self.streamPic)
 		else:
 			getPage(streamLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
 	
@@ -552,8 +544,12 @@ class meSerienScreen(Screen):
 				eps = re.findall('<a href="(.*?)" target="Videoframe.*?"><b><span style="color: black;">(.*?)</span>', each, re.S)
 				if eps:
 					for link,epTitle in eps:
-						print "Staffel "+str(staffelcount), epTitle, link
-						self.eListe.append(("S"+ str(staffelcount) + "E" + epTitle, link))
+						if int(staffelcount) < 10:
+							setStaffel = "S0%s" % str(staffelcount)
+						else:
+							setStaffel = "S%s" % str(staffelcount)
+						print "Staffel "+setStaffel, epTitle, link
+						self.eListe.append((setStaffel + "E" + epTitle, link))
 					self.chooseMenuList.setList(map(meListEntry, self.eListe))
 					self.keyLocked = False
 
@@ -576,6 +572,172 @@ class meSerienScreen(Screen):
 		else:
 			print data
 			stream_url = re.findall('src="(.*?)"', data, re.S)
+			if stream_url:
+				print stream_url
+				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+
+	def dataError(self, error):
+		print error
+
+	def keyCancel(self):
+		self.close()
+
+class meCollectionScreen(Screen):
+
+	def __init__(self, session, eName, eLink, streamPic):
+		self.session = session
+		self.eName = eName
+		self.eLink = eLink
+		self.streamPic = streamPic
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("%s - Collection Auswahl:" % self.eName)
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.page = 1
+		self.eListe = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
+		getPage(self.eLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getEpisoden).addErrback(self.dataError)
+
+	def getEpisoden(self, data):
+		self.eListe = []
+		titles = re.findall('>*\s*\r*\n<.*?>*\r*\n*\s(.*?)<.*?>*\r*\n*\s*<*>*\r*\n*<div style="margin: 5px;">', data)
+		if titles:
+			for title in titles:
+				raw = re.findall(title.replace('(','\(').replace(')','\)')+'(.*?)(<div class="spoiler" style="display: none;">Platzhalter</div>|<iframe src="http://my-entertainment.biz/images/hdtvschaer.jpg"|<iframe src="http://evonic.tv/images/hdtvschaer.jpg")', data, re.S)
+				if raw:
+					if "Platzhalter" in raw[0][1]:
+						print title, "Platzhalter"
+						self.eListe.append((title+" - Nicht vorhanden.", "Platzhalter"))
+					else:
+						servers = re.findall('<a href="(http://evonic.tv/server/.*?)"', raw[0][0], re.S)
+						if servers:
+							print title, servers
+							self.eListe.append((title, servers))
+
+			self.chooseMenuList.setList(map(meListEntry, self.eListe))
+			self.keyLocked = False
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+
+		print self.streamName, streamLink
+		self.session.open(meServerScreen, self.streamName, streamLink, self.streamPic)
+
+	def dataError(self, error):
+		print error
+
+	def keyCancel(self):
+		self.close()
+
+class meServerScreen(Screen):
+
+	def __init__(self, session, eName, eLink, streamPic):
+		self.session = session
+		self.eName = eName
+		self.eLink = eLink
+		self.streamPic = streamPic
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("%s - Collection Auswahl:" % self.eName)
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.page = 1
+		self.eListe = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.eListe = []
+		CoverHelper(self['coverArt']).getCover(self.streamPic)
+		print self.eLink
+		for server in self.eLink:
+			print server
+			if "Free-Member" in server:
+				self.eListe.append(("Free-Member", server))
+			elif "Premium-Member" in server:
+				self.eListe.append(("Premium-Member", server))
+		self.chooseMenuList.setList(map(meGenreEntry, self.eListe))
+		self.keyLocked = False
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		
+		print self.streamName, streamLink
+		getPage(streamLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStreamUrl).addErrback(self.dataError)		
+
+	def getStreamUrl(self, data):
+		print "get Stream Url.."
+		if self.streamName == "Premium":
+			stream_url = re.findall('src="(http://.*?)"', data, re.S)
+			if stream_url:
+				print stream_url
+				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+		else:
+			print data
+			stream_url = re.findall('src="(http://.*?)"', data, re.S)
 			if stream_url:
 				print stream_url
 				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
@@ -644,13 +806,13 @@ class meHosterScreen(Screen):
 	def getStreamUrl(self, data):
 		print "get Stream Url.."
 		if self.streamName == "Premium":
-			stream_url = re.findall('src="(.*?)"', data, re.S)
+			stream_url = re.findall('src="(http://.*?)"', data, re.S)
 			if stream_url:
 				print stream_url
 				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
 		else:
 			print data
-			stream_url = re.findall('source src="(.*?)"', data, re.S)
+			stream_url = re.findall('source src="(http://.*?)"', data, re.S)
 			print stream_url
 			self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
 		
