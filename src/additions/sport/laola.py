@@ -60,8 +60,17 @@ class laolaVideosOverviewScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		self.genreliste.append(("Live", "http://www.laola1.tv/de-de/calendar/0.html"))
+		self.genreliste.append(("Live (Not Working!)", "http://www.laola1.tv/de-de/calendar/0.html"))
+		self.genreliste.append(("Lastest Videos", "http://www.laola1.tv/de-de/home/0.html"))
 		self.genreliste.append(("Fussball", "http://www.laola1.tv/de-de/fussball/2.html"))
+		self.genreliste.append(("Eishockey", "http://www.laola1.tv/de-de/eishockey/41.html"))
+		self.genreliste.append(("Beach-Volleyball", "http://www.laola1.tv/de-de/beach-volleyball/101.html"))
+		self.genreliste.append(("Handball", "http://www.laola1.tv/de-de/handball/143.html"))
+		self.genreliste.append(("Tichtennis", "http://www.laola1.tv/de-de/tischtennis/182.html"))
+		self.genreliste.append(("Curling", "http://www.laola1.tv/de-de/curling/248.html"))
+		self.genreliste.append(("Motorsport", "http://www.laola1.tv/de-de/motorsport/239.html"))
+		self.genreliste.append(("Tennis", "http://www.laola1.tv/de-de/tennis/224.html"))
+		self.genreliste.append(("Mehr Sport", "http://www.laola1.tv/de-de/mehr-sport/404.html"))
 		self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
 		self.keyLocked = False
 
