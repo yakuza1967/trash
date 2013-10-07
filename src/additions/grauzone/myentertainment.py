@@ -68,6 +68,8 @@ class showMEHDGenre(Screen):
 
 		self.loginOK = False		
 		self.genreliste = []
+		self.searchText = ""
+		self.stoken = ""
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
@@ -127,6 +129,11 @@ class showMEHDGenre(Screen):
 			acci = "Benutzer: %s - %s: Registriert: %s -> %s" % (self.username, was, reg, bis)
 			print acci
 			self['ContentTitle'].setText(str(acci))
+
+		secutoken = re.findall('var SECURITYTOKEN = "(.*?)"', data, re.S)
+		if secutoken:
+			self.stoken = secutoken[0]
+			print self.stoken
 		
         def loginDone(self, data):
 		getPage(self.loginUrl, method="GET",
@@ -134,16 +141,16 @@ class showMEHDGenre(Screen):
 				followRedirect=True, timeout=30, cookies=ck).addCallback(self.accountInfos).addErrback(self.dataError)
 					
 		self.genreListe = []
-		#self.genreListe.append(("Suche", "suche"))
 		self.genreListe.append(("Neueinsteiger", "http://evonic.tv/forum/content.php?r=1969-Aktuelle-HD-Filme&page="))
 		self.genreListe.append(("Cineline", "http://evonic.tv/forum/list.php?r=category/169-Cineline&page="))
 		self.genreListe.append(("HD-Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
 		self.genreListe.append(("HD-Serien", "http://evonic.tv/forum/content.php?r=5993-Serien&page="))
 		self.genreListe.append(("Century", "dump"))
 		self.genreListe.append(("Imdb", "dump"))
-		self.genreListe.append(("HD-Charts", "http://evonic.tv/forum/content.php?r=1989-HD-Charts&page="))
+		self.genreListe.append(("Suche", "suche"))
 		self.genreListe.append(("3D-Charts", "http://evonic.tv/forum/content.php?r=5440-3d-charts&page="))
 		self.genreListe.append(("3D", "http://evonic.tv/forum/content.php?r=4225-3d-filme&page="))
+		self.genreListe.append(("HD-Charts", "http://evonic.tv/forum/content.php?r=1989-HD-Charts&page="))
 		self.genreListe.append(("Alle HD Premium Streams", "http://evonic.tv/forum/content.php?r=1669-hd-filme&page="))
 		self.genreListe.append(("Abenteuer", "http://evonic.tv/forum/list.php?r=category/65-HD-Abenteuer&page="))
 		self.genreListe.append(("Action", "http://evonic.tv/forum/list.php?r=category/35-HD-Action&page="))
@@ -174,9 +181,17 @@ class showMEHDGenre(Screen):
 				self.session.open(meCenturyScreen)
 			elif enterAuswahlLabel == "Imdb":
 				self.session.open(meImdbScreen)
+			elif enterAuswahlLabel == "Suche":
+				self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche:")), text = self.searchText)
 			else:
 				self.session.open(meMovieScreen, enterAuswahlLink, enterAuswahlLabel)
 		
+	def mySearch(self, callback = None):
+		print 'mySearch'
+		if callback != None:
+			self.searchTxt = callback
+			self.session.open(meSearchScreen, self.searchTxt, self.stoken)
+
 	def dataError(self, error):
 		print error
 		
@@ -189,7 +204,121 @@ class showMEHDGenre(Screen):
 
 	def keyCancel(self):
 		self.close()
+
+class meSearchScreen(Screen):
+
+	def __init__(self, session, search, stoken):
+		self.session = session
+		self.search = search
+		self.stoken = stoken
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("Search Auswahl: %s" % self.search)
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.searchList = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		url = "http://evonic.tv/forum/ajaxlivesearch.php?do=search"
+		print self.search, self.stoken
 		
+		postData = {'do': 'search',
+					 'keyword': self.search,
+					 'lsasort': 'lastpost',
+					 'lsasorttype': 'DESC',
+					 'lsatype': 0,
+					 'lsawithword': 1,
+					 'lsazone': '',
+					 's': '',
+					 'securitytoken': self.stoken
+					 }
+
+		getPage(url, method="POST", postdata=urlencode(postData), cookies=ck,
+			headers={'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest', 'Referer': 'http://evonic.tv/forum/content.php'},
+			followRedirect=True, timeout=30).addCallback(self.loadData).addErrback(self.dataError)
+
+	def loadData(self, data):				
+		found = re.findall('<span><a href=".*?" title="Stream">Stream</a></span>.*?<a href="(http://evonic.tv/forum/showthread.php\?t=.*?)" title="(.*?)">', data, re.S)
+		if found:
+			self.searchList = []
+			for link,title in found:
+				print title, link
+				self.searchList.append((title,link))
+		self.chooseMenuList.setList(map(meListEntry, self.searchList))
+		self.keyLocked = False
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		
+		print self.streamName, streamLink
+		
+		getPage(streamLink, method="GET", cookies=ck,
+			headers={'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest', 'Referer': 'http://evonic.tv/forum/content.php'},
+			followRedirect=True, timeout=30).addCallback(self.loadRefreshData).addErrback(self.dataError)
+
+	def loadRefreshData(self, data):
+		refreshUrl = re.findall('<meta http-equiv="refresh" content="0; URL=(.*?)">', data, re.S)
+		if refreshUrl:
+			print refreshUrl
+	
+			if re.match('.*?Collection', self.streamName, re.S|re.I):
+				print "Collection"
+				self.session.open(meCollectionScreen, self.streamName, refreshUrl[0], "")
+			else:
+				getPage(refreshUrl[0], cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
+	
+	def getStream(self, data):
+		print data
+		self.genreListe2 = []
+		findStream = re.findall('"(http://evonic.tv/server/Premium.*?)"', data)
+		if findStream:
+			print "Premium", findStream
+			self.genreListe2.append(("Premium", findStream[0].replace('"','')))
+			
+		findStream2 = re.findall('"http://evonic.tv/server/Free-Member.php.mov=.*?"', data)
+		if findStream2:
+			print "Free", findStream2
+			self.genreListe2.append(("Free", findStream2[0].replace('"','')))
+
+		print self.genreListe2
+		self.session.open(meHosterScreen, self.streamName, self.genreListe2, "")
+
+	def dataError(self, error):
+		print error
+
+	def keyCancel(self):
+		self.close()
+
 class meMovieScreen(Screen):
 
 	def __init__(self, session, enterAuswahlLink, enterAuswahlLabel):
@@ -341,25 +470,9 @@ class meMovieScreen(Screen):
 				self.loadHandlung()
 			else:
 				self.lastPage = self.page
-				
-		elif self.enterAuswahlLabel == "Suche":
-			print "suche"
-			totalPages = re.findall('<span class="first_last"><a href=".*?page=(.*?)"', data, re.S)
-			if totalPages:
-				print totalPages
-				self['page'].setText("%s / %s" % (self.page, totalPages[0]))
 
-			links = re.findall('<h3 class="searchtitle">.*?<a href="(.*?)".*?title="">(.*?)</a>', data, re.S)
-			if links:
-				for enterLink, enterName in links:
-					self.genreListe.append((enterName, enterLink, ""))
-				self.chooseMenuList.setList(map(meListEntry, self.genreListe))
-				self.keyLocked = False
-			else:
-				self['handlung'].setText("Nichts gefunden...")
-			
 		elif self.enterAuswahlLabel == "HD-Serien":
-			print "HD-Serien"			
+			print "HD-Serien"
 			totalPages = re.findall('<span class="first_last"><a href=".*?page=(.*?)"', data, re.S)
 			if totalPages:
 				print totalPages
@@ -375,13 +488,14 @@ class meMovieScreen(Screen):
 				self.keyLocked = False
 			else:
 				self['handlung'].setText("Nichts gefunden...")
-				
+
 		else:
 			print "Sonstige Genres"
-			totalPages = re.findall('<span class="first_last"><a href=".*?page=(.*?)"', data, re.S)
+			#totalPages = re.findall('<span class="first_last"><a href=".*?page=(.*?)"', data, re.S)
+			totalPages = re.findall('page=(\d).*?title="Zeige Ergebnis', data, re.S)
 			if totalPages:
 				print totalPages
-				self['page'].setText("%s / %s" % (self.page, totalPages[0]))
+				self['page'].setText("%s / %s" % (self.page, totalPages[-1]))
 				
 			movies = re.findall('<h3 class="article_preview">.*?<a href="(.*?)"><span>[AZ:]?(.*?)</span></a>.*?<div class="cms_article_section_location">.*?>IMDB(.*?)</a>.*?<img class="cms_article_preview_image" src="(.*?)" alt="Vorschau"', data,re.S)
 			if movies:
@@ -629,7 +743,6 @@ class meCenturyScreen(Screen):
 
 	def loadPage(self):
 		self.yearList = []
-		
 		self.yearList.append(('Jahr 2013','http://evonic.tv/forum/list.php?r=category/217&page='))
 		self.yearList.append(('Jahr 2012','http://evonic.tv/forum/list.php?r=category/216&page='))
 		self.yearList.append(('Jahr 2011','http://evonic.tv/forum/list.php?r=category/215&page='))
@@ -776,6 +889,10 @@ class meCollectionScreen(Screen):
 	def getEpisoden(self, data):
 		self.eListe = []
 		titles = re.findall('>*\s*\r*\n<.*?>*\r*\n*\s(.*?)<.*?>*\r*\n*\s*<*>*\r*\n*<div style="margin: 5px;">', data)
+		if titles[0] == "":
+			titles = re.findall('<font size="4">(.*?)</font><br />', data, re.S)
+			print titles
+
 		if titles:
 			for title in titles:
 				raw = re.findall(title.replace('(','\(').replace(')','\)')+'(.*?)(<div class="spoiler" style="display: none;">Platzhalter</div>|<iframe src="http://my-entertainment.biz/images/hdtvschaer.jpg"|<iframe src="http://evonic.tv/images/hdtvschaer.jpg")', data, re.S)
