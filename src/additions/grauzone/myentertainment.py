@@ -139,6 +139,8 @@ class showMEHDGenre(Screen):
 		self.genreListe.append(("Cineline", "http://evonic.tv/forum/list.php?r=category/169-Cineline&page="))
 		self.genreListe.append(("HD-Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
 		self.genreListe.append(("HD-Serien", "http://evonic.tv/forum/content.php?r=5993-Serien&page="))
+		self.genreListe.append(("Century", "dump"))
+		self.genreListe.append(("Imdb", "dump"))
 		self.genreListe.append(("HD-Charts", "http://evonic.tv/forum/content.php?r=1989-HD-Charts&page="))
 		self.genreListe.append(("3D-Charts", "http://evonic.tv/forum/content.php?r=5440-3d-charts&page="))
 		self.genreListe.append(("3D", "http://evonic.tv/forum/content.php?r=4225-3d-filme&page="))
@@ -167,7 +169,13 @@ class showMEHDGenre(Screen):
 			enterAuswahlLink = self['genreList'].getCurrent()[0][1]
 
 			print "Select:", enterAuswahlLabel, enterAuswahlLink
-			self.session.open(meMovieScreen, enterAuswahlLink, enterAuswahlLabel)
+
+			if enterAuswahlLabel == "Century":
+				self.session.open(meCenturyScreen)
+			elif enterAuswahlLabel == "Imdb":
+				self.session.open(meImdbScreen)
+			else:
+				self.session.open(meMovieScreen, enterAuswahlLink, enterAuswahlLabel)
 		
 	def dataError(self, error):
 		print error
@@ -578,6 +586,143 @@ class meSerienScreen(Screen):
 
 	def dataError(self, error):
 		print error
+
+	def keyCancel(self):
+		self.close()
+
+class meCenturyScreen(Screen):
+
+	def __init__(self, session):
+		self.session = session
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("Century Auswahl:")
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.yearList = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.yearList = []
+		
+		self.yearList.append(('Jahr 2013','http://evonic.tv/forum/list.php?r=category/217&page='))
+		self.yearList.append(('Jahr 2012','http://evonic.tv/forum/list.php?r=category/216&page='))
+		self.yearList.append(('Jahr 2011','http://evonic.tv/forum/list.php?r=category/215&page='))
+		self.yearList.append(('Jahr 2010','http://evonic.tv/forum/list.php?r=category/214&page='))
+		self.yearList.append(('Jahr 2009','http://evonic.tv/forum/list.php?r=category/213&page='))
+		self.yearList.append(('Jahr 2008','http://evonic.tv/forum/list.php?r=category/212&page='))
+		self.yearList.append(('Jahr 2007','http://evonic.tv/forum/list.php?r=category/211&page='))
+		self.yearList.append(('Jahr 2006','http://evonic.tv/forum/list.php?r=category/210&page='))
+		self.yearList.append(('Jahr 2005','http://evonic.tv/forum/list.php?r=category/209&page='))
+		self.yearList.append(('Jahr 2004','http://evonic.tv/forum/list.php?r=category/208&page='))
+		self.yearList.append(('Jahr 2003','http://evonic.tv/forum/list.php?r=category/207&page='))
+		self.yearList.append(('Jahr 2002','http://evonic.tv/forum/list.php?r=category/206&page='))
+		self.yearList.append(('Jahr 2001','http://evonic.tv/forum/list.php?r=category/205&page='))
+		self.yearList.append(('Jahr 2000','http://evonic.tv/forum/list.php?r=category/204&page='))
+		self.yearList.append(('Jahr 1990','http://evonic.tv/forum/list.php?r=category/203&page='))
+		self.yearList.append(('Jahr 1980','http://evonic.tv/forum/list.php?r=category/202&page='))
+		self.yearList.append(('Jahr 1970','http://evonic.tv/forum/list.php?r=category/201&page='))
+		self.yearList.append(('Jahr 1960','http://evonic.tv/forum/list.php?r=category/200&page='))
+		self.yearList.append(('Jahr 1950','http://evonic.tv/forum/list.php?r=category/199&page='))
+		self.chooseMenuList.setList(map(meGenreEntry, self.yearList))
+		self.keyLocked = False
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		
+		print self.streamName, streamLink
+		self.session.open(meMovieScreen, streamLink, self.streamName)
+
+	def keyCancel(self):
+		self.close()
+
+class meImdbScreen(Screen):
+
+	def __init__(self, session):
+		self.session = session
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("Century Auswahl:")
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.imdbList = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.imdbList = []
+		self.imdbList.append(('IMDB 8.0','http://evonic.tv/forum/list.php?r=category/161&page='))
+		self.imdbList.append(('IMDB 7.0','http://evonic.tv/forum/list.php?r=category/162&page='))
+		self.imdbList.append(('IMDB 6.0','http://evonic.tv/forum/list.php?r=category/163&page='))
+		self.imdbList.append(('IMDB 5.0','http://evonic.tv/forum/list.php?r=category/164&page='))
+		self.imdbList.append(('IMDB 4.0','http://evonic.tv/forum/list.php?r=category/165&page='))
+		self.imdbList.append(('IMDB 3.0','http://evonic.tv/forum/list.php?r=category/166&page='))
+		self.imdbList.append(('IMDB 2.0','http://evonic.tv/forum/list.php?r=category/167&page='))
+		self.chooseMenuList.setList(map(meGenreEntry, self.imdbList))
+		self.keyLocked = False
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		
+		print self.streamName, streamLink
+		self.session.open(meMovieScreen, streamLink, self.streamName)
 
 	def keyCancel(self):
 		self.close()
