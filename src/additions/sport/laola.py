@@ -60,7 +60,7 @@ class laolaVideosOverviewScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		self.genreliste.append(("Live (Not Working!)", "http://www.laola1.tv/de-de/calendar/0.html"))
+		self.genreliste.append(("Live", "http://www.laola1.tv/de-de/calendar/0.html"))
 		self.genreliste.append(("Lastest Videos", "http://www.laola1.tv/de-de/home/0.html"))
 		self.genreliste.append(("Fussball", "http://www.laola1.tv/de-de/fussball/2.html"))
 		self.genreliste.append(("Eishockey", "http://www.laola1.tv/de-de/eishockey/41.html"))
@@ -169,22 +169,26 @@ class laolaLiveScreen(Screen):
 			message = self.session.open(MessageBox, _("Event ist noch nicht gestartet."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			match_player=re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
+			if match_player:
+				response=self.getUrl(match_player[0])
+				match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
 
-			response=self.getUrl(match_player[0])
-			match_m3u8=re.compile('url: "(.+?)"', re.DOTALL).findall(response)
+				response=self.getUrl(match_m3u8[0].replace('/vod/','/live/'))
+				match_url=re.compile('url="(.+?)"', re.DOTALL).findall(response)
+				match_auth=re.compile('auth="(.+?)"', re.DOTALL).findall(response)
+				res_url=match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
+				m3u8_url = res_url+'?hdnea='+match_auth[0]
+				print m3u8_url
 
-			response=self.getUrl(match_m3u8[0].replace('/vod/','/live/'))
-			match_url=re.compile('url="(.+?)"', re.DOTALL).findall(response)
-			match_auth=re.compile('auth="(.+?)"', re.DOTALL).findall(response)
-			res_url=match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
-			m3u8_url = res_url+'?hdnea='+match_auth[0]
-
-			response=self.getUrl(m3u8_url)
-			match_sec_m3u8=re.compile('#EXT-X-STREAM-INF:(.+?)http(.+?)rebase=on', re.DOTALL).findall(response)
-			
-			stream_url = "http%s" % match_sec_m3u8[-1][1]+'rebase=on'
-			print stream_url
-			self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')
+				response=self.getUrl(m3u8_url)
+				match_sec_m3u8=re.compile('#EXT-X-STREAM-INF:(.+?)http(.+?)rebase=on', re.DOTALL).findall(response)
+				
+				stream_url = "http%s" % match_sec_m3u8[-1][1]
+				stream_url = str(stream_url).replace('a-p.m3u8','av-p.m3u8')
+				print stream_url
+				self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')
+			else:
+				message = self.session.open(MessageBox, _("Event ist noch nicht gestartet."), MessageBox.TYPE_INFO, timeout=3)
 
 	def getUrl(self, url):
 		req = urllib2.Request(url)
@@ -289,6 +293,7 @@ class laolaSelectGenreScreen(Screen):
 
 		stream_url = res_url+'?hdnea='+match_auth[0]+'&g='+self.char_gen(12)+'&hdcore=3.1.0'
 		print stream_url
+		stream_url = str(stream_url).replace('a-p.m3u8','av-p.m3u8').replace('low,','').replace('medium,','').replace('high,','')
 		self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')
 
 	def getUrl(self, url):
