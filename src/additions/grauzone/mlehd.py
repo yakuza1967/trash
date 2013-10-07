@@ -65,7 +65,7 @@ class mlehdGenreScreen(Screen):
 							("Action", "http://www.mle-hd.se/category/action/page/"),
 							("Animation-Zeichentrick", "http://www.mle-hd.se/category/animation-zeichentrick/page/"),
 							("Biografie-History", "http://www.mle-hd.se/category/biografiehistory/page/"),
-							("Doku", "http://www.mle-hd.se/category/doku/page/page/"),
+							("Doku", "http://www.mle-hd.se/category/doku/page/"),
 							("Drama", "http://www.mle-hd.se/category/dramathriller/page/"),
 							("Kinderfilme", "http://www.mle-hd.se/category/kinderfilme/page/"),
 							("Fantasy", "http://www.mle-hd.se/category/fantasy/page/"),
