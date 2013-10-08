@@ -29,6 +29,11 @@ def meGenreEntry(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
 
+def meWatchListEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+" - "+entry[1])
+		]
+
 class showMEHDGenre(Screen):
 
 	def __init__(self, session):
@@ -141,6 +146,7 @@ class showMEHDGenre(Screen):
 				followRedirect=True, timeout=30, cookies=ck).addCallback(self.accountInfos).addErrback(self.dataError)
 					
 		self.genreListe = []
+		self.genreListe.append(("Watchlist", "dump"))
 		self.genreListe.append(("Neueinsteiger", "http://evonic.tv/forum/content.php?r=1969-Aktuelle-HD-Filme&page="))
 		self.genreListe.append(("Cineline", "http://evonic.tv/forum/list.php?r=category/169-Cineline&page="))
 		self.genreListe.append(("HD-Collection", "http://evonic.tv/forum/content.php?r=3501-hd-collection&page="))
@@ -181,6 +187,8 @@ class showMEHDGenre(Screen):
 				self.session.open(meCenturyScreen)
 			elif enterAuswahlLabel == "Imdb":
 				self.session.open(meImdbScreen)
+			elif enterAuswahlLabel == "Watchlist":
+				self.session.open(meWatchlistScreen)
 			elif enterAuswahlLabel == "Suche":
 				self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche:")), text = self.searchText)
 			else:
@@ -339,7 +347,8 @@ class meMovieScreen(Screen):
 
 		Screen.__init__(self, session)
 
-		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+		#self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+		self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "EPGSelectActions", "WizardActions", "ColorActions", "NumberActions", "MenuActions", "MoviePlayerActions", "InfobarSeekActions"], {
 			"ok"    : self.keyOK,
 			"cancel": self.keyCancel,
 			"up" : self.keyUp,
@@ -347,7 +356,8 @@ class meMovieScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft,
 			"nextBouquet" : self.keyPageUp,
-			"prevBouquet" : self.keyPageDown
+			"prevBouquet" : self.keyPageDown,
+			"green" : self.addWatchlist
 		}, -1)
 
 		self.keyLocked = True
@@ -508,12 +518,33 @@ class meMovieScreen(Screen):
 				self.loadPic()
 				self.loadHandlung()
 
+	def addWatchlist(self):
+		if self.keyLocked:
+			return
+
+		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+		
+		print self.enterAuswahlLabel, self.streamName, streamLink
+		
+		if not fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist"):
+			print "erstelle watchlist"
+			open(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist","w").close()
+			
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist"):
+			print "schreibe watchlist", self.enterAuswahlLabel, self.streamName, streamLink
+			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist","a")
+			writePlaylist.write('"%s" "%s" "%s"\n' % (self.enterAuswahlLabel, self.streamName, streamLink))
+			writePlaylist.close()
+			message = self.session.open(MessageBox, _("%s wurde zur watchlist hinzugefuegt." % self.streamName), MessageBox.TYPE_INFO, timeout=3)
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
-		streamLink = self['filmList'].getCurrent()[0][1]
+
 		self.streamName = self['filmList'].getCurrent()[0][0]
+		streamLink = self['filmList'].getCurrent()[0][1]
+
 		print self.streamName, streamLink
 		
 		if self.enterAuswahlLabel == "HD-Serien":
@@ -918,6 +949,98 @@ class meCollectionScreen(Screen):
 
 		print self.streamName, streamLink
 		self.session.open(meServerScreen, self.streamName, streamLink, self.streamPic)
+
+	def dataError(self, error):
+		print error
+
+	def keyCancel(self):
+		self.close()
+
+class meWatchlistScreen(Screen):
+
+	def __init__(self, session):
+		self.session = session
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("Watchlist Auswahl:")
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.watchListe = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.watchListe = []
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist"):
+			print "read watchlist"
+			readStations = open(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist","r")
+			for rawData in readStations.readlines():
+				data = re.findall('"(.*?)" "(.*?)" "(.*?)"', rawData, re.S)
+				if data:
+					(which, title, link) = data[0]
+					print which, title, link
+					self.watchListe.append((which, title, link))
+			print "Load Watchlist.."
+			self.watchListe.sort()
+			self.chooseMenuList.setList(map(meWatchListEntry, self.watchListe))
+			readStations.close()
+			self.keyLocked = False
+	
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		streamWhich = self['filmList'].getCurrent()[0][0]
+		self.streamName = self['filmList'].getCurrent()[0][1]
+		streamLink = self['filmList'].getCurrent()[0][2]
+		
+		print streamWhich, self.streamName, streamLink
+		
+		if re.match('.*?Serien', streamWhich, re.S|re.I):
+			self.session.open(meSerienScreen, self.streamName, streamLink, "")
+		elif re.match('.*?Collection', streamWhich, re.S|re.I):
+			self.session.open(meCollectionScreen, self.streamName, streamLink, "")
+		else:
+			getPage(streamLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
+	
+	def getStream(self, data):
+		self.genreListe2 = []
+		findStream = re.findall('"(http://evonic.tv/server/Premium.*?)"', data)
+		if findStream:
+			print "Premium", findStream
+			self.genreListe2.append(("Premium", findStream[0].replace('"','')))
+			
+		findStream2 = re.findall('"http://evonic.tv/server/Free-Member.php.mov=.*?"', data)
+		if findStream2:
+			print "Free", findStream2
+			self.genreListe2.append(("Free", findStream2[0].replace('"','')))
+
+		print self.genreListe2
+		self.session.open(meHosterScreen, self.streamName, self.genreListe2, "")
 
 	def dataError(self, error):
 		print error
