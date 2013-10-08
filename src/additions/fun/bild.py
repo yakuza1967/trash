@@ -123,12 +123,12 @@ class bildSecondScreen(Screen):
 		else:
 			self['page'].setText(str(self.page))
 	
-		raw = re.findall('Neueste Videos</h2>(.*?)class="pagLast">', data, re.S)
+		raw = re.findall('Neueste Videos</h2>(.*?)</section></div></div>', data, re.S)
 		if raw:
-			seasons = re.findall('class="active">.*?data-ajax-href="/video/clip/tb-neueste-videos-(.*?),zeigeTSLink=true,page=0,isVideoStartseite=true,view=ajax,contentContextId=(.*?).bild.html"', raw[0], re.S)
+			seasons = re.findall('class="active">.*?data-ajax-href="(.*?)page=.*?,(.*?)"', raw[0], re.S)
 			vid_id1 = seasons[0][0]
 			vid_id2 = seasons[0][1]
-			nexturl = "http://www.bild.de/video/clip/tb-neueste-videos-" + vid_id1 + ",zeigeTSLink=true,page=" + str(self.page) + ",isVideoStartseite=true,view=ajax,contentContextId=" + vid_id2 + ".bild.html"
+			nexturl = "http://www.bild.de/" + vid_id1 + "page=" + str(self.page) + "," + vid_id2
 			data2 = urllib.urlopen(nexturl).read()
 			categorys =  re.findall('<div class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)</span>', data2, re.S)
 # Fix Me
