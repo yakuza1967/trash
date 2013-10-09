@@ -1040,7 +1040,8 @@ class meWatchlistScreen(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
-			"cancel": self.keyCancel
+			"cancel": self.keyCancel,
+			"red"	: self.delWatchListEntry
 		}, -1)
 
 		self.keyLocked = True
@@ -1074,9 +1075,37 @@ class meWatchlistScreen(Screen):
 			self.chooseMenuList.setList(map(meWatchListEntry, self.watchListe))
 			readStations.close()
 			self.keyLocked = False
-	
+
+	def delWatchListEntry(self):
+		exist = self['filmList'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+
+		entryDeleted = False
+		selectedName = self['filmList'].getCurrent()[0][1]
+
+		writeTmp = open(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist.tmp","w")
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist"):
+			readWatchlist = open(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist","r")
+			for rawData in readWatchlist.readlines():
+				data = re.findall('"(.*?)" "(.*?)" "(.*?)"', rawData, re.S)
+				if data:
+					(genre, title, link) = data[0]
+					if title != selectedName:
+						writeTmp.write('"%s" "%s" "%s"\n' % (genre, title, link))
+					else:
+						if entryDeleted:
+							writeTmp.write('"%s" "%s" "%s"\n' % (genre, title, link))
+						else:
+							entryDeleted = True
+			readWatchlist.close()
+			writeTmp.close()
+			shutil.move(config.mediaportal.watchlistpath.value+"mp_evonic_watchlist.tmp", config.mediaportal.watchlistpath.value+"mp_evonic_watchlist")
+			self.loadPage()
+
 	def keyOK(self):
-		if self.keyLocked:
+		exist = self['filmList'].getCurrent()
+		if self.keyLocked or exist == None:
 			return
 
 		streamWhich = self['filmList'].getCurrent()[0][0]
