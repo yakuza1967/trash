@@ -34,6 +34,19 @@ def meWatchListEntry(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+" - "+entry[1])
 		]
 
+def meWatchedListEntry(entry):
+	if entry[2]:
+		png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/watched.png"
+		watched = LoadPixmap(png)
+		return [entry,
+			(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 39, 3, 100, 22, watched),
+			(eListboxPythonMultiContent.TYPE_TEXT, 100, 0, 700, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+			]
+	else:
+		return [entry,
+			(eListboxPythonMultiContent.TYPE_TEXT, 100, 0, 700, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+			]
+
 class showMEHDGenre(Screen):
 
 	def __init__(self, session):
@@ -689,6 +702,20 @@ class meSerienScreen(Screen):
 		getPage(self.eLink, cookies=ck, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getEpisoden).addErrback(self.dataError)
 
 	def getEpisoden(self, data):
+		self.watched_liste = []
+		self.mark_last_watched = []
+		if not fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watched"):
+			open(config.mediaportal.watchlistpath.value+"mp_evonic_watched","w").close()
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watched"):
+			leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_evonic_watched")
+			if not leer == 0:
+				self.updates_read = open(config.mediaportal.watchlistpath.value+"mp_evonic_watched" , "r")
+				for lines in sorted(self.updates_read.readlines()):
+					line = re.findall('"(.*?)"', lines)
+					if line:
+						self.watched_liste.append("%s" % (line[0]))
+				self.updates_read.close()
+
 		staffeln = re.findall('<img src="http://evonic.tv/images/unbenanyn.jpg"(.*?)<iframe src="http://evonic.tv/images/hdtvschaer.jpg"', data, re.S)
 		if staffeln:
 			staffelcount = 0
@@ -702,8 +729,13 @@ class meSerienScreen(Screen):
 						else:
 							setStaffel = "S%s" % str(staffelcount)
 						print "Staffel "+setStaffel, epTitle, link
-						self.eListe.append((setStaffel + "E" + epTitle, link))
-					self.chooseMenuList.setList(map(meListEntry, self.eListe))
+
+						dupe_streamname = "%s - %s" % (self.eName, setStaffel + "E" + epTitle)
+						if dupe_streamname in self.watched_liste:
+							self.eListe.append((setStaffel + "E" + epTitle, link, True))
+						else:
+							self.eListe.append((setStaffel + "E" + epTitle, link, False))
+					self.chooseMenuList.setList(map(meWatchedListEntry, self.eListe))
 					self.keyLocked = False
 
 	def keyOK(self):
@@ -722,12 +754,45 @@ class meSerienScreen(Screen):
 			if stream_url:
 				print stream_url
 				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+				self.markAsWatched()
 		else:
 			print data
 			stream_url = re.findall('src="(.*?)"', data, re.S)
 			if stream_url:
 				print stream_url
 				self.session.open(SimplePlayer, [(self.eName + " " + self.streamName, stream_url[0], self.streamPic)], showPlaylist=False, ltype='ME', cover=True)
+				self.markAsWatched()
+
+	def markAsWatched(self):
+		self.stream_name = "%s - %s" % (self.eName, self.streamName)
+		print self.stream_name
+		if not fileExists(config.mediaportal.watchlistpath.value+"mp_evonic_watched"):
+			open(config.mediaportal.watchlistpath.value+"mp_evonic_watched","w").close()
+
+		self.update_liste = []
+		leer = os.path.getsize(config.mediaportal.watchlistpath.value+"mp_evonic_watched")
+		if not leer == 0:
+			self.updates_read = open(config.mediaportal.watchlistpath.value+"mp_evonic_watched" , "r")
+			for lines in sorted(self.updates_read.readlines()):
+				line = re.findall('"(.*?)"', lines)
+				if line:
+					print line[0]
+					self.update_liste.append("%s" % (line[0]))
+			self.updates_read.close()
+
+			updates_read2 = open(config.mediaportal.watchlistpath.value+"mp_evonic_watched" , "a")
+			check = ("%s" % self.stream_name)
+			if not check in self.update_liste:
+				print "update add: %s" % (self.stream_name)
+				updates_read2.write('"%s"\n' % (self.stream_name))
+				updates_read2.close()
+			else:
+				print "dupe %s" % (self.stream_name)
+		else:
+			updates_read3 = open(config.mediaportal.watchlistpath.value+"mp_evonic_watched" , "a")
+			print "[update add: %s" % (self.stream_name)
+			updates_read3.write('"%s"\n' % (self.stream_name))
+			updates_read3.close()
 
 	def dataError(self, error):
 		print error
