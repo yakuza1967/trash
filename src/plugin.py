@@ -863,7 +863,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		if config.mediaportal.showsport1fm.value:
 			self.funsport.append(self.hauptListEntry("Sport1.fm", "sport1fm"))
 		if config.mediaportal.bildde.value:
-			self.funsport.append(self.hauptListEntry("Bild.de", "no_icon"))
+			self.funsport.append(self.hauptListEntry("Bild.de", "bild"))
 		if config.mediaportal.showgrauzone.value:
 			if config.mediaportal.showMusicstreamcc.value:
 				self.funsport.append(self.hauptListEntry("Musicstream.cc", "musicstreamcc"))
@@ -1834,7 +1834,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.wissen.value:
 			self.plugin_liste.append(("Wissen.de", "wissen", "Fun"))
 		if config.mediaportal.bildde.value:
-			self.plugin_liste.append(("Bild.de", "no_icon", "Fun"))
+			self.plugin_liste.append(("Bild.de", "bild", "Fun"))
 		if astModule:
 			if config.mediaportal.showHeiseVideo.value:
 				self.plugin_liste.append(("heiseVIDEO", "heisevideo", "Fun"))
