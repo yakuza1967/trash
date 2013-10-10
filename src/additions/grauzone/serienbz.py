@@ -12,7 +12,11 @@ def SerienListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-
+	
+def sbzWatchListEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+		]
 
 class SerienFirstScreen(Screen):
 
@@ -35,7 +39,62 @@ class SerienFirstScreen(Screen):
 
 		self['title'] = Label("Serien.bz")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.1-beta")
+		self['name'] = Label("v0.2")
+		self['F1'] = Label("Exit")
+		self['F2'] = Label("")
+		self['F3'] = Label("")
+		self['F4'] = Label("")
+		self['F2'].hide()
+		self['F3'].hide()
+		self['F4'].hide()
+		self['coverArt'] = Pixmap()
+
+		self.genreliste = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['genreList'] = self.chooseMenuList
+		
+		self.onLayoutFinish.append(self.layoutFinished)
+		
+	def layoutFinished(self):
+		self.genreliste.append(("Serien A-Z","dump"))
+		self.genreliste.append(("Watchlist","dump"))
+		self.chooseMenuList.setList(map(SerienEntry, self.genreliste))
+		self.keyLocked = False
+		
+	def keyOK(self):
+		Auswahl = self['genreList'].getCurrent()[0][0]
+		if Auswahl == "Serien A-Z":
+			self.session.open(SerienLetterScreen)
+		else:
+			self.session.open(sbzWatchlistScreen)
+
+	def keyCancel(self):
+		self.close()
+
+class SerienLetterScreen(Screen):
+
+	def __init__(self, session):
+		self.session = session
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreen.xml" % config.mediaportal.skin.value
+		if not fileExists(path):
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreen.xml"
+		print path
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
+			"ok"	: self.keyOK,
+			"cancel": self.keyCancel
+		}, -1)
+
+		self['title'] = Label("Serien.bz")
+		self['ContentTitle'] = Label("Genre:")
+		self['name'] = Label("v0.2")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -100,17 +159,17 @@ class SerienSecondScreen(Screen):
 		"up" : self.keyUp,
 		"down" : self.keyDown,
 		"right" : self.keyRight,
-		"left" : self.keyLeft
+		"left" : self.keyLeft,
+		"green" : self.addWatchlist 
 		}, -1)
 
 		self['title'] = Label("Serien.bz")
 		self['ContentTitle'] = Label("Auswahl: %s" % self.serienName)
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
-		self['F2'] = Label("")
+		self['F2'] = Label("Watchlist")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
-		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
 		self['coverArt'] = Pixmap()
@@ -156,6 +215,7 @@ class SerienSecondScreen(Screen):
 		else:
 			self['name'].setText(decodeHtml(serienTitle))
 			sbzdescription = re.findall('<div class="entry">.*?<p.*?</p>.*?<p.*?</p>.*?<p style="text-align: left;">(.*?)</p>', data, re.S)
+			self.handlung = sbzdescription
 			if sbzdescription:
 				self['handlung'].setText(decodeHtml(sbzdescription[0]))
 			else:
@@ -166,6 +226,27 @@ class SerienSecondScreen(Screen):
 			CoverHelper(self['coverArt']).getCover(self.ImageUrl)
 		else:
 			self.ImageUrl = ""
+			
+
+	def addWatchlist(self):
+		if self.keyLocked:
+			return
+
+		self.serienName = self['liste'].getCurrent()[0][0]
+		self.serienLink = self['liste'].getCurrent()[0][1]
+		
+		print self.serienName, self.serienLink, self.ImageUrl, self.handlung
+		
+		if not fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
+			print "erstelle watchlist"
+			open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","w").close()
+			
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
+			print "schreibe watchlist", self.serienName, self.serienLink, self.ImageUrl, self.handlung
+			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","a")
+			writePlaylist.write('"%s" "%s" "%s" "%s"\n' % (self.serienName, self.serienLink, self.ImageUrl, self.handlung))
+			writePlaylist.close()
+			message = self.session.open(MessageBox, _("%s wurde zur watchlist hinzugefuegt." % self.serienName), MessageBox.TYPE_INFO, timeout=3)
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -360,6 +441,155 @@ class SerienStreamListingScreen(Screen):
 	def playfile(self, stream_url):
 		if stream_url != None:
 			self.session.open(SimplePlayer, [(self.serienName, stream_url, self.serienPic)], showPlaylist=False, ltype='serien.bz', cover=True)
+
+	def keyCancel(self):
+		self.close()
+		
+class sbzWatchlistScreen(Screen):
+
+	def __init__(self, session):
+		self.session = session
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+			"ok"    : self.keyOK,
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft,
+			"red"	: self.delWatchListEntry
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("Watchlist Auswahl:")
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+
+		self.watchListe = []
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.watchListe = []
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
+			print "read watchlist"
+			readStations = open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","r")
+			for rawData in readStations.readlines():
+				data = re.findall('"(.*?)" "(.*?)" "(.*?)" "(.*?)"', rawData, re.S)
+				if data:
+					(title, link, image, handlung) = data[0]
+					print title, link, image
+					self.watchListe.append((title, link, image, handlung))
+			print "Load Watchlist.."
+			self.watchListe.sort()
+			self.chooseMenuList.setList(map(sbzWatchListEntry, self.watchListe))
+			readStations.close()
+			self.showInfos()
+			self.keyLocked = False
+
+	def showInfos(self):
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
+			print "read watchlist"
+			readStations = open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","r")
+			for rawData in readStations.readlines():
+				data = re.findall('"(.*?)" "(.*?)" "(.*?)" "(.*?)"', rawData, re.S)
+				if data:
+					self.ImageUrl = self['filmList'].getCurrent()[0][2]
+					self.Handlung = self['filmList'].getCurrent()[0][3]
+					self['handlung'].setText(decodeHtml(self.Handlung))
+					CoverHelper(self['coverArt']).getCover(self.ImageUrl)
+		else:
+			self['handlung'].setText("Keine Infos gefunden.")
+			picPath = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/images/no_coverArt.png" % config.mediaportal.skin.value
+			self.ShowCoverFile(picPath)
+
+	def ShowCoverFile(self, picPath):
+		if fileExists(picPath):
+			self['coverArt'].instance.setPixmap(gPixmapPtr())
+			self.scale = AVSwitch().getFramebufferScale()
+			self.picload = ePicLoad()
+			size = self['coverArt'].instance.size()
+			self.picload.setPara((size.width(), size.height(), self.scale[0], self.scale[1], False, 1, "#FF000000"))
+			if self.picload.startDecode(picPath, 0, 0, False) == 0:
+				ptr = self.picload.getData()
+				if ptr != None:
+					self['coverArt'].instance.setPixmap(ptr)
+					self['coverArt'].show()
+					del self.picload
+
+	def delWatchListEntry(self):
+		exist = self['filmList'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+		entryDeleted = False
+		selectedName = self['filmList'].getCurrent()[0][0]
+
+		writeTmp = open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist.tmp","w")
+		if fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
+			readWatchlist = open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","r")
+			for rawData in readWatchlist.readlines():
+				data = re.findall('"(.*?)" "(.*?)" "(.*?)" "(.*?)"', rawData, re.S)
+				if data:
+					(title, link, image, handlung) = data[0]
+					if title != selectedName:
+						writeTmp.write('"%s" "%s" "%s" "%s"\n' % (title, link, image, handlung))
+					else:
+						if entryDeleted:
+							writeTmp.write('"%s" "%s" "%s" "%s"\n' % (title, link, image, handlung))
+						else:
+							entryDeleted = True
+			readWatchlist.close()
+			writeTmp.close()
+			shutil.move(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist.tmp", config.mediaportal.watchlistpath.value+"mp_sbz_watchlist")
+			self.loadPage()
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageUp()
+		self.showInfos()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageDown()
+		self.showInfos()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['filmList'].up()
+		self.showInfos()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['filmList'].down()
+		self.showInfos()
+
+	def keyOK(self):
+		serienName = self['filmList'].getCurrent()[0][0]
+		serienLink = self['filmList'].getCurrent()[0][1]
+		serienPic = self['filmList'].getCurrent()[0][2]
+		self.session.open(SerienEpListingScreen, serienLink, serienName, serienPic)
 
 	def keyCancel(self):
 		self.close()
