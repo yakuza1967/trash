@@ -216,16 +216,18 @@ class bildSecondScreen(Screen):
 		bildLink = self['liste'].getCurrent()[0][1]
 		self.bildLink = "http://www.bild.de" + bildLink
 		self.bildName = bildName
-		getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideoData).addErrback(self.dataError)
+		getPage(self.bildLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideoData).addErrback(self.dataError)
 
 	def parseVideoData(self, data):
 		xmllink = re.findall('longdesc="(.*?)"', data, re.S)
 		if xmllink:
 			getxml = "http://www.bild.de" + xmllink[0]
-			data2 = urllib.urlopen(getxml).read()
-			streamlink = re.findall('<video.*?src="(.*?)" ', data2, re.S)
-			if streamlink:
-				self.session.open(SimplePlayer, [(self.bildName, streamlink[0])], showPlaylist=False, ltype='bild')
+			getPage(getxml, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.playVideo).addErrback(self.dataError)
+
+	def playVideo(self, data):
+		streamlink = re.findall('<video.*?src="(.*?)" ', data, re.S)
+		if streamlink:
+			self.session.open(SimplePlayer, [(self.bildName, streamlink[0])], showPlaylist=False, ltype='Bild.de')
 
 	def keyCancel(self):
 		self.close()
