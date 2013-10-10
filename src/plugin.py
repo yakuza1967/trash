@@ -331,6 +331,8 @@ from additions.grauzone.movie25 import *
 config.mediaportal.showMovie25 = ConfigYesNo(default = False)
 from additions.grauzone.movie2k import *
 config.mediaportal.movie2k = ConfigYesNo(default = False)
+from additions.grauzone.serienbz import *
+config.mediaportal.serienbz = ConfigYesNo(default = False)
 
 class CheckPathes:
 	def __init__(self, session):
@@ -555,6 +557,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Vibeo", config.mediaportal.showVibeo))
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
+			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
 			#self.grauzone.append(getConfigListEntry("Viewster", config.mediaportal.showViewster))
 			self.grauzone.sort(key=lambda t : t[0].lower())
 
@@ -1037,6 +1040,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.grauzone.append(self.hauptListEntry("Movie2k.tl", "movie2k"))
 			if config.mediaportal.showMoovizon.value:
 				self.grauzone.append(self.hauptListEntry("Moovizon", "moovizon"))
+			if config.mediaportal.serienbz.value:
+				self.grauzone.append(self.hauptListEntry("Serien.bz", "serien"))
 
 		if len(self.porn) < 1:
 			self['Porn'].hide()
@@ -1510,6 +1515,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(ARDGenreScreen)
 		elif auswahl == "Bild.de":
 			self.session.open(bildFirstScreen)
+		elif auswahl == "Bild.de":
+			self.session.open(SerienFirstScreen)
 			
 		# Porn
 		elif auswahl == "4Tube":
@@ -1997,6 +2004,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("Moovizon", "moovizon", "Grauzone"))
 			if config.mediaportal.movie2k.value:
 				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
+			if config.mediaportal.serienbz.value:
+				self.plugin_liste.append(("Serien.bz", "serien", "Grauzone"))
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
 				self.plugin_liste.append(("Movie4k Watchlist", "movie4kwatchlist", "Grauzone"))
@@ -2500,6 +2509,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(movie2kGenreScreen)
 		elif auswahl == "Bild.de":
 			self.session.open(bildFirstScreen)
+		elif auswahl == "Serien.bz":
+			self.session.open(SerienFirstScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
