@@ -147,8 +147,10 @@ class bildSecondScreen(Screen):
 			vid_id1 = seasons[0][0]
 			vid_id2 = seasons[0][1]
 			nexturl = "http://www.bild.de/" + vid_id1 + "page=" + str(self.page) + "," + vid_id2
-			data2 = urllib.urlopen(nexturl).read()
-			categorys =  re.findall('<div class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)</span>', data2, re.S)
+			getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
+
+	def parseData2(self, data):
+			categorys =  re.findall('<div class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)</span>', data, re.S)
 # Fix Me
 #		   categorys =  re.findall('<div class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)</span>.*?<span class="headline"><span>(.*?)</h3>', data2, re.S)
 			self.filmliste = []
@@ -214,7 +216,9 @@ class bildSecondScreen(Screen):
 		bildLink = self['liste'].getCurrent()[0][1]
 		self.bildLink = "http://www.bild.de" + bildLink
 		self.bildName = bildName
-		data = urllib.urlopen(self.bildLink).read()
+		getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideoData).addErrback(self.dataError)
+
+	def parseVideoData(self, data):
 		xmllink = re.findall('longdesc="(.*?)"', data, re.S)
 		if xmllink:
 			getxml = "http://www.bild.de" + xmllink[0]
