@@ -223,9 +223,6 @@ class bildSecondScreen(Screen):
 		if xmllink:
 			getxml = "http://www.bild.de" + xmllink[0]
 			getPage(getxml, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.playVideo).addErrback(self.dataError)
-			streamlink = re.findall('<video.*?src="(.*?)" ', data2, re.S)
-			if streamlink:
-				self.session.open(SimplePlayer, [(self.bildName, streamlink[0])], showPlaylist=False, ltype='Bild.de')
 
 	def playVideo(self, data):
 		streamlink = re.findall('<video.*?src="(.*?)" ', data, re.S)
