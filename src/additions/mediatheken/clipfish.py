@@ -145,7 +145,7 @@ class show_CF_Genre(Screen):
 		self.genreSelected = False
 		self.menuListe = []
 		self.baseUrl = "http://www.clipfish.de"
-		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home/neu/%d/#111", "/special", "/special", "/special", "/special", "/special", "/special"]
+		self.genreBase = ["/suche", "/kategorien", "/musikvideos/charts", "/musikvideos/genre","/specialmodule/modulemusicvideodatematrix/5337/%d/?relyear=", "/special/spielfilme/genre", "/special/kino-trailer/home%s/#111", "/special", "/special", "/special", "/special", "/special", "/special"]
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
@@ -229,42 +229,42 @@ class show_CF_Genre(Screen):
 			],
 			None,
 			[
-			("Daniele Rizzo - Alle Videos", "/daniele-rizzo/home/neu/%d/"),
-			("Der ehrliche Dennis - Alle Videos", "/der-ehrliche-dennis/home/neu/%d/"),
-			("Seen - Die aktuellen Kino- und DVD-Filme", "/seen/home/neu/%d/"),
-			("Kino und Co. - Alle Videos", "/kino-und-co/home/neu/%d/")
+			("Daniele Rizzo - Alle Videos", "/daniele-rizzo/home%s"),
+			("Der ehrliche Dennis - Alle Videos", "/der-ehrliche-dennis/home%s"),
+			("Seen - Die aktuellen Kino- und DVD-Filme", "/seen/home%s"),
+			("Kino und Co. - Alle Videos", "/kino-und-co/home%s")
 			],
 			[
-			("News und Lifestyle - Alle Videos", "/news/aktuelles/neu/%d/"),
-			("Alle VIP-Videos", "/news/vip/neu/%d/"),
-			("Regional News - alle Videos", "/regional-news/home/neu/%d/"),
-			("Neues von Daaruum", "/daaruum/home/neu/%d/")
+			("News und Lifestyle - Alle Videos", "/news/aktuelles%s"),
+			("Alle VIP-Videos", "/news/vip%s"),
+			("Regional News - alle Videos", "/regional-news/home%s"),
+			("Neues von Daaruum", "/daaruum/home%s")
 			],
 			[
-			("Y-Titty - Videos", "/y-titty/home/neu/%d/"),
-			("Neues von FreshTorge", "/freshaltefolie/home/neu/%d/"),
-			("Neues von den Lochis", "/dielochis/home/neu/%d/"),
-			("Digges Ding Comedy - Alle Videos", "/digges-ding-comedy/home/neu/%d/"),
-			("ApeCrime - Alle Videos", "/ape-crime/home/neu/%d/")
+			("Y-Titty - Videos", "/y-titty/home%s"),
+			("Neues von FreshTorge", "/freshaltefolie/home%s"),
+			("Neues von den Lochis", "/dielochis/home%s"),
+			("Digges Ding Comedy - Alle Videos", "/digges-ding-comedy/home%s"),
+			("ApeCrime - Alle Videos", "/ape-crime/home%s")
 			],
 			[
-			("Alle Videos", "/familien-duell/home/neu/%d/")
+			("Alle Videos", "/familien-duell/home%s")
 			],
 			[
-			("DSDS 2013 - News", "/dsds/news/neu/%d/"),
-			("DSDS Musikvideos", "/musikvideos/dsds/neu/%d/"),
-			("Alle Videos aus den DSDS-Liveshows 2013", "/special/dsds/liveshow/neu/%d/"),
-			("DSDS Recall 2013 - Alle Videos", "/dsds/recall/neu/%d/"),
-			("DSDS 2013 Alle Casting-Videos", "/dsds/casting/neu/%d/"),
-			("DSDS 2012 - Alle Videos", "/dsds/2012/neu/%d/"),
-			("DSDS 8 - Videos", "/dsds/dsds-8/neu/%d/"),
-			("DSDS 7 - Videos", "/dsds/dsds-7/neu/%d/")
+			("DSDS 2013 - News", "/dsds/news%s"),
+			("DSDS Musikvideos", "/musikvideos/dsds%s"),
+			("Alle Videos aus den DSDS-Liveshows 2013", "/dsds/liveshow%s"),
+			("DSDS Recall 2013 - Alle Videos", "/dsds/recall%s"),
+			("DSDS 2013 Alle Casting-Videos", "/dsds/casting%s"),
+			("DSDS 2012 - Alle Videos", "/dsds/2012%s"),
+			("DSDS 8 - Videos", "/dsds/dsds-8%s"),
+			("DSDS 7 - Videos", "/dsds/dsds-7%s")
 			],
 			[
-			("Das Supertalent 2013 - Alle Videos", "/supertalent/videos/neu/%d/"),
-			("Supertalent 2013 Backstage - Alle Videos", "/supertalent/supertalent-backstage/neu/%d/"),
-			("Das Supertalent 2012 - Alle Videos", "/supertalent/2012/neu/%d/"),
-			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011/neu/%d/")
+			("Das Supertalent 2013 - Alle Videos", "/supertalent/videos%s"),
+			("Supertalent 2013 Backstage - Alle Videos", "/supertalent/supertalent-backstage%s"),
+			("Das Supertalent 2012 - Alle Videos", "/supertalent/2012%s"),
+			("Das Supertalent 2011 - Alle Videos", "/supertalent/2011%s")
 			]
 			]
 			]
@@ -502,9 +502,11 @@ class CF_FilmListeScreen(Screen):
 		self.genreSpecials = False
 		self.genreVideos = re.match('Videos', self.genreName)
 		self.genreSpielfilme = re.match('Spielfilm', self.genreName)
-		self.genreMusicCharts = re.match('.*?-Charts', self.genreName)
+		self.genreMusicCharts = re.search('-Charts', self.genreName)
 		self.genreSearch = re.match('Suche...', self.genreName)
-		self.genreSpecial = re.match('.*?/special', self.genreLink)
+		self.genreSpecial = re.search('/special/', self.genreLink)
+		self.genreSpecialModule = re.search('/specialmodule/', self.genreLink)
+		self.lurlpart = ''
 
 		self.setGenreStrTitle()
 
@@ -530,8 +532,14 @@ class CF_FilmListeScreen(Screen):
 		if self.genreVideos:
 			link = self.genreLink % 'neu'
 			url = "%s/%d/" % (link, page)
-		elif self.genreSpielfilme or self.genreSpecial or self.genreSearch:
+		elif self.genreSpielfilme or self.genreSearch or self.genreSpecialModule:
 			url = self.genreLink % page
+		elif self.genreSpecial:
+			if self.lurlpart:
+				s = self.lurlpart % page
+			else:
+				s = ''
+			url = self.genreLink % s
 		elif self.genreMusicCharts:
 			url = self.genreLink
 		else:
@@ -610,11 +618,16 @@ class CF_FilmListeScreen(Screen):
 			if not self.pages:
 				m1 = re.search('<div class="pager">(.*?)</div>', data, re.S)
 				if m1:
-					m2 = re.findall('".*?>(\d*?)</a>', m1.group(1))
+					m2 = re.findall('".*?href="(.*?)".*?>(\d*?)</a>', m1.group(1))
 
 				if m1 and m2:
+					try:
+						self.lurlpart = '/' + m2[0][0].split('/')[-2] + '/%d'
+					except:
+						pass
+						
 					pages = 0
-					for i in m2:
+					for u,i in m2:
 						x = int(i)
 						if x > pages:
 							pages = x
