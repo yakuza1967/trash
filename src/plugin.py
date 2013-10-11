@@ -1041,7 +1041,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.showMoovizon.value:
 				self.grauzone.append(self.hauptListEntry("Moovizon", "moovizon"))
 			if config.mediaportal.serienbz.value:
-				self.grauzone.append(self.hauptListEntry("Serien.bz", "serien"))
+				self.grauzone.append(self.hauptListEntry("Serien.bz", "serienbz"))
 
 		if len(self.porn) < 1:
 			self['Porn'].hide()
@@ -1515,7 +1515,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(ARDGenreScreen)
 		elif auswahl == "Bild.de":
 			self.session.open(bildFirstScreen)
-		elif auswahl == "Bild.de":
+		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
 			
 		# Porn
@@ -2005,7 +2005,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.movie2k.value:
 				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
 			if config.mediaportal.serienbz.value:
-				self.plugin_liste.append(("Serien.bz", "serien", "Grauzone"))
+				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
 				self.plugin_liste.append(("Movie4k Watchlist", "movie4kwatchlist", "Grauzone"))
