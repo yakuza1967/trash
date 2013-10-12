@@ -219,6 +219,8 @@ from additions.mediatheken.srf import *
 config.mediaportal.showSRF = ConfigYesNo(default = True)
 from additions.mediatheken.ard import *
 config.mediaportal.showARD = ConfigYesNo(default = True)
+from additions.mediatheken.dreisat import *
+config.mediaportal.showDreisat = ConfigYesNo(default = True)
 
 # Porn
 from additions.porn.x4tube import *
@@ -496,6 +498,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.mediatheken.append(getConfigListEntry("VOXNOW", config.mediaportal.showVoxnow))
 		self.mediatheken.append(getConfigListEntry("ZDF Mediathek", config.mediaportal.showZDF))
 		self.mediatheken.append(getConfigListEntry("MySpass", config.mediaportal.showmyspass))
+		self.mediatheken.append(getConfigListEntry("3Sat", config.mediaportal.showDreisat))
 		self.mediatheken.sort(key=lambda t : t[0].lower())
 
 		### Porn
@@ -917,6 +920,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("MySpass", "myspass"))
 		if config.mediaportal.showARD.value:
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
+		if config.mediaportal.showDreisat.value:
+			self.mediatheken.append(self.hauptListEntry("3sat Mediathek", "3sat"))
 
 		# Porn
 		if config.mediaportal.showporn.value:
@@ -1515,8 +1520,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(ARDGenreScreen)
 		elif auswahl == "Bild.de":
 			self.session.open(bildFirstScreen)
-		elif auswahl == "Serien.bz":
-			self.session.open(SerienFirstScreen)
+		elif auswahl == "3sat Mediathek":
+			self.session.open(dreisatFirstScreen)
 			
 		# Porn
 		elif auswahl == "4Tube":
@@ -1881,6 +1886,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("ARD Mediathek", "ard", "Mediathek"))
 		if config.mediaportal.showmyspass.value:
 			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
+		if config.mediaportal.showDreisat.value:
+			self.plugin_liste.append(("3sat Mediathek", "3sat", "Mediathek"))
 
 		# Porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2547,7 +2554,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(sport1fmGenreScreen)
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
-
+		elif auswahl == "3sat Mediathek":
+			self.session.open(dreisatFirstScreen)
+			
 		# porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
