@@ -556,6 +556,7 @@ class sbzWatchlistScreen(Screen):
 		exist = self['filmList'].getCurrent()
 		if self.keyLocked or exist == None:
 			return
+
 		entryDeleted = False
 		selectedName = self['filmList'].getCurrent()[0][0]
 
@@ -603,6 +604,10 @@ class sbzWatchlistScreen(Screen):
 		self.showInfos()
 
 	def keyOK(self):
+		exist = self['filmList'].getCurrent()
+		if self.keyLocked or exist == None:
+			return
+
 		serienName = self['filmList'].getCurrent()[0][0]
 		serienLink = self['filmList'].getCurrent()[0][1]
 		serienPic = self['filmList'].getCurrent()[0][2]
