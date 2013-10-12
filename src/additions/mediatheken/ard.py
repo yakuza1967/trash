@@ -1,5 +1,7 @@
+#	-*-	coding:	utf-8	-*-
+#
 # ARD-Mediathek von chroma_key
-# v0.3
+# v0.4
 #
 # GenreFlags (self.gF):
 # 1 = ABC (TV)
@@ -264,7 +266,7 @@ class ARDPreSelect(Screen):
 			if extra == '1': # Tipps der Redaktion
 				streamLink = "%s/ard/servlet/ajax-cache/3474772/view=list" % mainLink
 				self.session.open(ARDStreamScreen,streamLink,auswahl,"dummy")
-			elif extra == '2': # Hoerspiel
+			elif extra == '2': # Hörspiel
 				streamLink = "%s/ard/servlet/ajax-cache/5407526/view=list" % mainLink
 				self.session.open(ARDStreamScreen,streamLink,auswahl,"dummy")
 			elif extra == '3': # Neueste Clips
@@ -565,19 +567,16 @@ class ARDPostSelect(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.handlePicAndTxt).addErrback(self.dataError)
 
 	def handlePicAndTxt(self, data):
-		gefunden = re.findall('"description" content="(.*?)".*?<meta name="gsaimg512" content="(.*?)"', data, re.S)
+		gefunden = re.findall('<meta name="description" content="(.*?)".*?<meta name="gsaimg512" content="(.*?)"', data, re.S)
 		if gefunden:
-			for (descr,streamPic) in gefunden:
-				if not descr:
+			for (itxt,streamPic) in gefunden:
+				itxttmp = itxt.split("|")
+				itxt = itxttmp[-1]
+				itxt = decodeHtml(itxt)
+				if itxt[:1] == " ":
+					itxt = itxt[1:]
+				if itxt == "":
 					itxt = tDef
-				else:
-					descrtmp = descr.split("|")
-					itxt = descrtmp[-1]
-					itxt = decodeHtml(itxt)
-					if itxt[:1] == " ":
-						itxt = itxt[1:]
-					if itxt == "":
-						itxt = tDef
 		if textTrigger == 1:
 			streamHandlung = itxt
 		elif textTrigger == 0:
@@ -734,10 +733,10 @@ class ARDStreamScreen(Screen):
 				if airtime:
 					if len(airtime) == 0:
 						date = tDef
-						dur = tDef
+						dur = "-"
 					elif len(airtime) == 8:
 						date = "%s" % (airtime)
-						dur = tDef
+						dur = "-"
 					else:
 						date = airtime[:8]
 						if self.gF == "2" or self.gF == "5":	# Suche
@@ -746,9 +745,10 @@ class ARDStreamScreen(Screen):
 							dur = airtime[9:]
 				handlung = "Media:\t%s\nGenre:\t%s\nSendung:\t%s\nClip-Datum:\t%s\nSender:\t%s\nDauer:\t%s\t\t\t\t%s" % (media,self.gN,decodeHtml(sendung),date,sender,dur,seite)
 				self.filmliste.append((decodeHtml(title),url,handlung))
+				self.chooseMenuList.setList(map(ARDBody, self.filmliste))
 		else:
 			self.filmliste.append((isWeg, None, None, None))
-		self.chooseMenuList.setList(map(ARDBody, self.filmliste))
+			self.chooseMenuList.setList(map(ARDBody, self.filmliste))
 		self.keyLocked = False
 		self.loadPic()
 
@@ -757,13 +757,29 @@ class ARDStreamScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.handlePicAndTxt).addErrback(self.dataError)
 
 	def handlePicAndTxt(self, data):
-		ergebnis = re.findall('"description".*?-Clip (.*?)".*?name="gsaimg512".*?"(.*?)"', data, re.S)
-		if ergebnis:
-			for (itxt,streamPic) in ergebnis:
-				if not itxt or len(itxt) == 0:
-					itxt = tDef
-				else:
-					itxt = decodeHtml(itxt)
+		if '<div><p>' in data:
+			ergebnis = re.findall('<meta name="gsaimg512" content="(.*?)".*?<div><p>(.*?)</p></div>', data, re.S)
+			if ergebnis:
+				for (streamPic,itxt) in ergebnis:
+					if not itxt or len(itxt) == 0:
+						itxt = tDef
+					else:
+						itxt = decodeHtml(itxt)
+		else:
+			ergebnis = re.findall('<meta name="description" content="(.*?)".*?<meta name="gsaimg512" content="(.*?)"', data, re.S)
+			if ergebnis:
+				for (itxt,streamPic) in ergebnis:
+					if not itxt or len(itxt) == 0:
+						itxt = tDef
+					else:
+						title = self['List'].getCurrent()[0][0]
+						itxttmp = itxt.split(title)
+						itxt = itxttmp[-1]
+						itxt = decodeHtml(itxt)
+						if itxt[:2] == ": ":
+							itxt = itxt[2:]
+						if itxt == "":
+							itxt = tDef
 		if textTrigger == 1:
 			streamHandlung = itxt
 		elif textTrigger == 0:
@@ -814,9 +830,9 @@ class ARDStreamScreen(Screen):
 			contentExists = 0
 
 			for (a,b,c,d) in qualitycheck:
-				if "?sen=" in d:	# Fuer ARD-Links, sonst wird von rtmp auf http geschwenkt - "?sen=[...]" vermutlich wegen Untertitel fuer Hoergeschaedigte in PC-Browser
+				if "?sen=" in d:	# Für ARD-Links, sonst wird von rtmp auf http geschwenkt - "?sen=[...]" vermutlich wegen Untertitel für Hörgeschädigte in PC-Browser
 					d = d.split("?")[0]
-				if ".mp3" in (d.lower()):	# Checke Abspielarten und uebersehe nachfolgend keine Upper-Cases, zB. beim SR
+				if ".mp3" in (d.lower()):	# Checke Abspielarten und übersehe nachfolgend keine Upper-Cases, zB. beim SR
 					art = ".mp3"
 				elif ".mp4" in (d.lower()):
 					art = ".mp4"
@@ -868,18 +884,18 @@ class ARDStreamScreen(Screen):
 					rtH = Q3H
 					rtP = Q3P
 			# Sonderlocken
-			if "geode_" in rtP:	# rtmp-Links mit ardgeofs/geode_ im URI duerfen aus rechtlichen Gruenden nur in Deutschland gestreamt werden + muessen auf http umgebaut werden, da sie sonst auch in D nicht laufen.
+			if "geode_" in rtP:	# rtmp-Links mit ardgeofs/geode_ im URI dürfen aus rechtlichen Gründen nur in Deutschland gestreamt werden + müssen auf http umgebaut werden, da sie sonst auch in D nicht laufen.
 				geoP = re.search('mp4:.*?/.*?/.*?/(.*?).mp4', rtP, re.S)
 				geoP = geoP.group(1).replace("geode_","")
 				htP = "http://mvideos.daserste.de/videoportal/Film/"+geoP+".mp4"
 				rtP = ""
 				rtH = ""
-			if "bie_webl_ard" in htP:	# Large/Small-Quali von Boerse im Ersten laeuft auch am PC nicht (alle Clips); nur Medium + nur http angeboten.
+			if "bie_webl_ard" in htP:	# Large/Small-Quali von Börse im Ersten läuft auch am PC nicht (alle Clips); nur Medium + nur http angeboten.
 				htP = htP.replace("bie_webl_ard","bie_ard")
 
-			if htP == "" and rtH != "":	# Wenn kein einziger http-Link vorhanden (ausschliesslich rtmp-Links), umgehe nachfolgende http-Abfrage, und "vertraue darauf" dass Content existiert. Beispiel, bei dem es misslingt: "2 Mann fuer alle Gaenge"... Nur rtmp, aber gleichzeitig nicht mehr vorhanden...
+			if htP == "" and rtH != "":	# Wenn kein einziger http-Link vorhanden (ausschliesslich rtmp-Links), umgehe nachfolgende http-Abfrage, und "vertraue darauf" dass Content existiert. Beispiel, bei dem es misslingt: "2 Mann für alle Gänge"... Nur rtmp, aber gleichzeitig nicht mehr vorhanden...
 				contentExists = 1
-			if htP != "":	# http-Abfrage, ob Content existiert. Wenn ja, und es werden ebenfalls rtmp-Links angeboten, dann existieren immer beide Contents! Eine rtmp-Abfrage waere zu kompliziert.
+			if htP != "":	# http-Abfrage, ob Content existiert. Wenn ja, und es werden ebenfalls rtmp-Links angeboten, dann existieren immer beide Contents! Eine rtmp-Abfrage wäre zu kompliziert.
 				try:
 					url = urllib2.urlopen(htP)
 				except IOError:
