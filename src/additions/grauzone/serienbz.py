@@ -39,7 +39,7 @@ class SerienFirstScreen(Screen):
 
 		self['title'] = Label("Serien.bz")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.2")
+		self['name'] = Label("v0.3")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -94,7 +94,7 @@ class SerienLetterScreen(Screen):
 
 		self['title'] = Label("Serien.bz")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.2")
+		self['name'] = Label("v0.3")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -184,14 +184,31 @@ class SerienSecondScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 0
-		self.onLayoutFinish.append(self.loadPage)
+		if self.serienName == "Top50":
+			self.onLayoutFinish.append(self.loadPage2)
+		else:
+			self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		url = self.serienLink
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		raw = re.findall('<li><a href="(.*?)">(.*?)</a>', data, re.S)
+		raw = re.findall('<li><a href="(.*?)".*?>(.*?)</a>', data, re.S)
+		if raw:
+			self.filmliste = []
+			for (serienUrl, serienTitle) in raw:
+				self.filmliste.append((decodeHtml(serienTitle), serienUrl))
+			self.chooseMenuList.setList(map(SerienListEntry, self.filmliste))
+			self.keyLocked = False
+			self.loadInfos()
+			
+	def loadPage2(self):
+		url = "http://serien.bz"
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
+
+	def parseData2(self, data):
+		raw = re.findall('<li><a href="(.*?)".*?>(.*?)</a>', data, re.S)
 		if raw:
 			self.filmliste = []
 			for (serienUrl, serienTitle) in raw:
