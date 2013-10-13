@@ -1895,7 +1895,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
 		if config.mediaportal.showDreisat.value:
 			self.plugin_liste.append(("3sat Mediathek", "3sat", "Mediathek"))
-		if config.mediaportal.showDreisat.value:
+		if config.mediaportal.showArte.value:
 			self.plugin_liste.append(("Arte Mediathek", "arte", "Mediathek"))
 
 		# Porn
