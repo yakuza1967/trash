@@ -342,7 +342,7 @@ class CheckPathes:
 		res, msg = SimplePlaylistIO.checkPath(config.mediaportal.watchlistpath.value, '', True)
 		if not res:
 			self.session.openWithCallback(self._callback, MessageBox, msg, MessageBox.TYPE_ERROR)
-		
+
 		if config.mediaportal.useRtmpDump.value or config.mediaportal.useHttpDump.value:
 			res, msg = SimplePlaylistIO.checkPath(config.mediaportal.storagepath.value, '', True)
 			if not res:
@@ -1508,7 +1508,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(dreisatFirstScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
-			
+
 		# Porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
@@ -2009,7 +2009,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if not fileExists(self.sort_plugins_file):
 				print "Erstelle Wall-Pluginliste."
 				open(self.sort_plugins_file,"w").close()
-				
+
 			pluginliste_leer = os.path.getsize(self.sort_plugins_file)
 			if pluginliste_leer == 0:
 				print "1st time - Schreibe Wall-Pluginliste."
@@ -2534,7 +2534,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(dreisatFirstScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
-			
+
 		# porn
 		elif auswahl == "4Tube":
 			self.pornscreen = fourtubeGenreScreen
