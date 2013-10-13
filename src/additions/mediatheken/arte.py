@@ -70,7 +70,7 @@ class arteFirstScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -81,7 +81,7 @@ class arteFirstScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class arteSecondScreen(Screen):
 
 	def __init__(self, session, Link, Name):
@@ -205,7 +205,7 @@ class arteSecondScreen(Screen):
 
 		self.title = self['liste'].getCurrent()[0][0]
 		link = self['liste'].getCurrent()[0][1].replace('&amp;','&')
-		
+
 		print self.title, link
 		api_url = "http://www.arte.tv/player/v2//index.php?json_url=http://arte.tv/papi/tvguide/videos/stream/player/D/049880-014_PLUS7-D/ALL/ALL.json&lang=de_DE&config=arte_tvguide&rendering_place=" + str(link)
 		print api_url
@@ -221,7 +221,7 @@ class arteSecondScreen(Screen):
 		stream_url = re.findall('<meta name="twitter:player:stream" content="(.*?)">', data)
 		if stream_url:
 			self.tw_agent_hlp.getRedirectedUrl(self.playStream, self.dataError, stream_url[0])
-			
+
 	def playStream(self, url):
 		print url
 		self.session.open(SimplePlayer, [(self.title, url, self.ImageUrl)], showPlaylist=False, ltype='Arte', cover=True)
