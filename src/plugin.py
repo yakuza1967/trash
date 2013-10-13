@@ -88,8 +88,6 @@ from additions.music.eighties import *
 config.mediaportal.showEighties = ConfigYesNo(default = False)
 from additions.music.nuna import *
 config.mediaportal.showNuna = ConfigYesNo(default = True)
-#from additions.music.allmusichouse import *
-#config.mediaportal.showAllMusicHouse = ConfigYesNo(default = True)
 from additions.music.putpattv import *
 config.mediaportal.showputpattv = ConfigYesNo(default = True)
 from additions.music.canna import *
@@ -315,10 +313,6 @@ from additions.grauzone.watchseries import *
 config.mediaportal.showWatchseries = ConfigYesNo(default = False)
 from additions.grauzone.szenestreams import *
 config.mediaportal.showSzeneStreams = ConfigYesNo(default = False)
-#from additions.grauzone.cinestream import *
-#config.mediaportal.showCinestream = ConfigYesNo(default = False)
-#from additions.grauzone.viewster import *
-#config.mediaportal.showViewster = ConfigYesNo(default = False)
 from additions.grauzone.moovizon import *
 config.mediaportal.showMoovizon = ConfigYesNo(default = False)
 from additions.grauzone.vibeo import *
@@ -391,7 +385,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 				skins.append(skin)
 		config.mediaportal.skin.setChoices(skins)
 
-		## Allgemein
+		### Allgemein
 		self.configlist.append(getConfigListEntry("----- Allgemein -----", config.mediaportal.fake_entry))
 		self.configlist.append(getConfigListEntry("Automatic Update Check:", config.mediaportal.autoupdate))
 		self.configlist.append(getConfigListEntry("Hauptansicht Style:", config.mediaportal.ansicht))
@@ -425,7 +419,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.sport.sort(key=lambda t : t[0].lower())
 
 		### Music
-		#self.music.append(getConfigListEntry("AllMusicHouse", config.mediaportal.showAllMusicHouse))
 		self.music.append(getConfigListEntry("Deluxemusic", config.mediaportal.showDeluxemusic))
 		self.music.append(getConfigListEntry("MTV.de Charts", config.mediaportal.showMTVdeCharts))
 		self.music.append(getConfigListEntry("MUSIC-Channels", config.mediaportal.showMusicChannels))
@@ -554,7 +547,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Burning-Series", config.mediaportal.showBs))
 			self.grauzone.append(getConfigListEntry("Kinox", config.mediaportal.showKinox))
 			self.grauzone.append(getConfigListEntry("Movie4k", config.mediaportal.showM4k))
-			#self.grauzone.append(getConfigListEntry("Cinestream", config.mediaportal.showCinestream))
 			self.grauzone.append(getConfigListEntry("MLE-HD", config.mediaportal.showmlehd))
 			self.grauzone.append(getConfigListEntry("PrimeWire", config.mediaportal.showprimewire))
 			self.grauzone.append(getConfigListEntry("ddl.me", config.mediaportal.showDdlme))
@@ -564,7 +556,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
-			#self.grauzone.append(getConfigListEntry("Viewster", config.mediaportal.showViewster))
 			self.grauzone.sort(key=lambda t : t[0].lower())
 
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
@@ -775,8 +766,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 		self.porn = []
 
 		# Fun/Music/Sport
-		#if config.mediaportal.showAllMusicHouse.value:
-		#	self.funsport.append(self.hauptListEntry("AllMusicHouse", "allmusichouse"))
 		if config.mediaportal.showputpattv.value:
 			self.funsport.append(self.hauptListEntry("putpat.tv", "putpattv"))
 		if config.mediaportal.showLaola1.value:
@@ -1020,8 +1009,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.grauzone.append(self.hauptListEntry("Movie4k", "movie4k"))
 			if config.mediaportal.showKinox.value:
 				self.grauzone.append(self.hauptListEntry("Kinox", "kinox"))
-			#if config.mediaportal.showCinestream.value:
-			#	self.grauzone.append(self.hauptListEntry("Cinestream", "cinestream"))
 			if config.mediaportal.showKinoKiste.value:
 				self.grauzone.append(self.hauptListEntry("KinoKiste", "kinokiste"))
 			if config.mediaportal.showstreamit.value:
@@ -1042,8 +1029,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.grauzone.append(self.hauptListEntry("Movie25", "movie25"))
 			if config.mediaportal.showWatchseries.value:
 				self.grauzone.append(self.hauptListEntry("Watchseries", "watchseries"))
-			#if config.mediaportal.showViewster.value:
-			#	self.grauzone.append(self.hauptListEntry("Viewster", "viewster"))
 			if config.mediaportal.showVibeo.value:
 				self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
 			if config.mediaportal.movie2k.value:
@@ -1419,8 +1404,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(showDOKUHGenre)
 		elif auswahl == "DokuHouse":
 			self.session.open(show_DH_Genre)
-		#elif auswahl == "AllMusicHouse":
-		#	self.session.open(show_AMH_Genre)
 		elif auswahl == "putpat.tv":
 			self.session.open(putpattvGenreScreen)
 		elif auswahl == "LiveLeak":
@@ -1505,8 +1488,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(ORFGenreScreen)
 		elif auswahl == "SRF Player":
 			self.session.open(SRFGenreScreen)
-		#elif auswahl == "Cinestream":
-		#	self.session.open(cinestreamFilmListeScreen)
 		elif auswahl == "Moovizon":
 			self.session.open(moovizonGenreScreen)
 		elif auswahl == "Wrestlingnetwork":
@@ -1519,8 +1500,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(sport1fmGenreScreen)
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
-		#elif auswahl == "Viewster":
-		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
 		elif auswahl == "Bild.de":
@@ -1765,8 +1744,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("MUSIC-Channels", "musicchannels", "Music"))
 		if config.mediaportal.showRadio.value:
 			self.plugin_liste.append(("Radio.de", "radiode", "Music"))
-		#if config.mediaportal.showAllMusicHouse.value:
-		#	self.plugin_liste.append(("AllMusicHouse", "allmusichouse", "Music"))
 		if config.mediaportal.showputpattv.value:
 			self.plugin_liste.append(("putpat.tv", "putpattv", "Music"))
 		if config.mediaportal.showgrauzone.value:
@@ -2006,14 +1983,10 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("Kinox", "kinox", "Grauzone"))
 			if config.mediaportal.showStreamOase.value:
 				self.plugin_liste.append(("StreamOase", "streamoase", "Grauzone"))
-			#if config.mediaportal.showCinestream.value:
-			#	self.plugin_liste.append(("Cinestream", "cinestream", "Grauzone"))
 			if config.mediaportal.showKinoKiste.value:
 				self.plugin_liste.append(("KinoKiste", "kinokiste", "Grauzone"))
 			if config.mediaportal.showBs.value:
 				self.plugin_liste.append(("Burning-Series", "burningseries", "Grauzone"))
-			#if config.mediaportal.showViewster.value:
-			#	self.plugin_liste.append(("Viewster", "viewster", "Grauzone"))
 			if config.mediaportal.showprimewire.value:
 				self.plugin_liste.append(("PrimeWire", "primewire", "Grauzone"))
 			if config.mediaportal.showMoovizon.value:
@@ -2453,8 +2426,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(showDOKUHGenre)
 		elif auswahl == "DokuHouse":
 			self.session.open(show_DH_Genre)
-		#elif auswahl == "AllMusicHouse":
-		#	self.session.open(show_AMH_Genre)
 		elif auswahl == "putpat.tv":
 			self.session.open(putpattvGenreScreen)
 		elif auswahl == "LiveLeak":
@@ -2477,8 +2448,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(show_MUSIC_Genre)
 		elif auswahl == "USER-Channels":
 			self.session.open(show_USER_Genre)
-		#elif auswahl == "Cinestream":
-		#	self.session.open(cinestreamFilmListeScreen)
 		elif auswahl == "Moovizon":
 			self.session.open(moovizonGenreScreen)
 		elif auswahl == "YouTube":
@@ -2553,8 +2522,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(wrestlingnetworkGenreScreen)
 		elif auswahl == "retro-tv":
 			self.session.open(retrotvFilmListeScreen)
-		#elif auswahl == "Viewster":
-		#	self.session.open(viewsterGenreScreen)
 		elif auswahl == "ARD Mediathek":
 			self.session.open(ARDGenreScreen)
 		elif auswahl == "Galileo-Videolexikon":
