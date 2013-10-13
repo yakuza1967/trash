@@ -40,7 +40,7 @@ class movie25GenreScreen(Screen):
 
 		self.keyLocked = True
 		self['title'] = Label("movie25.so")
-		self['ContentTitle'] = Label("Genre and Title 0-9/A-Z:")
+		self['ContentTitle'] = Label("Genre:")
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
@@ -85,33 +85,33 @@ class movie25GenreScreen(Screen):
                             ('Thriller',"http://www.movie25.so/movies/thriller/"),
                             ('War',"http://www.movie25.so/movies/war/"),
                             ('Western',"http://www.movie25.so/movies/western/"),
-                            ('Movie Title: 0-9',"http://www.movie25.so/movies/0-9/"),
-                            ('Movie Title: A',"http://www.movie25.so/movies/a/"),
-                            ('Movie Title: B',"http://www.movie25.so/movies/b/"),
-                            ('Movie Title: C',"http://www.movie25.so/movies/c/"),
-                            ('Movie Title: D',"http://www.movie25.so/movies/d/"),
-                            ('Movie Title: E',"http://www.movie25.so/movies/e/"),
-                            ('Movie Title: F',"http://www.movie25.so/movies/f/"),
-                            ('Movie Title: G',"http://www.movie25.so/movies/g/"),
-                            ('Movie Title: H',"http://www.movie25.so/movies/h/"),
-                            ('Movie Title: I',"http://www.movie25.so/movies/i/"),
-                            ('Movie Title: J',"http://www.movie25.so/movies/j/"),
-                            ('Movie Title: K',"http://www.movie25.so/movies/k/"),
-                            ('Movie Title: L',"http://www.movie25.so/movies/l/"),
-                            ('Movie Title: M',"http://www.movie25.so/movies/m/"),
-                            ('Movie Title: N',"http://www.movie25.so/movies/n/"),
-                            ('Movie Title: O',"http://www.movie25.so/movies/o/"),
-                            ('Movie Title: P',"http://www.movie25.so/movies/p/"),
-                            ('Movie Title: Q',"http://www.movie25.so/movies/q/"),
-                            ('Movie Title: R',"http://www.movie25.so/movies/r/"),
-                            ('Movie Title: S',"http://www.movie25.so/movies/s/"),
-                            ('Movie Title: T',"http://www.movie25.so/movies/t/"),
-                            ('Movie Title: U',"http://www.movie25.so/movies/u/"),
-                            ('Movie Title: V',"http://www.movie25.so/movies/v/"),
-                            ('Movie Title: W',"http://www.movie25.so/movies/w/"),
-                            ('Movie Title: X',"http://www.movie25.so/movies/x/"),
-                            ('Movie Title: Y',"http://www.movie25.so/movies/y/"),
-                            ('Movie Title: Z',"http://www.movie25.so/movies/z/"),]       
+                            ('Movie Title 0-9',"http://www.movie25.so/movies/0-9/"),
+                            ('Movie Title A',"http://www.movie25.so/movies/a/"),
+                            ('Movie Title B',"http://www.movie25.so/movies/b/"),
+                            ('Movie Title C',"http://www.movie25.so/movies/c/"),
+                            ('Movie Title D',"http://www.movie25.so/movies/d/"),
+                            ('Movie Title E',"http://www.movie25.so/movies/e/"),
+                            ('Movie Title F',"http://www.movie25.so/movies/f/"),
+                            ('Movie Title G',"http://www.movie25.so/movies/g/"),
+                            ('Movie Title H',"http://www.movie25.so/movies/h/"),
+                            ('Movie Title I',"http://www.movie25.so/movies/i/"),
+                            ('Movie Title J',"http://www.movie25.so/movies/j/"),
+                            ('Movie Title K',"http://www.movie25.so/movies/k/"),
+                            ('Movie Title L',"http://www.movie25.so/movies/l/"),
+                            ('Movie Title M',"http://www.movie25.so/movies/m/"),
+                            ('Movie Title N',"http://www.movie25.so/movies/n/"),
+                            ('Movie Title O',"http://www.movie25.so/movies/o/"),
+                            ('Movie Title P',"http://www.movie25.so/movies/p/"),
+                            ('Movie Title Q',"http://www.movie25.so/movies/q/"),
+                            ('Movie Title R',"http://www.movie25.so/movies/r/"),
+                            ('Movie Title S',"http://www.movie25.so/movies/s/"),
+                            ('Movie Title T',"http://www.movie25.so/movies/t/"),
+                            ('Movie Title U',"http://www.movie25.so/movies/u/"),
+                            ('Movie Title V',"http://www.movie25.so/movies/v/"),
+                            ('Movie Title W',"http://www.movie25.so/movies/w/"),
+                            ('Movie Title X',"http://www.movie25.so/movies/x/"),
+                            ('Movie Title Y',"http://www.movie25.so/movies/y/"),
+                            ('Movie Title Z',"http://www.movie25.so/movies/z/"),]
 
 		self.chooseMenuList.setList(map(movie25GenreListEntry, self.genreliste))
 		self.keyLocked = False
@@ -194,10 +194,10 @@ class movie25FilmeListeScreen(Screen):
 		lastpage = re.findall('>Page <font color=red>.*?</font> of (.*\d)</td>', data, re.S)
 		if lastpage:
 			self['page'].setText(lastpage[0])
-        
+
 		data=data.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
 		movies = re.findall('        <li><div class="movie_pic"><a href="(.+?)"  target.+?img src="(.+?)".+?target="_self">(.+?)</a></', data, re.S)
-                movies += re.findall('</li>      <li><div class="movie_pic"><a href="(.+?)"  target.+?img src="(.+?)".+?target="_self">(.+?)</a></', data, re.S)		
+                movies += re.findall('</li>      <li><div class="movie_pic"><a href="(.+?)"  target.+?img src="(.+?)".+?target="_self">(.+?)</a></', data, re.S)
 		if movies:
 			self.filmliste = []
 			for (link,image,title) in movies:
@@ -329,7 +329,7 @@ class movie25StreamListeScreen(Screen):
 		printl(error,self,"E")
 
 	def loadPageData(self, data):
-		print "movie25StreamListeScreen daten bekommen data = ", data		
+		print "movie25StreamListeScreen daten bekommen data = ", data
                 streams = re.findall('<li class="link_name">(.*?)</li>.*?<li class="playing_button"><span><a href="(.*?)" target', data, re.S)
                 print " streams =", streams
 		if streams:
