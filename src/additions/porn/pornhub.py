@@ -126,8 +126,6 @@ def RotWord(w):
 def encrypt(plaintext, password, nBits):
 	blockSize = 16
 	if not nBits in (128, 192, 256): return ""
-#	plaintext = plaintext.encode("utf-8")
-#	password  = password.encode("utf-8")
 	nBytes = nBits//8
 	pwBytes = [0] * nBytes
 	for i in range(nBytes): pwBytes[i] = 0 if i>=len(password) else ord(password[i])
@@ -174,7 +172,6 @@ def decrypt(ciphertext, password, nBits):
 	blockSize = 16
 	if not nBits in (128, 192, 256): return ""
 	ciphertext = base64.b64decode(ciphertext)
-#	password = password.encode("utf-8")
 
 	nBytes = nBits//8
 	pwBytes = [0] * nBytes
@@ -209,8 +206,7 @@ def decrypt(ciphertext, password, nBits):
 		plaintxt[b] = "".join(plaintxtByte)
 
 	plaintext = "".join(plaintxt)
- #   plaintext = plaintext.decode("utf-8")
-	return plaintext
+ 	return plaintext
 
 def urs(a, b):
 	a &= 0xffffffff
@@ -230,6 +226,19 @@ def pornhubGenreListEntry(entry):
 def pornhubFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 900, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
+		]
+
+def pornhubPlayListEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 450, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
+		(eListboxPythonMultiContent.TYPE_TEXT, 610, 0, 290, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "Videos: " + entry[1])
+		]
+
+def pornhubPornstarListEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 140, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "Rank: " + entry[3]),
+		(eListboxPythonMultiContent.TYPE_TEXT, 150, 0, 450, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
+		(eListboxPythonMultiContent.TYPE_TEXT, 610, 0, 290, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "Videos: " + entry[4])
 		]
 
 class pornhubGenreScreen(Screen):
@@ -260,6 +269,7 @@ class pornhubGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
+		self.type = None
 
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -281,8 +291,11 @@ class pornhubGenreScreen(Screen):
 				phUrl = "http://www.pornhub.com" + phUrl + "&page="
 				self.filmliste.append((phTitle, phUrl, phImage))
 			self.filmliste.sort()
-			self.filmliste.insert(0, ("Pornstar Toplist", "http://www.pornhub.com/pornstars?o=mp&page=", None))
-			self.filmliste.insert(0, ("Playlists", "playlist", None))
+			self.filmliste.insert(0, ("Playlists - Most Favorited", "http://www.pornhub.com/playlists?o=mf&page=", None))
+			self.filmliste.insert(0, ("Playlists - Top Rated", "http://www.pornhub.com/playlists?page=", None))
+			self.filmliste.insert(0, ("Playlists - Most Viewed", "http://www.pornhub.com/playlists?o=mv&page=", None))
+			self.filmliste.insert(0, ("Playlists - Most Recent", "http://www.pornhub.com/playlists?o=mr&page=", None))
+			self.filmliste.insert(0, ("Pornstars", "http://www.pornhub.com/pornstars?o=mp&page=", None))
 			self.filmliste.insert(0, ("HD", "http://www.pornhub.com/video?c=38&page=", 'http://cdn1a.static.pornhub.phncdn.com/images/categories/38.jpg'))
 			self.filmliste.insert(0, ("Longest", "http://www.pornhub.com/video?o=lg&page=", None))
 			self.filmliste.insert(0, ("Top Rated", "http://www.pornhub.com/video?o=tr&page=", None))
@@ -306,18 +319,17 @@ class pornhubGenreScreen(Screen):
 		if self.keyLocked:
 			return
 		streamGenreName = self['genreList'].getCurrent()[0][0]
-		Name = "Dump"
 		if streamGenreName == "--- Search ---":
 			self.suchen()
-		elif streamGenreName == "Pornstar Toplist":
+		elif streamGenreName == "Pornstars":
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
 			self.session.open(pornhubPornstarScreen, streamGenreLink)
-		elif streamGenreName == "Playlists":
+		elif re.match("Playlists", streamGenreName):
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
-			self.session.open(pornhubPlaylistsScreen, streamGenreLink)
+			self.session.open(pornhubPlayListScreen, streamGenreLink)
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
-			self.session.open(pornhubFilmScreen, streamGenreLink, Name)
+			self.session.open(pornhubFilmScreen, streamGenreLink, self.type)
 
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
@@ -326,8 +338,7 @@ class pornhubGenreScreen(Screen):
 		if callback is not None and len(callback):
 			self.suchString = callback.replace(' ', '%2B')
 			streamGenreLink = 'http://www.pornhub.com/video/search?search=%s&page=' % (self.suchString)
-			Name = "Dump"
-			self.session.open(pornhubFilmScreen, streamGenreLink, Name)
+			self.session.open(pornhubFilmScreen, streamGenreLink, self.type)
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -355,76 +366,15 @@ class pornhubGenreScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
-		
-class pornhubPlaylistsScreen(Screen):
-
-	def __init__(self, session, streamGenreLink):
-		self.session = session
-		self.Link = streamGenreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
-		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXGenreScreen.xml"
-		print path
-		with open(path, "r") as f:
-			self.skin = f.read()
-			f.close()
-
-		Screen.__init__(self, session)
-
-		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
-			"ok" : self.keyOK,
-			"cancel" : self.keyCancel
-		}, -1)
-
-		self['title'] = Label("Pornhub.com")
-		self['name'] = Label("Playlist Auswahl")
-		self['coverArt'] = Pixmap()
-		self.keyLocked = True
-		self.suchString = ''
-
-		self.filmliste = []
-		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
-		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
-		self.chooseMenuList.l.setItemHeight(25)
-		self['genreList'] = self.chooseMenuList
-
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-			self.filmliste.sort()
-			self.filmliste.insert(0, ("Top Rated", "http://www.pornhub.com/playlists?page=", None))
-			self.filmliste.insert(0, ("Most Viewed", "http://www.pornhub.com/playlists?o=mv&page=", None))
-			self.filmliste.insert(0, ("Most Recent", "http://www.pornhub.com/playlists?o=mr&page=", None))
-			self.filmliste.insert(0, ("Most Favorited", "http://www.pornhub.com/playlists?o=mf&page=", None))
-			self.chooseMenuList.setList(map(pornhubGenreListEntry, self.filmliste))
-			self.chooseMenuList.moveToIndex(0)
-			self.keyLocked = False
-
-	def keyOK(self):
-		if self.keyLocked:
-			return
-		streamGenreName = self['genreList'].getCurrent()[0][0]
-		streamGenreLink = self['genreList'].getCurrent()[0][1]
-		self.session.open(pornhubPlayListScreen, streamGenreLink)
-
-	def keyCancel(self):
-		self.close()
-
-def pornhubPlayListEntry(entry):
-	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 450, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
-		(eListboxPythonMultiContent.TYPE_TEXT, 610, 0, 290, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "Videos: " + entry[1])
-		]
 
 class pornhubPlayListScreen(Screen):
 
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.Link = streamGenreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXFilmScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -440,13 +390,16 @@ class pornhubPlayListScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft,
 			"nextBouquet" : self.keyPageUp,
-			"prevBouquet" : self.keyPageDown
+			"prevBouquet" : self.keyPageDown,
+			"green" : self.keyPageNumber
 		}, -1)
 
 		self['title'] = Label("Pornhub.com")
 		self['name'] = Label("Playlists")
+		self['views'] = Label("")
+		self['runtime'] = Label("")
+		self['page'] = Label("1")
 		self['coverArt'] = Pixmap()
-#		self['page'] = Label("1")
 		self.keyLocked = True
 		self.page = 1
 
@@ -462,17 +415,19 @@ class pornhubPlayListScreen(Screen):
 		self.filmliste = []
 		self.keyLocked = True
 		url = self.Link + str(self.page)
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadpage).addErrback(self.dataError)
 
-	def loadPageData(self, data):
+	def loadpage(self, data):
 		phCats = re.findall('class="playlist-videos.*?<span>(.*?)</span>.*?src="(.*?)".*?class="title".*?href="(.*?)">(.*?)</a>', data, re.S)
 		if phCats:
 			for phVideos, phImage, phUrl, phTitle in phCats:
+				phUrl = "http://www.pornhub.com" + phUrl
 				self.filmliste.append((decodeHtml(phTitle), phVideos, phImage, phUrl))
 			self.chooseMenuList.setList(map(pornhubPlayListEntry, self.filmliste))
+			self.chooseMenuList.moveToIndex(0)
 			self.keyLocked = False
 			self.showInfos()
-#			self['page'].setText(str(self.page))
+			self['page'].setText(str(self.page))
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -480,6 +435,23 @@ class pornhubPlayListScreen(Screen):
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(phImage)
+
+	def keyOK(self):
+		Link = self['genreList'].getCurrent()[0][3]
+		self.type = "Playlist"
+		self.session.open(pornhubFilmScreen, phCatLink, self.type)
+
+	def keyPageNumber(self):
+		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
+
+	def callbackkeyPageNumber(self, answer):
+		if answer is not None:
+			answer = re.findall('\d+', answer)
+		else:
+			return
+		if answer:
+			self.page = int(answer[0])
+			self.layoutFinished()
 
 	def keyPageDown(self):
 		print "PageDown"
@@ -520,30 +492,17 @@ class pornhubPlayListScreen(Screen):
 		self['genreList'].down()
 		self.showInfos()
 
-	def keyOK(self):
-		Link = self['genreList'].getCurrent()[0][3]
-		Name = "Playlist"
-		phCatLink = "http://www.pornhub.com" + Link
-		self.session.open(pornhubFilmScreen, phCatLink, Name)
-		
 	def keyCancel(self):
 		self.close()
-
-def pornhubPornstarListEntry(entry):
-	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 140, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "Rank: " + entry[3]),
-		(eListboxPythonMultiContent.TYPE_TEXT, 150, 0, 450, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
-		(eListboxPythonMultiContent.TYPE_TEXT, 610, 0, 290, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "Videos: " + entry[4])
-		]
 
 class pornhubPornstarScreen(Screen):
 
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.Link = streamGenreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXGenreScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXFilmScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -559,15 +518,19 @@ class pornhubPornstarScreen(Screen):
 			"right" : self.keyRight,
 			"left" : self.keyLeft,
 			"nextBouquet" : self.keyPageUp,
-			"prevBouquet" : self.keyPageDown
+			"prevBouquet" : self.keyPageDown,
+			"green" : self.keyPageNumber
 		}, -1)
 
 		self['title'] = Label("Pornhub.com")
-		self['name'] = Label("Pornstar Toplist")
+		self['name'] = Label("Pornstars")
+		self['views'] = Label("")
+		self['runtime'] = Label("")
+		self['page'] = Label("1")
 		self['coverArt'] = Pixmap()
-#		self['page'] = Label("1")
 		self.keyLocked = True
 		self.page = 1
+		self.type = None
 
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -581,17 +544,19 @@ class pornhubPornstarScreen(Screen):
 		self.filmliste = []
 		self.keyLocked = True
 		url = self.Link + str(self.page)
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadpage).addErrback(self.dataError)
 
-	def loadPageData(self, data):
-		phCats = re.findall('rank_number">(.*?)<.*?src="(.*?)".*?href="(.*?)".*?class="title".*?>(.*?)<.*?videosNumber">(.*?)</span>', data, re.S)
+	def loadpage(self, data):
+		phCats = re.findall('rank_number">(.*?)<.*?src="(.*?)".*?href="(.*?)".*?class="title".*?>(.*?)<.*?videosNumber">(.*?)\sVideos</span>', data, re.S)
 		if phCats:
 			for phRank, phImage, phUrl, phTitle, phVideos in phCats:
+				phUrl = phUrl + "?page="
 				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage, phRank, phVideos))
 			self.chooseMenuList.setList(map(pornhubPornstarListEntry, self.filmliste))
+			self.chooseMenuList.moveToIndex(0)
 			self.keyLocked = False
 			self.showInfos()
-#			self['page'].setText(str(self.page))
+			self['page'].setText(str(self.page))
 
 	def dataError(self, error):
 		printl(error,self,"E")
@@ -599,6 +564,22 @@ class pornhubPornstarScreen(Screen):
 	def showInfos(self):
 		phImage = self['genreList'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(phImage)
+
+	def keyOK(self):
+		Link = self['genreList'].getCurrent()[0][1]
+		self.session.open(pornhubFilmScreen, phCatLink, self.type)
+
+	def keyPageNumber(self):
+		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
+
+	def callbackkeyPageNumber(self, answer):
+		if answer is not None:
+			answer = re.findall('\d+', answer)
+		else:
+			return
+		if answer:
+			self.page = int(answer[0])
+			self.layoutFinished()
 
 	def keyPageDown(self):
 		print "PageDown"
@@ -639,21 +620,15 @@ class pornhubPornstarScreen(Screen):
 		self['genreList'].down()
 		self.showInfos()
 
-	def keyOK(self):
-		Link = self['genreList'].getCurrent()[0][1]
-		Name = "Dump"
-		phCatLink = Link + "?page="
-		self.session.open(pornhubFilmScreen, phCatLink, Name)
-		
 	def keyCancel(self):
 		self.close()
 
 class pornhubFilmScreen(Screen):
 
-	def __init__(self, session, phCatLink, name):
+	def __init__(self, session, phCatLink, type):
 		self.session = session
 		self.phCatLink = phCatLink
-		self.name = name
+		self.type = type
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXFilmScreen.xml"
@@ -698,7 +673,7 @@ class pornhubFilmScreen(Screen):
 		self['name'].setText('Bitte warten...')
 		self.filmliste = []
 		self['page'].setText(str(self.page))
-		if self.name == "Playlist":
+		if self.type == "Playlist":
 			url = "%s" % (self.phCatLink)
 		else:
 			url = "%s%s" % (self.phCatLink, str(self.page))
