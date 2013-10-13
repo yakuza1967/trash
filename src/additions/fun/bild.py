@@ -337,8 +337,7 @@ class bildSecondScreen(Screen):
 
 	def showInfos(self):
 		coverUrl = self['liste'].getCurrent()[0][2]
-		ImageUrl = "%s" % coverUrl
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		CoverHelper(self['coverArt']).getCover(coverUrl)
 
 	def keyLeft(self):
 		if self.keyLocked:

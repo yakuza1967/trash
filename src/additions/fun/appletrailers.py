@@ -173,8 +173,7 @@ class appletrailersFilmScreen(Screen):
 		phRuntime = self['genreList'].getCurrent()[0][3]
 		self['name'].setText(phTitle)
 		self['runtime'].setText(phRuntime)
-		ImageUrl = "%s" % phImage
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		CoverHelper(self['coverArt']).getCover(phImage)
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))

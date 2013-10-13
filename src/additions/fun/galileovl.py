@@ -159,8 +159,7 @@ class galileovlListeScreen(Screen):
 		streamPic = self['liste'].getCurrent()[0][3]
 		handlung = self['liste'].getCurrent()[0][2]
 		self['handlung'].setText(decodeHtml(handlung))
-		ImageUrl = "%s" % streamPic
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def keyLeft(self):
 		if self.keyLocked:

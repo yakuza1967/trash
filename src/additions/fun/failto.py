@@ -73,8 +73,7 @@ class failScreen(Screen):
 		flPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(flTitle)
 		self['page'].setText(str(self.page))
-		ImageUrl = "%s" % flPicLink
-		CoverHelper(self['Pic']).getCover(ImageUrl)
+		CoverHelper(self['Pic']).getCover(flPicLink)
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))

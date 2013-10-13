@@ -224,8 +224,7 @@ class vibeoTypeListeScreen(Screen):
 			(coverID, handlung) = infos[0]
 			streamPic = "http://static.vibeo.tv/covers/%s" % coverID
 			self['handlung'].setText(decodeHtml(handlung))
-			ImageUrl = "%s" % streamPic
-			CoverHelper(self['coverArt']).getCover(ImageUrl)
+			CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def keyLeft(self):
 		if self.keyLocked:

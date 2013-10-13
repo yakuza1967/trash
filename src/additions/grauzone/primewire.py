@@ -139,8 +139,7 @@ class PrimeWireFilmlisteScreen(Screen):
 
 	def showInfos(self):
 		coverUrl = self['streamlist'].getCurrent()[0][2]
-		ImageUrl = "%s" % coverUrl
-		CoverHelper(self['stationIcon']).getCover(ImageUrl)
+		CoverHelper(self['stationIcon']).getCover(coverUrl)
 
 	def dataError(self, error):
 		printl(error,self,"E")

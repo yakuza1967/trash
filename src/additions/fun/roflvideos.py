@@ -69,8 +69,7 @@ class roflScreen(Screen):
 		roflName = self['List'].getCurrent()[0][0]
 		self['name'].setText(roflName)
 		self['page'].setText(str(self.page))
-		ImageUrl = "%s" % PicLink
-		CoverHelper(self['Pic']).getCover(ImageUrl)
+		CoverHelper(self['Pic']).getCover(PicLink)
 
 	def keyPageDown(self):
 		print "PageDown"

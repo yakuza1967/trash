@@ -97,8 +97,7 @@ class retrotvFilmListeScreen(Screen):
 		streamUrl = self['liste'].getCurrent()[0][1]
 		streamPic = self['liste'].getCurrent()[0][2]
 		self['name'].setText(streamTitle)
-		ImageUrl = "%s" % streamPic
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 		getPage(streamUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDescription).addErrback(self.dataError)
 
 	def getDescription(self, data):

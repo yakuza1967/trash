@@ -70,8 +70,7 @@ class trailer(Screen, ConfigListScreen):
 		coverUrl = self['List'].getCurrent()[0][2]
 		self.filmtrailer = self['List'].getCurrent()[0][0]
 		self['name'].setText(self.filmtrailer)
-		ImageUrl = "%s" % coverUrl
-		CoverHelper(self['Pic']).getCover(ImageUrl)
+		CoverHelper(self['Pic']).getCover(coverUrl)
 
 	def keyOK(self):
 		exist = self['List'].getCurrent()

@@ -126,8 +126,7 @@ class focus(Screen):
 		Image = self['streamlist'].getCurrent()[0][1]
 		Link = self['streamlist'].getCurrent()[0][2]
 		self['name'].setText(Title)
-		ImageUrl = "%s" % Image
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		CoverHelper(self['coverArt']).getCover(Image)
 
 	def handlungData(self, data):
 		handlung = re.findall('og:description"\scontent="(.*?)"', data, re.S)

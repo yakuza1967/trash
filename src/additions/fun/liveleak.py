@@ -123,8 +123,7 @@ class LiveLeakClips(Screen):
 		llPicLink = self['List'].getCurrent()[0][2]
 		self['name'].setText(llTitle)
 		self['page'].setText(str(self.page))
-		ImageUrl = "%s" % llPicLink
-		CoverHelper(self['Pic']).getCover(ImageUrl)
+		CoverHelper(self['Pic']).getCover(llPicLink)
 
 	def keyPageDown(self):
 		print "PageDown"

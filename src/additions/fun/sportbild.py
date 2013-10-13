@@ -78,8 +78,7 @@ class sportBildScreen(Screen):
 		self['page'].setText(str(self.page))
 		self['date'].setText(spDate)
 		self['runtime'].setText(spRuntime)
-		ImageUrl = "%s" % spPicLink
-		CoverHelper(self['Pic']).getCover(ImageUrl)
+		CoverHelper(self['Pic']).getCover(spPicLink)
 
 	def keyPageDown(self):
 		print "PageDown"

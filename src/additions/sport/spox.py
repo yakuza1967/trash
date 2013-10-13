@@ -178,8 +178,7 @@ class spoboxFilmListeScreen(Screen):
 		streamName = self['filmList'].getCurrent()[0][0]
 		self['name'].setText(streamName)
 		streamPic = self['filmList'].getCurrent()[0][2]
-		ImageUrl = "%s" % streamPic
-		CoverHelper(self['coverArt']).getCover(ImageUrl)
+		CoverHelper(self['coverArt']).getCover(streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:

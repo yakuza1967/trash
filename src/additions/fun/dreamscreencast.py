@@ -76,8 +76,7 @@ class dreamscreencast(Screen):
 	def getImage(self, data):
 		image = re.findall('<a rel="gallery" href="(.*?)"', data, re.S)
 		streamPic = image[0]
-		ImageUrl = "%s" % streamPic
-		CoverHelper(self['stationIcon']).getCover(ImageUrl)
+		CoverHelper(self['stationIcon']).getCover(streamPic)
 
 	def keyOK(self):
 		exist = self['streamlist'].getCurrent()

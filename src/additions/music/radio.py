@@ -114,8 +114,7 @@ class Radiode(Screen):
 
 
 	def stationIconRead(self, stationIconLink):
-		ImageUrl = "%s" % stationIconLink
-		CoverHelper(self['stationIcon']).getCover(ImageUrl)
+		CoverHelper(self['stationIcon']).getCover(stationIconLink)
 
 	def keySwitchList(self):
 		if self.currentList == "streamlist":
