@@ -3,8 +3,6 @@ from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 from Plugins.Extensions.MediaPortal.resources.yt_url import *
-from urllib import quote, urlencode
-import md5
 
 config.entertain = ConfigSubsection()
 config.entertain.userName = ConfigText(default="USERNAME", fixed_size=False)
@@ -47,7 +45,7 @@ def meWatchedListEntry(entry):
 			(eListboxPythonMultiContent.TYPE_TEXT, 100, 0, 700, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 			]
 
-class showMEHDGenre(Screen):
+class showevonicGenre(Screen):
 
 	def __init__(self, session):
 		self.session = session

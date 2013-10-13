@@ -34,7 +34,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 from jsunpacker import cJsUnpacker
 
-import re, urllib, urllib2, os, cookielib, time, socket, sha, shutil, base64, datetime, math, hashlib, random, json
+import re, urllib, urllib2, os, cookielib, time, socket, sha, shutil, base64, datetime, math, hashlib, random, json, md5
 from urllib2 import Request, URLError, urlopen as urlopen2
 from socket import gaierror, error
 from urllib import quote, unquote_plus, unquote, urlencode

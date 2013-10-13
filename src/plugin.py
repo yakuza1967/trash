@@ -293,8 +293,8 @@ from additions.porn.youporn import *
 config.mediaportal.showyouporn = ConfigYesNo(default = False)
 
 # Grauzone
-from additions.grauzone.myentertainment import *
-config.mediaportal.showMEHD = ConfigYesNo(default = False)
+from additions.grauzone.evonic import *
+config.mediaportal.showevonic = ConfigYesNo(default = False)
 from additions.grauzone.streamoase import *
 config.mediaportal.showStreamOase = ConfigYesNo(default = False)
 from additions.grauzone.kinokiste import *
@@ -546,7 +546,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		### Grauzone
 		if config.mediaportal.showgrauzone.value:
 			self.grauzone.append(getConfigListEntry("SzeneStreams", config.mediaportal.showSzeneStreams))
-			self.grauzone.append(getConfigListEntry("My-Entertainment", config.mediaportal.showMEHD))
+			self.grauzone.append(getConfigListEntry("Evonic.tv", config.mediaportal.showevonic))
 			self.grauzone.append(getConfigListEntry("STREAMIT", config.mediaportal.showstreamit))
 			self.grauzone.append(getConfigListEntry("Baskino", config.mediaportal.showBaskino))
 			self.grauzone.append(getConfigListEntry("KinoKiste", config.mediaportal.showKinoKiste))
@@ -1014,8 +1014,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.grauzone.append(self.hauptListEntry("MLE-HD", "mlehd"))
 			if config.mediaportal.showStreamOase.value:
 				self.grauzone.append(self.hauptListEntry("StreamOase", "streamoase"))
-			if config.mediaportal.showMEHD.value:
-				self.grauzone.append(self.hauptListEntry("My-Entertainment", "mehd"))
+			if config.mediaportal.showevonic.value:
+				self.grauzone.append(self.hauptListEntry("Evonic.tv", "evonic"))
 			if config.mediaportal.showM4k.value:
 				self.grauzone.append(self.hauptListEntry("Movie4k", "movie4k"))
 			if config.mediaportal.showKinox.value:
@@ -1400,7 +1400,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "Tivi":
 			self.session.open(tiviGenreListeScreen)
 		elif auswahl == "My-Entertainment":
-			self.session.open(showMEHDGenre)
+			self.session.open(showevonicGenre)
 		elif auswahl == "Songs.to":
 			self.session.open(showSongstoGenre)
 		elif auswahl == "Movie4k":
@@ -1982,8 +1982,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if (config.mediaportal.showgrauzone.value == False and config.mediaportal.filter.value == 'Grauzone'):
 			config.mediaportal.filter.value = 'ALL'
 		if config.mediaportal.showgrauzone.value:
-			if config.mediaportal.showMEHD.value:
-				self.plugin_liste.append(("My-Entertainment", "mehd", "Grauzone"))
+			if config.mediaportal.showevonic.value:
+				self.plugin_liste.append(("Evonic.tv", "evonic", "Grauzone"))
 			if config.mediaportal.showM4k.value:
 				self.plugin_liste.append(("Movie4k", "movie4k", "Grauzone"))
 			if config.mediaportal.showstreamit.value:
@@ -2434,7 +2434,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "Tivi":
 			self.session.open(tiviGenreListeScreen)
 		elif auswahl == "My-Entertainment":
-			self.session.open(showMEHDGenre)
+			self.session.open(showevonicGenre)
 		elif auswahl == "Songs.to":
 			self.session.open(showSongstoGenre)
 		elif auswahl == "Movie4k":
