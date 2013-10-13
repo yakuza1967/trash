@@ -260,6 +260,7 @@ class bildSecondScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 0
+		self.realpage = 1
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
@@ -269,9 +270,9 @@ class bildSecondScreen(Screen):
 	def parseData(self, data):
 		lastpage = re.findall('<li class="pagLast">.*?page=(.*?),isVideoStartseite', data)
 		if lastpage:
-			self['page'].setText("%s / %s" % (str(self.page), str(lastpage[0])))
+			self['page'].setText("%s / %s" % (str(self.realpage), str(lastpage[0])))
 		else:
-			self['page'].setText(str(self.page))
+			self['page'].setText(str(self.realpage))
 
 		if self.bildName == "Geschichte" or self.bildName == "Natur":
 			raw = re.findall('Alle Videos</h2>(.*?)</section></div></div>', data, re.S)
@@ -354,6 +355,7 @@ class bildSecondScreen(Screen):
 		if self.keyLocked:
 			return
 		if not self.page < 1:
+			self.realpage -= 1
 			self.page -= 1
 			self.loadPage()
 
@@ -362,6 +364,7 @@ class bildSecondScreen(Screen):
 		if self.keyLocked:
 			return
 		self.page += 1
+		self.realpage += 1
 		self.loadPage()
 
 	def keyOK(self):
