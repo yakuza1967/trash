@@ -12,7 +12,7 @@ def SerienListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-	
+
 def sbzWatchListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
@@ -54,15 +54,15 @@ class SerienFirstScreen(Screen):
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
-		
+
 		self.onLayoutFinish.append(self.layoutFinished)
-		
+
 	def layoutFinished(self):
 		self.genreliste.append(("Serien A-Z","dump"))
 		self.genreliste.append(("Watchlist","dump"))
 		self.chooseMenuList.setList(map(SerienEntry, self.genreliste))
 		self.keyLocked = False
-		
+
 	def keyOK(self):
 		Auswahl = self['genreList'].getCurrent()[0][0]
 		if Auswahl == "Serien A-Z":
@@ -127,7 +127,7 @@ class SerienLetterScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		serienName = self['genreList'].getCurrent()[0][0]
 		serienLink = self['genreList'].getCurrent()[0][1]
@@ -135,7 +135,7 @@ class SerienLetterScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class SerienSecondScreen(Screen):
 
 	def __init__(self, session, serienLink, serienName):
@@ -160,7 +160,7 @@ class SerienSecondScreen(Screen):
 		"down" : self.keyDown,
 		"right" : self.keyRight,
 		"left" : self.keyLeft,
-		"green" : self.addWatchlist 
+		"green" : self.addWatchlist
 		}, -1)
 
 		self['title'] = Label("Serien.bz")
@@ -202,7 +202,7 @@ class SerienSecondScreen(Screen):
 			self.chooseMenuList.setList(map(SerienListEntry, self.filmliste))
 			self.keyLocked = False
 			self.loadInfos()
-			
+
 	def loadPage2(self):
 		url = "http://serien.bz"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
@@ -243,7 +243,7 @@ class SerienSecondScreen(Screen):
 			CoverHelper(self['coverArt']).getCover(self.ImageUrl)
 		else:
 			self.ImageUrl = ""
-			
+
 
 	def addWatchlist(self):
 		if self.keyLocked:
@@ -251,13 +251,13 @@ class SerienSecondScreen(Screen):
 
 		self.serienName = self['liste'].getCurrent()[0][0]
 		self.serienLink = self['liste'].getCurrent()[0][1]
-		
+
 		print self.serienName, self.serienLink, self.ImageUrl, self.handlung
-		
+
 		if not fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
 			print "erstelle watchlist"
 			open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","w").close()
-			
+
 		if fileExists(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist"):
 			print "schreibe watchlist", self.serienName, self.serienLink, self.ImageUrl, self.handlung
 			writePlaylist = open(config.mediaportal.watchlistpath.value+"mp_sbz_watchlist","a")
@@ -292,9 +292,9 @@ class SerienSecondScreen(Screen):
 	def keyOK(self):
 		serienName = self['liste'].getCurrent()[0][0]
 		serienLink = self['liste'].getCurrent()[0][1]
-		
+
 		print serienName, serienLink
-		
+
 		self.session.open(SerienEpListingScreen, serienLink, serienName, self.ImageUrl)
 
 	def keyCancel(self):
@@ -366,14 +366,14 @@ class SerienEpListingScreen(Screen):
 								s = "S0%s" % str(staffel)
 							else:
 								s = "S%s" % str(staffel)
-								
+
 							if int(episode) < 10:
 								e = "E0%s" % str(episode)
 							else:
 								e = "E%s" % str(episode)
-								
+
 							title = "%s%s" % (s, e)
-							
+
 							self.filmliste.append((title, streams))
 					self.chooseMenuList.setList(map(SerienListEntry, self.filmliste))
 					self.keyLocked = False
@@ -384,9 +384,9 @@ class SerienEpListingScreen(Screen):
 	def keyOK(self):
 		serienName = self['liste'].getCurrent()[0][0]
 		serienLink = self['liste'].getCurrent()[0][1]
-		
+
 		print serienName, serienLink
-		
+
 		self.session.open(SerienStreamListingScreen, serienLink, serienName, self.serienPic)
 
 	def keyCancel(self):
@@ -451,7 +451,7 @@ class SerienStreamListingScreen(Screen):
 	def keyOK(self):
 		hostername = self['liste'].getCurrent()[0][0]
 		hoster = self['liste'].getCurrent()[0][1]
-		
+
 		print hostername, hoster
 		get_stream_link(self.session).check_link(hoster, self.playfile)
 
@@ -461,7 +461,7 @@ class SerienStreamListingScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class sbzWatchlistScreen(Screen):
 
 	def __init__(self, session):
