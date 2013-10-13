@@ -1508,6 +1508,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(dreisatFirstScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
+		elif auswahl == "Serien.bz":
+			self.session.open(SerienFirstScreen)	
 
 		# Porn
 		elif auswahl == "4Tube":
