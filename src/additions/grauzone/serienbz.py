@@ -184,30 +184,17 @@ class SerienSecondScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 0
-		if self.serienName == "Top50":
-			self.onLayoutFinish.append(self.loadPage2)
-		else:
-			self.onLayoutFinish.append(self.loadPage)
-
+		self.ImageUrl = ""
+		self.onLayoutFinish.append(self.loadPage)
+		
 	def loadPage(self):
-		url = self.serienLink
+		if self.serienName == "Top50":
+			url = "http://serien.bz"
+		else:
+			url = self.serienLink
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		raw = re.findall('<li><a href="(.*?)".*?>(.*?)</a>', data, re.S)
-		if raw:
-			self.filmliste = []
-			for (serienUrl, serienTitle) in raw:
-				self.filmliste.append((decodeHtml(serienTitle), serienUrl))
-			self.chooseMenuList.setList(map(SerienListEntry, self.filmliste))
-			self.keyLocked = False
-			self.loadInfos()
-
-	def loadPage2(self):
-		url = "http://serien.bz"
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
-
-	def parseData2(self, data):
 		raw = re.findall('<li><a href="(.*?)".*?>(.*?)</a>', data, re.S)
 		if raw:
 			self.filmliste = []
@@ -225,6 +212,12 @@ class SerienSecondScreen(Screen):
 		getPage(serienUrl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showInfos).addErrback(self.dataError)
 
 	def showInfos(self, data):
+		sbzCover = re.findall('<div class="entry">.*?<p.*?src="(.*?)".*?</p>.*?<p.*?</p>.*?<p.*?</p>', data, re.S)
+		if sbzCover:
+			self.ImageUrl = "http://serien.bz%s" % sbzCover[0]
+			CoverHelper(self['coverArt']).getCover(self.ImageUrl)
+		else:
+			self.ImageUrl = ""
 		serienTitle = self['liste'].getCurrent()[0][0]
 		if re.match('.*?Sorry, but there.*?category yet.</h2>', data, re.S):
 			self['handlung'].setText("Kein Stream vorhanden!")
@@ -237,13 +230,6 @@ class SerienSecondScreen(Screen):
 				self['handlung'].setText(decodeHtml(sbzdescription[0]))
 			else:
 				self['handlung'].setText("Keine Infos gefunden.")
-		sbzCover = re.findall('<div class="entry">.*?<p.*?src="(.*?)".*?</p>.*?<p.*?</p>.*?<p.*?</p>', data, re.S)
-		if sbzCover:
-			self.ImageUrl = "http://serien.bz%s" % sbzCover[0]
-			CoverHelper(self['coverArt']).getCover(self.ImageUrl)
-		else:
-			self.ImageUrl = ""
-
 
 	def addWatchlist(self):
 		if self.keyLocked:
@@ -290,11 +276,13 @@ class SerienSecondScreen(Screen):
 		self.loadInfos()
 
 	def keyOK(self):
+		if self.keyLocked:
+			return
 		serienName = self['liste'].getCurrent()[0][0]
 		serienLink = self['liste'].getCurrent()[0][1]
 
 		print serienName, serienLink
-
+		
 		self.session.open(SerienEpListingScreen, serienLink, serienName, self.ImageUrl)
 
 	def keyCancel(self):
