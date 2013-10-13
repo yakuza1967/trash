@@ -68,7 +68,7 @@ class dreisatFirstScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		Name = self['genreList'].getCurrent()[0][0]
 		Link = self['genreList'].getCurrent()[0][1]
@@ -77,7 +77,7 @@ class dreisatFirstScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class dreisatSecondScreen(Screen):
 
 	def __init__(self, session, Link, Name):
@@ -196,7 +196,7 @@ class dreisatSecondScreen(Screen):
 	def keyOK(self):
 		self.title = self['liste'].getCurrent()[0][0]
 		link = self['liste'].getCurrent()[0][1].replace('&amp;','&')
-		
+
 		(dump, id) = link.split('obj=')
 		url = "http://www.3sat.de/mediathek/xmlservice/web/beitragsDetails?ak=web&id=%s" % id
 		print url

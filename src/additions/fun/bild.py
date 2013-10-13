@@ -73,7 +73,7 @@ class bildFirstScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 	def keyOK(self):
 		bildName = self['genreList'].getCurrent()[0][0]
 		Link = self['genreList'].getCurrent()[0][1]
@@ -87,7 +87,7 @@ class bildFirstScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class bildRegionalScreen(Screen):
 
 	def __init__(self, session):
@@ -119,7 +119,7 @@ class bildRegionalScreen(Screen):
 		self['F4'].hide()
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -141,7 +141,7 @@ class bildRegionalScreen(Screen):
 		self.filmliste.append(("München", "http://www.bild.de/video/clip/muenchen-regional/muenchen-15717974.bild.html"))
 		self.filmliste.append(("Ruhrgebiet", "http://www.bild.de/video/clip/ruhrgebiet-regional/ruhrgebiet-16989232.bild.html"))
 		self.filmliste.append(("Stuttgart", "http://www.bild.de/video/clip/stuttgart-regional/stuttgart-15718002.bild.html"))
-		
+
 		self.chooseMenuList.setList(map(bildEntry, self.filmliste))
 
 	def keyOK(self):
@@ -183,7 +183,7 @@ class bildWissenScreen(Screen):
 		self['F4'].hide()
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
-		
+
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -298,7 +298,7 @@ class bildSecondScreen(Screen):
 				vid_id1 = seasons[0][0]
 				vid_id2 = seasons[0][1]
 				nexturl = "http://www.bild.de/" + vid_id1 + "page=" + str(self.page) + "," + vid_id2
-				getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)	
+				getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
 		else:
 			raw = re.findall('Neueste Videos</h2>(.*?)</section></div></div>', data, re.S)
 			if raw:
