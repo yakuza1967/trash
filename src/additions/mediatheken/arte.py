@@ -224,7 +224,7 @@ class arteSecondScreen(Screen):
 
 	def playStream(self, url):
 		print url
-		self.session.open(SimplePlayer, [(self.title, url, self.ImageUrl)], showPlaylist=False, ltype='Arte', cover=True)
+		self.session.open(SimplePlayer, [(self.title, url, self.ImageUrl)], showPlaylist=False, ltype='Arte')
 
 	def keyCancel(self):
 		self.close()
