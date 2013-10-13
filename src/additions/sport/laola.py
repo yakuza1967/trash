@@ -1,6 +1,5 @@
 ﻿from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
-import random,string
 
 def laolaOverviewListEntry(entry):
 	return [entry,
@@ -82,7 +81,7 @@ class laolaVideosOverviewScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
+
 		auswahl = self['genreList'].getCurrent()[0][0]
 		link = self['genreList'].getCurrent()[0][1]
 		print auswahl, link
@@ -149,7 +148,7 @@ class laolaLiveScreen(Screen):
 	def loadPage(self):
 		print self.llink
 		getPage(self.llink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData).addErrback(self.dataError)
-		
+
 	def getLiveData(self, data):
 		live = re.findall('<img width="80" height="45" src=".*?">.*?<a href="(.*?)"><h2>.*?<span class="ititle">Sportart:</span><span class="idesc half">(.*?)</span>.*?<span class="ititle">Liga:</span><span class="idesc half">(.*?)</span>.*?<span class="ititle full">Streamstart:</span><span class="idesc full">(.*?)</span>.*?<span class="ititle full">Verf&uuml;gbar in:</span><span class="idesc full"><span style="color:#0A0;">(.*?)<', data, re.S)
 		if live:
@@ -157,18 +156,18 @@ class laolaLiveScreen(Screen):
 				print url,sportart,welche,time,where
 				title = "%s - %s-%s" % (time, sportart, welche)
 				self.genreliste.append((title, url))
-			
+
 			self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
 			self.keyLocked = False
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
+
 		self.auswahl = self['genreList'].getCurrent()[0][0]
 		url = self['genreList'].getCurrent()[0][1]
 		print self.auswahl, url
-		
+
 		response=self.getUrl(url)
 		if 'Dieser Stream beginnt' in response:
 			message = self.session.open(MessageBox, _("Event ist noch nicht gestartet."), MessageBox.TYPE_INFO, timeout=3)
@@ -179,7 +178,7 @@ class laolaLiveScreen(Screen):
 				getPage(match_player[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData2).addErrback(self.dataError)
 			else:
 				message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
-				
+
 	def getLiveData2(self, data):
 		match_m3u8 = re.compile('url: "(.+?)"', re.DOTALL).findall(data)
 		if match_m3u8:
@@ -201,7 +200,7 @@ class laolaLiveScreen(Screen):
 				message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
 		else:
 			message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
-				
+
 	def getLiveData4(self, data):
 		match_sec_m3u8 = re.compile('#EXT-X-STREAM-INF:(.+?)http(.+?)rebase=on', re.DOTALL).findall(data)
 		if match_sec_m3u8:
@@ -219,13 +218,13 @@ class laolaLiveScreen(Screen):
 		link=response.read()
 		response.close()
 		return link
-	
+
 	def keyCancel(self):
 		self.close()
 
 	def dataError(self, error):
 		printl(error,self,"E")
-		
+
 class laolaSelectGenreScreen(Screen):
 
 	def __init__(self, session, name, link):
@@ -274,14 +273,14 @@ class laolaSelectGenreScreen(Screen):
 		self['genreList'] = self.chooseMenuList
 
 		self.onLayoutFinish.append(self.loadPage)
-		
+
 	def char_gen(self, size=1, chars=string.ascii_uppercase):
 		return ''.join(random.choice(chars) for x in range(size))
-	
+
 	def loadPage(self):
 		print self.llink
 		getPage(self.llink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getEventData).addErrback(self.dataError)
-		
+
 	def getEventData(self, data):
 		self.genreliste = []
 		events = re.compile('<span class="category">(.+?)</span>.*?<span class="date">(.+?)</span>.*?<h2><div class="hdkenn_list"></div>(.+?)</h2></a>.*?<a href="/(.*?)">', re.S).findall(data)
@@ -297,7 +296,7 @@ class laolaSelectGenreScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-			
+
 		self.auswahl = self['genreList'].getCurrent()[0][0]
 		url = self['genreList'].getCurrent()[0][1]
 		print self.auswahl, url
@@ -330,7 +329,7 @@ class laolaSelectGenreScreen(Screen):
 			self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')
 		else:
 			message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
-	
+
 	def keyCancel(self):
 		self.close()
 
