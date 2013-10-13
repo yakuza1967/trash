@@ -146,7 +146,7 @@ class SRFFilmeListeScreen(Screen):
 
 	def loadPageData(self, data):
 		self.filmliste = []
-		folgen = re.findall('<h2\sclass="title"><a\stitle="(.*?)"\salt=".*?"\shref=".*?id=(.*?)"', data, re.S)
+		folgen = re.findall('<h3\sclass="title">(.*?)</h3>.*?<a\shref=".*?id=(.*?)">', data, re.S)
 		if folgen:
 			for (title, id) in folgen:
 				url = "http://www.srf.ch/webservice/cvis/segment/%s/.json?nohttperr=1;omit_video_segments_validity=1;omit_related_segments=1;nearline_data=1" % id
