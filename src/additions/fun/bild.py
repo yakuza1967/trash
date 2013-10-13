@@ -269,9 +269,9 @@ class bildSecondScreen(Screen):
 	def parseData(self, data):
 		lastpage = re.findall('<li class="pagLast">.*?page=(.*?),isVideoStartseite', data)
 		if lastpage:
-			self['page'].setText("%s / %s" % (str(self.page), str(lastpage[0])))
+			self['page'].setText("%s / %s" % (str(self.page +1), str(lastpage[0])))
 		else:
-			self['page'].setText(str(self.page))
+			self['page'].setText(str(self.page +1))
 
 		if self.bildName == "Geschichte" or self.bildName == "Natur":
 			raw = re.findall('Alle Videos</h2>(.*?)</section></div></div>', data, re.S)
