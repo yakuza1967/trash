@@ -200,12 +200,32 @@ class dreisatSecondScreen(Screen):
 		(dump, id) = link.split('obj=')
 		url = "http://www.3sat.de/mediathek/xmlservice/web/beitragsDetails?ak=web&id=%s" % id
 		print url
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDataStream).addErrback(self.dataError)
+
+	def getDataStream(self, data):
+		urls = re.findall('<url>(.*?zdf.de.*?\.mp4)</url>', data) # mp4
+		urls = re.findall('<quality>(.*?)</quality.*?<url>(.*?zdf.de.*?\.smil)</url>', data, re.S)
+		print urls
+		if urls:
+			getPage(urls[-1][1], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
 
 	def getStream(self, data):
-		urls = re.findall('<url>(.*?zdf.de.*?\.mp4)</url>', data)
-		if urls:
-			self.session.open(SimplePlayer, [(self.title, urls[-1], self.ImageUrl)], showPlaylist=False, ltype='3sat', cover=True)
+		print data
+		host = re.findall('<param name="host" value="(.*?)" />', data)
+		if host:
+			print host
+			playpath = re.findall('<video dur=".*?" paramGroup=".*?" src="(.*?)" system-bitrate=".*?">', data, re.S)
+			if playpath:
+				print playpath
+				if config.mediaportal.useRtmpDump.value:
+					final = "rtmp://%s/ondemand/' --playpath=%s'" % (host[0], playpath[-1])
+					print final
+					movieinfo = [final,self.title]
+					self.session.open(PlayRtmpMovie, movieinfo, self.title)
+				else:
+					final = "rtmp://%s/ondemand/ playpath=%s" % (host[0], playpath[-1])
+					print final
+					self.session.open(SimplePlayer, [(self.title, final, self.ImageUrl)], showPlaylist=False, ltype='3sat', cover=True)
 
 	def keyCancel(self):
 		self.close()
