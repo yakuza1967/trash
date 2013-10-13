@@ -74,6 +74,16 @@ class bildFirstScreen(Screen):
 	def dataError(self, error):
 		printl(error,self,"E")
 		
+	def getTriesEntry(self):
+		return config.ParentalControl.retries.setuppin
+
+	def pincheckok(self, pincode):
+		bildName = self['genreList'].getCurrent()[0][0]
+		Link = self['genreList'].getCurrent()[0][1]
+		bildLink = "http://www.bild.de" + Link
+		if pincode:
+			self.session.open(bildSecondScreen, bildLink, bildName)
+				
 	def keyOK(self):
 		bildName = self['genreList'].getCurrent()[0][0]
 		Link = self['genreList'].getCurrent()[0][1]
@@ -82,6 +92,11 @@ class bildFirstScreen(Screen):
 			self.session.open(bildWissenScreen)
 		elif bildName == "Regional":
 			self.session.open(bildRegionalScreen)
+		elif bildName == "Erotik":
+			if config.mediaportal.pornpin.value:
+				self.session.openWithCallback(self.pincheckok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
+			else:
+				self.session.open(bildSecondScreen, bildLink, bildName)
 		else:
 			self.session.open(bildSecondScreen, bildLink, bildName)
 
