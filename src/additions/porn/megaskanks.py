@@ -193,19 +193,11 @@ class megaskanksFilmScreen(Screen):
 				self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
 		
-		if self.phCatName == "--- Search ---":
-			phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?PostMetadataFooter', data, re.S|re.I)
-			if phMovies:
-				for (phUrl, phTitle) in phMovies:
-					phTitle = phTitle.strip()
-					self.filmliste.append((decodeHtml(phTitle), phUrl, None))
-		else:
-			phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?img.*?src=["|\'](.*?)["|\'].*?PostMetadataFooter', data, re.S|re.I)
-			if phMovies:
-				for (phUrl, phTitle, phImage) in phMovies:
-					if not re.search('PostHeaderIcon', phImage):
-						phTitle = phTitle.strip()
-						self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
+		phMovies = re.findall('art-PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?data-img=["|\'](.*?)["|\'].*?art-PostMetadataFooter', data, re.S|re.I)
+		if phMovies:
+			for (phUrl, phTitle, phImage) in phMovies:
+				phTitle = phTitle.strip()
+				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
 		self.chooseMenuList.setList(map(megaskanksFilmListEntry, self.filmliste))
 		self.chooseMenuList.moveToIndex(0)
 		self.keyLocked = False
