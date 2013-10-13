@@ -37,11 +37,11 @@ IS_siteEncoding = 'utf-8'
 
 """
 
-def IStreamGenreListEntry(entry):
+def streamitGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
 		]
-class showIStreamGenre(Screen):
+class showstreamitGenre(Screen):
 
 	def __init__(self, session, mode):
 		self.session = session
@@ -133,7 +133,7 @@ class showIStreamGenre(Screen):
 		for (Name,Url) in Genre:
 			self.genreListe.append((Name,Url))
 
-		self.chooseMenuList.setList(map(IStreamGenreListEntry, self.genreListe))
+		self.chooseMenuList.setList(map(streamitGenreListEntry, self.genreListe))
 		self.keyLocked = False
 
 
@@ -157,7 +157,7 @@ class showIStreamGenre(Screen):
 			genreName = 'Videosuche: ' + self.param_search
 			genreLink = self['genreList'].getCurrent()[0][1] % s
 			print genreLink
-			self.session.open(IStreamFilmListeScreen, genreLink, genreName)
+			self.session.open(streamitFilmListeScreen, genreLink, genreName)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -168,16 +168,16 @@ class showIStreamGenre(Screen):
 		if re.match('.*?Suche...',genreName):
 			self.session.openWithCallback(self.cb_Search, VirtualKeyBoard, title = (_("Suchanfrage")), text = self.param_search)
 		else:
-			self.session.open(IStreamFilmListeScreen, genreLink, genreName)
+			self.session.open(streamitFilmListeScreen, genreLink, genreName)
 
 	def keyCancel(self):
 		self.close()
 
-def IStreamFilmListEntry(entry):
+def streamitFilmListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
-class IStreamFilmListeScreen(Screen):
+class streamitFilmListeScreen(Screen):
 
 	def __init__(self, session, genreLink, genreName):
 		self.session = session
@@ -316,7 +316,7 @@ class IStreamFilmListeScreen(Screen):
 		print "dataError:"
 		printl(error,self,"E")
 		self.filmListe.append(("No movies found !",""))
-		self.chooseMenuList.setList(map(IStreamFilmListEntry,	self.filmListe))
+		self.chooseMenuList.setList(map(streamitFilmListEntry,	self.filmListe))
 
 	def loadPageData(self, data):
 		print "loadPageData:",len(data)
@@ -345,13 +345,13 @@ class IStreamFilmListeScreen(Screen):
 				#print	"Url: ", url, "Name: ", name, "ImgUrl: ", imageurl
 				self.filmListe.append((decodeHtml(name), url, imageurl))
 
-			self.chooseMenuList.setList(map(IStreamFilmListEntry,	self.filmListe))
+			self.chooseMenuList.setList(map(streamitFilmListEntry,	self.filmListe))
 			self.keyLocked = False
 			self.loadPicQueued()
 		else:
 			print "No movies found !"
 			self.filmListe.append(("No movies found !",""))
-			self.chooseMenuList.setList(map(IStreamFilmListEntry,	self.filmListe))
+			self.chooseMenuList.setList(map(streamitFilmListEntry,	self.filmListe))
 			if self.filmQ.empty():
 				self.eventL.clear()
 			else:
@@ -455,7 +455,7 @@ class IStreamFilmListeScreen(Screen):
 		streamLink = self['liste'].getCurrent()[0][1]
 		streamName = self['liste'].getCurrent()[0][0]
 		imageLink = self['liste'].getCurrent()[0][2]
-		self.session.open(IStreamStreams, streamLink, streamName, imageLink)
+		self.session.open(streamitStreams, streamLink, streamName, imageLink)
 
 	def keyUp(self):
 		if self.keyLocked:
@@ -599,11 +599,11 @@ class IStreamFilmListeScreen(Screen):
 	def keyCancel(self):
 		self.close()
 
-def IStreamStreamListEntry(entry):
+def streamitStreamListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0]+entry[2])
 		]
-class IStreamStreams(Screen, ConfigListScreen):
+class streamitStreams(Screen, ConfigListScreen):
 
 	def __init__(self, session, filmUrl, filmName, imageLink):
 		self.session = session
@@ -710,7 +710,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 			print "No Streams found"
 			self.streamListe.append(("No streams found!","",""))
 
-		self.streamMenuList.setList(map(IStreamStreamListEntry, self.streamListe))
+		self.streamMenuList.setList(map(streamitStreamListEntry, self.streamListe))
 		self['handlung'].setText(decodeHtml(desc))
 		self.keyLocked = False
 		print "imageUrl: ",self.imageUrl
@@ -720,7 +720,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 		print "dataError:"
 		printl(error,self,"E")
 		self.streamListe.append(("Read error !",""))
-		self.streamMenuList.setList(map(IStreamStreamListEntry, self.streamListe))
+		self.streamMenuList.setList(map(streamitStreamListEntry, self.streamListe))
 
 	def got_link(self, stream_url):
 		print "got_link:"
@@ -732,7 +732,7 @@ class IStreamStreams(Screen, ConfigListScreen):
 				movieinfo = [stream_url,self.filmName,""]
 				self.session.open(PlayHttpMovie, movieinfo, title)
 			else:
-				self.session.open(SimplePlayer, [(title, stream_url, self.imageUrl)], cover=True, showPlaylist=False, ltype='istream.ws')
+				self.session.open(SimplePlayer, [(title, stream_url, self.imageUrl)], cover=True, showPlaylist=False, ltype='streamit')
 
 	def keyTrailer(self):
 		if self.trailerId:
