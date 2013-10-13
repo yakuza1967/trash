@@ -1384,7 +1384,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(gronkhGenreScreen)
 		elif auswahl == "Tivi":
 			self.session.open(tiviGenreListeScreen)
-		elif auswahl == "My-Entertainment":
+		elif auswahl == "Evonic.tv":
 			self.session.open(showevonicGenre)
 		elif auswahl == "Songs.to":
 			self.session.open(showSongstoGenre)
@@ -2406,7 +2406,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(gronkhGenreScreen)
 		elif auswahl == "Tivi":
 			self.session.open(tiviGenreListeScreen)
-		elif auswahl == "My-Entertainment":
+		elif auswahl == "Evonic.tv":
 			self.session.open(showevonicGenre)
 		elif auswahl == "Songs.to":
 			self.session.open(showSongstoGenre)
