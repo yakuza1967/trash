@@ -53,10 +53,24 @@ class myVideoGenreScreen(Screen):
 		self.genreliste.append(("Western", "75189"))
 		self.chooseMenuList.setList(map(myVideoGenreListEntry, self.genreliste))
 
+	def getTriesEntry(self):
+		return config.ParentalControl.retries.setuppin
+
+	def pincheckok(self, pincode):
+		streamGenreLink = self['genreList'].getCurrent()[0][1]
+		if pincode:
+			self.session.open(myVideoFilmScreen, streamGenreLink)
+
 	def keyOK(self):
 		streamGenreLink = self['genreList'].getCurrent()[0][1]
 		print streamGenreLink
-		self.session.open(myVideoFilmScreen, streamGenreLink)
+		if streamGenreLink == "78357":
+			if config.mediaportal.pornpin.value:
+				self.session.openWithCallback(self.pincheckok, PinInput, pinList = [(config.mediaportal.pincode.value)], triesEntry = self.getTriesEntry(), title = _("Please enter the correct pin code"), windowTitle = _("Enter pin code"))
+			else:
+				self.session.open(myVideoFilmScreen, streamGenreLink)
+		else:
+			self.session.open(myVideoFilmScreen, streamGenreLink)
 
 	def keyCancel(self):
 		self.close()
