@@ -39,8 +39,8 @@ class movie25GenreScreen(Screen):
 		}, -1)
 
 		self.keyLocked = True
-		self['title'] = Label("movie25.com")
-		self['ContentTitle'] = Label("Genre:")
+		self['title'] = Label("movie25.so")
+		self['ContentTitle'] = Label("Genre and Title 0-9/A-Z:")
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
@@ -58,12 +58,60 @@ class movie25GenreScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		self.genreliste = [('Featured Movies',"http://www.movie25.com/movies/featured-movies/"),
-							('Last Added',"http://www.movie25.com/movies/latest-added/"),
-							('New Releases',"http://www.movie25.com/movies/new-releases/"),
-							('DVD Releases',"http://www.movie25.com/movies/dvd-releases/"),
-							('Most Viewed',"http://www.movie25.com/movies/most-viewed/"),
-							('Most Voted',"http://www.movie25.com/movies/most-voted/")]
+		self.genreliste = [ ('New Releases',"http://www.movie25.so/movies/new-releases/"),
+		                    ('Last Added',"http://www.movie25.so/movies/latest-added/"),
+		                    ('Featured Movies',"http://www.movie25.so/movies/featured-movies/"),
+		                    ('Latest HQ Movies',"http://www.movie25.so/movies/latest-hd-movies/"),
+		                    ('Most Viewed',"http://www.movie25.so/movies/most-viewed/"),
+		                    ('Most Voted',"http://www.movie25.so/movies/most-voted/"),
+                            ('Action',"http://www.movie25.so/movies/action/"),
+                            ('Adventure',"http://www.movie25.so/movies/adventure/"),
+                            ('Animation',"http://www.movie25.so/movies/animation/"),
+                            ('Biography',"http://www.movie25.so/movies/biography/"),
+                            ('Comedy',"http://www.movie25.so/movies/comedy/"),
+                            ('Crime',"http://www.movie25.so/movies/crime/"),
+                            ('Documentary',"http://www.movie25.so/movies/documentary/"),
+                            ('Drama',"http://www.movie25.so/movies/drama/"),
+                            ('Family',"http://www.movie25.so/movies/family/"),
+                            ('History',"http://www.movie25.so/movies/history/"),
+                            ('Horror',"http://www.movie25.so/movies/horror/"),
+                            ('Music',"http://www.movie25.so/movies/music/"),
+                            ('Musical',"http://www.movie25.so/movies/musical/"),
+                            ('Mystery',"http://www.movie25.so/movies/mystery/"),
+                            ('Romance',"http://www.movie25.so/movies/romance/"),
+                            ('Sci-Fi',"http://www.movie25.so/movies/sci-fi/"),
+                            ('Short',"http://www.movie25.so/movies/short/"),
+                            ('Sport',"http://www.movie25.so/movies/sport/"),
+                            ('Thriller',"http://www.movie25.so/movies/thriller/"),
+                            ('War',"http://www.movie25.so/movies/war/"),
+                            ('Western',"http://www.movie25.so/movies/western/"),
+                            ('Movie Title: 0-9',"http://www.movie25.so/movies/0-9/"),
+                            ('Movie Title: A',"http://www.movie25.so/movies/a/"),
+                            ('Movie Title: B',"http://www.movie25.so/movies/b/"),
+                            ('Movie Title: C',"http://www.movie25.so/movies/c/"),
+                            ('Movie Title: D',"http://www.movie25.so/movies/d/"),
+                            ('Movie Title: E',"http://www.movie25.so/movies/e/"),
+                            ('Movie Title: F',"http://www.movie25.so/movies/f/"),
+                            ('Movie Title: G',"http://www.movie25.so/movies/g/"),
+                            ('Movie Title: H',"http://www.movie25.so/movies/h/"),
+                            ('Movie Title: I',"http://www.movie25.so/movies/i/"),
+                            ('Movie Title: J',"http://www.movie25.so/movies/j/"),
+                            ('Movie Title: K',"http://www.movie25.so/movies/k/"),
+                            ('Movie Title: L',"http://www.movie25.so/movies/l/"),
+                            ('Movie Title: M',"http://www.movie25.so/movies/m/"),
+                            ('Movie Title: N',"http://www.movie25.so/movies/n/"),
+                            ('Movie Title: O',"http://www.movie25.so/movies/o/"),
+                            ('Movie Title: P',"http://www.movie25.so/movies/p/"),
+                            ('Movie Title: Q',"http://www.movie25.so/movies/q/"),
+                            ('Movie Title: R',"http://www.movie25.so/movies/r/"),
+                            ('Movie Title: S',"http://www.movie25.so/movies/s/"),
+                            ('Movie Title: T',"http://www.movie25.so/movies/t/"),
+                            ('Movie Title: U',"http://www.movie25.so/movies/u/"),
+                            ('Movie Title: V',"http://www.movie25.so/movies/v/"),
+                            ('Movie Title: W',"http://www.movie25.so/movies/w/"),
+                            ('Movie Title: X',"http://www.movie25.so/movies/x/"),
+                            ('Movie Title: Y',"http://www.movie25.so/movies/y/"),
+                            ('Movie Title: Z',"http://www.movie25.so/movies/z/"),]       
 
 		self.chooseMenuList.setList(map(movie25GenreListEntry, self.genreliste))
 		self.keyLocked = False
@@ -108,7 +156,7 @@ class movie25FilmeListeScreen(Screen):
 			"prevBouquet" : self.keyPageDown
 		}, -1)
 
-		self['title'] = Label("movie25.com")
+		self['title'] = Label("movie25.so")
 		self['ContentTitle'] = Label("%s:" % self.streamGenreName)
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
@@ -134,8 +182,8 @@ class movie25FilmeListeScreen(Screen):
 
 	def loadPage(self):
 		self['Page'].setText(str(self.page)+ " of")
-		url = "%sindex-%s.html" % (self.streamGenreLink, str(self.page))
-		print url
+		url = "%s%s" % (self.streamGenreLink, str(self.page))
+		print "url =", url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
@@ -146,11 +194,14 @@ class movie25FilmeListeScreen(Screen):
 		lastpage = re.findall('>Page <font color=red>.*?</font> of (.*\d)</td>', data, re.S)
 		if lastpage:
 			self['page'].setText(lastpage[0])
-
-		movies = re.findall('<div class="movie_pic"><a href="(http://www.movie25.com/.*?)" ><img src="(.*?)".*?<h1><a href=".*?" >(.*?)</a></h1>', data, re.S)
+        
+		data=data.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+		movies = re.findall('        <li><div class="movie_pic"><a href="(.+?)"  target.+?img src="(.+?)".+?target="_self">(.+?)</a></', data, re.S)
+                movies += re.findall('</li>      <li><div class="movie_pic"><a href="(.+?)"  target.+?img src="(.+?)".+?target="_self">(.+?)</a></', data, re.S)		
 		if movies:
 			self.filmliste = []
 			for (link,image,title) in movies:
+			        link = "http://www.movie25.so" + link
 				self.filmliste.append((decodeHtml(title),link,image))
 			self.chooseMenuList.setList(map(movie25FilmListEntry, self.filmliste))
 			self.keyLocked = False
@@ -247,7 +298,7 @@ class movie25StreamListeScreen(Screen):
 			"cancel": self.keyCancel
 		}, -1)
 
-		self['title'] = Label("movie25.com")
+		self['title'] = Label("movie25.so")
 		self['ContentTitle'] = Label("Streams for %s:" % self.streamGenreName)
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
@@ -278,12 +329,14 @@ class movie25StreamListeScreen(Screen):
 		printl(error,self,"E")
 
 	def loadPageData(self, data):
-		print "daten bekommen"
-		streams = re.findall('<li class=link_name>(.*?)</li><li class="playing_button"><span><a href=(http://www.movie25.com/.*?.html)', data, re.S)
+		print "movie25StreamListeScreen daten bekommen data = ", data		
+                streams = re.findall('<li class="link_name">(.*?)</li>.*?<li class="playing_button"><span><a href="(.*?)" target', data, re.S)
+                print " streams =", streams
 		if streams:
 			self.filmliste = []
 			for (name,link) in streams:
-				if re.match('.*?(sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', name, re.S|re.I):
+			        link = "http://www.movie25.so" + link
+				if re.match('.*?(mightyupload|sharesix|putme|limevideo|stream2k|played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|BitShare|Userporn)', name, re.S|re.I):
 					self.filmliste.append((decodeHtml(name),link))
 
 			if len(self.filmliste) == 0:
@@ -298,11 +351,13 @@ class movie25StreamListeScreen(Screen):
 			return
 		streamName = self['liste'].getCurrent()[0][0]
 		streamLink = self['liste'].getCurrent()[0][1]
-		print streamName, streamLink
+		print "streamName, streamLink B=", streamName, streamLink
 		getPage(streamLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLink).addErrback(self.dataError)
 
 	def getLink(self, data):
-		link = re.findall("value=.*?Click Here to Play.*?onclick=.*?Javascript:location.href=.*?(http://.*?)'", data, re.S)
+		print "getLink data =", data
+                link = re.findall("value=.*?Click Here to Play.*?onclick=.*?Javascript:location.href=.*?(http://.*?)'", data, re.S)
+                print "link =", link
 		if link:
 			print link[0]
 			get_stream_link(self.session).check_link(link[0], self.got_link, False)
