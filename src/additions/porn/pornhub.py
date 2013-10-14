@@ -294,7 +294,7 @@ class pornhubGenreScreen(Screen):
 			self.filmliste.insert(0, ("Playlists - Top Rated", "http://www.pornhub.com/playlists?page=", None))
 			self.filmliste.insert(0, ("Playlists - Most Viewed", "http://www.pornhub.com/playlists?o=mv&page=", None))
 			self.filmliste.insert(0, ("Playlists - Most Recent", "http://www.pornhub.com/playlists?o=mr&page=", None))
-			self.filmliste.insert(0, ("Pornstars", "http://www.pornhub.com/pornstars?o=mp&page=", None))
+			self.filmliste.insert(0, ("Pornstars", "http://www.pornhub.com/pornstars?page=", None))
 			self.filmliste.insert(0, ("HD", "http://www.pornhub.com/video?c=38&page=", 'http://cdn1a.static.pornhub.phncdn.com/images/categories/38.jpg'))
 			self.filmliste.insert(0, ("Longest", "http://www.pornhub.com/video?o=lg&page=", None))
 			self.filmliste.insert(0, ("Top Rated", "http://www.pornhub.com/video?o=tr&page=", None))
@@ -544,7 +544,8 @@ class pornhubPornstarScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadpage).addErrback(self.dataError)
 
 	def loadpage(self, data):
-		phCats = re.findall('rank_number">(.*?)<.*?src="(.*?)".*?href="(.*?)".*?class="title".*?>(.*?)<.*?videosNumber">(.*?)\sVideos</span>', data, re.S)
+		parse = re.search('class="section_title">Most\sPopular\sPornstars(.*)', data, re.S)
+		phCats = re.findall('rank_number">(.*?)<.*?src="(.*?)".*?href="(.*?)".*?class="title".*?>(.*?)<.*?videosNumber">(.*?)\sVideos</span>', parse.group(1), re.S)
 		if phCats:
 			for phRank, phImage, phUrl, phTitle, phVideos in phCats:
 				phUrl = phUrl + "?page="
