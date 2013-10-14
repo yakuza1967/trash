@@ -225,7 +225,7 @@ class dreisatSecondScreen(Screen):
 				else:
 					final = "rtmp://%s/ondemand/ playpath=%s" % (host[0], playpath[-1])
 					print final
-					self.session.open(SimplePlayer, [(self.title, final, self.ImageUrl)], showPlaylist=False, ltype='3sat', cover=True)
+					self.session.open(SimplePlayer, [(self.title, final, self.ImageUrl)], showPlaylist=False, ltype='3sat')
 
 	def keyCancel(self):
 		self.close()
