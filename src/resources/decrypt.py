@@ -124,8 +124,6 @@ def RotWord(w):
 def encrypt(plaintext, password, nBits):
 	blockSize = 16
 	if not nBits in (128, 192, 256): return ""
-#    plaintext = plaintext.encode("utf-8")
-#    password  = password.encode("utf-8")
 	nBytes = nBits//8
 	pwBytes = [0] * nBytes
 	for i in range(nBytes): pwBytes[i] = 0 if i>=len(password) else ord(password[i])
@@ -172,7 +170,6 @@ def decrypt(ciphertext, password, nBits):
 	blockSize = 16
 	if not nBits in (128, 192, 256): return ""
 	ciphertext = base64.b64decode(ciphertext)
-#    password = password.encode("utf-8")
 
 	nBytes = nBits//8
 	pwBytes = [0] * nBytes
@@ -204,10 +201,9 @@ def decrypt(ciphertext, password, nBits):
 		for i in range(len(ciphertext[b])):
 			plaintxtByte[i] = cipherCntr[i] ^ ord(ciphertext[b][i])
 			plaintxtByte[i] = chr(plaintxtByte[i])
-			plaintxt[b] = "".join(plaintxtByte)
+		plaintxt[b] = "".join(plaintxtByte)
 
 	plaintext = "".join(plaintxt)
- #   plaintext = plaintext.decode("utf-8")
 	return plaintext
 
 def urs(a, b):
@@ -219,10 +215,3 @@ def urs(a, b):
 	else:
 		a = (a >> b)
 	return a
-
-std_headers = {
-	'User-Agent': 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.6) Gecko/20100627 Firefox/3.6.6',
-	'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Language': 'en-us,en;q=0.5',
-}
