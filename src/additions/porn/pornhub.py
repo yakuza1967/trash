@@ -436,7 +436,7 @@ class pornhubPlayListScreen(Screen):
 		CoverHelper(self['coverArt']).getCover(phImage)
 
 	def keyOK(self):
-		Link = self['genreList'].getCurrent()[0][3]
+		phCatLink = self['genreList'].getCurrent()[0][3]
 		self.session.open(pornhubFilmScreen, phCatLink)
 
 	def keyPageNumber(self):
@@ -564,7 +564,7 @@ class pornhubPornstarScreen(Screen):
 		CoverHelper(self['coverArt']).getCover(phImage)
 
 	def keyOK(self):
-		Link = self['genreList'].getCurrent()[0][1]
+		phCatLink = self['genreList'].getCurrent()[0][1]
 		self.session.open(pornhubFilmScreen, phCatLink)
 
 	def keyPageNumber(self):
