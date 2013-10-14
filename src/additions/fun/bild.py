@@ -307,7 +307,7 @@ class bildSecondScreen(Screen):
 		categorys =  re.findall('class="hentry.*?<a\shref="([^#].*?)".*?src="(.*?)".*?class="kicker">(.*?)<.*?class="headline">(.*?)</h3>', data, re.S)
 		self.filmliste = []
 		for (bildUrl, bildImage, bildTitle, handlung) in categorys:
-			handlung = handlung.replace('<span>','').replace('</span>','')
+			handlung = handlung.replace('</span><span>',' ').replace('<span>','').replace('</span>','')
 			self.filmliste.append((decodeHtml(bildTitle), bildUrl, bildImage, handlung))
 		self.chooseMenuList.setList(map(bildEntry1, self.filmliste))
 		self.keyLocked = False
@@ -377,7 +377,14 @@ class bildSecondScreen(Screen):
 	def playVideo(self, data):
 		streamlink = re.search('<video\ssrc="(.*?)"', data, re.S)
 		if streamlink:
-			self.session.open(SimplePlayer, [(self.bildName, streamlink.group(1))], showPlaylist=False, ltype='Bild.de')
+			if re.match('.*?\/ondemand\/', streamlink.group(1)):
+				host = streamlink.group(1).split('ondemand/')[0]
+				playpath = streamlink.group(1).split('ondemand/')[1]
+				final = "%sondemand/ playpath=mp4:%s swfVfy=1" % (host, playpath)
+			else:
+				final = streamlink.group(1)
+			print "Final: " + final
+			self.session.open(SimplePlayer, [(self.bildName, final)], showPlaylist=False, ltype='Bild.de')
 
 	def keyCancel(self):
 		self.close()
