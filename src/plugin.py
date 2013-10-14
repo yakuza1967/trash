@@ -1505,7 +1505,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "Bild.de":
 			self.session.open(bildFirstScreen)
 		elif auswahl == "3sat Mediathek":
-			self.session.open(dreisatFirstScreen)
+			self.session.open(dreisatGenreScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
@@ -2533,7 +2533,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		elif auswahl == "MySpass":
 			self.session.open(myspassGenreScreen)
 		elif auswahl == "3sat Mediathek":
-			self.session.open(dreisatFirstScreen)
+			self.session.open(dreisatGenreScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
 

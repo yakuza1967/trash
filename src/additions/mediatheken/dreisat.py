@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+	# -*- coding: utf-8 -*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
@@ -14,13 +14,13 @@ def dreisatEntry1(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
-class dreisatFirstScreen(Screen):
+class dreisatGenreScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreenCover.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreenCover.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -30,7 +30,11 @@ class dreisatFirstScreen(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions"], {
 			"ok"	: self.keyOK,
-			"cancel": self.keyCancel
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft
 		}, -1)
 
 		self['title'] = Label("3sat Mediathek")
@@ -44,8 +48,10 @@ class dreisatFirstScreen(Screen):
 		self['F3'].hide()
 		self['F4'].hide()
 		self['coverArt'] = Pixmap()
+
 		self.keyLocked = True
 		self.filmliste = []
+
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
@@ -54,31 +60,69 @@ class dreisatFirstScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		url = "http://www.3sat.de/mediathek/"
+		url = "http://www.3sat.de/mediathek/?mode=sendungenaz0"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		raw = re.findall('<li class="SubMenu.*?href="(.*?)red=(.*?)">(.*?)</a></li>', data, re.S)
+		raw = re.findall('class="mediatheklistbox.*?_hover".*?href="(.*?)".*?img\sclass=.*?MediathekListPic"\salt="(.*?)"\ssrc="(.*?)"', data, re.S)
 		if raw:
-			self.filmliste = []
-			for (dump, Url, Title) in raw:
-				self.filmliste.append((decodeHtml(Title), Url, dump))
-			self.chooseMenuList.setList(map(dreisatEntry, self.filmliste))
-			self.keyLocked = False
+			for (Url, Title, Image) in raw:
+				self.filmliste.append((decodeHtml(Title), Url, Image))
+		url = "http://www.3sat.de/mediathek/?mode=sendungenaz1"
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
+
+	def parseData2(self, data):
+		raw = re.findall('class="mediatheklistbox.*?_hover".*?href="(.*?)".*?img\sclass=.*?MediathekListPic"\salt="(.*?)"\ssrc="(.*?)"', data, re.S)
+		if raw:
+			for (Url, Title, Image) in raw:
+				self.filmliste.append((decodeHtml(Title), Url, Image))
+				self.chooseMenuList.setList(map(dreisatEntry, self.filmliste))
+		self.keyLocked = False
+		self.showInfos()
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
+	def showInfos(self):
+		ImageUrl = "http://www.3sat.de" + self['genreList'].getCurrent()[0][2]
+		print ImageUrl
+		CoverHelper(self['coverArt']).getCover(ImageUrl)
+
 	def keyOK(self):
 		Name = self['genreList'].getCurrent()[0][0]
-		Link = self['genreList'].getCurrent()[0][1]
-		bildLink = "http://www.bild.de" + Link
-		self.session.open(dreisatSecondScreen, Link, Name)
+		Link = "http://www.3sat.de/mediathek/" + self['genreList'].getCurrent()[0][1]
+		print Name
+		print Link
+		self.session.open(dreisatListScreen, Link, Name)
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['genreList'].pageUp()
+		self.showInfos()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['genreList'].pageDown()
+		self.showInfos()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['genreList'].up()
+		self.showInfos()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['genreList'].down()
+		self.showInfos()
 
 	def keyCancel(self):
 		self.close()
 
-class dreisatSecondScreen(Screen):
+class dreisatListScreen(Screen):
 
 	def __init__(self, session, Link, Name):
 		self.session = session
@@ -122,37 +166,51 @@ class dreisatSecondScreen(Screen):
 		self['handlung'] = Label("")
 
 		self.keyLocked = True
-		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 0
+		self.lastpage = 0
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		url = "http://www.3sat.de/mediathek/?mode=verpasst" + str(self.page) + "&red=" + self.Link
+		self.keyLocked = True
+		self.filmliste = []
+		url = self.Link + "&mode=verpasst" + str(self.page)
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		raw = re.findall('BoxPicture.*?src="(.*?)".*?BoxHeadline.*?href="(.*?)">(.*?)<.*?FloatText.*?href=".*?">(.*?)</a>', data, re.S)
+		lastpage = re.search('class="ClnNextNblEnd".*?mode=verpasst([\d]+)\&amp;red', data, re.S)
+		if lastpage:
+			self.lastpage = int(lastpage.group(1))+1
+			self['page'].setText("%s / %s" % (str(self.page+1), str(self.lastpage)))
+		else:
+			lastpage = re.search('ClnInfo.*?class="mediathek_menu_.*?([\d]+)&nbsp;.*?class="ClnNextLock', data, re.S)
+			if lastpage:
+				self.lastpage = int(lastpage.group(1))
+				self['page'].setText("%s / %s" % (str(self.page+1), str(self.lastpage)))
+			else:
+				self.lastpage = 0
+				self['page'].setText("%s / 1" % str(self.page+1))
+
+		raw = re.findall('BoxPicture.*?src="(.*?)".*?BoxHeadline.*?href=".*?obj=(.*?)">(.*?)<.*?FloatText.*?href=".*?">(.*?)</a>', data, re.S)
 		if raw:
-			self.filmliste = []
-			for (Image, Link, Title, Handlung) in raw:
-				self.filmliste.append((decodeHtml(Title), Link, Image, Handlung))
+			for (Image, id, Title, Handlung) in raw:
+				self.filmliste.append((decodeHtml(Title), id, Image, Handlung))
 			self.chooseMenuList.setList(map(dreisatEntry1, self.filmliste))
-			self.keyLocked = False
-			self.showInfos()
+			self.chooseMenuList.moveToIndex(0)
+		self.keyLocked = False
+		self.showInfos()
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def showInfos(self):
-		coverUrl = self['liste'].getCurrent()[0][2]
+		coverUrl = "http://www.3sat.de" + self['liste'].getCurrent()[0][2]
 		handlung = self['liste'].getCurrent()[0][3]
 		self['handlung'].setText(decodeHtml(handlung))
-		self.ImageUrl = "http://www.3sat.de%s" % coverUrl
-		CoverHelper(self['coverArt']).getCover(self.ImageUrl)
+		CoverHelper(self['coverArt']).getCover(coverUrl)
 
 	def keyPageDown(self):
 		print "PageDown"
@@ -166,8 +224,9 @@ class dreisatSecondScreen(Screen):
 		print "PageUP"
 		if self.keyLocked:
 			return
-		self.page += 1
-		self.loadPage()
+		if self.page+1 < self.lastpage:
+			self.page += 1
+			self.loadPage()
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -194,38 +253,19 @@ class dreisatSecondScreen(Screen):
 		self.showInfos()
 
 	def keyOK(self):
+		if self.keyLocked:
+			return
 		self.title = self['liste'].getCurrent()[0][0]
-		link = self['liste'].getCurrent()[0][1].replace('&amp;','&')
-
-		(dump, id) = link.split('obj=')
+		id = self['liste'].getCurrent()[0][1].replace('amp;','')
 		url = "http://www.3sat.de/mediathek/xmlservice/web/beitragsDetails?ak=web&id=%s" % id
-		print url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getDataStream).addErrback(self.dataError)
 
 	def getDataStream(self, data):
-		urls = re.findall('<url>(.*?zdf.de.*?\.mp4)</url>', data) # mp4
-		urls = re.findall('<quality>(.*?)</quality.*?<url>(.*?zdf.de.*?\.smil)</url>', data, re.S)
-		print urls
-		if urls:
-			getPage(urls[-1][1], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getStream).addErrback(self.dataError)
-
-	def getStream(self, data):
-		print data
-		host = re.findall('<param name="host" value="(.*?)" />', data)
-		if host:
-			print host
-			playpath = re.findall('<video dur=".*?" paramGroup=".*?" src="(.*?)" system-bitrate=".*?">', data, re.S)
-			if playpath:
-				print playpath
-				if config.mediaportal.useRtmpDump.value:
-					final = "rtmp://%s/ondemand/' --playpath=%s'" % (host[0], playpath[-1])
-					print final
-					movieinfo = [final,self.title]
-					self.session.open(PlayRtmpMovie, movieinfo, self.title)
-				else:
-					final = "rtmp://%s/ondemand/ playpath=%s" % (host[0], playpath[-1])
-					print final
-					self.session.open(SimplePlayer, [(self.title, final, self.ImageUrl)], showPlaylist=False, ltype='3sat')
+		stream = re.findall('basetype="h264_aac_mp4.*?".*?<quality>veryhigh</quality>.*?<url>(http://[nrodl|rodl].*?zdf.de.*?.mp4)</url>', data, re.S)
+		if stream:
+			playlist = []
+			playlist.append((self.title, stream[0]))
+			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='3sat')
 
 	def keyCancel(self):
 		self.close()
