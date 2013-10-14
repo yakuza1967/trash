@@ -39,20 +39,20 @@ class autoBildGenreScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		self.genreliste.append(("Alle Videos", "http://www.autobild.de/videos/?page="))
-		self.genreliste.append(("Aktionen", "http://www.autobild.de/videos/aktionen/?page="))
-		self.genreliste.append(("Erlkoenige", "http://www.autobild.de/videos/erlkoenige/?page="))
-		self.genreliste.append(("Fahrberichte", "http://www.autobild.de/videos/fahrberichte/?page="))
-		self.genreliste.append(("Klassik", "http://www.autobild.de/videos/klassik/?page="))
-		self.genreliste.append(("Messen", "http://www.autobild.de/videos/messen/?page="))
-		self.genreliste.append(("Motorsport", "http://www.autobild.de/index_3398533.html?page="))
-		self.genreliste.append(("Neuvorstellungen", "http://www.autobild.de/videos/neuvorstellungen/?page="))
-		self.genreliste.append(("Ratgeber", "http://www.autobild.de/videos/ratgeber/?page="))
-		self.genreliste.append(("Tests", "http://www.autobild.de/videos/tests/?page="))
+		self.genreliste.append(("Alle Videos", "videos/"))
+		self.genreliste.append(("Aktionen", "videos/aktionen/"))
+		self.genreliste.append(("Erlkoenige", "videos/erlkoenige/"))
+		self.genreliste.append(("Fahrberichte", "videos/fahrberichte/"))
+		self.genreliste.append(("Klassik", "videos/klassik/"))
+		self.genreliste.append(("Messen", "videos/messen/"))
+		self.genreliste.append(("Motorsport", "index_3398533.html"))
+		self.genreliste.append(("Neuvorstellungen", "videos/neuvorstellungen/"))
+		self.genreliste.append(("Ratgeber", "videos/ratgeber/"))
+		self.genreliste.append(("Tests", "videos/tests/"))
 		self.chooseMenuList.setList(map(autoBildGenreListEntry, self.genreliste))
 
 	def keyOK(self):
-		streamGenreLink = self['genreList'].getCurrent()[0][1]
+		streamGenreLink = "http://www.autobild.de/" + self['genreList'].getCurrent()[0][1] + "?page="
 		print streamGenreLink
 		self.session.open(autoBildFilmListeScreen, streamGenreLink)
 

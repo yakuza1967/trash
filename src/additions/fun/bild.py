@@ -73,7 +73,7 @@ class bildFirstScreen(Screen):
 
 	def dataError(self, error):
 		printl(error,self,"E")
- 
+
 	def getTriesEntry(self):
 		return config.ParentalControl.retries.setuppin
 
@@ -83,7 +83,7 @@ class bildFirstScreen(Screen):
 		bildLink = "http://www.bild.de" + Link
 		if pincode:
 			self.session.open(bildSecondScreen, bildLink, bildName)
-				
+
 	def keyOK(self):
 		bildName = self['genreList'].getCurrent()[0][0]
 		Link = self['genreList'].getCurrent()[0][1]
@@ -144,24 +144,24 @@ class bildRegionalScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		self.filmliste.append(("Berlin", "http://www.bild.de/video/clip/berlin-regional/berlin-15717736.bild.html"))
-		self.filmliste.append(("Bremen", "http://www.bild.de/video/clip/bremen-regional/bremen-15717790.bild.html"))
-		self.filmliste.append(("Dresden", "http://www.bild.de/video/clip/dresden-regional/dresden-15717824.bild.html"))
-		self.filmliste.append(("Düsseldorf", "http://www.bild.de/video/clip/duesseldorf-regional/duesseldorf-15717846.bild.html"))
-		self.filmliste.append(("Frankfurt", "http://www.bild.de/video/clip/frankfurt-regional/frankfurt-15717874.bild.html"))
-		self.filmliste.append(("Hamburg", "http://www.bild.de/video/clip/hamburg-regional/hamburg-15717766.bild.html"))
-		self.filmliste.append(("Hannover", "http://www.bild.de/video/clip/hannover-regional/hannover-15717900.bild.html"))
-		self.filmliste.append(("Köln", "http://www.bild.de/video/clip/koeln-regional/koeln-15717928.bild.html"))
-		self.filmliste.append(("Leipzig", "http://www.bild.de/video/clip/leipzig-regional/leipzig-15717952.bild.html"))
-		self.filmliste.append(("München", "http://www.bild.de/video/clip/muenchen-regional/muenchen-15717974.bild.html"))
-		self.filmliste.append(("Ruhrgebiet", "http://www.bild.de/video/clip/ruhrgebiet-regional/ruhrgebiet-16989232.bild.html"))
-		self.filmliste.append(("Stuttgart", "http://www.bild.de/video/clip/stuttgart-regional/stuttgart-15718002.bild.html"))
+		self.filmliste.append(("Berlin", "berlin-regional/berlin-15717736"))
+		self.filmliste.append(("Bremen", "bremen-regional/bremen-15717790"))
+		self.filmliste.append(("Dresden", "dresden-regional/dresden-15717824"))
+		self.filmliste.append(("Düsseldorf", "duesseldorf-regional/duesseldorf-15717846"))
+		self.filmliste.append(("Frankfurt", "frankfurt-regional/frankfurt-15717874"))
+		self.filmliste.append(("Hamburg", "hamburg-regional/hamburg-15717766"))
+		self.filmliste.append(("Hannover", "hannover-regional/hannover-15717900"))
+		self.filmliste.append(("Köln", "koeln-regional/koeln-15717928"))
+		self.filmliste.append(("Leipzig", "leipzig-regional/leipzig-15717952"))
+		self.filmliste.append(("München", "muenchen-regional/muenchen-15717974"))
+		self.filmliste.append(("Ruhrgebiet", "ruhrgebiet-regional/ruhrgebiet-16989232"))
+		self.filmliste.append(("Stuttgart", "stuttgart-regional/stuttgart-15718002"))
 
 		self.chooseMenuList.setList(map(bildEntry, self.filmliste))
 
 	def keyOK(self):
 		bildName = self['genreList'].getCurrent()[0][0]
-		bildLink = self['genreList'].getCurrent()[0][1]
+		bildLink = "http://www.bild.de/video/clip/" + self['genreList'].getCurrent()[0][1] + ".bild.html"
 		self.session.open(bildSecondScreen, bildLink, bildName)
 
 	def keyCancel(self):
@@ -208,18 +208,17 @@ class bildWissenScreen(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		self.filmliste.append(("Übersicht", "http://www.bild.de/video/clip/bild-de-wissen/wissen-uebersicht-20423868.bild.html"))
-		self.filmliste.append(("Medizin", "http://www.bild.de/video/clip/bild-de-wissen-medizin/wissen-medizin-20424074.bild.html"))
-		self.filmliste.append(("Technik", "http://www.bild.de/video/clip/bild-de-wissen-technik/wissen-technik-20424140.bild.html"))
-		self.filmliste.append(("Panorama", "http://www.bild.de/video/clip/bild-de-wissen-panorama/wissen-panorama-20424026.bild.html"))
-		self.filmliste.append(("Natur", "http://www.bild.de/video/clip/bild-de-wissen-natur/wissen-natur-20424092.bild.html"))
-		self.filmliste.append(("Geschichte", "http://www.bild.de/video/clip/bild-de-wissen-geschichte/wissen-geschichte-20424050.bild.html"))
-
+		self.filmliste.append(("Übersicht", "/wissen-uebersicht-20423868"))
+		self.filmliste.append(("Medizin", "-medizin/wissen-medizin-20424074"))
+		self.filmliste.append(("Technik", "-technik/wissen-technik-20424140"))
+		self.filmliste.append(("Panorama", "-panorama/wissen-panorama-20424026"))
+		self.filmliste.append(("Natur", "-natur/wissen-natur-20424092"))
+		self.filmliste.append(("Geschichte", "-geschichte/wissen-geschichte-20424050"))
 		self.chooseMenuList.setList(map(bildEntry, self.filmliste))
 
 	def keyOK(self):
 		bildName = self['genreList'].getCurrent()[0][0]
-		bildLink = self['genreList'].getCurrent()[0][1]
+		bildLink = "http://www.bild.de/video/clip/bild-de-wissen" + self['genreList'].getCurrent()[0][1] + ".bild.html"
 		self.session.open(bildSecondScreen, bildLink, bildName)
 
 	def keyCancel(self):
@@ -275,6 +274,7 @@ class bildSecondScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 0
+		self.lastpage = 0
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
@@ -282,46 +282,31 @@ class bildSecondScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		lastpage = re.findall('<li class="pagLast">.*?page=(.*?),isVideoStartseite', data)
+		lastpage = re.search('<li\sclass="pagLast">.*?page=(.*),isVideoStartseite', data)
 		if lastpage:
-			self['page'].setText("%s / %s" % (str(self.page +1), str(lastpage[0])))
+			self.lastpage = int(lastpage.group(1))+1
+			self['page'].setText("%s / %s" % (str(self.page+1), str(self.lastpage)))
 		else:
-			self['page'].setText(str(self.page +1))
+			parse = re.search('class="pag">(.*)weiter</a>', data, re.S)
+			if parse:
+				lastpage = re.findall('>([\d]+)</a></li>', parse.group(1), re.S)
+				if lastpage:
+					self.lastpage = int(lastpage[-1])
+					self['page'].setText("%s / %s" % (str(self.page+1), str(self.lastpage)))
+			else:
+				self.lastpage = 0
+				self['page'].setText("%s / 1" % str(self.page+1))
 
-		if self.bildName == "Geschichte" or self.bildName == "Natur":
-			raw = re.findall('Alle Videos</h2>(.*?)</section></div></div>', data, re.S)
-			if raw:
-				categorys = re.findall('class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)<.*?class="headline">(.*?)</h3>', raw[0], re.S)
-				self.filmliste = []
-				for (bildUrl, bildImage, bildTitle, handlung) in categorys:
-					self.filmliste.append((decodeHtml(bildTitle), bildUrl, bildImage,(decodeBild(handlung))))
-				self.chooseMenuList.setList(map(bildEntry1, self.filmliste))
-				self.keyLocked = False
-				self.showInfos()
-		elif self.bildName == "Panorama" or self.bildName == "Technik" or self.bildName == "Medizin" or self.bildName == "Übersicht":
-			raw = re.findall('Alle Videos</h2>(.*?)</section></div></div>', data, re.S)
-			if raw:
-				seasons = re.findall('class="active">.*?data-ajax-href="(.*?)page=.*?,(.*?)"', raw[0], re.S)
+		raw = re.search('(Aktuellste|Neueste|Alle)\sVideos</h2>(.*)</section></div></div>', data, re.S).groups()
+		if raw:
+			seasons = re.findall('class="active">.*?data-ajax-href="(.*?)page=.*?,(.*?)"', raw[1], re.S)
+			if seasons:
 				vid_id1 = seasons[0][0]
 				vid_id2 = seasons[0][1]
 				nexturl = "http://www.bild.de/" + vid_id1 + "page=" + str(self.page) + "," + vid_id2
 				getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
-		elif self.bildName == "Stuttgart":
-			raw = re.findall('Aktuellste Videos</h2>(.*?)</section></div></div>', data, re.S)
-			if raw:
-				seasons = re.findall('class="active">.*?data-ajax-href="(.*?)page=.*?,(.*?)"', raw[0], re.S)
-				vid_id1 = seasons[0][0]
-				vid_id2 = seasons[0][1]
-				nexturl = "http://www.bild.de/" + vid_id1 + "page=" + str(self.page) + "," + vid_id2
-				getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
-		else:
-			raw = re.findall('Neueste Videos</h2>(.*?)</section></div></div>', data, re.S)
-			if raw:
-				seasons = re.findall('class="active">.*?data-ajax-href="(.*?)page=.*?,(.*?)"', raw[0], re.S)
-				vid_id1 = seasons[0][0]
-				vid_id2 = seasons[0][1]
-				nexturl = "http://www.bild.de/" + vid_id1 + "page=" + str(self.page) + "," + vid_id2
-				getPage(nexturl, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData2).addErrback(self.dataError)
+			else:
+				self.parseData2(raw[1])
 
 	def parseData2(self, data):
 		categorys =  re.findall('class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)<.*?class="headline">(.*?)</h3>', data, re.S)
@@ -375,14 +360,16 @@ class bildSecondScreen(Screen):
 		print "PageUP"
 		if self.keyLocked:
 			return
-		self.page += 1
-		self.loadPage()
+		if self.page+1 < self.lastpage:
+			self.page += 1
+			self.loadPage()
 
 	def keyOK(self):
-		bildName = self['liste'].getCurrent()[0][0]
+		if self.keyLocked:
+			return
 		bildLink = self['liste'].getCurrent()[0][1]
 		self.bildLink = "http://www.bild.de" + bildLink
-		self.bildName = bildName
+		self.bildName = self['liste'].getCurrent()[0][0]
 		getPage(self.bildLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideoData).addErrback(self.dataError)
 
 	def parseVideoData(self, data):
