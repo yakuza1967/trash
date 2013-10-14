@@ -73,9 +73,9 @@ class xxxsaveFilmScreen(Screen):
 		else:
 			self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
-		phMovies = re.findall('class="thumbnail"><a\shref="(.*?)".*?<img.*?src="(.*?)".*?title=".*?">(.*?)</a>', data, re.S)
+		phMovies = re.findall('barang.*?<a\shref="(.*?)".*?title="(.*?)".*?<img.*?src="(.*?)"', data, re.S)
 		if phMovies:
-			for (phUrl, phImage, phTitle) in phMovies:
+			for (phUrl, phTitle, phImage) in phMovies:
 				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
 			self.chooseMenuList.setList(map(xxxsaveFilmListEntry, self.filmliste))
 			self.chooseMenuList.moveToIndex(0)
@@ -201,12 +201,12 @@ class xxxsaveStreamListeScreen(Screen):
 
 	def loadPageData(self, data):
 		print "daten bekommen"
-		streams = re.findall('href="(http://(streamcloud.eu).*?)".*?', data, re.S)
+		streams = re.findall('href="(http://(streamcloud.eu|flashx.tv|vidx.to).*?)".*?', data, re.S)
 		if streams:
 			for (stream, hostername) in streams:
-				if re.match('.*?(streamcloud.eu)', hostername, re.S|re.I):
+				if re.match('.*?(streamcloud.eu|flashx.tv|vidx.to)', hostername, re.S|re.I):
 					print hostername, stream
-					hostername = hostername.replace('.eu','')
+					hostername = hostername.replace('.eu','').replace('.tv','').replace('.to','')
 					hostername = hostername.title()
 					disc = re.search('.*?(Scene_10|Scene_11|Scene_12|Scene_13|Scene_14|Scene_15|Scene_1|Scene_2|Scene_3|Scene_4|Scene_5|Scene_6|Scene_7|Scene_8|Scene_9).*?', stream, re.S|re.I)
 					if disc:
