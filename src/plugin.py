@@ -279,6 +279,8 @@ from additions.porn.sunporno import *
 config.mediaportal.showsunporno = ConfigYesNo(default = False)
 from additions.porn.thenewporn import *
 config.mediaportal.showthenewporn = ConfigYesNo(default = False)
+from additions.porn.tube8 import *
+config.mediaportal.showtube8 = ConfigYesNo(default = False)
 from additions.porn.updatetube import *
 config.mediaportal.showupdatetube = ConfigYesNo(default = False)
 from additions.porn.wetplace import *
@@ -518,6 +520,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.porn.append(getConfigListEntry("SeXXX-HD", config.mediaportal.showsexxxhd))
 		self.porn.append(getConfigListEntry("SunPorno", config.mediaportal.showsunporno))
 		self.porn.append(getConfigListEntry("TheNewPorn", config.mediaportal.showthenewporn))
+		self.porn.append(getConfigListEntry("Tube8", config.mediaportal.showtube8))
 		self.porn.append(getConfigListEntry("UpdateTube", config.mediaportal.showupdatetube))
 		self.porn.append(getConfigListEntry("WetPlace", config.mediaportal.showwetplace))
 		self.porn.append(getConfigListEntry("xHamster", config.mediaportal.showXhamster))
@@ -983,6 +986,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.porn.append(self.hauptListEntry("SunPorno", "sunporno"))
 			if config.mediaportal.showthenewporn.value:
 				self.porn.append(self.hauptListEntry("TheNewPorn", "thenewporn"))
+			if config.mediaportal.showtube8.value:
+				self.porn.append(self.hauptListEntry("Tube8", "tube8"))
 			if config.mediaportal.showupdatetube.value:
 				self.porn.append(self.hauptListEntry("UpdateTube", "updatetube"))
 			if config.mediaportal.showwetplace.value:
@@ -1574,6 +1579,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.pornscreen = sunpornoGenreScreen
 		elif auswahl == "TheNewPorn":
 			self.pornscreen = thenewpornGenreScreen
+		elif auswahl == "Tube8":
+			self.pornscreen = tube8GenreScreen
 		elif auswahl == "UpdateTube":
 			self.pornscreen = updatetubeGenreScreen
 		elif auswahl == "WetPlace":
@@ -1945,6 +1952,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("SunPorno", "sunporno", "Porn"))
 			if config.mediaportal.showthenewporn.value:
 				self.plugin_liste.append(("TheNewPorn", "thenewporn", "Porn"))
+			if config.mediaportal.showtube8.value:
+				self.plugin_liste.append(("Tube8", "tube8", "Porn"))
 			if config.mediaportal.showupdatetube.value:
 				self.plugin_liste.append(("UpdateTube", "updatetube", "Porn"))
 			if config.mediaportal.showwetplace.value:
@@ -2600,6 +2609,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.pornscreen = sunpornoGenreScreen
 		elif auswahl == "TheNewPorn":
 			self.pornscreen = thenewpornGenreScreen
+		elif auswahl == "Tube8":
+			self.pornscreen = tube8GenreScreen
 		elif auswahl == "UpdateTube":
 			self.pornscreen = updatetubeGenreScreen
 		elif auswahl == "WetPlace":
