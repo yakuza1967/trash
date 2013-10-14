@@ -13,11 +13,6 @@ def bildEntry1(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+" - "+entry[3])
 		]
 
-def decodeBild(text):
-	text = text.replace('<span>','')
-	text = text.replace('</span>',' ')
-	return text
-
 class bildFirstScreen(Screen):
 
 	def __init__(self, session):
@@ -309,10 +304,11 @@ class bildSecondScreen(Screen):
 				self.parseData2(raw[1])
 
 	def parseData2(self, data):
-		categorys =  re.findall('class="hentry.*?href="(.*?)".*?src="(.*?)".*?class="kicker">(.*?)<.*?class="headline">(.*?)</h3>', data, re.S)
+		categorys =  re.findall('class="hentry.*?<a\shref="([^#].*?)".*?src="(.*?)".*?class="kicker">(.*?)<.*?class="headline">(.*?)</h3>', data, re.S)
 		self.filmliste = []
 		for (bildUrl, bildImage, bildTitle, handlung) in categorys:
-			self.filmliste.append((decodeHtml(bildTitle), bildUrl, bildImage,(decodeBild(handlung))))
+			handlung = handlung.replace('<span>','').replace('</span>','')
+			self.filmliste.append((decodeHtml(bildTitle), bildUrl, bildImage, handlung))
 		self.chooseMenuList.setList(map(bildEntry1, self.filmliste))
 		self.keyLocked = False
 		self.showInfos()
@@ -369,19 +365,19 @@ class bildSecondScreen(Screen):
 			return
 		bildLink = self['liste'].getCurrent()[0][1]
 		self.bildLink = "http://www.bild.de" + bildLink
-		self.bildName = self['liste'].getCurrent()[0][0]
+		self.bildName = self['liste'].getCurrent()[0][0] + " - " + self['liste'].getCurrent()[0][3]
 		getPage(self.bildLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseVideoData).addErrback(self.dataError)
 
 	def parseVideoData(self, data):
-		xmllink = re.findall('longdesc="(.*?)"', data, re.S)
+		xmllink = re.search('longdesc="(.*?)"', data, re.S)
 		if xmllink:
-			getxml = "http://www.bild.de" + xmllink[0]
+			getxml = "http://www.bild.de" + xmllink.group(1)
 			getPage(getxml, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.playVideo).addErrback(self.dataError)
 
 	def playVideo(self, data):
-		streamlink = re.findall('<video.*?src="(.*?)" ', data, re.S)
+		streamlink = re.search('<video\ssrc="(.*?)"', data, re.S)
 		if streamlink:
-			self.session.open(SimplePlayer, [(self.bildName, streamlink[0])], showPlaylist=False, ltype='Bild.de')
+			self.session.open(SimplePlayer, [(self.bildName, streamlink.group(1))], showPlaylist=False, ltype='Bild.de')
 
 	def keyCancel(self):
 		self.close()
