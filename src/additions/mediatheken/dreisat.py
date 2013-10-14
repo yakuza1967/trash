@@ -85,14 +85,11 @@ class dreisatGenreScreen(Screen):
 
 	def showInfos(self):
 		ImageUrl = "http://www.3sat.de" + self['genreList'].getCurrent()[0][2]
-		print ImageUrl
 		CoverHelper(self['coverArt']).getCover(ImageUrl)
 
 	def keyOK(self):
 		Name = self['genreList'].getCurrent()[0][0]
 		Link = "http://www.3sat.de/mediathek/" + self['genreList'].getCurrent()[0][1]
-		print Name
-		print Link
 		self.session.open(dreisatListScreen, Link, Name)
 
 	def keyLeft(self):
