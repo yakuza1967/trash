@@ -269,7 +269,6 @@ class pornhubGenreScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.suchString = ''
-		self.type = None
 
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -329,7 +328,7 @@ class pornhubGenreScreen(Screen):
 			self.session.open(pornhubPlayListScreen, streamGenreLink)
 		else:
 			streamGenreLink = self['genreList'].getCurrent()[0][1]
-			self.session.open(pornhubFilmScreen, streamGenreLink, self.type)
+			self.session.open(pornhubFilmScreen, streamGenreLink)
 
 	def suchen(self):
 		self.session.openWithCallback(self.SuchenCallback, VirtualKeyBoard, title = (_("Suchkriterium eingeben")), text = self.suchString)
@@ -338,7 +337,7 @@ class pornhubGenreScreen(Screen):
 		if callback is not None and len(callback):
 			self.suchString = callback.replace(' ', '%2B')
 			streamGenreLink = 'http://www.pornhub.com/video/search?search=%s&page=' % (self.suchString)
-			self.session.open(pornhubFilmScreen, streamGenreLink, self.type)
+			self.session.open(pornhubFilmScreen, streamGenreLink)
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -438,8 +437,7 @@ class pornhubPlayListScreen(Screen):
 
 	def keyOK(self):
 		Link = self['genreList'].getCurrent()[0][3]
-		self.type = "Playlist"
-		self.session.open(pornhubFilmScreen, phCatLink, self.type)
+		self.session.open(pornhubFilmScreen, phCatLink)
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
@@ -530,7 +528,6 @@ class pornhubPornstarScreen(Screen):
 		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.page = 1
-		self.type = None
 
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -567,7 +564,7 @@ class pornhubPornstarScreen(Screen):
 
 	def keyOK(self):
 		Link = self['genreList'].getCurrent()[0][1]
-		self.session.open(pornhubFilmScreen, phCatLink, self.type)
+		self.session.open(pornhubFilmScreen, phCatLink)
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
@@ -625,10 +622,9 @@ class pornhubPornstarScreen(Screen):
 
 class pornhubFilmScreen(Screen):
 
-	def __init__(self, session, phCatLink, type):
+	def __init__(self, session, phCatLink):
 		self.session = session
 		self.phCatLink = phCatLink
-		self.type = type
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/XXXFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/XXXFilmScreen.xml"
@@ -673,7 +669,7 @@ class pornhubFilmScreen(Screen):
 		self['name'].setText('Bitte warten...')
 		self.filmliste = []
 		self['page'].setText(str(self.page))
-		if self.type == "Playlist":
+		if re.match(".*\/playlist\/",self.phCatLink):
 			url = "%s" % (self.phCatLink)
 		else:
 			url = "%s%s" % (self.phCatLink, str(self.page))
