@@ -39,7 +39,7 @@ class bildFirstScreen(Screen):
 
 		self['title'] = Label("Bild.de")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.3")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -124,7 +124,7 @@ class bildRegionalScreen(Screen):
 
 		self['title'] = Label("Bild.de")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.3")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -188,7 +188,7 @@ class bildWissenScreen(Screen):
 
 		self['title'] = Label("Bild.de")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.3")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")

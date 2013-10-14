@@ -35,7 +35,7 @@ class arteFirstScreen(Screen):
 
 		self['title'] = Label("Arte Mediathek")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.1")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")

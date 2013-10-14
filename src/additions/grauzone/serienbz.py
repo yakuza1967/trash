@@ -39,7 +39,7 @@ class SerienFirstScreen(Screen):
 
 		self['title'] = Label("Serien.bz")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.3")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
@@ -94,7 +94,7 @@ class SerienLetterScreen(Screen):
 
 		self['title'] = Label("Serien.bz")
 		self['ContentTitle'] = Label("Genre:")
-		self['name'] = Label("v0.3")
+		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
 		self['F2'] = Label("")
 		self['F3'] = Label("")
