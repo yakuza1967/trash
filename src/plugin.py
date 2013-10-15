@@ -221,6 +221,8 @@ from additions.mediatheken.dreisat import *
 config.mediaportal.showDreisat = ConfigYesNo(default = True)
 from additions.mediatheken.arte import *
 config.mediaportal.showArte = ConfigYesNo(default = True)
+from additions.mediatheken.wissensthek import *
+config.mediaportal.wissensthek = ConfigYesNo(default = True)
 
 # Porn
 from additions.porn.x4tube import *
@@ -333,6 +335,8 @@ from additions.grauzone.movie2k import *
 config.mediaportal.movie2k = ConfigYesNo(default = False)
 from additions.grauzone.serienbz import *
 config.mediaportal.serienbz = ConfigYesNo(default = False)
+from additions.grauzone.topimdb import *
+config.mediaportal.topimdb = ConfigYesNo(default = False)
 
 class CheckPathes:
 	def __init__(self, session):
@@ -497,6 +501,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.mediatheken.append(getConfigListEntry("ZDF Mediathek", config.mediaportal.showZDF))
 		self.mediatheken.append(getConfigListEntry("MySpass", config.mediaportal.showmyspass))
 		self.mediatheken.append(getConfigListEntry("3Sat", config.mediaportal.showDreisat))
+		self.mediatheken.append(getConfigListEntry("Wissensthek", config.mediaportal.wissensthek))
 		self.mediatheken.sort(key=lambda t : t[0].lower())
 
 		### Porn
@@ -559,6 +564,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
+			self.grauzone.append(getConfigListEntry("Top imdb", config.mediaportal.topimdb))
 			self.grauzone.sort(key=lambda t : t[0].lower())
 
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
@@ -919,6 +925,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("3sat Mediathek", "3sat"))
 		if config.mediaportal.showArte.value:
 			self.mediatheken.append(self.hauptListEntry("Arte Mediathek", "arte"))
+		if config.mediaportal.wissensthek.value:
+			self.mediatheken.append(self.hauptListEntry("Wissensthek", "wissensthek"))
 
 		# Porn
 		if config.mediaportal.showporn.value:
@@ -1514,7 +1522,9 @@ class haupt_Screen(Screen, ConfigListScreen):
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
-			self.session.open(SerienFirstScreen)	
+			self.session.open(SerienFirstScreen)
+		elif auswahl == "Wissensthek":
+			self.session.open(wissensthekGenreScreen)
 
 		# Porn
 		elif auswahl == "4Tube":
@@ -1883,6 +1893,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("3sat Mediathek", "3sat", "Mediathek"))
 		if config.mediaportal.showArte.value:
 			self.plugin_liste.append(("Arte Mediathek", "arte", "Mediathek"))
+		if config.mediaportal.wissensthek.value:
+			self.plugin_liste.append(("Wissensthek", "wissensthek", "Mediathek"))
 
 		# Porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2006,6 +2018,9 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
 			if config.mediaportal.serienbz.value:
 				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
+			if config.mediaportal.serienbz.value:
+				self.plugin_liste.append(("Top imdb", "timdb", "Grauzone"))
+
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
 				self.plugin_liste.append(("Movie4k Watchlist", "movie4kwatchlist", "Grauzone"))
@@ -2507,6 +2522,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(bildFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
+		elif auswahl == "Top imdb":
+			self.session.open(timdbGenreScreen)
 
 		# mediatheken
 		elif auswahl == "VOXNOW":
@@ -2545,6 +2562,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(dreisatGenreScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
+		elif auswahl == "Wissensthek":
+			self.session.open(wissensthekGenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
