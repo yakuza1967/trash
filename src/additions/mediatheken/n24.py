@@ -1,4 +1,4 @@
-	# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
@@ -76,12 +76,12 @@ class n24GenreScreen(Screen):
 			return
 		Name = self['genreList'].getCurrent()[0][0]
 		Link = self['genreList'].getCurrent()[0][1].replace(' ','+')
-		self.session.open(wissensthekListScreen, Link, Name)
+		self.session.open(n24ListScreen, Link, Name)
 
 	def keyCancel(self):
 		self.close()
 
-class wissensthekListScreen(Screen):
+class n24ListScreen(Screen):
 
 	def __init__(self, session, Link, Name):
 		self.session = session
@@ -130,13 +130,13 @@ class wissensthekListScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 1
-		self.lastpage = 0
+		self.lastpage = 1
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
 		self.keyLocked = True
 		self.filmliste = []
-		url = "http://www.n24.de/n24/Mediathek/videos/q?query=&hitsPerPage=50&pageNum=" + str(self.page) + "&recent=0&docType=CMVideo&category=" + self.Link + "&from=&to=&taxonomy=&type=&sort=new" 
+		url = "http://www.n24.de/n24/Mediathek/videos/q?query=&hitsPerPage=50&pageNum=" + str(self.page) + "&recent=0&docType=CMVideo&category=" + self.Link + "&from=&to=&taxonomy=&type=&sort=new"
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
@@ -175,8 +175,9 @@ class wissensthekListScreen(Screen):
 		print "PageUP"
 		if self.keyLocked:
 			return
-		self.page += 1
-		self.loadPage()
+		if self.page < self.lastpage:
+			self.page += 1
+			self.loadPage()
 
 	def keyLeft(self):
 		if self.keyLocked:
@@ -214,10 +215,8 @@ class wissensthekListScreen(Screen):
 		if host:
 			playpath = re.findall('_n24VideoCfg.flash.videoFlashSource = "(.*?)";', data, re.S)
 			if playpath:
-				if config.mediaportal.useRtmpDump.value:
-					final = "%s playpath=%s" % (host[0], playpath[0])
-					self.session.open(SimplePlayer, [(self.title, final)], showPlaylist=False, ltype='n24') 
-
+				final = "%s playpath=%s" % (host[0], playpath[0])
+				self.session.open(SimplePlayer, [(self.title, final)], showPlaylist=False, ltype='n24')
 
 	def keyCancel(self):
 		self.close()
