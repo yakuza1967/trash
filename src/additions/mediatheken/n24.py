@@ -149,7 +149,8 @@ class wissensthekListScreen(Screen):
 		raw = re.findall('<div class="result_media">.*?href="(.*?)".*?class="image">.*?src=&#034;(.*?)&#034;.*?<h4>.*?href.*?>(.*?)</a>', data, re.S)
 		if raw:
 			for (Link, Image, Title) in raw:
-				self.filmliste.append((decodeHtml(Title), Link, Image))
+				title = Title.replace('                ','')
+				self.filmliste.append((decodeHtml(title), Link, Image))
 			self.chooseMenuList.setList(map(n24Entry1, self.filmliste))
 			self.chooseMenuList.moveToIndex(0)
 		self.keyLocked = False
