@@ -60,6 +60,7 @@ class timdbGenreScreen(Screen):
 		self.keyLocked = True
 		self.filmliste = []
 		self.page = 1
+		self.lastpage = 20
 
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
@@ -154,8 +155,9 @@ class timdbGenreScreen(Screen):
 		print "PageUP"
 		if self.keyLocked:
 			return
-		self.page += 1
-		self.loadPage()
+		if self.page < self.lastpage:
+			self.page += 1
+			self.loadPage()
 
 	def keyLeft(self):
 		if self.keyLocked:
