@@ -223,6 +223,8 @@ config.mediaportal.showDreisat = ConfigYesNo(default = True)
 #config.mediaportal.showArte = ConfigYesNo(default = True)
 from additions.mediatheken.wissensthek import *
 config.mediaportal.wissensthek = ConfigYesNo(default = True)
+from additions.mediatheken.n24 import *
+config.mediaportal.n24 = ConfigYesNo(default = True)
 
 # Porn
 from additions.porn.x4tube import *
@@ -502,6 +504,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.mediatheken.append(getConfigListEntry("MySpass", config.mediaportal.showmyspass))
 		self.mediatheken.append(getConfigListEntry("3Sat Mediathek", config.mediaportal.showDreisat))
 		self.mediatheken.append(getConfigListEntry("Welt der Wunder", config.mediaportal.wissensthek))
+		self.mediatheken.append(getConfigListEntry("N24 Mediathek", config.mediaportal.n24))
 		self.mediatheken.sort(key=lambda t : t[0].lower())
 
 		### Porn
@@ -927,6 +930,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 		#	self.mediatheken.append(self.hauptListEntry("arte Mediathek", "arte"))
 		if config.mediaportal.wissensthek.value:
 			self.mediatheken.append(self.hauptListEntry("Welt der Wunder", "wissensthek"))
+		if config.mediaportal.n24.value:
+			self.mediatheken.append(self.hauptListEntry("N24 Mediathek", "n24"))
 
 		# Porn
 		if config.mediaportal.showporn.value:
@@ -1529,6 +1534,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(timdbGenreScreen)
 		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
+		elif auswahl == "N24 Mediathek":
+			self.session.open(n24GenreScreen)
 
 		# Porn
 		elif auswahl == "4Tube":
@@ -1899,6 +1906,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		#	self.plugin_liste.append(("arte Mediathek", "arte", "Mediathek"))
 		if config.mediaportal.wissensthek.value:
 			self.plugin_liste.append(("Welt der Wunder", "wissensthek", "Mediathek"))
+		if config.mediaportal.n24.value:
+			self.plugin_liste.append(("N24 Mediathek", "n24", "Mediathek"))
 
 		# Porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2568,6 +2577,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		#	self.session.open(arteFirstScreen)
 		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
+		elif auswahl == "N24 Mediathek":
+			self.session.open(n24GenreScreen)
 
 		# porn
 		elif auswahl == "4Tube":
