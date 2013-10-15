@@ -140,17 +140,19 @@ class n24ListScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		lastpage = re.findall('<li><span class="pages">.*? / (.*?)</span></li>', data, re.S)
+		lastpage = re.search('<li><span\sclass="pages">.*?\s/\s(.*?)</span></li>', data, re.S)
 		if lastpage:
-			self['page'].setText("%s / %s" % (str(self.page), str(lastpage[0])))
+			self.lastpage = int(lastpage.group(1))
+			self['page'].setText("%s / %s" % (str(self.page), str(self.lastpage)))
 		else:
+			self.lastpage = 1
 			self['page'].setText("%s / 1" % str(self.page))
 
 		raw = re.findall('<div class="result_media">.*?href="(.*?)".*?class="image">.*?src=&#034;(.*?)&#034;.*?<h4>.*?href.*?>(.*?)</a>', data, re.S)
 		if raw:
 			for (Link, Image, Title) in raw:
-				title = Title.replace('                ','')
-				self.filmliste.append((decodeHtml(title), Link, Image))
+				Title = Title.strip()
+				self.filmliste.append((decodeHtml(Title), Link, Image))
 			self.chooseMenuList.setList(map(n24Entry1, self.filmliste))
 			self.chooseMenuList.moveToIndex(0)
 		self.keyLocked = False
