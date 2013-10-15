@@ -4,9 +4,14 @@ from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-def wissensthekEntry(entry):
+def wissensthekGenreEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
+		]
+
+def wissensthekEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
 class wissensthekGenreScreen(Screen):
@@ -28,7 +33,7 @@ class wissensthekGenreScreen(Screen):
 			"cancel": self.keyCancel
 		}, -1)
 
-		self['title'] = Label("Wissensthek")
+		self['title'] = Label("Welt der Wunder - Wissensthek")
 		self['ContentTitle'] = Label("Genre:")
 		self['name'] = Label("Auswahl:")
 		self['F1'] = Label("Exit")
@@ -60,7 +65,7 @@ class wissensthekGenreScreen(Screen):
 		if raw:
 			for (Url, Title) in raw:
 				self.filmliste.append((decodeHtml(Title), Url))
-				self.chooseMenuList.setList(map(wissensthekEntry, self.filmliste))
+				self.chooseMenuList.setList(map(wissensthekGenreEntry, self.filmliste))
 			self.keyLocked = False
 
 	def dataError(self, error):
@@ -104,7 +109,7 @@ class wissensthekListScreen(Screen):
 		"prevBouquet" : self.keyPageDown
 		}, -1)
 
-		self['title'] = Label("Wissensthek")
+		self['title'] = Label("Welt der Wunder - Wissensthek")
 		self['ContentTitle'] = Label("Genre: %s" % self.Name)
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
@@ -135,7 +140,9 @@ class wissensthekListScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-#				self['page'].setText("%s / 1" % str(self.page+1))
+		self.lastpage = re.findall('target="_self"\starget=\'_self\'>(.*?)</a></li>', data, re.S|re.I)
+		if self.lastpage:
+			self['page'].setText("%s / %s" % (str(self.page), str(self.lastpage[-1])))
 
 		raw = re.findall('description-box".*?href="(.*?)%5Bclipid%5D=(.*?)&amp;cHash=(.*?)".*?src="(.*?)".*?time-video">(.*?)<.*?<h5>.*?class="test">(.*?)</a>.*?<span>(.*?)</span>.*?<p>(.*?)</p>   ', data, re.S)
 		if raw:
@@ -153,7 +160,6 @@ class wissensthekListScreen(Screen):
 		coverUrl = self['liste'].getCurrent()[0][4]
 		handlung = self['liste'].getCurrent()[0][8]
 		self['handlung'].setText(decodeHtml(handlung))
-		self['page'].setText("%s" % str(self.page))
 		CoverHelper(self['coverArt']).getCover(coverUrl)
 
 	def keyPageDown(self):
