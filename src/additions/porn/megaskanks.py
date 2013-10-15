@@ -193,19 +193,16 @@ class megaskanksFilmScreen(Screen):
 				self.lastpage = 1
 		self['page'].setText(str(self.page) + ' / ' + str(self.lastpage))
 		
-		if self.phCatName == "--- Search ---":
-			phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?PostMetadataFooter', data, re.S|re.I)
-			if phMovies:
-				for (phUrl, phTitle) in phMovies:
-					phTitle = phTitle.strip()
-					self.filmliste.append((decodeHtml(phTitle), phUrl, None))
-		else:
-			phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?img.*?src=["|\'](.*?)["|\'].*?PostMetadataFooter', data, re.S|re.I)
-			if phMovies:
-				for (phUrl, phTitle, phImage) in phMovies:
-					if not re.search('PostHeaderIcon', phImage):
-						phTitle = phTitle.strip()
-						self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
+		phMovies = re.findall('PostHeader.*?<a\shref="(.*?)".*?title=".*?">\n{0,2}(.*?)</a>.*?PostContent(.*?)PostMetadataFooter', data, re.S|re.I)
+		if phMovies:
+			for (phUrl, phTitle, phImage) in phMovies:
+				Image = re.search('NcodeImage.*?src=["|\'](.*?)["|\'].*?\/>', phImage)
+				if Image:
+					phImage = Image.group(1)
+				else:
+					phImage = None
+				phTitle = phTitle.strip()
+				self.filmliste.append((decodeHtml(phTitle), phUrl, phImage))
 		self.chooseMenuList.setList(map(megaskanksFilmListEntry, self.filmliste))
 		self.chooseMenuList.moveToIndex(0)
 		self.keyLocked = False
@@ -220,6 +217,8 @@ class megaskanksFilmScreen(Screen):
 		self['name'].setText(phTitle)
 		if not phImage == None:
 			CoverHelper(self['coverArt']).getCover(phImage)
+		else:
+			CoverHelper(self['coverArt']).getCover(None)
 
 	def keyPageNumber(self):
 		self.session.openWithCallback(self.callbackkeyPageNumber, VirtualKeyBoard, title = (_("Seitennummer eingeben")), text = str(self.page))
