@@ -219,8 +219,8 @@ from additions.mediatheken.ard import *
 config.mediaportal.showARD = ConfigYesNo(default = True)
 from additions.mediatheken.dreisat import *
 config.mediaportal.showDreisat = ConfigYesNo(default = True)
-from additions.mediatheken.arte import *
-config.mediaportal.showArte = ConfigYesNo(default = True)
+#from additions.mediatheken.arte import *
+#config.mediaportal.showArte = ConfigYesNo(default = True)
 from additions.mediatheken.wissensthek import *
 config.mediaportal.wissensthek = ConfigYesNo(default = True)
 
@@ -484,7 +484,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 
 		### Mediatheken
 		self.mediatheken.append(getConfigListEntry("ARD Mediathek", config.mediaportal.showARD))
-		self.mediatheken.append(getConfigListEntry("Arte Mediathek", config.mediaportal.showArte))
+		#self.mediatheken.append(getConfigListEntry("arte Mediathek", config.mediaportal.showArte))
 		self.mediatheken.append(getConfigListEntry("KIKA+", config.mediaportal.showkika))
 		self.mediatheken.append(getConfigListEntry("KinderKino", config.mediaportal.showKinderKino))
 		self.mediatheken.append(getConfigListEntry("Myvideo", config.mediaportal.showMyvideo))
@@ -923,8 +923,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.mediatheken.append(self.hauptListEntry("ARD Mediathek", "ard"))
 		if config.mediaportal.showDreisat.value:
 			self.mediatheken.append(self.hauptListEntry("3sat Mediathek", "3sat"))
-		if config.mediaportal.showArte.value:
-			self.mediatheken.append(self.hauptListEntry("Arte Mediathek", "arte"))
+		#if config.mediaportal.showArte.value:
+		#	self.mediatheken.append(self.hauptListEntry("arte Mediathek", "arte"))
 		if config.mediaportal.wissensthek.value:
 			self.mediatheken.append(self.hauptListEntry("Welt der Wunder", "wissensthek"))
 
@@ -1521,8 +1521,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(bildFirstScreen)
 		elif auswahl == "3sat Mediathek":
 			self.session.open(dreisatGenreScreen)
-		elif auswahl == "Arte Mediathek":
-			self.session.open(arteFirstScreen)
+		#elif auswahl == "arte Mediathek":
+		#	self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
 		elif auswahl == "Top IMDb":
@@ -1895,8 +1895,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("MySpass", "myspass", "Mediathek"))
 		if config.mediaportal.showDreisat.value:
 			self.plugin_liste.append(("3sat Mediathek", "3sat", "Mediathek"))
-		if config.mediaportal.showArte.value:
-			self.plugin_liste.append(("Arte Mediathek", "arte", "Mediathek"))
+		#if config.mediaportal.showArte.value:
+		#	self.plugin_liste.append(("arte Mediathek", "arte", "Mediathek"))
 		if config.mediaportal.wissensthek.value:
 			self.plugin_liste.append(("Welt der Wunder", "wissensthek", "Mediathek"))
 
@@ -2564,8 +2564,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(myspassGenreScreen)
 		elif auswahl == "3sat Mediathek":
 			self.session.open(dreisatGenreScreen)
-		elif auswahl == "Arte Mediathek":
-			self.session.open(arteFirstScreen)
+		#elif auswahl == "arte Mediathek":
+		#	self.session.open(arteFirstScreen)
 		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
 
