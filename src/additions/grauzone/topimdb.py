@@ -5,6 +5,7 @@ from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 from kinoxto import *
 from movie4k import *
 from mlehd import *
+from kinokiste import *
 
 def timdbEntry(entry):
 	return [entry,
@@ -40,13 +41,14 @@ class timdbGenreScreen(Screen):
 		"prevBouquet" : self.keyPageDown,
 		"green" : self.kinoxSearch,
 		"yellow" : self.movie4kSearch, 
-		"blue" : self.mleSearch
+		"blue" : self.mleSearch,
+		"red" : self.kinokisteSearch
 		}, -1)
 
 		self['title'] = Label("Top imdb")
 		self['ContentTitle'] = Label("Auswahl:")
 		self['name'] = Label("")
-		self['F1'] = Label("Exit")
+		self['F1'] = Label("KinoKiste")
 		self['F2'] = Label("Kinox")
 		self['F3'] = Label("Movie4k")
 		self['F4'] = Label("MLE")
@@ -74,7 +76,7 @@ class timdbGenreScreen(Screen):
 
 		url = "http://www.imdb.de/search/title?groups=top_1000&sort=user_rating,desc&start=%s" % str(self.start)
 		print url
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded', 'User-agent':'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5'}).addCallback(self.parseData).addErrback(self.dataError)
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded', 'User-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0', 'Accept-Language':'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
 		movies = re.findall('<td class="number">(.*?)</td>.*?<img src="(.*?)".*?<a href="/title/.*?">(.*?)</a>.*?<span class="year_type">(.*?)</span><br>.*?<div class="rating rating-list".*?title="Users rated this (.*?\/)', data, re.S)
@@ -103,6 +105,16 @@ class timdbGenreScreen(Screen):
 		self.searchTitle = self['liste'].getCurrent()[0][1]
 		print self.searchTitle
 
+	def kinokisteSearch(self):
+		self.searchTitle = self['liste'].getCurrent()[0][1]
+		self.session.openWithCallback(self.searchKinokisteCallback, VirtualKeyBoard, title = (_("kinokiste: Suche nach..")), text = self.searchTitle)
+
+	def searchKinokisteCallback(self, callbackStr):
+		if callbackStr is not None:
+			url = "http://kkiste.to/search/?q=%s" % callbackStr.replace(' ','%20')
+			self.session.open(kinokisteSearchScreen, url)
+
+	
 	def kinoxSearch(self):
 		self.searchTitle = self['liste'].getCurrent()[0][1]
 		self.session.openWithCallback(self.searchKinoxCallback, VirtualKeyBoard, title = (_("kinox: Suche nach..")), text = self.searchTitle)
@@ -128,7 +140,7 @@ class timdbGenreScreen(Screen):
 	def searchMleCallback(self, callbackStr):
 		if callbackStr is not None:
 			url = "http://mle-hd.se/page/"
-			self.session.open(mlehdFilmListeScreen, "Suche", url, callbackStr)
+			self.session.open(mlehdFilmListeScreen, "Suche", url, callbackStr.replace(' ','%20'))
 		
 	def keyPageDown(self):
 		print "PageDown"

@@ -65,7 +65,7 @@ class kinokisteGenreScreen(Screen):
 	def searchCallback(self, callbackStr):
 		if callbackStr is not None:
 			print callbackStr
-			url = "http://kkiste.to/search/?q=%s" % callbackStr
+			url = "http://kkiste.to/search/?q=%s" % callbackStr.replace(' ','%20')
 			print url
 			self.session.open(kinokisteSearchScreen, url)
 
