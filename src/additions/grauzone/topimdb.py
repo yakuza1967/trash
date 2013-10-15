@@ -95,7 +95,7 @@ class timdbGenreScreen(Screen):
 
 	def showInfos(self):
 		coverUrl = self['liste'].getCurrent()[0][4]
-		self['page'].setText("%s" % str(self.page))
+		self['page'].setText("%s / 20" % str(self.page))
 		CoverHelper(self['coverArt']).getCover(coverUrl)
 
 	def keyOK(self):
