@@ -564,7 +564,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
-			self.grauzone.append(getConfigListEntry("Top imdb", config.mediaportal.topimdb))
+			self.grauzone.append(getConfigListEntry("Top IMDb", config.mediaportal.topimdb))
 			self.grauzone.sort(key=lambda t : t[0].lower())
 
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
@@ -1050,6 +1050,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.grauzone.append(self.hauptListEntry("Moovizon", "moovizon"))
 			if config.mediaportal.serienbz.value:
 				self.grauzone.append(self.hauptListEntry("Serien.bz", "serienbz"))
+			if config.mediaportal.topimdb.value:
+				self.grauzone.append(self.hauptListEntry("Top IMDb", "topimdb"))
 
 		if len(self.porn) < 1:
 			self['Porn'].hide()
@@ -1523,6 +1525,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
+		elif auswahl == "Top IMDb":
+			self.session.open(timdbGenreScreen)
 		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
 
@@ -2019,7 +2023,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.serienbz.value:
 				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
 			if config.mediaportal.serienbz.value:
-				self.plugin_liste.append(("Top imdb", "timdb", "Grauzone"))
+				self.plugin_liste.append(("Top IMDb", "timdb", "Grauzone"))
 
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
@@ -2522,7 +2526,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(bildFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
-		elif auswahl == "Top imdb":
+		elif auswahl == "Top IMDb":
 			self.session.open(timdbGenreScreen)
 
 		# mediatheken

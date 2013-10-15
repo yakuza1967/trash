@@ -45,7 +45,7 @@ class timdbGenreScreen(Screen):
 		"red" : self.kinokisteSearch
 		}, -1)
 
-		self['title'] = Label("Top imdb")
+		self['title'] = Label("Top IMDb")
 		self['ContentTitle'] = Label("Auswahl:")
 		self['name'] = Label("")
 		self['F1'] = Label("KinoKiste")
