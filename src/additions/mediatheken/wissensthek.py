@@ -130,7 +130,7 @@ class wissensthekListScreen(Screen):
 		self.chooseMenuList.l.setItemHeight(25)
 		self['liste'] = self.chooseMenuList
 		self.page = 1
-		self.lastpage = 0
+		self.lastpage = 1
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
@@ -140,9 +140,10 @@ class wissensthekListScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.parseData).addErrback(self.dataError)
 
 	def parseData(self, data):
-		self.lastpage = re.findall('target="_self"\starget=\'_self\'>(.*?)</a></li>', data, re.S|re.I)
+		lastpage = re.search('target="_self"\s.*target=\'_self\'>(.*?)</a></li>', data, re.S)
 		if self.lastpage:
-			self['page'].setText("%s / %s" % (str(self.page), str(self.lastpage[-1])))
+			self.lastpage = int(lastpage.group(1))
+			self['page'].setText("%s / %s" % (str(self.page), str(self.lastpage)))
 
 		raw = re.findall('description-box".*?href="(.*?)%5Bclipid%5D=(.*?)&amp;cHash=(.*?)".*?src="(.*?)".*?time-video">(.*?)<.*?<h5>.*?class="test">(.*?)</a>.*?<span>(.*?)</span>.*?<p>(.*?)</p>   ', data, re.S)
 		if raw:
@@ -174,8 +175,9 @@ class wissensthekListScreen(Screen):
 		print "PageUP"
 		if self.keyLocked:
 			return
-		self.page += 1
-		self.loadPage()
+		if self.page < self.lastpage:
+			self.page += 1
+			self.loadPage()
 
 	def keyLeft(self):
 		if self.keyLocked:

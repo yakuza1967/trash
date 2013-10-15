@@ -500,8 +500,8 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.mediatheken.append(getConfigListEntry("VOXNOW", config.mediaportal.showVoxnow))
 		self.mediatheken.append(getConfigListEntry("ZDF Mediathek", config.mediaportal.showZDF))
 		self.mediatheken.append(getConfigListEntry("MySpass", config.mediaportal.showmyspass))
-		self.mediatheken.append(getConfigListEntry("3Sat", config.mediaportal.showDreisat))
-		self.mediatheken.append(getConfigListEntry("Wissensthek", config.mediaportal.wissensthek))
+		self.mediatheken.append(getConfigListEntry("3Sat Mediathek", config.mediaportal.showDreisat))
+		self.mediatheken.append(getConfigListEntry("Welt der Wunder", config.mediaportal.wissensthek))
 		self.mediatheken.sort(key=lambda t : t[0].lower())
 
 		### Porn
@@ -926,7 +926,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		if config.mediaportal.showArte.value:
 			self.mediatheken.append(self.hauptListEntry("Arte Mediathek", "arte"))
 		if config.mediaportal.wissensthek.value:
-			self.mediatheken.append(self.hauptListEntry("Wissensthek", "wissensthek"))
+			self.mediatheken.append(self.hauptListEntry("Welt der Wunder", "wissensthek"))
 
 		# Porn
 		if config.mediaportal.showporn.value:
@@ -1523,7 +1523,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
-		elif auswahl == "Wissensthek":
+		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
 
 		# Porn
@@ -1894,7 +1894,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 		if config.mediaportal.showArte.value:
 			self.plugin_liste.append(("Arte Mediathek", "arte", "Mediathek"))
 		if config.mediaportal.wissensthek.value:
-			self.plugin_liste.append(("Wissensthek", "wissensthek", "Mediathek"))
+			self.plugin_liste.append(("Welt der Wunder", "wissensthek", "Mediathek"))
 
 		# Porn
 		if (config.mediaportal.showporn.value == False and config.mediaportal.filter.value == 'Porn'):
@@ -2562,7 +2562,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(dreisatGenreScreen)
 		elif auswahl == "Arte Mediathek":
 			self.session.open(arteFirstScreen)
-		elif auswahl == "Wissensthek":
+		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
 
 		# porn
