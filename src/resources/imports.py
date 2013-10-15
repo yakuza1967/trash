@@ -120,6 +120,14 @@ def decodeHtml(text):
 	text = text.replace('&#8220;',"'")
 	text = text.replace('&#8221;','"')
 	text = text.replace('&#8222;',',')
+	
+	text = text.replace('&#xC4;','Ä')
+	text = text.replace('&#xD6;','Ö')
+	text = text.replace('&#xDC;','Ü')
+	text = text.replace('&#xE4;','ä')
+	text = text.replace('&#xF6;','ö')
+	text = text.replace('&#xFC;','ü')
+	text = text.replace('&#xDF;','ß')
 
 	text = text.replace('&#8230;','...')
 	text = text.replace('\u2026','...')
