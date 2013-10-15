@@ -2031,7 +2031,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
 			if config.mediaportal.serienbz.value:
 				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
-			if config.mediaportal.serienbz.value:
+			if config.mediaportal.topimdb.value:
 				self.plugin_liste.append(("Top IMDb", "timdb", "Grauzone"))
 
 		# Watchlisten - Grauzone
