@@ -138,10 +138,15 @@ class myspassStaffelListeScreen(Screen):
 
 	def loadPageData(self, data):
 		parse = re.search('\/\sGanze\sFolgen.*?class="episodeListSeasonList(.*?)</ul>', data, re.S)
-		staffeln = re.findall('data-maxpages="(.*?)".*?data-query="(.*?season=.*?)">.*?\);">.\t{0,5}\s{0,15}(.*?)</a></span>', parse.group(1), re.S)
+		staffeln = re.findall('data-target=(.*?)data-query="(.*?season=.*?)">.*?\);">.\t{0,5}\s{0,15}(.*?)</a></span>', parse.group(1), re.S)
 		if staffeln:
 			self.staffelliste = []
 			for (pages, link, name) in staffeln:
+				page = re.search('data-maxpages="(.*?)"', pages, re.S)
+				if page:
+					pages = page.group(1)
+				else:
+					pages = 0
 				link = "http://www.myspass.de/myspass/includes/php/ajax.php?v=2&ajax=true&action=%s&pageNumber=" % (link.replace('&amp;','&'))
 				self.staffelliste.append((decodeHtml(name), link, pages))
 			self.chooseMenuList.setList(map(myspassListEntry, self.staffelliste))
