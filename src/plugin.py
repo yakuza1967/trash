@@ -438,7 +438,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.music.append(getConfigListEntry("Canna-Power", config.mediaportal.showCanna))
 			self.music.append(getConfigListEntry("Musicstream.cc", config.mediaportal.showMusicstreamcc))
 			self.music.append(getConfigListEntry("Songs.to", config.mediaportal.showSongsto))
-			self.music.append(getConfigListEntry("OnlineMusicRecorder.com ", config.mediaportal.showomr))
+			self.music.append(getConfigListEntry("OnlineMusicRecorder.com", config.mediaportal.showomr))
 		self.music.sort(key=lambda t : t[0].lower())
 
 		### Fun
@@ -567,7 +567,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
-			self.grauzone.append(getConfigListEntry("Top IMDb", config.mediaportal.topimdb))
+			self.grauzone.append(getConfigListEntry("Top1000 IMDb", config.mediaportal.topimdb))
 			self.grauzone.sort(key=lambda t : t[0].lower())
 
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
@@ -1056,7 +1056,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.serienbz.value:
 				self.grauzone.append(self.hauptListEntry("Serien.bz", "serienbz"))
 			if config.mediaportal.topimdb.value:
-				self.grauzone.append(self.hauptListEntry("Top IMDb", "topimdb"))
+				self.grauzone.append(self.hauptListEntry("Top1000 IMDb", "topimdb"))
 
 		if len(self.porn) < 1:
 			self['Porn'].hide()
@@ -1530,7 +1530,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		#	self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
-		elif auswahl == "Top IMDb":
+		elif auswahl == "Top1000 IMDb":
 			self.session.open(timdbGenreScreen)
 		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
@@ -2032,7 +2032,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.serienbz.value:
 				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
 			if config.mediaportal.topimdb.value:
-				self.plugin_liste.append(("Top IMDb", "timdb", "Grauzone"))
+				self.plugin_liste.append(("Top1000 IMDb", "timdb", "Grauzone"))
 
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
@@ -2535,7 +2535,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(bildFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
-		elif auswahl == "Top IMDb":
+		elif auswahl == "Top1000 IMDb":
 			self.session.open(timdbGenreScreen)
 
 		# mediatheken
