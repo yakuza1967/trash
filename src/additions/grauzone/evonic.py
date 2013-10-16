@@ -1,4 +1,4 @@
-#	-*-	coding:	utf-8	-*-
+﻿#	-*-	coding:	utf-8	-*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
@@ -176,7 +176,7 @@ class showevonicGenre(Screen):
 		self.genreListe.append(("Drama", "http://evonic.tv/forum/list.php?r=category/36-HD-Drama&page="))
 		self.genreListe.append(("Fantasy", "http://evonic.tv/forum/list.php?r=category/37-HD-Fantasy&page="))
 		self.genreListe.append(("Horror", "http://evonic.tv/forum/list.php?r=category/38-HD-Horror&page="))
-		self.genreListe.append(("Komoedie", "http://evonic.tv/forum/list.php?r=category/39-HD-Kom%F6die&page="))
+		self.genreListe.append(("Komödie", "http://evonic.tv/forum/list.php?r=category/39-HD-Kom%F6die&page="))
 		self.genreListe.append(("Kriegsfilm", "http://evonic.tv/forum/list.php?r=category/66-HD-Kriegsfilm&page="))		
 		self.genreListe.append(("Krimi", "http://evonic.tv/forum/list.php?r=category/56-HD-Krimi&page="))
 		self.genreListe.append(("Mystery", "http://evonic.tv/forum/list.php?r=category/62-HD-Mystery&page="))
@@ -512,11 +512,10 @@ class meMovieScreen(Screen):
 
 		else:
 			print "Sonstige Genres"
-			#totalPages = re.findall('<span class="first_last"><a href=".*?page=(.*?)"', data, re.S)
-			totalPages = re.findall('page=(\d).*?title="Zeige Ergebnis', data, re.S)
+			totalPages = re.search('>Seite \d+ von (\d+)</a>', data, re.S)
 			if totalPages:
-				print totalPages
-				self['page'].setText("%s / %s" % (self.page, totalPages[-1]))
+				print "Last page:",totalPages.group(1)
+				self['page'].setText("%s / %s" % (self.page, totalPages.group(1)))
 				
 			movies = re.findall('<h3 class="article_preview">.*?<a href="(.*?)"><span>[AZ:]?(.*?)</span></a>.*?<div class="cms_article_section_location">.*?>IMDB(.*?)</a>.*?<img class="cms_article_preview_image" src="(.*?)" alt="Vorschau"', data,re.S)
 			if movies:
@@ -595,6 +594,7 @@ class meMovieScreen(Screen):
 		handlung = re.findall('<div class="bbcode_quote_container"></div>(.*?)<', data, re.S)
 		if handlung:
 			handlung = re.sub(r"\s+", " ", handlung[0])
+			handlung = decodeHtml2(handlung)
 			self['handlung'].setText(handlung.strip())
 		else:
 			self['handlung'].setText("Keine infos gefunden.")
