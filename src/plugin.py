@@ -2023,7 +2023,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.serienbz.value:
 				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
 			if config.mediaportal.topimdb.value:
-				self.plugin_liste.append(("Top1000 IMDb", "timdb", "Grauzone"))
+				self.plugin_liste.append(("Top1000 IMDb", "topimdb", "Grauzone"))
 
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
