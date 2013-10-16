@@ -164,6 +164,15 @@ class n24ListScreen(Screen):
 	def showInfos(self):
 		coverUrl = self['liste'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(coverUrl)
+		link = "http://www.n24.de" + self['liste'].getCurrent()[0][1]
+		getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getHandlung).addErrback(self.dataError)
+
+	def getHandlung(self, data):
+		handlung = re.findall('<div\sclass="text">.*?<p>(.*?)</p>.*?<div\sclass="related">', data, re.S)
+		if handlung:
+			self['handlung'].setText(decodeHtml(handlung[0]))
+		else:
+			self['handlung'].setText("Keine Infos gefunden.")
 
 	def keyPageDown(self):
 		print "PageDown"
