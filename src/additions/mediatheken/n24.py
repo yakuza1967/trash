@@ -221,12 +221,10 @@ class n24ListScreen(Screen):
 
 	def getStreamData(self, data):
 		self.title = self['liste'].getCurrent()[0][0]
-		host = re.findall('_n24VideoCfg.flash.videoFlashconnectionUrl = "(.*?)";', data, re.S)
-		if host:
-			playpath = re.findall('_n24VideoCfg.flash.videoFlashSource = "(.*?)";', data, re.S)
-			if playpath:
-				final = "%s playpath=%s" % (host[0], playpath[0])
-				self.session.open(SimplePlayer, [(self.title, final)], showPlaylist=False, ltype='n24')
+		host = re.search('videoFlashconnectionUrl\s=\s["|\'](.*?)["|\'];', data, re.S)
+		playpath = re.search('videoFlashSource\s=\s["|\'](.*?)["|\'];', data, re.S)
+		final = "%s playpath=%s" % (host.group(1), playpath.group(1))
+		self.session.open(SimplePlayer, [(self.title, final)], showPlaylist=False, ltype='n24')
 
 	def keyCancel(self):
 		self.close()
