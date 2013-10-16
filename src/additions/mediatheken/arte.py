@@ -20,7 +20,7 @@ class arteFirstScreen(Screen):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultGenreScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()

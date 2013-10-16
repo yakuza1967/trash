@@ -20,7 +20,7 @@ class dreisatGenreScreen(Screen):
 		self.session = session
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreenCover.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreenCover.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultGenreScreenCover.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
