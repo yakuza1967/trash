@@ -91,7 +91,7 @@ class mlehdGenreScreen(Screen):
 		self.mlehdGenre = self['genreList'].getCurrent()[0][0]
 		self.mlehdUrl = self['genreList'].getCurrent()[0][1]
 		print self.mlehdGenre, self.mlehdUrl
-		
+
 		if self.mlehdGenre == "Suche":
 			self.session.openWithCallback(self.callbackSuche, VirtualKeyBoard, title = (_("Suche..")), text = "")
 		else:
@@ -101,7 +101,7 @@ class mlehdGenreScreen(Screen):
 		if callback is not None:
 			print callback
 			self.session.open(mlehdFilmListeScreen, self.mlehdGenre, self.mlehdUrl, callback)
-	
+
 	def keyCancel(self):
 		self.close()
 

@@ -61,7 +61,7 @@ class kinokisteGenreScreen(Screen):
 			self.session.open(kinokisteGenrelistenScreen)
 		else:
 			self.session.openWithCallback(self.searchCallback, VirtualKeyBoard, title = (_("Suchbegriff eingeben")), text = "")
-			
+
 	def searchCallback(self, callbackStr):
 		if callbackStr is not None:
 			print callbackStr
@@ -289,7 +289,7 @@ class kinokisteSerienScreen(Screen):
 			return
 		kkName = self['List'].getCurrent()[0][0]
 		kkUrl = self['List'].getCurrent()[0][1]
-		
+
 		print kkName, kkUrl
 		self.session.open(kinokisteEpisodeScreen, kkName, kkUrl, self.kkImageUrl)
 
@@ -334,7 +334,7 @@ class kinokisteSerienScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class kinokisteEpisodeScreen(Screen):
 
 	def __init__(self, session, serienName, serienUrl, serienPic):
@@ -342,7 +342,7 @@ class kinokisteEpisodeScreen(Screen):
 		self.serienName = serienName
 		self.serienUrl = serienUrl
 		self.serienPic = serienPic
-		
+
 		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/myVideoFilmScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
 			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/myVideoFilmScreen.xml"
@@ -394,7 +394,7 @@ class kinokisteEpisodeScreen(Screen):
 					url = "http://kkiste.to/xhr/movies/episodes/%s" % jsonLink[0]
 					print url, staffel
 					self.urlliste.append((url, staffel))
-					
+
 		self.count = len(self.urlliste)
 		self.counting = 0
 		if len(self.urlliste) != 0:
@@ -409,7 +409,7 @@ class kinokisteEpisodeScreen(Screen):
 		self.counting += 1
 		post = {'season': staffel}
 		return getPage(url, method='POST', postdata=urlencode(post), headers={'Content-Type':'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'})
-	
+
 	def showEpisodes(self, data):
 		eps = re.findall('link":"(.*?)","part":"(.*?)"', data, re.S)
 		if eps:
@@ -436,7 +436,7 @@ class kinokisteEpisodeScreen(Screen):
 		self.serienName2 = "%s - %s" % (self.serienName, kkName)
 		print kkName, self.kkUrl
 		getPage(self.kkUrl, cookies=self.kekse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.dataError)
-		
+
 	def eco_read(self, data):
 		print data
 		print "hole daten"
@@ -445,7 +445,7 @@ class kinokisteEpisodeScreen(Screen):
 			postString = {'id': id[0]}
 			print postString
 			api_url = "http://www.ecostream.tv/xhr/video/get/"
-			getPage(api_url, method='POST', cookies=self.kekse, postdata=urlencode(postString), headers={'Content-Type': 'application/x-www-form-urlencoded', 'Referer': self.kkUrl, 'X-Requested-With': 'XMLHttpRequest'}).addCallback(self.eco_data).addErrback(self.dataError)		
+			getPage(api_url, method='POST', cookies=self.kekse, postdata=urlencode(postString), headers={'Content-Type': 'application/x-www-form-urlencoded', 'Referer': self.kkUrl, 'X-Requested-With': 'XMLHttpRequest'}).addCallback(self.eco_data).addErrback(self.dataError)
 
 	def eco_data(self, data):
 		print "hole stream"
@@ -519,7 +519,7 @@ class kinokistePartsScreen(Screen):
 		print self.kkLink
 		self.keyLocked = True
 		getPage(self.kkLink, cookies=self.kekse, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.eco_read).addErrback(self.dataError)
-		
+
 	def eco_read(self, data):
 		print data
 		print "hole daten"
@@ -528,7 +528,7 @@ class kinokistePartsScreen(Screen):
 			postString = {'id': id[0]}
 			print postString
 			api_url = "http://www.ecostream.tv/xhr/video/get/"
-			getPage(api_url, method='POST', cookies=self.kekse, postdata=urlencode(postString), headers={'Content-Type': 'application/x-www-form-urlencoded', 'Referer': self.kkLink, 'X-Requested-With': 'XMLHttpRequest'}).addCallback(self.eco_data).addErrback(self.dataError)		
+			getPage(api_url, method='POST', cookies=self.kekse, postdata=urlencode(postString), headers={'Content-Type': 'application/x-www-form-urlencoded', 'Referer': self.kkLink, 'X-Requested-With': 'XMLHttpRequest'}).addCallback(self.eco_data).addErrback(self.dataError)
 
 	def eco_data(self, data):
 		print "hole stream"
@@ -539,7 +539,7 @@ class kinokistePartsScreen(Screen):
 			print final_url
 			part = self['genreList'].getCurrent()[0][0]
 			streamname = "%s - %s" % (self.stream_name, part)
-			self.session.open(SimplePlayer, [(streamname, final_url)], showPlaylist=False, ltype='kinokiste')			
+			self.session.open(SimplePlayer, [(streamname, final_url)], showPlaylist=False, ltype='kinokiste')
 
 	def eco_final(self, data):
 		part = self['genreList'].getCurrent()[0][0]
@@ -611,7 +611,7 @@ class kinokisteFilmlistenScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class kinokisteGenrelistenScreen(Screen):
 
 	def __init__(self, session):
@@ -657,17 +657,17 @@ class kinokisteGenrelistenScreen(Screen):
 		self.genreliste.append(("Geschichte", "http://kkiste.to/geschichte/"))
 		self.genreliste.append(("Horror", "http://kkiste.to/horror/"))
 		self.genreliste.append(("Klassiker", "http://kkiste.to/klassiker/"))
-		self.genreliste.append(("Komoedie", "http://kkiste.to/komoedie/"))	
+		self.genreliste.append(("Komoedie", "http://kkiste.to/komoedie/"))
 		self.genreliste.append(("Kriegsfilm", "http://kkiste.to/kriegsfilm/"))
 		self.genreliste.append(("Krimi", "http://kkiste.to/krimi/"))
 		self.genreliste.append(("Musik", "http://kkiste.to/musik/"))
 		self.genreliste.append(("Mystery", "http://kkiste.to/mystery/"))
 		self.genreliste.append(("Romantik", "http://kkiste.to/romantik/"))
-		self.genreliste.append(("Sci-Fi", "http://kkiste.to/sci-fi/"))		
+		self.genreliste.append(("Sci-Fi", "http://kkiste.to/sci-fi/"))
 		self.genreliste.append(("Sport", "http://kkiste.to/sport/"))
 		self.genreliste.append(("Thriller", "http://kkiste.to/thriller/"))
 		self.genreliste.append(("Western", "http://kkiste.to/western/"))
-		
+
 		self.chooseMenuList.setList(map(kinokisteGenreListEntry, self.genreliste))
 
 	def keyOK(self):
@@ -677,7 +677,7 @@ class kinokisteGenrelistenScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 def kinokisteInGenreListEntry(entry):
 	return [entry,
 		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 500, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
@@ -760,7 +760,7 @@ class kinokisteInGenreScreen(Screen):
 			self['handlung'].setText(decodeHtml(ddDescription[0]))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
-					
+
 	def keyPageDown(self):
 		print "PageDown"
 		if self.keyLocked:
@@ -885,8 +885,8 @@ class kinokisteFilmLetterScreen(Screen):
 
 	def loadpage2(self):
 		kkLink = self['genreList'].getCurrent()[0][3]
-		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showInfos).addErrback(self.dataError)	
-		
+		getPage(kkLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.showInfos).addErrback(self.dataError)
+
 	def showInfos(self, data):
 		ddDescription = re.findall('<meta name="description" content="(.*?)"', data, re.S)
 		kkCover = re.findall('<img src="(.*?)".*?alt=".*?>', data, re.S)
@@ -897,7 +897,7 @@ class kinokisteFilmLetterScreen(Screen):
 		kkImage = kkCover[0]
 		kkImageUrl = "%s" % kkImage.replace('_170_120','_145_215')
 		CoverHelper(self['coverArt']).getCover(kkImageUrl)
-		
+
 	def dataError(self, error):
 		printl(error,self,"E")
 
@@ -915,7 +915,7 @@ class kinokisteFilmLetterScreen(Screen):
 			return
 		self.page += 1
 		self.loadpage()
-		
+
 	def keyLeft(self):
 		if self.keyLocked:
 			return
@@ -956,7 +956,7 @@ class kinokisteFilmLetterScreen(Screen):
 
 	def keyCancel(self):
 		self.close()
-		
+
 class kinokisteSearchScreen(Screen):
 
 	def __init__(self, session, kkLink):

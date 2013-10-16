@@ -602,7 +602,7 @@ class DDLME_FilmListeScreen(Screen):
 
 		url = self['liste'].getCurrent()[0][2]
 		CoverHelper(self['coverArt']).getCover(url)
-		
+
 	def getHandlung(self, desc):
 		print "getHandlung:"
 		if desc == None:
@@ -610,11 +610,11 @@ class DDLME_FilmListeScreen(Screen):
 			self['handlung'].setText("Keine weiteren Info's vorhanden.")
 			return
 		self.setHandlung(desc)
-	
+
 	def setHandlung(self, data):
 		print "setHandlung:"
 		self['handlung'].setText(decodeHtml(data))
-	
+
 	def keyOK(self):
 		if (self.keyLocked|self.eventL.is_set()):
 			return
@@ -970,7 +970,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 
 	def _insert(self, ori, ins, pos):
 		return ori[:pos] + ins + ori[pos:]
-		
+
 	def dataError(self, error):
 		print "dataError:"
 		printl(error,self,"E")

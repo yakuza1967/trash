@@ -1,4 +1,5 @@
-﻿from Plugins.Extensions.MediaPortal.resources.imports import *
+﻿# -*- coding: utf-8 -*-
+from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 
 def laolaOverviewListEntry(entry):
@@ -48,7 +49,7 @@ class laolaVideosOverviewScreen(Screen):
 		self['ContentTitle'] = Label("")
 		self['name'] = Label("")
 		self['F1'] = Label("Exit")
-		self['F2'] = Label("Land")
+		self['F2'] = Label("")
 		self['F3'] = Label("")
 		self['F4'] = Label("")
 		self['F3'].hide()
@@ -66,11 +67,11 @@ class laolaVideosOverviewScreen(Screen):
 	def loadPage(self):
 		self.genreliste.append(("Live", "http://www.laola1.tv/de-de/calendar/0.html"))
 		#self.genreliste.append(("Lastest Videos", "http://www.laola1.tv/de-de/home/0.html"))
-		self.genreliste.append(("Fussball", "http://www.laola1.tv/de-de/fussball/2.html"))
+		self.genreliste.append(("Fußball", "http://www.laola1.tv/de-de/fussball/2.html"))
 		self.genreliste.append(("Eishockey", "http://www.laola1.tv/de-de/eishockey/41.html"))
 		self.genreliste.append(("Beach-Volleyball", "http://www.laola1.tv/de-de/beach-volleyball/101.html"))
 		self.genreliste.append(("Handball", "http://www.laola1.tv/de-de/handball/143.html"))
-		self.genreliste.append(("Tichtennis", "http://www.laola1.tv/de-de/tischtennis/182.html"))
+		self.genreliste.append(("Tischtennis", "http://www.laola1.tv/de-de/tischtennis/182.html"))
 		self.genreliste.append(("Curling", "http://www.laola1.tv/de-de/curling/248.html"))
 		self.genreliste.append(("Motorsport", "http://www.laola1.tv/de-de/motorsport/239.html"))
 		self.genreliste.append(("Tennis", "http://www.laola1.tv/de-de/tennis/224.html"))
@@ -172,28 +173,28 @@ class laolaLiveScreen(Screen):
 		if 'Dieser Stream beginnt' in response:
 			message = self.session.open(MessageBox, _("Event ist noch nicht gestartet."), MessageBox.TYPE_INFO, timeout=3)
 		else:
-			match_player = re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(response)
+			match_player = re.search('<iframe.*?src="(.*?)"', response, re.S)
 			if match_player:
-				print match_player[0]
-				getPage(match_player[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData2).addErrback(self.dataError)
+				print match_player.group(1)
+				getPage(match_player.group(1), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData2).addErrback(self.dataError)
 			else:
 				message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
 
 	def getLiveData2(self, data):
-		match_m3u8 = re.compile('url: "(.+?)"', re.DOTALL).findall(data)
+		match_m3u8 = re.search('url: "(.*?)"', data, re.S)
 		if match_m3u8:
-			print match_m3u8[0].replace('/vod/','/live/')
-			getPage(match_m3u8[0].replace('/vod/','/live/'), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData3).addErrback(self.dataError)
+			print match_m3u8.group(1).replace('/vod/','/live/')
+			getPage(match_m3u8.group(1).replace('/vod/','/live/'), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData3).addErrback(self.dataError)
 		else:
 			message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
 
 	def getLiveData3(self, data):
-		match_url = re.compile('url="(.+?)"', re.DOTALL).findall(data)
+		match_url = re.search('url="(.*?)"', data, re.S)
 		if match_url:
-			match_auth = re.compile('auth="(.+?)"', re.DOTALL).findall(data)
+			match_auth = re.search('auth="(.*?)"', data, re.S)
 			if match_auth:
-				res_url = match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
-				m3u8_url = res_url+'?hdnea='+match_auth[0]
+				res_url = match_url.group(1).replace('l-_a-','l-L1TV_a-l1tv')
+				m3u8_url = res_url+'?hdnea='+match_auth.group(1)
 				print m3u8_url
 				getPage(m3u8_url.replace('/vod/','/live/'), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData4).addErrback(self.dataError)
 			else:
@@ -202,7 +203,7 @@ class laolaLiveScreen(Screen):
 			message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
 
 	def getLiveData4(self, data):
-		match_sec_m3u8 = re.compile('#EXT-X-STREAM-INF:(.+?)http(.+?)rebase=on', re.DOTALL).findall(data)
+		match_sec_m3u8 = re.findall('#EXT-X-STREAM-INF:(.*?)http(.*?)rebase=on', data, re.S)
 		if match_sec_m3u8:
 			stream_url = "http%s" % match_sec_m3u8[-1][1]
 			stream_url = str(stream_url).replace('a-p.m3u8','av-p.m3u8')
@@ -283,7 +284,8 @@ class laolaSelectGenreScreen(Screen):
 
 	def getEventData(self, data):
 		self.genreliste = []
-		events = re.compile('<span class="category">(.+?)</span>.*?<span class="date">(.+?)</span>.*?<h2><div class="hdkenn_list"></div>(.+?)</h2></a>.*?<a href="/(.*?)">', re.S).findall(data)
+		parse = re.search('class="grid2\s0">.*?class="grid2\s0">(.*?)footer_copyright', data, re.S)
+		events = re.findall('<span\sclass="category">(.*?)</span>.*?<span\sclass="date">(.*?)</span>.*?<h2>(.*?)</h2></a>.*?<a\shref="/(.*?)">', parse.group(1), re.S)
 		if events:
 			for genre,time,desc,url in events:
 				print genre,time,desc,url
@@ -296,34 +298,33 @@ class laolaSelectGenreScreen(Screen):
 	def keyOK(self):
 		if self.keyLocked:
 			return
-
 		self.auswahl = self['genreList'].getCurrent()[0][0]
 		url = self['genreList'].getCurrent()[0][1]
 		print self.auswahl, url
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData).addErrback(self.dataError)
 
 	def getLiveData(self, data):
-		match_player = re.compile('<iframe.+?src="(.+?)"', re.DOTALL).findall(data)
+		match_player = re.search('<iframe.*?src="(.*?)"', data, re.S)
 		if match_player:
-			print match_player[0]
-			getPage(match_player[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData2).addErrback(self.dataError)
+			print match_player.group(1)
+			getPage(match_player.group(1), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData2).addErrback(self.dataError)
 		else:
 			message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
 
 	def getLiveData2(self, data):
-		match_m3u8 = re.compile('url: "(.+?)"', re.DOTALL).findall(data)
+		match_m3u8 = re.search('url: "(.*?)"', data, re.S)
 		if match_m3u8:
 			print match_m3u8
-			getPage(match_m3u8[0], headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData3).addErrback(self.dataError)
+			getPage(match_m3u8.group(1), headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData3).addErrback(self.dataError)
 		else:
 			message = self.session.open(MessageBox, _("Event nicht verfuegbar."), MessageBox.TYPE_INFO, timeout=3)
 
 	def getLiveData3(self, data):
-		match_url = re.compile('url="(.+?)"', re.DOTALL).findall(data)
-		match_auth = re.compile('auth="(.+?)"', re.DOTALL).findall(data)
+		match_url = re.search('url="(.*?)"', data, re.S)
+		match_auth = re.search('auth="(.*?)"', data, re.S)
 		if match_url and match_auth:
-			res_url = match_url[0].replace('l-_a-','l-L1TV_a-l1tv')
-			stream_url = res_url+'?hdnea='+match_auth[0]+'&g='+self.char_gen(12)+'&hdcore=3.1.0'
+			res_url = match_url.group(1).replace('l-_a-','l-L1TV_a-l1tv')
+			stream_url = res_url+'?hdnea='+match_auth.group(1)+'&g='+self.char_gen(12)+'&hdcore=3.1.0'
 			print stream_url
 			stream_url = str(stream_url).replace('a-p.m3u8','av-p.m3u8').replace('low,','').replace('medium,','').replace('high,','')
 			self.session.open(SimplePlayer, [(self.auswahl, stream_url)], showPlaylist=False, ltype='laola1')

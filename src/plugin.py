@@ -21,8 +21,8 @@ config.mediaportal = ConfigSubsection()
 config.mediaportal.fake_entry = NoSave(ConfigNothing())
 
 # Allgemein
-config.mediaportal.version = NoSave(ConfigText(default="481"))
-config.mediaportal.versiontext = NoSave(ConfigText(default="4.8.1"))
+config.mediaportal.version = NoSave(ConfigText(default="490"))
+config.mediaportal.versiontext = NoSave(ConfigText(default="4.9.0"))
 config.mediaportal.autoupdate = ConfigYesNo(default = True)
 config.mediaportal.pincode = ConfigPIN(default = 0000)
 config.mediaportal.showporn = ConfigYesNo(default = False)
@@ -68,8 +68,8 @@ config.mediaportal.sp_pl_number = ConfigInteger(default = 1, limits = (1,99))
 config.mediaportal.sp_mi_key = ConfigSelection(default = "info", choices = [("info", _("EPG/INFO")),("displayHelp", _("HELP")),("showMovies", _("PVR/VIDEO"))])
 
 # Sport
-from additions.sport.ran import *
-config.mediaportal.showRan = ConfigYesNo(default = True)
+#from additions.sport.ran import *
+#config.mediaportal.showRan = ConfigYesNo(default = True)
 from additions.sport.nhl import *
 config.mediaportal.showNhl = ConfigYesNo(default = True)
 from additions.sport.spox import *
@@ -121,8 +121,6 @@ from additions.fun.roflvideos import *
 config.mediaportal.showRofl = ConfigYesNo(default = True)
 from additions.fun.focus import *
 config.mediaportal.showFocus = ConfigYesNo(default = True)
-from additions.fun.tvkino import *
-config.mediaportal.showTvkino = ConfigYesNo(default = True)
 from additions.fun.filmon import *
 config.mediaportal.showFilmOn = ConfigYesNo(default = True)
 from additions.fun.failto import *
@@ -423,7 +421,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.sport.append(getConfigListEntry("Spobox", config.mediaportal.showSpobox))
 		self.sport.append(getConfigListEntry("Laola1", config.mediaportal.showLaola1))
 		self.sport.append(getConfigListEntry("Sport1.fm", config.mediaportal.showsport1fm))
-		self.sport.append(getConfigListEntry("Ran.de", config.mediaportal.showRan))
+		#self.sport.append(getConfigListEntry("Ran.de", config.mediaportal.showRan))
 		self.sport.sort(key=lambda t : t[0].lower())
 
 		### Music
@@ -438,7 +436,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.music.append(getConfigListEntry("Canna-Power", config.mediaportal.showCanna))
 			self.music.append(getConfigListEntry("Musicstream.cc", config.mediaportal.showMusicstreamcc))
 			self.music.append(getConfigListEntry("Songs.to", config.mediaportal.showSongsto))
-			self.music.append(getConfigListEntry("OnlineMusicRecorder.com ", config.mediaportal.showomr))
+			self.music.append(getConfigListEntry("OnlineMusicRecorder.com", config.mediaportal.showomr))
 		self.music.sort(key=lambda t : t[0].lower())
 
 		### Fun
@@ -446,7 +444,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.fun.append(getConfigListEntry("Fail.to", config.mediaportal.showFail))
 		self.fun.append(getConfigListEntry("LiveLeak", config.mediaportal.showLiveLeak))
 		self.fun.append(getConfigListEntry("Radio.de", config.mediaportal.showRadio))
-		self.fun.append(getConfigListEntry("TvKino", config.mediaportal.showTvkino))
 		self.fun.append(getConfigListEntry("FilmOn", config.mediaportal.showFilmOn))
 		self.fun.append(getConfigListEntry("Focus", config.mediaportal.showFocus))
 		self.fun.append(getConfigListEntry("HörspielHouse", config.mediaportal.showHoerspielHouse))
@@ -567,7 +564,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
-			self.grauzone.append(getConfigListEntry("Top IMDb", config.mediaportal.topimdb))
+			self.grauzone.append(getConfigListEntry("Top1000 IMDb", config.mediaportal.topimdb))
 			self.grauzone.sort(key=lambda t : t[0].lower())
 
 		self.configlist.append(getConfigListEntry("----- Sport -----", config.mediaportal.fake_entry))
@@ -792,8 +789,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("LiveLeak", "liveleak"))
 		if config.mediaportal.showFilmOn.value:
 			self.funsport.append(self.hauptListEntry("FilmOn", "filmon"))
-		if config.mediaportal.showTvkino.value:
-			self.funsport.append(self.hauptListEntry("TV-Kino", "tvkino"))
 		if config.mediaportal.showRadio.value:
 			self.funsport.append(self.hauptListEntry("Radio.de", "radiode"))
 		if config.mediaportal.showSpobox.value:
@@ -812,8 +807,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("USER-Channels", "userchannels"))
 		if config.mediaportal.showYoutube.value:
 			self.funsport.append(self.hauptListEntry("YouTube", "youtube"))
-		if config.mediaportal.showRan.value:
-			self.funsport.append(self.hauptListEntry("Ran.de", "ran"))
+		#if config.mediaportal.showRan.value:
+		#	self.funsport.append(self.hauptListEntry("Ran.de", "ran"))
 		if config.mediaportal.showGEOde.value:
 			self.funsport.append(self.hauptListEntry("GEO.de", "geo_de"))
 		if config.mediaportal.showTeledunet.value:
@@ -1056,7 +1051,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 			if config.mediaportal.serienbz.value:
 				self.grauzone.append(self.hauptListEntry("Serien.bz", "serienbz"))
 			if config.mediaportal.topimdb.value:
-				self.grauzone.append(self.hauptListEntry("Top IMDb", "topimdb"))
+				self.grauzone.append(self.hauptListEntry("Top1000 IMDb", "topimdb"))
 
 		if len(self.porn) < 1:
 			self['Porn'].hide()
@@ -1386,8 +1381,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(kxWatchlist)
 		elif auswahl == "Dreamscreencast":
 			self.session.open(dreamscreencast)
-		elif auswahl == "TV-Kino":
-			self.session.open(tvkino)
 		elif auswahl == "StreamOase":
 			self.session.open(oasetvGenreScreen)
 		elif auswahl == "AutoBild":
@@ -1460,8 +1453,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(cannaGenreScreen)
 		elif auswahl == "OnlineMusicRecorder":
 			self.session.open(omrGenreScreen)
-		elif auswahl == "Ran.de":
-			self.session.open(ranGenreScreen)
+		#elif auswahl == "Ran.de":
+		#	self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":
 			self.session.open(movie25GenreScreen)
 		elif auswahl == "80s & 90s Music":
@@ -1530,7 +1523,7 @@ class haupt_Screen(Screen, ConfigListScreen):
 		#	self.session.open(arteFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
-		elif auswahl == "Top IMDb":
+		elif auswahl == "Top1000 IMDb":
 			self.session.open(timdbGenreScreen)
 		elif auswahl == "Welt der Wunder":
 			self.session.open(wissensthekGenreScreen)
@@ -1755,8 +1748,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("NHL", "nhl", "Sport"))
 		if config.mediaportal.showSpobox.value:
 			self.plugin_liste.append(("Spobox", "spobox", "Sport"))
-		if config.mediaportal.showRan.value:
-			self.plugin_liste.append(("Ran.de", "ran", "Sport"))
+		#if config.mediaportal.showRan.value:
+		#	self.plugin_liste.append(("Ran.de", "ran", "Sport"))
 		if config.mediaportal.showsport1fm.value:
 			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
 
@@ -1827,8 +1820,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Fail.to", "fail", "Fun"))
 		if config.mediaportal.showFilmOn.value:
 			self.plugin_liste.append(("FilmOn", "filmon", "Fun"))
-		if config.mediaportal.showTvkino.value:
-			self.plugin_liste.append(("TV-Kino", "tvkino", "Fun"))
 		if config.mediaportal.showLiveLeak.value:
 			self.plugin_liste.append(("LiveLeak", "liveleak", "Fun"))
 		if config.mediaportal.showDokuStream.value:
@@ -2032,7 +2023,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			if config.mediaportal.serienbz.value:
 				self.plugin_liste.append(("Serien.bz", "serienbz", "Grauzone"))
 			if config.mediaportal.topimdb.value:
-				self.plugin_liste.append(("Top IMDb", "timdb", "Grauzone"))
+				self.plugin_liste.append(("Top1000 IMDb", "topimdb", "Grauzone"))
 
 		# Watchlisten - Grauzone
 			if config.mediaportal.showM4kWatchlist.value:
@@ -2427,8 +2418,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(kxWatchlist)
 		elif auswahl == "Dreamscreencast":
 			self.session.open(dreamscreencast)
-		elif auswahl == "TV-Kino":
-			self.session.open(tvkino)
 		elif auswahl == "StreamOase":
 			self.session.open(oasetvGenreScreen)
 		elif auswahl == "AutoBild":
@@ -2501,8 +2490,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(cannaGenreScreen)
 		elif auswahl == "OnlineMusicRecorder":
 			self.session.open(omrGenreScreen)
-		elif auswahl == "Ran.de":
-			self.session.open(ranGenreScreen)
+		#elif auswahl == "Ran.de":
+		#	self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":
 			self.session.open(movie25GenreScreen)
 		elif auswahl == "80s & 90s Music":
@@ -2535,7 +2524,7 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(bildFirstScreen)
 		elif auswahl == "Serien.bz":
 			self.session.open(SerienFirstScreen)
-		elif auswahl == "Top IMDb":
+		elif auswahl == "Top1000 IMDb":
 			self.session.open(timdbGenreScreen)
 
 		# mediatheken

@@ -147,9 +147,9 @@ class kxMain(Screen):
 		elif auswahl == "Neueste Serien":
 			self.session.open(kxNeuesteSerien, url)
 		elif auswahl == "Dokumentationen A-Z":
-			self.session.open(kxDokuABC, url)	
+			self.session.open(kxDokuABC, url)
 		elif auswahl == "Neueste Dokumentationen":
-			self.session.open(kxNeuesteDoku, url)	
+			self.session.open(kxNeuesteDoku, url)
 		elif auswahl == "Watchlist":
 			self.session.open(kxWatchlist)
 
@@ -982,7 +982,7 @@ class kxDokuABCpage(Screen):
 			return
 		self.page += 1
 		self.loadPage()
-		
+
 	def keyCancel(self):
 		self.close()
 
@@ -1113,7 +1113,7 @@ class kxNeuesteDoku(Screen):
 			return
 		self['streamlist'].down()
 		self.showInfos()
-		
+
 	def keyCancel(self):
 		self.close()
 

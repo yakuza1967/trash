@@ -167,9 +167,9 @@ class n24ListScreen(Screen):
 		getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getHandlung).addErrback(self.dataError)
 
 	def getHandlung(self, data):
-		handlung = re.findall('<div\sclass="text">.*?<p>(.*?)</p>.*?<div\sclass="related">', data, re.S)
+		handlung = re.search('<div\sclass="text">.*?<p>(.*?)</p>.*?<div\sclass="related">', data, re.S)
 		if handlung:
-			self['handlung'].setText(decodeHtml(handlung[0]))
+			self['handlung'].setText(decodeHtml(handlung.group(1).strip()))
 		else:
 			self['handlung'].setText("Keine Infos gefunden.")
 
