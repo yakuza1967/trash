@@ -128,6 +128,13 @@ def decodeHtml(text):
 	text = text.replace('&#xF6;','ö')
 	text = text.replace('&#xFC;','ü')
 	text = text.replace('&#xDF;','ß')
+	text = text.replace('&#xE9;','é')
+	text = text.replace('&#xB7;','·')
+	text = text.replace("&#x27;","'")
+	text = text.replace("&#x26;","&")
+	text = text.replace("&#xFB;","û")
+	text = text.replace("&#xF8;","ø")
+
 
 	text = text.replace('&#8230;','...')
 	text = text.replace('\u2026','...')
