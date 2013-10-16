@@ -68,8 +68,8 @@ config.mediaportal.sp_pl_number = ConfigInteger(default = 1, limits = (1,99))
 config.mediaportal.sp_mi_key = ConfigSelection(default = "info", choices = [("info", _("EPG/INFO")),("displayHelp", _("HELP")),("showMovies", _("PVR/VIDEO"))])
 
 # Sport
-from additions.sport.ran import *
-config.mediaportal.showRan = ConfigYesNo(default = True)
+#from additions.sport.ran import *
+#config.mediaportal.showRan = ConfigYesNo(default = True)
 from additions.sport.nhl import *
 config.mediaportal.showNhl = ConfigYesNo(default = True)
 from additions.sport.spox import *
@@ -421,7 +421,7 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.sport.append(getConfigListEntry("Spobox", config.mediaportal.showSpobox))
 		self.sport.append(getConfigListEntry("Laola1", config.mediaportal.showLaola1))
 		self.sport.append(getConfigListEntry("Sport1.fm", config.mediaportal.showsport1fm))
-		self.sport.append(getConfigListEntry("Ran.de", config.mediaportal.showRan))
+		#self.sport.append(getConfigListEntry("Ran.de", config.mediaportal.showRan))
 		self.sport.sort(key=lambda t : t[0].lower())
 
 		### Music
@@ -807,8 +807,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("USER-Channels", "userchannels"))
 		if config.mediaportal.showYoutube.value:
 			self.funsport.append(self.hauptListEntry("YouTube", "youtube"))
-		if config.mediaportal.showRan.value:
-			self.funsport.append(self.hauptListEntry("Ran.de", "ran"))
+		#if config.mediaportal.showRan.value:
+		#	self.funsport.append(self.hauptListEntry("Ran.de", "ran"))
 		if config.mediaportal.showGEOde.value:
 			self.funsport.append(self.hauptListEntry("GEO.de", "geo_de"))
 		if config.mediaportal.showTeledunet.value:
@@ -1453,8 +1453,8 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(cannaGenreScreen)
 		elif auswahl == "OnlineMusicRecorder":
 			self.session.open(omrGenreScreen)
-		elif auswahl == "Ran.de":
-			self.session.open(ranGenreScreen)
+		#elif auswahl == "Ran.de":
+		#	self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":
 			self.session.open(movie25GenreScreen)
 		elif auswahl == "80s & 90s Music":
@@ -1748,8 +1748,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("NHL", "nhl", "Sport"))
 		if config.mediaportal.showSpobox.value:
 			self.plugin_liste.append(("Spobox", "spobox", "Sport"))
-		if config.mediaportal.showRan.value:
-			self.plugin_liste.append(("Ran.de", "ran", "Sport"))
+		#if config.mediaportal.showRan.value:
+		#	self.plugin_liste.append(("Ran.de", "ran", "Sport"))
 		if config.mediaportal.showsport1fm.value:
 			self.plugin_liste.append(("Sport1.fm", "sport1fm", "Sport"))
 
@@ -2490,8 +2490,8 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(cannaGenreScreen)
 		elif auswahl == "OnlineMusicRecorder":
 			self.session.open(omrGenreScreen)
-		elif auswahl == "Ran.de":
-			self.session.open(ranGenreScreen)
+		#elif auswahl == "Ran.de":
+		#	self.session.open(ranGenreScreen)
 		elif auswahl == "Movie25":
 			self.session.open(movie25GenreScreen)
 		elif auswahl == "80s & 90s Music":
