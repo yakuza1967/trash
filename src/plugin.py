@@ -121,8 +121,6 @@ from additions.fun.roflvideos import *
 config.mediaportal.showRofl = ConfigYesNo(default = True)
 from additions.fun.focus import *
 config.mediaportal.showFocus = ConfigYesNo(default = True)
-from additions.fun.tvkino import *
-config.mediaportal.showTvkino = ConfigYesNo(default = True)
 from additions.fun.filmon import *
 config.mediaportal.showFilmOn = ConfigYesNo(default = True)
 from additions.fun.failto import *
@@ -446,7 +444,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 		self.fun.append(getConfigListEntry("Fail.to", config.mediaportal.showFail))
 		self.fun.append(getConfigListEntry("LiveLeak", config.mediaportal.showLiveLeak))
 		self.fun.append(getConfigListEntry("Radio.de", config.mediaportal.showRadio))
-		self.fun.append(getConfigListEntry("TvKino", config.mediaportal.showTvkino))
 		self.fun.append(getConfigListEntry("FilmOn", config.mediaportal.showFilmOn))
 		self.fun.append(getConfigListEntry("Focus", config.mediaportal.showFocus))
 		self.fun.append(getConfigListEntry("HörspielHouse", config.mediaportal.showHoerspielHouse))
@@ -792,8 +789,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.funsport.append(self.hauptListEntry("LiveLeak", "liveleak"))
 		if config.mediaportal.showFilmOn.value:
 			self.funsport.append(self.hauptListEntry("FilmOn", "filmon"))
-		if config.mediaportal.showTvkino.value:
-			self.funsport.append(self.hauptListEntry("TV-Kino", "tvkino"))
 		if config.mediaportal.showRadio.value:
 			self.funsport.append(self.hauptListEntry("Radio.de", "radiode"))
 		if config.mediaportal.showSpobox.value:
@@ -1386,8 +1381,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(kxWatchlist)
 		elif auswahl == "Dreamscreencast":
 			self.session.open(dreamscreencast)
-		elif auswahl == "TV-Kino":
-			self.session.open(tvkino)
 		elif auswahl == "StreamOase":
 			self.session.open(oasetvGenreScreen)
 		elif auswahl == "AutoBild":
@@ -1827,8 +1820,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.plugin_liste.append(("Fail.to", "fail", "Fun"))
 		if config.mediaportal.showFilmOn.value:
 			self.plugin_liste.append(("FilmOn", "filmon", "Fun"))
-		if config.mediaportal.showTvkino.value:
-			self.plugin_liste.append(("TV-Kino", "tvkino", "Fun"))
 		if config.mediaportal.showLiveLeak.value:
 			self.plugin_liste.append(("LiveLeak", "liveleak", "Fun"))
 		if config.mediaportal.showDokuStream.value:
@@ -2427,8 +2418,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(kxWatchlist)
 		elif auswahl == "Dreamscreencast":
 			self.session.open(dreamscreencast)
-		elif auswahl == "TV-Kino":
-			self.session.open(tvkino)
 		elif auswahl == "StreamOase":
 			self.session.open(oasetvGenreScreen)
 		elif auswahl == "AutoBild":
