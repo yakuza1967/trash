@@ -2,6 +2,8 @@
 <screen name="MediaPortal" position="center,center" size="1280,680" backgroundColor="#00060606" flags="wfNoBorder">
 	<widget name="name" position="320,50" size="650,50" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal; 30" valign="center" halign="center" />
 	<widget name="page" position="570,645" size="140,30" foregroundColor="#00aaaaaa" backgroundColor="#00101214" transparent="1" font="mediaportal;24" valign="center" halign="center" />"
+	<ePixmap position="980,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
+	<eLabel text="PVR " position="980,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
 	<ePixmap position="1050,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"
 	<eLabel text="Menu " position="1050,645" size="60,25" transparent="1" font="mediaportal; 18" backgroundColor="#00101214" foregroundColor="#00aaaaaa" valign="center" halign="center" zPosition="1" />
 	<ePixmap position="1120,670" size="60,2" zPosition="1" pixmap="~/original/images/buttongrey.png" alphatest="blend" backgroundColor="#00101214" />"

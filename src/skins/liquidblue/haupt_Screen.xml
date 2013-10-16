@@ -2,15 +2,18 @@
 <screen name="MediaPortal" position="0,0" size="1280,720" flags="wfNoBorder">
   <ePixmap position="0,0" size="1280,720" zPosition="-1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/mpback.png" />
  <widget source="session.VideoPicture" render="Pig" position="886,22" size="328,186" zPosition="3" backgroundColor="transparent" />
+  <ePixmap position="1180,525" size="90,36" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttongrey.png" alphatest="blend" backgroundColor="#26181d20" />
+  <eLabel text="PVR " position="1180,525" size="90,36" transparent="1" font="mediaportal; 18" backgroundColor="#26181d20" foregroundColor="#00ffffff" valign="center" halign="center" zPosition="1" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttonglas.png" position="1180,525" size="90,36" alphatest="blend" zPosition="2" />
   <ePixmap position="1180,575" size="90,36" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttongrey.png" alphatest="blend" backgroundColor="#26181d20" />
   <eLabel text="Menu " position="1180,575" size="90,36" transparent="1" font="mediaportal; 18" backgroundColor="#26181d20" foregroundColor="#00ffffff" valign="center" halign="center" zPosition="1" />
-  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/buttonglas.png" position="1180,575" size="90,36" alphatest="blend" zPosition="2" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttonglas.png" position="1180,575" size="90,36" alphatest="blend" zPosition="2" />
   <ePixmap position="1180,625" size="90,36" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttongrey.png" alphatest="blend" backgroundColor="#26181d20" />
   <eLabel text=" Help " position="1180,625" size="90,36" transparent="1" font="mediaportal; 18" backgroundColor="#26181d20" foregroundColor="#00ffffff" valign="center" halign="center" zPosition="1" />
-  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/buttonglas.png" position="1180,625" size="90,36" alphatest="blend" zPosition="2" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttonglas.png" position="1180,625" size="90,36" alphatest="blend" zPosition="2" />
   <ePixmap position="1180,675" size="90,36" zPosition="1" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttongrey.png" alphatest="blend" backgroundColor="#26181d20" />
   <eLabel text=" Exit " position="1180,675" size="90,36" transparent="1" font="mediaportal; 18" backgroundColor="#26181d20" foregroundColor="#00ffffff" valign="center" halign="center" zPosition="1" />
-  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/tec/images/buttonglas.png" position="1180,675" size="90,36" alphatest="blend" zPosition="2" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/buttonglas.png" position="1180,675" size="90,36" alphatest="blend" zPosition="2" />
   <!-- select screen -->
   <widget name="Mediatheken" position="40,165" size="280,30" backgroundColor="#26181d20" zPosition="5" font="mediaportal; 26" halign="left" transparent="1" foregroundColor="#00ffffff" />
   <widget name="mediatheken" position="40,210" size="280,500" backgroundColor="#26181d20" transparent="1" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/liquidblue/images/sel.png" foregroundColorSelected="#ffffff" foregroundColor="#00bbbbbb" />
