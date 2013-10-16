@@ -60,6 +60,8 @@ src/skins/tec/images/Makefile
 src/skins/original/Makefile
 src/skins/original/images/Makefile
 src/userfiles/Makefile
+Components/Makefile
+Components/Converter/Makefile
 
 ])
 AC_OUTPUT
