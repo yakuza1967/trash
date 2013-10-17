@@ -18,7 +18,7 @@ else:
 	IMDbPresent = False
 	TMDbPresent = False
 
-DDLME_Version = "ddl.me v0.95 (experimental)"
+DDLME_Version = "ddl.me v0.96 (experimental)"
 
 DDLME_siteEncoding = 'utf-8'
 
@@ -230,12 +230,12 @@ class show_DDLME_Genre(Screen):
 
 		if self.genreSelected:
 			print "Genre selected"
-			if re.match('.*?Neue (Filme|Serien)', self.genreTitle):
+			if re.search('Neue (Filme|Serien)', self.genreTitle):
 				genreurl = self.baseUrl+self.genreUrl[0]+self.genreUrl[1]
 			else:
 				genreurl = self.baseUrl+self.genreBase[self.menuIdx[0]]+self.genreUrl[0]+self.genreUrl[1]
 			print genreurl
-			if re.match('.*?Suche...', self.genreTitle):
+			if re.search('Suche...', self.genreTitle):
 				self.paraQuery()
 			else:
 				self.session.open(DDLME_FilmListeScreen, genreurl, self.genreTitle)
@@ -402,12 +402,12 @@ class DDLME_FilmListeScreen(Screen):
 		self.keckse = {}
 		self.page = 0
 		self.pages = 0;
-		self.serienEpisoden = re.match('.*?Episoden -', self.genreName)
-		self.genreFilme = re.match('.*?Filme', self.genreName)
-		self.genreSerien = re.match('.*?Serien', self.genreName)
-		self.genreABook = re.match('.*?Hörbücher', self.genreName)
-		self.genreSearch = re.match('.*?Suche...', self.genreName)
-		self.genreUpdates = re.match('.*?Neue (Filme|Serien)', self.genreName)
+		self.serienEpisoden = re.search('Episoden -', self.genreName)
+		self.genreFilme = re.search('Filme', self.genreName)
+		self.genreSerien = re.search('Serien', self.genreName)
+		self.genreABook = re.search('Hörbücher', self.genreName)
+		self.genreSearch = re.search('Suche...', self.genreName)
+		self.genreUpdates = re.search('Neue (Filme|Serien)', self.genreName)
 		self.genreSpecials = self.serienEpisoden or self.genreSearch or self.genreUpdates
 
 		self.setGenreStrTitle()
@@ -486,17 +486,6 @@ class DDLME_FilmListeScreen(Screen):
 						if i>0:
 							nm = nm[:i]
 
-						#if int(info.group(3)) < 10:
-						#	staffel = "S0"+str(info.group(3))
-						#else:
-						#	staffel = "S"+str(info.group(3))
-
-						#if int(info.group(2)) < 10:
-						#	episode = "E0"+str(info.group(2))
-						#else:
-						#	episode = "E"+str(info.group(2))
-
-						#t = "%s%s - %s" % (staffel, episode, nm)
 						t = 'S%02dE%03d - %s' % (int(info.group(3)), int(info.group(2)), nm)
 						self.filmListe.append((t, h, self.imgLink, ''))
 					else:
@@ -511,7 +500,7 @@ class DDLME_FilmListeScreen(Screen):
 				mg = re.search("class='submenu'>(.*?)class=\"hr\">", data[a:])
 				if mg:
 					a += mg.end()
-					if re.match('.*?Neue Filme', self.genreName):
+					if re.search('Neue Filme', self.genreName):
 						m = re.search(">Neue Filme<", mg.group(1))
 					else:
 						m = re.search(">Neue Serien<", mg.group(1))
@@ -533,7 +522,9 @@ class DDLME_FilmListeScreen(Screen):
 						#print "tit.: ",t
 						self.filmListe.append((decodeHtml(t), "%s%s" % (self.baseUrl, h), i, ''))
 		else:
+			print "normal parse"
 			if self.genreSearch:
+				print "search..."
 				mg = re.search("<div id='view'(.*?)class=\"clear\">", data)
 			else:
 				mg = re.search("<div id='view'(.*?)class='clear'>", data)
@@ -541,9 +532,9 @@ class DDLME_FilmListeScreen(Screen):
 			if mg:
 				print "mg found"
 				if self.genreSearch:
-					m = re.findall('title=\'(.*?)\'.*?href=\'(.*?)\'.*?<img src=\'(.*?)\'.*?(>TV<|>Film<)/span>', mg.group(1))
+					m = re.findall('title=\'(.*?)\'.*?href=\'(.*?)\'.*?<img.*?src=\'(.*?)\'.*?(>TV<|>Film<)/span>', mg.group(1))
 				else:
-					m = re.findall('title=\'(.*?)\'.*?href=\'(.*?)\'.*?<img src=\'(.*?)\'', mg.group(1))
+					m = re.findall('title=\'(.*?)\'.*?href=\'(.*?)\'.*?<img.*?src=\'(.*?)\'', mg.group(1))
 				if m:
 					print "movies found"
 					if self.genreSearch:
@@ -622,7 +613,7 @@ class DDLME_FilmListeScreen(Screen):
 		url = self['liste'].getCurrent()[0][1]
 		img = self['liste'].getCurrent()[0][2]
 		sm = self['liste'].getCurrent()[0][3]
-		genreSerien = self.genreSerien or sm == '>TV<' or re.match('.*?Neue Serien', self.genreName)
+		genreSerien = self.genreSerien or sm == '>TV<' or re.search('Neue Serien', self.genreName)
 
 		if not genreSerien:
 			self.session.open(DDLMEStreams, url, title, img)
@@ -878,7 +869,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 									if streams:
 										#print "Streams found"
 										s = mg.group(1)
-										if re.match('.*?(played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', s, re.I):
+										if re.search('(played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', s, re.I):
 											#print s
 
 											for h in streams:
@@ -937,7 +928,7 @@ class DDLMEStreams(Screen, ConfigListScreen):
 						if streams:
 							print "Streams found"
 							s = mg.group(1)
-							if re.match('.*?(played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', s, re.I):
+							if re.search('(played|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|Click.*?Play|BitShare)', s, re.I):
 								#print s
 								part = ''
 								for (p,h) in streams:
