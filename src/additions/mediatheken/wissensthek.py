@@ -1,7 +1,6 @@
 	# -*- coding: utf-8 -*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
-from Plugins.Extensions.MediaPortal.resources.playrtmpmovie import PlayRtmpMovie
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
 def wissensthekGenreEntry(entry):
@@ -78,9 +77,9 @@ class wissensthekGenreScreen(Screen):
 		printl(error,self,"E")
 
 	def LiveStream(self, data):
-		raw = re.findall('class="pionteve_title">(.*?)</td>.*?</span>(.*?)</i>.*?<i>(.*?)</i>', data, re.S)
+		raw = re.search('class="pionteve_title">(.*?)</td>.*?</span>(.*?)</i>.*?<i>(.*?)</i>', data, re.S).groups()
 		if raw:
-			title = raw[1][0] + raw[1][1] + raw[1][2]
+			title = raw[0] + raw[1] + " " + raw[2]
 		else:
 			title = "Live TV"
 		url = "rtmp://mf.weltderwunder.c.nmdn.net:1935/wdw_pc/wdwpc.sdp"
