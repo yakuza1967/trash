@@ -6,7 +6,7 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-DH_Version = "DokuHouse.de v0.99"
+DH_Version = "DokuHouse.de v1.00"
 
 DH_siteEncoding = 'utf-8'
 
@@ -782,9 +782,12 @@ class DH_Streams(Screen, ConfigListScreen):
 	def parseData(self, data):
 		print "parseData:"
 		desc = ''
-		m = re.search('<!-- aeBeginAds -->(.*?)<!-- aeEndAds -->', data, re.S)
+		imgurl = self.dokuImg
+		self.streamListe = []
+		m2 = None
+		m = re.search('class="the-content">(.*?)</div>', data, re.S)
 		if m:
-			ldesc = re.findall('<p>(.*?</p>)',m.group(1),re.S)
+			ldesc = re.findall('<p>(.*?</p>)',m.group(1))
 			if ldesc:
 				i = 0
 				for txt in ldesc:
@@ -796,9 +799,7 @@ class DH_Streams(Screen, ConfigListScreen):
 					desc = "%s%s" % (desc,re.sub('<.*?>','',txt))
 					i += 1
 
-		self.streamListe = []
-		m2 = re.search('//www.youtube.com/(embed|v)/(.*?)("|\?)', m.group(1))
-		imgurl = self.dokuImg
+			m2 = re.search('//www.youtube.com/(embed|v)/(.*?)("|\?)', m.group(1))
 
 		if m2:
 			print "Streams found"
