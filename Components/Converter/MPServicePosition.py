@@ -1,4 +1,4 @@
-import datetime
+import time
 from Converter import Converter
 from Poll import Poll
 from enigma import iPlayableService
@@ -34,11 +34,13 @@ class MPServicePosition(Poll, Converter, object):
 		elif type == "EndTime":
 			self.type = self.TYPE_ENDTIME
 		else:
-			raise ElementError("type must be {Length|Position|Remaining|Gauge|EndTime} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for ServicePosition converter")
+			raise ElementError("type must be {Length|Position|Remaining|Gauge|EndTime} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for MPServicePosition converter")
 
 		if self.detailed:
 			self.poll_interval = 100
-		elif self.type == self.TYPE_LENGTH or self.type == self.TYPE_ENDTIME:
+		elif self.TYPE_ENDTIME:
+			self.poll_interval = 1000
+		elif self.type == self.TYPE_LENGTH:
 			self.poll_interval = 2000
 		else:
 			self.poll_interval = 500
@@ -88,12 +90,13 @@ class MPServicePosition(Poll, Converter, object):
 			elif self.type == self.TYPE_REMAINING:
 				l = self.length - self.position
 			elif self.type == self.TYPE_ENDTIME:
-				l = self.length - self.position
-				time = datetime.datetime.now() + datetime.timedelta(seconds=l / 90000)
-				if time is None:
-					return ""
-
-				return time.strftime("%H:%M:%S")
+				l = (self.length - self.position) / 90000
+				t = time.time()
+				t = time.localtime(t + l)
+				if self.showNoSeconds:
+					return "%2d:%02d" % (t.tm_hour, t.tm_min)
+				else:
+					return "%2d:%02d:%02d" % (t.tm_hour, t.tm_min, t.tm_sec)
 
 			if not self.detailed:
 				l /= 90000
