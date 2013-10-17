@@ -18,10 +18,13 @@ class dreisatGenreScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreenCover.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreenCover.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreenCover.xml"
-		print path
+			path = self.skin_path + "/original/defaultGenreScreenCover.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -125,11 +128,13 @@ class dreisatListScreen(Screen):
 		self.session = session
 		self.Link = Link
 		self.Name = Name
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultListScreen.xml" % config.mediaportal.skin.value
+		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultListScreen.xml"
-		print path
+			path = self.skin_path + "/original/defaultListScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()

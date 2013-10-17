@@ -22,10 +22,13 @@ class SerienFirstScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreen.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreen.xml"
-		print path
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -77,10 +80,13 @@ class SerienLetterScreen(Screen):
 
 	def __init__(self, session):
 		self.session = session
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultGenreScreen.xml" % config.mediaportal.skin.value
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/defaultGenreScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/defaultGenreScreen.xml"
-		print path
+			path = self.skin_path + "/original/defaultGenreScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -142,11 +148,13 @@ class SerienSecondScreen(Screen):
 		self.session = session
 		self.serienLink = serienLink
 		self.serienName = serienName
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultListScreen.xml" % config.mediaportal.skin.value
+		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultListScreen.xml"
-		print path
+			path = self.skin_path + "/original/defaultListScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -295,11 +303,13 @@ class SerienEpListingScreen(Screen):
 		self.serienLink = serienLink
 		self.serienName = serienName
 		self.serienPic = serienPic
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultListScreen.xml" % config.mediaportal.skin.value
+		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultListScreen.xml"
-		print path
+			path = self.skin_path + "/original/defaultListScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
@@ -387,11 +397,13 @@ class SerienStreamListingScreen(Screen):
 		self.serienLink = serienLink
 		self.serienName = serienName
 		self.serienPic = serienPic
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
 
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/defaultListScreen.xml" % config.mediaportal.skin.value
+		path = "%s/%s/defaultListScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/defaultListScreen.xml"
-		print path
+			path = self.skin_path + "/original/defaultListScreen.xml"
+
 		with open(path, "r") as f:
 			self.skin = f.read()
 			f.close()
