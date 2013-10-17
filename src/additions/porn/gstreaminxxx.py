@@ -383,6 +383,7 @@ class gstreaminxxxStreamListeScreen(Screen):
 			self.get_stream(url)
 		else:
 			print 'Secured Play'
+			self.tw_agent_hlp.headers.addRawHeader('Referer','http://g-stream.in')
 			self.tw_agent_hlp.getRedirectedUrl(self.get_stream, self.dataError, streamLink)
 
 	def get_stream(self,url):
