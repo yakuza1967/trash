@@ -68,18 +68,40 @@ class wissensthekGenreScreen(Screen):
 		if raw:
 			for (Url, Title) in raw:
 				self.filmliste.append((decodeHtml(Title), Url))
-				self.chooseMenuList.setList(map(wissensthekGenreEntry, self.filmliste))
+			if config.mediaportal.useRtmpDump.value:
+				self.filmliste.sort()
+				self.filmliste.insert(0, ("Live TV", "DUMP", None))
+			self.chooseMenuList.setList(map(wissensthekGenreEntry, self.filmliste))
+			self.chooseMenuList.moveToIndex(0)
 			self.keyLocked = False
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
+	def LiveStream(self, data):
+		raw = re.findall('class="pionteve_title">(.*?)</td>.*?</span>(.*?)</i>.*?<i>(.*?)</i>', data, re.S)
+		if raw:
+			title = raw[1][0] + raw[1][1] + raw[1][2]
+		else:
+			title = "Live TV"
+		host = "rtmp://mf.weltderwunder.c.nmdn.net:1935/wdw_pc"
+		playpath = "wdwpc.sdp"
+		final = "%s' --playpath=%s'" % (host, playpath)
+		movieinfo = [final,title]
+		self.session.open(PlayRtmpMovie, movieinfo, title)
+		
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		Name = self['genreList'].getCurrent()[0][0]
-		Link = "http://www.wissensthek.de/" + self['genreList'].getCurrent()[0][1]
-		self.session.open(wissensthekListScreen, Link, Name)
+		if self['genreList'].getCurrent()[0][0] == "Live TV":
+			url = "http://www.weltderwunder.tv/index.php?id=133"
+			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.LiveStream).addErrback(self.dataError)
+		else:
+			Name = self['genreList'].getCurrent()[0][0]
+			Link = "http://www.wissensthek.de/" + self['genreList'].getCurrent()[0][1]
+			self.session.open(wissensthekListScreen, Link, Name)
+
+
 
 	def keyCancel(self):
 		self.close()
