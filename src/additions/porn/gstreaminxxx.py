@@ -336,10 +336,10 @@ class gstreaminxxxStreamListeScreen(Screen):
 	def loadPageData(self, data):
 		print "daten bekommen"
 		raw = re.findall('<table\sid="post[0-9]+"(.*?)id="post_thanks_box', data, re.S)
-		streams = re.findall('"(http://.*?(g-stream.in\/secure\/.*?\/|flashx|[w]+.putlocker|[w]+.sockshare|.).*?)"', raw[0], re.S)
+		streams = re.findall('"(http://.*?(g-stream.in\/secure\/.*?\/|flashx|[w]+.putlocker|[w]+.sockshare|vidx.to|.).*?)"', raw[0], re.S)
 		if streams:
 			for (stream, hostername) in streams:
-				if re.match('.*?(putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|BitShare)', hostername.strip(' '), re.S|re.I):
+				if re.match('.*?(vidx|putlocker|sockshare|streamclou|xvidstage|filenuke|movreel|nowvideo|xvidstream|uploadc|vreer|MonsterUploads|Novamov|Videoweed|Divxstage|Ginbig|Flashstrea|Movshare|yesload|faststream|Vidstream|PrimeShare|flashx|Divxmov|Putme|BitShare)', hostername.strip(' '), re.S|re.I):
 					print hostername, stream
 					if hostername == 'flashx':
 						hostername = 'Flashx'
