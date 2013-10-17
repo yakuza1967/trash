@@ -32,6 +32,14 @@ def meWatchListEntry(entry):
 		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 800, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]+" - "+entry[1])
 		]
 
+def meTimdbEntry(entry):
+	return [entry,
+		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 70, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0]),
+		(eListboxPythonMultiContent.TYPE_TEXT, 70, 0, 550, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[1]),
+		(eListboxPythonMultiContent.TYPE_TEXT, 620, 0, 100, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[2]),
+		(eListboxPythonMultiContent.TYPE_TEXT, 720, 0, 100, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[3])
+		]
+
 def meWatchedListEntry(entry):
 	if entry[2]:
 		png = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/images/watched.png"
@@ -149,11 +157,10 @@ class showevonicGenre(Screen):
 		secutoken = re.findall('var SECURITYTOKEN = "(.*?)"', data, re.S)
 		if secutoken:
 			self.stoken = secutoken[0]
-			print self.stoken
+			print "SECURITYTOKEN:", self.stoken
 
-        def loginDone(self, data):
-		getPage(self.loginUrl, method="GET",
-				headers={'Content-Type': 'application/x-www-form-urlencoded'},
+	def loginDone(self, data):
+		getPage(self.loginUrl, method="GET", headers={'Content-Type': 'application/x-www-form-urlencoded'},
 				followRedirect=True, timeout=30, cookies=ck).addCallback(self.accountInfos).addErrback(self.dataError)
 
 		self.genreListe = []
@@ -164,6 +171,7 @@ class showevonicGenre(Screen):
 		self.genreListe.append(("HD-Serien", "http://evonic.tv/forum/content.php?r=5993-Serien&page="))
 		self.genreListe.append(("Century", "dump"))
 		self.genreListe.append(("Imdb", "dump"))
+		self.genreListe.append(("Imdb Top 1000", "dump"))
 		self.genreListe.append(("Suche", "suche"))
 		self.genreListe.append(("3D-Charts", "http://evonic.tv/forum/content.php?r=5440-3d-charts&page="))
 		self.genreListe.append(("3D", "http://evonic.tv/forum/content.php?r=4225-3d-filme&page="))
@@ -200,6 +208,8 @@ class showevonicGenre(Screen):
 				self.session.open(meImdbScreen)
 			elif enterAuswahlLabel == "Watchlist":
 				self.session.open(meWatchlistScreen)
+			elif enterAuswahlLabel == "Imdb Top 1000":
+				self.session.open(meTimdbGenreScreen, self.stoken)
 			elif enterAuswahlLabel == "Suche":
 				self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche:")), text = self.searchText)
 			else:
@@ -1022,6 +1032,141 @@ class meCollectionScreen(Screen):
 
 	def dataError(self, error):
 		print error
+
+	def keyCancel(self):
+		self.close()
+
+class meTimdbGenreScreen(Screen):
+
+	def __init__(self, session, stoken):
+		self.session = session
+		self.stoken = stoken
+
+		self.plugin_path = mp_globals.pluginPath
+		self.skin_path =  mp_globals.pluginPath + "/skins"
+
+		path = "%s/%s/m4kdefaultPageListeScreen.xml" % (self.skin_path, config.mediaportal.skin.value)
+		if not fileExists(path):
+			path = self.skin_path + "/original/m4kdefaultPageListeScreen.xml"
+
+		with open(path, "r") as f:
+			self.skin = f.read()
+			f.close()
+
+		Screen.__init__(self, session)
+
+		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
+		"ok"	: self.keyOK,
+		"cancel": self.keyCancel,
+		"up" : self.keyUp,
+		"down" : self.keyDown,
+		"right" : self.keyRight,
+		"left" : self.keyLeft,
+		"nextBouquet" : self.keyPageUp,
+		"prevBouquet" : self.keyPageDown
+		}, -1)
+
+		self.keyLocked = True
+		self['title'] = Label("IMDb - Top 1000 Suche")
+		self['name'] = Label("")
+		self['handlung'] = Label("")
+		self['page'] = Label("")
+		self['coverArt'] = Pixmap()
+		
+		self.filmliste = []
+		self.page = 1
+		self.lastpage = 20
+
+		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setItemHeight(25)
+		self['filmList'] = self.chooseMenuList
+
+		self.onLayoutFinish.append(self.loadPage)
+
+	def loadPage(self):
+		self.keyLocked = True
+		self.filmliste = []
+		self.start = 1
+		self.start = (self.page * 50) - 49
+
+		url = "http://www.imdb.de/search/title?groups=top_1000&sort=user_rating,desc&start=%s" % str(self.start)
+		print url
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded', 'User-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0', 'Accept-Language':'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3'}).addCallback(self.parseData).addErrback(self.dataError)
+
+	def parseData(self, data):
+		movies = re.findall('<td class="number">(.*?)</td>.*?<img src="(.*?)".*?<a href="/title/.*?">(.*?)</a>.*?<span class="year_type">(.*?)</span><br>.*?<div class="rating rating-list".*?title="Users rated this (.*?\/)', data, re.S)
+		if movies:
+			for place,image,title,year,rates in movies:
+				rates = "%s10" % rates
+				image_raw = image.split('@@')
+				image = "%s@@._V1_SX214_.jpg" % image_raw[0]
+				self.filmliste.append((place, decodeHtml(title), year, rates, image))
+				self.chooseMenuList.setList(map(meTimdbEntry, self.filmliste))
+			self.showInfos()
+			self.keyLocked = False
+
+	def dataError(self, error):
+		printl(error,self,"E")
+
+	def showInfos(self):
+		coverUrl = self['filmList'].getCurrent()[0][4]
+		self['page'].setText("%s / 20" % str(self.page))
+		CoverHelper(self['coverArt']).getCover(coverUrl)
+
+	def keyOK(self):
+		if self.keyLocked:
+			return
+
+		self.searchTitle = self['filmList'].getCurrent()[0][1]
+		print self.searchTitle
+
+		self.session.openWithCallback(self.mySearch, VirtualKeyBoard, title = (_("Suche:")), text = self.searchTitle)
+
+	def mySearch(self, callback = None):
+		print 'mySearch'
+		if callback != None:
+			self.session.open(meSearchScreen, callback, self.stoken)
+
+	def keyPageDown(self):
+		print "PageDown"
+		if self.keyLocked:
+			return
+		if not self.page < 2:
+			self.page -= 1
+			self.loadPage()
+
+	def keyPageUp(self):
+		print "PageUP"
+		if self.keyLocked:
+			return
+		if self.page < self.lastpage:
+			self.page += 1
+			self.loadPage()
+
+	def keyLeft(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageUp()
+		self.showInfos()
+
+	def keyRight(self):
+		if self.keyLocked:
+			return
+		self['filmList'].pageDown()
+		self.showInfos()
+
+	def keyUp(self):
+		if self.keyLocked:
+			return
+		self['filmList'].up()
+		self.showInfos()
+
+	def keyDown(self):
+		if self.keyLocked:
+			return
+		self['filmList'].down()
+		self.showInfos()
 
 	def keyCancel(self):
 		self.close()
