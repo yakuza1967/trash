@@ -135,6 +135,8 @@ class SerienLetterScreen(Screen):
 		printl(error,self,"E")
 
 	def keyOK(self):
+		if self.keyLocked:
+			return
 		serienName = self['genreList'].getCurrent()[0][0]
 		serienLink = self['genreList'].getCurrent()[0][1]
 		self.session.open(SerienSecondScreen, serienLink, serienName)
