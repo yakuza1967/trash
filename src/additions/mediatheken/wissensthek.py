@@ -68,9 +68,8 @@ class wissensthekGenreScreen(Screen):
 		if raw:
 			for (Url, Title) in raw:
 				self.filmliste.append((decodeHtml(Title), Url))
-			if config.mediaportal.useRtmpDump.value:
-				self.filmliste.sort()
-				self.filmliste.insert(0, ("Live TV", "DUMP", None))
+			self.filmliste.sort()
+			self.filmliste.insert(0, ("Live TV", None))
 			self.chooseMenuList.setList(map(wissensthekGenreEntry, self.filmliste))
 			self.chooseMenuList.moveToIndex(0)
 			self.keyLocked = False
@@ -84,12 +83,11 @@ class wissensthekGenreScreen(Screen):
 			title = raw[1][0] + raw[1][1] + raw[1][2]
 		else:
 			title = "Live TV"
-		host = "rtmp://mf.weltderwunder.c.nmdn.net:1935/wdw_pc"
-		playpath = "wdwpc.sdp"
-		final = "%s' --playpath=%s'" % (host, playpath)
-		movieinfo = [final,title]
-		self.session.open(PlayRtmpMovie, movieinfo, title)
-		
+		url = "rtmp://mf.weltderwunder.c.nmdn.net:1935/wdw_pc/wdwpc.sdp"
+		playlist = []
+		playlist.append((title, url))
+		self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='wissensthek')
+
 	def keyOK(self):
 		if self.keyLocked:
 			return
@@ -100,8 +98,6 @@ class wissensthekGenreScreen(Screen):
 			Name = self['genreList'].getCurrent()[0][0]
 			Link = "http://www.wissensthek.de/" + self['genreList'].getCurrent()[0][1]
 			self.session.open(wissensthekListScreen, Link, Name)
-
-
 
 	def keyCancel(self):
 		self.close()
