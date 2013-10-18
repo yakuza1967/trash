@@ -1,6 +1,0 @@
-<screen name="Update" position="0,0" size="1280,720" title="Update" backgroundColor="transparent" flags="wfNoBorder">
-  <ePixmap position="center,center" size="750,610" zPosition="0" pixmap="~/tec/images/update.png" alphatest="on" />
-  <widget source="mp.update" render="mp.update" position="317,139" size="654,500" font="mediaportal; 24" valign="center" halign="center" backgroundColor="#00000000" transparent="1" zPosition="1">
-      <convert type="mp.update">Name</convert>
-    </widget>
-</screen>
