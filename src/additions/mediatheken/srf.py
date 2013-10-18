@@ -162,25 +162,25 @@ class SRFFilmeListeScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_xml).addErrback(self.dataError)
 
 	def get_xml(self, data):
-		if re.search('geoblock', data, re.S):
-			message = self.session.open(MessageBox, _("Aus rechtlichen Gruenden steht dieses Video nur innerhalb der Schweiz zur Verfuegung."), MessageBox.TYPE_INFO, timeout=5)
-			return
-		xml = re.findall('"url":"(rtmp:.*?)"', data, re.S)
+		master = re.findall('"streaming":"hls","quality":".*?","url":"(.*?)"}', data, re.S)
+		url = master[-1].replace("\/","/")
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_master).addErrback(self.dataError)
+		
+	def get_master(self, data):
+		xml = re.findall('CODECS="avc.*?"\n(.*?)\n', data, re.S)
 		if xml:
-			url = xml[0].replace("\/","/")
-			host = url.split('mp4:')[0]
-			playpath = url.split('mp4:')[1]
+			url = xml[-1]
+		if not xml:
+			if re.search('geoblock', data, re.S):
+				message = self.session.open(MessageBox, _("Aus rechtlichen Gruenden steht dieses Video nur innerhalb der Schweiz zur Verfuegung."), MessageBox.TYPE_INFO, timeout=5)
+				return
+			else:
+				message = self.session.open(MessageBox, _("Kein Stream gefunden."), MessageBox.TYPE_INFO, timeout=5)
+				return
 		title = self['List'].getCurrent()[0][0]
-		if config.mediaportal.useRtmpDump.value:
-			final = "%s' --swfVfy=1 --playpath=mp4:%s --swfUrl=http://www.srf.ch/player/flash/srfplayer.swf'" % (host, playpath)
-			movieinfo = [final,title]
-			self.session.open(PlayRtmpMovie, movieinfo, title)
-		else:
-			final = "%s swfUrl=http://www.srf.ch/player/flash/srfplayer.swf playpath=mp4:%s swfVfy=1" % (host, playpath)
-			print final
-			playlist = []
-			playlist.append((title, final))
-			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='srf')
+		playlist = []
+		playlist.append((title, url))
+		self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='srf')
 
 	def keyCancel(self):
 		self.close()
