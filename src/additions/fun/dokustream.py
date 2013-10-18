@@ -6,7 +6,7 @@ import threading
 from Plugins.Extensions.MediaPortal.resources.youtubeplayer import YoutubePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
 
-DS_Version = "Doku-Stream.org v0.99"
+DS_Version = "Doku-Stream.org v1.00"
 
 DS_siteEncoding = 'utf-8'
 
@@ -28,7 +28,7 @@ Stream Auswahl:
 """
 def DS_menuListentry(entry):
 	return [entry,
-		(eListboxPythonMultiContent.TYPE_TEXT, 20, 0, 860, 25, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, entry[0])
+		(eListboxPythonMultiContent.TYPE_TEXT, 100, 0, 780, 25, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, entry[0])
 		]
 
 #class show_DS_Genre(Screen):
@@ -69,7 +69,7 @@ class show_DS_Genre(Screen):
 		self['F4'] = Label("")
 
 		self.menuLevel = 0
-		self.menuMaxLevel = 1
+		self.menuMaxLevel = 0
 		self.menuIdx = [0,0,0]
 		self.keyLocked = True
 		self.genreSelected = False
@@ -79,8 +79,6 @@ class show_DS_Genre(Screen):
 		self.genreName = ["","","",""]
 		self.genreUrl = ["","","",""]
 		self.genreTitle = ""
-		#self.subMenu = []
-		#self.keckse = {}
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
 		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
 		self.chooseMenuList.l.setItemHeight(25)
@@ -89,90 +87,29 @@ class show_DS_Genre(Screen):
 		self.genreMenu = [
 			[
 			("Neueste Dokus", ""),
-			("Doku Empfehlungen", "/tag/empfehlung"),
-			("Geschichte", "/zeitgeschichte"),
-			("Gesellschaft", "/gesellschaft"),
-			("HD", "/hd"),
-			("Politik", "/politik"),
-			("Religion", "/religion"),
-			("Serien", "/serien"),
-			#("Shortclips", "/clips-ausschnitte"),
+			("Abenteuer", "/gesellschaft/abenteuer"),
+			("Albrecht Beutelspacher - Mathematik zum Anfassen", "/serien/mathematik-zum-anfassen"),
+			("DDR", "/ddr"),
+			("Diverses Geschichte", "/zeitgeschichte/diverses-geschichte"),
+			("Diverses Gesellschaft", "/gesellschaft/diverses-gesellschaft"),
+			("Diverses Wissen", "/wissenschaft/diverses-wissen"),
+			("Geheimnisse des Universums / Unser Universum", "/serien/serie-geheimnisse-des-universums"),
+			("Harald Lesch - Alpha Centauri", "/serien/alpha-centauri"),
+			("Harald Lesch - Leschs Kosmos", "/serien/leschs-kosmos"),
+			("HD (720p/1080p)", "/hd"),
+			("Hitler / 2. Weltkrieg", "/zeitgeschichte/2-weltkrieg-zeitgeschichte"),
+			("Kriminalität", "/gesellschaft/verbrechen"),
+			("Manfred Spitzer - Geist & Gehirn", "/serien/geist-gehirn"),
+			("Meilensteine der Naturwissenschaft & Technik", "/serien/meilensteine-der-naturwissenschaft-und-technik"),
+			("Nordkorea / Nord-Südkorea-Konflikt / Korea Krieg", "/nordkorea"),
 			("Technik", "/technik"),
-			("Vorträge", "/vortrage"),
-			("Wirtschaft", "/wirtschaft-2"),
-			("Wissen", "/wissenschaft")
+			("Tier und Natur", "/wissenschaft/tier-und-natur"),
+			("Übernatürliches", "/wissenschaft/ubernaturliches"),
+			("Weltall / Universum / Weltraum / Astronomie", "/wissenschaft/astronomie"),
+			("Wirtschaft / Politik", "/wirtschaft-2"),
+			("ZDF - Terra X", "/serien/terra-x-serien")
 			],
 			[
-			#Genre Neueste, Empfehlungen
-			None, None,
-			#subGenre_0 =
-			[
-			#("1. Weltkrieg", "/1-weltkrieg-zeitgeschichte"),
-			("2. Weltkrieg", "/2-weltkrieg-zeitgeschichte"),
-			#("Antike - Ägypten", "/agypten"),
-			#("Antike - Rom", "/antike-rom"),
-			("Diverses Geschichte", "/diverses-geschichte")
-			],
-			#subGenre_1 =
-			[
-			("Abenteuer", "/abenteuer"),
-			("Diverses Gesellschaft", "/diverses-gesellschaft"),
-			("Drogen", "/drogen-gesellschaft"),
-			("Gewalt", "/gewalt"),
-			("Kriminalität", "/verbrechen")
-			],
-			#subGenre_2 =
-			None,
-			#subGenre_3 =
-			None,
-			#[
-			#("Ausland", "/ausland"),
-			#("Inland", "/inland")
-			#],
-			#subGenre_4 =
-			None,
-			#subGenre_5 =
-			[
-			("Alpha Centauri", "/alpha-centauri"),
-			#("Das Römer Experiment", "/das-romer-experiment"),
-			("Der Kalte Krieg", "/der-kalte-krieg"),
-			("Geheimnisse des Universums / Unser Universum", "/serie-geheimnisse-des-universums"),
-			("Geist & Gehirn", "/geist-gehirn"),
-			("Leschs Kosmos", "/leschs-kosmos"),
-			("Mathematik zum Anfassen", "/mathematik-zum-anfassen"),
-			("Meilensteine der Naturwissenschaft & Technik", "/meilensteine-der-naturwissenschaft-und-technik"),
-			#("Stil-Epochen", "/stil-epochen"),
-			("Terra X", "/terra-x-serien")
-			],
-			#subGenre_6 =
-			None,
-			#[
-			#("Diverse Shortclips", "/diverse-shortclips"),
-			#("Science vs. Fiction", "/science-vs-fiction"),
-			#("SciXpert-Leschs Universum", "/scixpert-leschs-universum")
-			#],
-			#subGenre_7 =
-			None,
-			#subGenre_8 =
-			None,
-			#[
-			#("Politikvorträge", "/politikvortrage"),
-			#("Wirtschaftsvorträge", "/wirtschaft-vortrage"),
-			#("Wissenschaftsvorträge", "/wissen-vortrage")
-			#],
-			#subGenre_9 =
-			None,
-			#subGenre_10 =
-			[
-			("Astronomie", "/astronomie"),
-			#("Dinosaurier", "/dinosaurier"),
-			("Diverses Wissen", "/diverses-wissen"),
-			("Tier und Natur", "/tier-und-natur"),
-			("Übernatürliches", "/ubernaturliches")
-			]
-			],
-			[
-			#subGenre_0_0
 			None
 			]
 			]
@@ -367,15 +304,11 @@ class DS_FilmListeScreen(Screen):
 			"9" : self.key_9,
 			"blue" :  self.keyTxtPageDown,
 			"red" :  self.keyTxtPageUp
-			#"seekBackManual" :  self.keyPageDownMan,
-			#"seekFwdManual" :  self.keyPageUpMan,
-			#"seekFwd" :  self.keyPageUp,
-			#"seekBack" :  self.keyPageDown
 		}, -1)
 
 		self.sortOrder = 0
 		self.baseUrl = "http://www.doku-stream.org"
-		self.genreTitle = "Dokus in Genre "
+		self.genreTitle = ""
 		self.sortParIMDB = ""
 		self.sortParAZ = ""
 		self.sortOrderStrAZ = ""
@@ -408,9 +341,8 @@ class DS_FilmListeScreen(Screen):
 		self.keckse = {}
 		self.page = 0
 		self.pages = 0;
-		self.genreNEUESTE = re.match(".*?Neueste Dokus",self.genreName)
-		#self.genreNEUESTE = False
-		self.genreEMPFEHLUNG = re.match(".*?Doku Empfehlung",self.genreName)
+		self.genreNEUESTE = re.search("Neueste Dokus",self.genreName)
+		self.genreEMPFEHLUNG = re.search("Doku Empfehlung",self.genreName)
 		self.genreSpecials = self.genreNEUESTE or self.genreEMPFEHLUNG
 
 		self.setGenreStrTitle()
@@ -429,10 +361,7 @@ class DS_FilmListeScreen(Screen):
 
 	def loadPage(self):
 		print "loadPage:"
-		#if not self.genreSpecials:
 		url = "%s/page/%d/" % (self.genreLink, self.page)
-		#else:
-		#	url =
 
 		if self.page:
 			self['page'].setText("%d / %d" % (self.page,self.pages))
@@ -448,7 +377,6 @@ class DS_FilmListeScreen(Screen):
 		self['name'].setText('Bitte warten...')
 		while not self.filmQ.empty():
 			url = self.filmQ.get_nowait()
-		#self.eventL.clear()
 		print url
 		getPage(url, cookies=self.keckse, agent=std_headers, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
@@ -461,66 +389,30 @@ class DS_FilmListeScreen(Screen):
 
 	def loadPageData(self, data):
 		print "loadPageData:"
-		"""
-		if self.genreNEUESTE:
-			print "Specials Dokus suche..."
-			m=re.search('class="lcp_catlist"(.*?)</ul>',data,re.S)
-		else:
-			print "Normal search.."
-			m=re.search('id="content"(.*?)"navigation">',data,re.S)
-		"""
-		m=re.search('id="content"(.*?)"navigation">',data,re.S)
-
-		if m:
-			"""
-			if self.genreNEUESTE:
-				dokus = re.findall('href="(.*?)".*?title="(.*?)">', m.group(1))
-			else:
-				dokus = re.findall('"border-bottom:none.*?href="(.*?)".*?title="(.*?)">.*?<img.*?src="(.*?)"', m.group(1), re.S)
-			"""
-			dokus = re.findall('"border-bottom:none.*?href="(.*?)".*?title="(.*?)">.*?<img.*?src="(.*?)"', m.group(1), re.S)
-		else:
-			dokus = None
-
+		self.dokusListe = []
+		dokus = re.findall('<div class="bild">.*?href="(.*?)".*?title="(.*?)">.*?<img.*?src="(.*?)"', data)
 		if dokus:
 			print "Dokus found !"
-			if not self.pages:
-				#m = re.findall('class=\'pages\'>Seite.*?von (.*?)</', data)
-				if self.genreNEUESTE:
-					m = re.findall('class=\'larger page\'>(.*?)</', data)
-				else:
-					m = re.findall('class=\'page larger\'>(.*?)</', data)
-				if m:
-					pages = 0
-					for i in m:
-						x = int(i)
-						if x > pages:
-							pages = x
+			m = re.findall('class=\'page larger\'>(\d+)<', data)
+			if m:
+				try:
+					pages = int(m[-1])
+				except:
+					pages = 1
 
+				if pages > self.pages:
 					self.pages = pages
-				else:
-					self.pages = 1
-				self.page = 1
-				print "Page: %d / %d" % (self.page,self.pages)
-				self['page'].setText("%d / %d" % (self.page,self.pages))
 
-			self.dokusListe = []
-			"""
-			if self.genreNEUESTE:
-				for	(url,name) in dokus:
-					#print	"Url: ", url, "Name: ", name
-					self.dokusListe.append((decodeHtml(name), url, None))
-			else:
-				for	(url,name,img) in dokus:
-					#print	"Url: ", url, "Name: ", name
-					self.dokusListe.append((decodeHtml(name), url, img))
-			"""
+			if not self.page:
+				self.page = 1
+			print "Page: %d / %d" % (self.page,self.pages)
+			self['page'].setText("%d / %d" % (self.page,self.pages))
+
 
 			for	(url,name,img) in dokus:
 				#print	"Url: ", url, "Name: ", name
 				self.dokusListe.append((decodeHtml(name), url, img))
 
-			self.dokusListe.sort()
 			self.chooseMenuList.setList(map(DS_FilmListEntry, self.dokusListe))
 
 			self.loadPicQueued()
@@ -795,14 +687,8 @@ class DS_Streams(Screen, ConfigListScreen):
 
 	def parseData(self, data):
 		print "parseData:"
-		#m = re.search('id="content"(.*?)</div>', data, re.S)
-
-		#m2 = None
 		desc = None
 		self.streamListe = []
-
-		#if m:
-		#	m2 = re.search('"http://www.youtube.com/(embed|v)/(.*?)&amp', m.group(1), re.S)
 		m2 = re.search('"http://www.youtube.com/(embed|v)/(.*?)&amp', data, re.S)
 
 		parts = False
