@@ -192,9 +192,9 @@ class Flashx(UrllibHelper):
 					url = 'http://play.flashx.tv/player/%s' % m.group(1)
 					html = self.__getData(url, postdata=pdata)
 					if html:
-						js = re.search('player.swf\?config=(.*?)"', html)
+						js = re.search('playit.swf\?config=(.*?)"', html)
 						if js:
-							url = 'http://play.flashx.tv/nuevo/player/player.swf'
+							url = 'http://play.flashx.tv/nuevo/player/playit.swf'
 							self.__getData(url)
 							html = self.__getData(js.group(1))
 							if html:
