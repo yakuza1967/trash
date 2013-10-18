@@ -79,7 +79,7 @@ class wissensthekGenreScreen(Screen):
 	def LiveStream(self, data):
 		raw = re.search('class="pionteve_title">(.*?)</td>.*?</span>(.*?)</i>.*?<i>(.*?)</i>', data, re.S).groups()
 		if raw:
-			title = raw[0] + raw[1] + " " + raw[2]
+			title = raw[0] + "\n" + raw[1] + " " + raw[2]
 		else:
 			title = "Live TV"
 		url = "rtmp://mf.weltderwunder.c.nmdn.net:1935/wdw_pc/wdwpc.sdp"
