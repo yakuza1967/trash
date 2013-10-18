@@ -3,15 +3,15 @@
   <ePixmap position="40,555" size="1200,150" zPosition="3" pixmap="~/simpleplayer/spglas.png" alphatest="blend" />
   <ePixmap position="40,555" size="1200,150" zPosition="2" pixmap="~/simpleplayer/spiconframe.png" alphatest="blend" />
   <widget source="session.CurrentService" render="Label" position="273,566" size="700,54" font="mediaportal; 24" valign="center" halign="center" backgroundColor="#00000000" transparent="1">
-      <convert type="ServiceName">Name</convert>
-    </widget>
+    <convert type="ServiceName">Name</convert>
+  </widget>
   <widget source="session.CurrentService" render="Progress" position="273,626" size="700,14" pixmap="~/simpleplayer/spbar.png" zPosition="3" transparent="1" backgroundColor="#00000000">
-  <convert type="MPServicePosition">Position</convert>
-</widget>
+    <convert type="MPServicePosition">Position</convert>
+  </widget>
   <widget name="seekbarcursor" position="273,626" size="16,16" zPosition="4" pixmap="~/simpleplayer/seekbutton.png" alphatest="on" />
   <widget source="session.CurrentService" render="PositionGauge" position="271,624" size="695,12" zPosition="3" transparent="1">
-  <convert type="MPServicePosition">Gauge</convert>
-</widget>
+    <convert type="MPServicePosition">Gauge</convert>
+  </widget>
   <widget source="session.CurrentService" render="Label" position="273,645" size="100,30" font="mediaportal;20" halign="left" backgroundColor="#00000000" transparent="1" valign="top">
     <convert type="MPServicePosition">Position</convert>
   </widget>
@@ -28,37 +28,42 @@
   <ePixmap position="90,599" size="120,50" pixmap="~/simpleplayer/mplogo.png" alphatest="blend" />
   <eLabel position="251,569" size="2,110" backgroundColor="#00808888" />
   <eLabel position="991,569" size="2,110" backgroundColor="#00808888" />
-  <ePixmap pixmap="~/simpleplayer/ico_format_off.png" position="1041,655" size="36,20" zPosition="1" alphatest="blend" />
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_format_on.png" position="1041,655" size="36,20" zPosition="2" alphatest="blend">
+  <ePixmap pixmap="~/simpleplayer/ico_format_off.png" position="1010,655" size="36,20" zPosition="1" alphatest="blend" />
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_format_on.png" position="1010,655" size="36,20" zPosition="2" alphatest="blend">
     <convert type="ServiceInfo">IsWidescreen</convert>
     <convert type="ConditionalShowHide" />
   </widget>
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_hd_off.png" position="1176,655" size="29,20" zPosition="1" alphatest="blend">
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_hd_off.png" position="1085,655" size="29,20" zPosition="1" alphatest="blend">
     <convert type="ServiceInfo">VideoWidth</convert>
     <convert type="ValueRange">0,1279</convert>
     <convert type="ConditionalShowHide" />
   </widget>
-  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_hd_on.png" position="1176,655" size="29,20" zPosition="2" alphatest="blend">
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_hd_on.png" position="1085,655" size="29,20" zPosition="2" alphatest="blend">
     <convert type="ServiceInfo">VideoWidth</convert>
     <convert type="ValueRange">1280,1980</convert>
     <convert type="ConditionalShowHide" />
   </widget>
-  <ePixmap pixmap="~/simpleplayer/clock.png" position="1105,577" size="20,20" zPosition="1" alphatest="blend" />
-  <widget source="global.CurrentTime" render="Label" position="1128,575" size=" 70,24" font="mediaportal;20" transparent="1" backgroundColor="#00000000" halign="left">
-  <convert type="ClockToText">Default</convert>
-</widget>
-   
-  <widget source="session.CurrentService" render="Label" position="1081,656" size="40,17" backgroundColor="#00000000" transparent="1" font="mediaportal; 16" halign="right">
+  <ePixmap pixmap="~/simpleplayer/clock.png" position="1012,579" size="20,20" zPosition="1" alphatest="blend" />
+  <widget source="global.CurrentTime" render="Label" position="1035,575" size=" 70,24" font="mediaportal;24" transparent="1" backgroundColor="#00000000" halign="left">
+    <convert type="ClockToText">Default</convert>
+  </widget>
+ <ePixmap pixmap="~/simpleplayer/resicon.png" position="1010,616" size="30,20" zPosition="1" alphatest="blend" />
+  <widget source="session.CurrentService" render="Label" position="1046,616" size="50,20" backgroundColor="#00000000" transparent="1" font="mediaportal; 20" halign="right">
     <convert type="ServiceInfo">VideoWidth</convert>
   </widget>
-  <eLabel position="1119,656" size="14,17" backgroundColor="#00000000" transparent="1" text="x" font="mediaportal; 16" halign="center" />
-  <widget source="session.CurrentService" render="Label" position="1132,656" size="40,17" backgroundColor="#00000000" transparent="1" font="mediaportal; 16" halign="left">
+  <eLabel position="1094,616" size="20,20" backgroundColor="#00000000" transparent="1" text="x" font="mediaportal; 20" halign="center" />
+  <widget source="session.CurrentService" render="Label" position="1112,616" size="50,20" backgroundColor="#00000000" transparent="1" font="mediaportal; 20" halign="left">
     <convert type="ServiceInfo">VideoHeight</convert>
   </widget>
   <widget position="76,585" size="150,80" zPosition="1" alphatest="blend" transparent="1" name="Icon" />
+<ePixmap pixmap="~/simpleplayer/ico_dolby_off.png" position="1144,655" size="57,20" zPosition="1" alphatest="blend" />
+  <widget source="session.CurrentService" render="Pixmap" pixmap="~/simpleplayer/ico_dolby_on.png" position="1144,655" size="57,20" zPosition="2" alphatest="blend">
+   <convert type="ServiceInfo">IsMultichannel</convert>
+    <convert type="ConditionalShowHide" />
+  </widget>
   <!-- Film Endzeit -->
-  <ePixmap pixmap="~/simpleplayer/clockend.png" position="1105,600" size="20,20" zPosition="1" alphatest="blend" />
-  <widget source="session.CurrentService" render="Label" position="1126,600" size="80,24" font="mediaportal;20" halign="right" backgroundColor="#00000000" transparent="1">
-  <convert type="MPServicePosition">EndTime</convert>
+  <ePixmap pixmap="~/simpleplayer/clockend.png" position="1110,576" size="24,24" zPosition="1" alphatest="blend" />
+  <widget source="session.CurrentService" render="Label" position="1131,575" size="70,24" font="mediaportal;24" halign="right" backgroundColor="#00000000" transparent="1">
+    <convert type="MPServicePosition">EndTime,ShowNoSeconds</convert>
   </widget>
 </screen>
