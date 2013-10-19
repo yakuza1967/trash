@@ -923,7 +923,6 @@ class get_stream_link:
 	def movshare_post(self, data):
 		print "movshare drin"
 		l = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)\);', data)
-		#print "eliinfo", l
 		if l:
 			for (w, i, s, e) in l:
 				pass
