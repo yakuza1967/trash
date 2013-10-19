@@ -311,7 +311,7 @@ class laolaSelectGenreScreen(Screen):
 			for genre,time,desc,url,image in events:
 				desc = desc.replace('<div class="hdkenn_list"></div>','')
 				genre = genre.replace("Tennis/",'').replace("Eishockey/",'').replace("Fussball/",'').replace("Beach Volleyball/",'').replace("Curling/",'').replace("Tischtennis/",'').replace("Handball/",'').replace("Motorsport/",'').replace("Volleyball/",'')
-				title = "%s %s, %s" % (time, genre, desc)
+				title = "%s %s, %s" % (time, decodeHtml(genre), decodeHtml(desc))
 				url = "http://www.laola1.tv/%s" % url
 				self.genreliste.append((title, url, genre, image))
 			self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
