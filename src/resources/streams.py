@@ -922,15 +922,80 @@ class get_stream_link:
 
 	def movshare_post(self, data):
 		print "movshare drin"
-		file = re.findall('flashvars.file="(.*?)"', data, re.S)
-		key = re.findall('flashvars.filekey="(.*?)"', data, re.S)
-		if file and key:
-			url = "http://www.movshare.net/api/player.api.php?file=%s&key=%s" % (file[0], key[0])
+		l = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)\);', data)
+		#print "eliinfo", l
+		if l:
+			for (w, i, s, e) in l:
+				pass
+		crypt1 = self.movshare_code1(w,i,s,e)
+		m = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt1)	
+		if m:
+			for (w, i, s, e) in m: 
+				pass
+		crypt2 = self.movshare_code1(w,i,s,e)
+		n = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'.*?return.*?\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt2)
+		if n:
+			for (w1, i1, s1, e1, w2, i2, s2, e2) in n:
+				pass
+		s = 0
+		while s < len(w1):
+			i = "%s%s" % (i, chr(self.base36decode(w1[s:s+2])) )
+			s += 2
+		crypt3 = self.movshare_code1(w2,i2,s2,e2)
+		filecode = re.findall('flashvars.file="(.*?)"', crypt3, re.S)
+		key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
+		keyvar = re.findall('var\s%s="(.*?)"' % key[0], crypt3, re.S)
+		if filecode and keyvar:
+			url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar[0], filecode[0])
 			print url
 			getPage(url, method='GET').addCallback(self.movshare_xml).addErrback(self.errorload)
 		else:
 			print "ja"
 			self.stream_not_found()
+
+	def movshare_code1(self,w,i,s,e):
+		lIll=0
+		ll1I=0
+		Il1l=0
+		ll1l=[]
+		l1lI=[]
+		
+		while not len(w)+len(i)+len(s)+len(e)==len(ll1l)+len(l1lI)+len(e):
+			if lIll < 5:
+				l1lI.append(w[lIll])
+			elif lIll < len(w):
+				ll1l.append(w[lIll])
+			lIll += 1
+			if ll1I < 5:
+				l1lI.append(i[ll1I])
+			elif ll1I < len(i):
+				ll1l.append(i[ll1I])
+			ll1I += 1
+			if Il1l < 5:
+				l1lI.append(s[Il1l])
+			elif Il1l < len(s):
+				ll1l.append(s[Il1l])
+			Il1l += 1       
+		str1 = ''
+		lI1l = str1.join( ll1l )
+		I1lI = str1.join( l1lI )
+		
+		ll1I = 0
+		l1ll = []
+		lIll = 0
+		while lIll < len(ll1l):
+			ll11 = -1
+			if ord(I1lI[ll1I])%2:
+				ll11 = 1
+			l1ll.append(chr(self.base36decode(lI1l[lIll:lIll+2]) - ll11))
+			ll1I += 1
+			if ll1I >= len(l1lI):
+				ll1I = 0
+			lIll += 2    
+		return str1.join(l1ll)
+
+	def base36decode(self, number):
+		return int(number,36)
 
 	def movshare_xml(self, data):
 		file_link = re.search('url=(.+?)&title=', data)
