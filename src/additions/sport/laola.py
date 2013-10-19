@@ -140,7 +140,7 @@ class laolaLiveScreen(Screen):
 		self.genreliste = []
 
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
-		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 21))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 
@@ -151,11 +151,12 @@ class laolaLiveScreen(Screen):
 		getPage(self.llink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData).addErrback(self.dataError)
 
 	def getLiveData(self, data):
-		live = re.findall('<img width="80" height="45" src=".*?">.*?<a href="(.*?)"><h2>.*?<span class="ititle">Sportart:</span><span class="idesc half">(.*?)</span>.*?<span class="ititle">Liga:</span><span class="idesc half">(.*?)</span>.*?<span class="ititle full">Streamstart:</span><span class="idesc full">(.*?)</span>.*?<span class="ititle full">Verf&uuml;gbar in:</span><span class="idesc full"><span style="color:#0A0;">(.*?)<', data, re.S)
+		live = re.findall('<img\swidth="80"\sheight="45"\ssrc=".*?">.*?<a\shref="(.*?)"><h2>(.*?)</h2>.*?<span\sclass="ititle">Liga:</span><span\sclass="idesc\shalf">(.*?)</span>.*?<span\sclass="ititle\sfull">Streamstart:</span><span\sclass="idesc\sfull">.*?,(.*?)</span>.*?<span\sclass="ititle\sfull">Verf&uuml;gbar\sin:</span><span\sclass="idesc\sfull"><span\sstyle="color:\#0A0;">(.*?)<', data, re.S)
 		if live:
 			for url,sportart,welche,time,where in live:
 				print url,sportart,welche,time,where
-				title = "%s - %s-%s" % (time, sportart, welche)
+				sportart = sportart.replace('<div class="hdkennzeichnung"></div>','')
+				title = "%s - %s - %s" % (time, sportart, welche)
 				self.genreliste.append((title, url))
 			self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
 			self.keyLocked = False
@@ -167,8 +168,8 @@ class laolaLiveScreen(Screen):
 		self.auswahl = self['genreList'].getCurrent()[0][0]
 		url = self['genreList'].getCurrent()[0][1]
 		print self.auswahl, url
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData1).addErrback(self.dataError)		
-		
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.getLiveData1).addErrback(self.dataError)
+
 	def getLiveData1(self, data):
 		if 'Dieser Stream beginnt' in data:
 			message = self.session.open(MessageBox, _("Event ist noch nicht gestartet."), MessageBox.TYPE_INFO, timeout=3)
@@ -256,7 +257,7 @@ class laolaSelectGenreScreen(Screen):
 		self.genreliste = []
 
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
-		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 23))
+		self.chooseMenuList.l.setFont(0, gFont('mediaportal', 21))
 		self.chooseMenuList.l.setItemHeight(25)
 		self['genreList'] = self.chooseMenuList
 
@@ -272,11 +273,13 @@ class laolaSelectGenreScreen(Screen):
 	def getEventData(self, data):
 		self.genreliste = []
 		parse = re.search('class="grid2\s">.*?class="grid2\s">.*?class="grid2\s">(.*?)footer_copyright', data, re.S)
-		events = re.findall('<span\sclass="category">(.*?)</span>.*?<span\sclass="date">(.*?)</span>.*?<h2>(.*?)</h2></a>.*?<a\shref="/(.*?)">', parse.group(1), re.S)
+		events = re.findall('<span\sclass="category">(.*?)</span>.*?<span\sclass="date">.*?,(.*?)</span>.*?<h2>(.*?)</h2></a>.*?<a\shref="/(.*?)">', parse.group(1), re.S)
 		if events:
 			for genre,time,desc,url in events:
 				print genre,time,desc,url
-				title = "%s - %s" % (time, genre)
+				desc = desc.replace('<div class="hdkenn_list"></div>','')
+				genre = genre.replace("Tennis/",'').replace("Eishockey/",'').replace("Fussball/",'').replace("Beach Volleyball/",'').replace("Curling/",'').replace("Tischtennis/",'').replace("Handball/",'').replace("Motorsport/",'')
+				title = "%s %s, %s" % (time, genre, desc)
 				url = "http://www.laola1.tv/%s" % url
 				self.genreliste.append((title, url, genre))
 			self.chooseMenuList.setList(map(laolaSubOverviewListEntry, self.genreliste))
