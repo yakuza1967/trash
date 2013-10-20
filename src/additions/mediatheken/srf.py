@@ -55,13 +55,12 @@ class SRFGenreScreen(Screen):
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def loadPageData(self, data):
-		sendungen = re.findall('<img\sclass="az_thumb.*?data-src2x="(.*?)".*?alt="(.*?)"\s/></a><h3><a\sclass="sendung_name"\shref="(/player/tv/.*?)">.*?</a></h3>.*?az_description">(.*?)</p>', data, re.S)
+		sendungen = re.findall('<img\sclass="az_thumb.*?data-src2x="(.*?)".*?alt="(.*?)"\s/></a><h3><a\sclass="sendung_name"\shref="/player/tv/.*?\?id=(.*?)">.*?</a></h3>.*?az_description">(.*?)</p>', data, re.S)
 		if sendungen:
 			self.genreliste = []
-			for (image, title, url, handlung) in sendungen:
-				url = "http://www.srf.ch%s" % url
+			for (image, title, id, handlung) in sendungen:
 				image = image.replace("width=144","width=320")
-				self.genreliste.append((decodeHtml(title), url, image, handlung))
+				self.genreliste.append((decodeHtml(title), id, image, handlung))
 			self.genreliste.sort()
 			self.chooseMenuList.setList(map(SRFGenreListEntry, self.genreliste))
 			self.keyLocked = False
@@ -111,9 +110,9 @@ class SRFFilmeListeScreen(Screen):
 	def __init__(self, session, streamGenreLink):
 		self.session = session
 		self.streamGenreLink = streamGenreLink
-		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowFilmeScreen.xml" % config.mediaportal.skin.value
+		path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/%s/RTLnowGenreScreen.xml" % config.mediaportal.skin.value
 		if not fileExists(path):
-			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/RTLnowFilmeScreen.xml"
+			path = "/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/skins/original/RTLnowGenreScreen.xml"
 		print path
 		with open(path, "r") as f:
 			self.skin = f.read()
@@ -123,11 +122,17 @@ class SRFFilmeListeScreen(Screen):
 
 		self["actions"]  = ActionMap(["OkCancelActions", "ShortcutActions", "WizardActions", "ColorActions", "SetupActions", "NumberActions", "MenuActions", "EPGSelectActions"], {
 			"ok"    : self.keyOK,
-			"cancel": self.keyCancel
+			"cancel": self.keyCancel,
+			"up" : self.keyUp,
+			"down" : self.keyDown,
+			"right" : self.keyRight,
+			"left" : self.keyLeft
 		}, -1)
 
 		self['title'] = Label("SRF Player")
 		self['name'] = Label("Folgen Auswahl")
+		self['handlung'] = Label("")
+		self['Pic'] = Pixmap()
 
 		self.keyLocked = True
 		self.filmliste = []
@@ -139,22 +144,34 @@ class SRFFilmeListeScreen(Screen):
 		self.onLayoutFinish.append(self.loadPage)
 
 	def loadPage(self):
-		getPage(self.streamGenreLink, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
+		url = "http://www.srf.ch/player/tv/rss/sendung?id=" + self.streamGenreLink
+		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.loadPageData).addErrback(self.dataError)
 
 	def dataError(self, error):
 		printl(error,self,"E")
 
 	def loadPageData(self, data):
 		self.filmliste = []
-		folgen = re.findall('<h3\sclass="title">(.*?)</h3>.*?<a\shref=".*?id=(.*?)">', data, re.S)
+		folgen = re.findall('<item>.*?<title>(.*?)</title>.*?<description>(.*?)&lt;ul&gt;.*?src="(.*?)".*?<guid>.*?id=(.*?)</guid>.*?</item>', data, re.S)
 		if folgen:
-			for (title, id) in folgen:
+			for (title, desc, image, id) in folgen:
 				url = "http://www.srf.ch/webservice/cvis/segment/%s/.json?nohttperr=1;omit_video_segments_validity=1;omit_related_segments=1;nearline_data=1" % id
-				self.filmliste.append((decodeHtml(title), url))
+				image = image.replace("width=224","width=320")
+				desc = decodeHtml(desc).strip()	
+				self.filmliste.append((decodeHtml(title), url, desc, image))
 		else:
-			self.filmliste.append(("Keine Sendungen gefunden.",None))
+			self.filmliste.append(("Keine Sendungen gefunden.",None, None, None))
 		self.chooseMenuList.setList(map(SRFFilmListEntry, self.filmliste))
 		self.keyLocked = False
+		self.loadPic()
+
+	def loadPic(self):
+		streamName = self['List'].getCurrent()[0][0]
+		self['name'].setText(streamName)
+		streamHandlung = self['List'].getCurrent()[0][2]
+		self['handlung'].setText(decodeHtml(streamHandlung))
+		streamPic = self['List'].getCurrent()[0][3]
+		CoverHelper(self['Pic']).getCover(streamPic)
 
 	def keyOK(self):
 		if self.keyLocked:
@@ -197,6 +214,22 @@ class SRFFilmeListeScreen(Screen):
 		else:
 			message = self.session.open(MessageBox, _("Aus rechtlichen Gründen steht dieses Video nur innerhalb der Schweiz zur Verfügung."), MessageBox.TYPE_INFO, timeout=5)
 			return
+
+	def keyLeft(self):
+		self['List'].pageUp()
+		self.loadPic()
+
+	def keyRight(self):
+		self['List'].pageDown()
+		self.loadPic()
+
+	def keyUp(self):
+		self['List'].up()
+		self.loadPic()
+
+	def keyDown(self):
+		self['List'].down()
+		self.loadPic()
 
 	def keyCancel(self):
 		self.close()
