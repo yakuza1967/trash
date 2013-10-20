@@ -988,14 +988,12 @@ class get_stream_link:
 				#if key:
 				#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
 				#	keyvar = keyvar1[0]
+				key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
+				key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
+				key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
+				key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
+				keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S) 
 					
-			#cid2 = re.findall('flashvars.cid2="(.*?)"', sUnpacked, re.S)
-			#key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
-			#key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
-			#key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
-			#key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
-			#keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S)
-			
 		if filecode and keyvar:
 			if hostername == "movshare":
 				print "movshare"
