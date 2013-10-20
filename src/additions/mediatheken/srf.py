@@ -157,7 +157,7 @@ class SRFFilmeListeScreen(Screen):
 			for (title, desc, image, id) in folgen:
 				url = "http://www.srf.ch/webservice/cvis/segment/%s/.json?nohttperr=1;omit_video_segments_validity=1;omit_related_segments=1;nearline_data=1" % id
 				image = image.replace("width=224","width=320")
-				desc = decodeHtml(desc).strip()	
+				desc = decodeHtml(desc).strip()
 				self.filmliste.append((decodeHtml(title), url, desc, image))
 		else:
 			self.filmliste.append(("Keine Sendungen gefunden.",None, None, None))
@@ -186,6 +186,9 @@ class SRFFilmeListeScreen(Screen):
 		if master:
 			url = master[-1].replace("\/","/")
 			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_master).addErrback(self.dataError)
+		else:
+			url = self['List'].getCurrent()[0][1]
+			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_rtmp).addErrback(self.dataError)
 
 	def get_master(self, data):
 		xml = re.findall('CODECS="avc.*?"\n(.*?)\n', data, re.S)
@@ -203,7 +206,7 @@ class SRFFilmeListeScreen(Screen):
 	def get_rtmp(self, data):
 		xml = re.findall('"url":"(rtmp:.*?)"', data, re.S)
 		if xml:
-			url = xml[0].replace("\/","/")
+			url = xml[-1].replace("\/","/")
 			host = url.split('mp4:')[0]
 			playpath = url.split('mp4:')[1]
 			title = self['List'].getCurrent()[0][0]
