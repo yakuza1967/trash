@@ -45,7 +45,6 @@ class bildFirstScreen(Screen):
 		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
-		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 		self.filmliste = []
 		self.chooseMenuList = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
@@ -133,7 +132,6 @@ class bildRegionalScreen(Screen):
 		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
-		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 
 		self.filmliste = []
@@ -200,7 +198,6 @@ class bildWissenScreen(Screen):
 		self['F2'].hide()
 		self['F3'].hide()
 		self['F4'].hide()
-		self['coverArt'] = Pixmap()
 		self.keyLocked = True
 
 		self.filmliste = []
