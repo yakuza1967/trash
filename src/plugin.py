@@ -317,8 +317,6 @@ from additions.grauzone.watchseries import *
 config.mediaportal.showWatchseries = ConfigYesNo(default = False)
 from additions.grauzone.szenestreams import *
 config.mediaportal.showSzeneStreams = ConfigYesNo(default = False)
-from additions.grauzone.moovizon import *
-config.mediaportal.showMoovizon = ConfigYesNo(default = False)
 from additions.grauzone.vibeo import *
 config.mediaportal.showVibeo = ConfigYesNo(default = False)
 from additions.grauzone.burningseries import *
@@ -561,7 +559,6 @@ class hauptScreenSetup(Screen, ConfigListScreen):
 			self.grauzone.append(getConfigListEntry("movie25", config.mediaportal.showMovie25))
 			self.grauzone.append(getConfigListEntry("watchseries", config.mediaportal.showWatchseries))
 			self.grauzone.append(getConfigListEntry("Vibeo", config.mediaportal.showVibeo))
-			self.grauzone.append(getConfigListEntry("Moovizon", config.mediaportal.showMoovizon))
 			self.grauzone.append(getConfigListEntry("Movie2k", config.mediaportal.movie2k))
 			self.grauzone.append(getConfigListEntry("Serien.bz", config.mediaportal.serienbz))
 			self.grauzone.append(getConfigListEntry("Top1000 IMDb", config.mediaportal.topimdb))
@@ -1046,8 +1043,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 				self.grauzone.append(self.hauptListEntry("Vibeo", "vibeo"))
 			if config.mediaportal.movie2k.value:
 				self.grauzone.append(self.hauptListEntry("Movie2k.tl", "movie2k"))
-			if config.mediaportal.showMoovizon.value:
-				self.grauzone.append(self.hauptListEntry("Moovizon", "moovizon"))
 			if config.mediaportal.serienbz.value:
 				self.grauzone.append(self.hauptListEntry("Serien.bz", "serienbz"))
 			if config.mediaportal.topimdb.value:
@@ -1501,8 +1496,6 @@ class haupt_Screen(Screen, ConfigListScreen):
 			self.session.open(ORFGenreScreen)
 		elif auswahl == "SRF Player":
 			self.session.open(SRFGenreScreen)
-		elif auswahl == "Moovizon":
-			self.session.open(moovizonGenreScreen)
 		elif auswahl == "Wrestlingnetwork":
 			self.session.open(wrestlingnetworkGenreScreen)
 		elif auswahl == "retro-tv":
@@ -2016,8 +2009,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 				self.plugin_liste.append(("Burning-Series", "burningseries", "Grauzone"))
 			if config.mediaportal.showprimewire.value:
 				self.plugin_liste.append(("PrimeWire", "primewire", "Grauzone"))
-			if config.mediaportal.showMoovizon.value:
-				self.plugin_liste.append(("Moovizon", "moovizon", "Grauzone"))
 			if config.mediaportal.movie2k.value:
 				self.plugin_liste.append(("Movie2k.tl", "movie2k", "Grauzone"))
 			if config.mediaportal.serienbz.value:
@@ -2476,8 +2467,6 @@ class haupt_Screen_Wall(Screen, ConfigListScreen):
 			self.session.open(show_MUSIC_Genre)
 		elif auswahl == "USER-Channels":
 			self.session.open(show_USER_Genre)
-		elif auswahl == "Moovizon":
-			self.session.open(moovizonGenreScreen)
 		elif auswahl == "YouTube":
 			self.session.open(youtubeGenreScreen)
 		elif auswahl == "Clipfish":
