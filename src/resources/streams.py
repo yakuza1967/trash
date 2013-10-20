@@ -9,6 +9,7 @@ from jsunpacker import cJsUnpacker
 from flashx import Flashx
 from userporn import Userporn
 from twagenthelper import TwAgentHelper
+from packer import unpack
 
 # cookies
 ck = {}
@@ -942,10 +943,24 @@ class get_stream_link:
 			s += 2
 		crypt3 = self.movshare_code1(w2,i2,s2,e2)
 		filecode = re.findall('flashvars.file="(.*?)"', crypt3, re.S)
-		key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
-		keyvar = re.findall('var\s%s="(.*?)"' % key[0], crypt3, re.S)
+		if filecode:
+			key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
+			if key:
+				keyvar1 = re.findall('var\s%s="(.*?)"' % key[0], crypt3, re.S)
+				keyvar = keyvar1[0]
+		else:
+			#print "code mit crypt"
+			sUnpacked = unpack(crypt3)
+			filecode = re.findall('flashvars.file="(.*?)"', sUnpacked, re.S)
+			#cid2 = re.findall('flashvars.cid2="(.*?)"', sUnpacked, re.S)
+			key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
+			key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
+			key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
+			key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
+			keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S)
+			
 		if filecode and keyvar:
-			url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar[0], filecode[0])
+			url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
 			print url
 			getPage(url, method='GET').addCallback(self.movshare_xml).addErrback(self.errorload)
 		else:
