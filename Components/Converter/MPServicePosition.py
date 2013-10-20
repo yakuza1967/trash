@@ -94,9 +94,9 @@ class MPServicePosition(Poll, Converter, object):
 				t = time.time()
 				t = time.localtime(t + l)
 				if self.showNoSeconds:
-					return "%2d:%02d" % (t.tm_hour, t.tm_min)
+					return "%02d:%02d" % (t.tm_hour, t.tm_min)
 				else:
-					return "%2d:%02d:%02d" % (t.tm_hour, t.tm_min, t.tm_sec)
+					return "%02d:%02d:%02d" % (t.tm_hour, t.tm_min, t.tm_sec)
 
 			if not self.detailed:
 				l /= 90000
