@@ -69,12 +69,12 @@ class get_stream_link:
 			elif re.search('http://(www|embed).nowvideo.eu', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link, "nowvideo").addErrback(self.errorload)
 
 			elif re.search('nowvideo', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.nowvideo).addErrback(self.errorload)
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link, "nowvideo").addErrback(self.errorload)
 
 			elif re.search('http://www.uploadc.com', data, re.S):
 				link = data
@@ -114,12 +114,12 @@ class get_stream_link:
 			elif re.search('.movshare.net', data, re.S):
 				link = data
 				#print link
-				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link).addErrback(self.errorload)
+				getPage(link, cookies=cj, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link, "movshare").addErrback(self.errorload)
 
 			elif re.match('.*divxstage', data, re.S):
 				link = data
 				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.divxstage).addErrback(self.errorload)
+				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link, "divxstage").addErrback(self.errorload)
 
 			elif re.search('yesload.tv', data, re.S):
 				link = data
@@ -917,23 +917,28 @@ class get_stream_link:
 			print "ja"
 			self.stream_not_found()
 
-	def movshare(self, data, url):
+	def movshare(self, data, url, hostername):
 		info = {}
-		getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare_post).addErrback(self.errorload)
+		getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare_post, hostername).addErrback(self.errorload)
 
-	def movshare_post(self, data):
-		print "movshare drin"
+	def movshare_post(self, data, hostername):
+		print "movshare drin:", hostername
 		l = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)\);', data)
 		if l:
+			print "l", l
 			for (w, i, s, e) in l:
 				pass
 		crypt1 = self.movshare_code1(w,i,s,e)
+		print "crypt1", crypt1
 		m = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt1)	
 		if m:
+			print "m", m
 			for (w, i, s, e) in m: 
 				pass
 		crypt2 = self.movshare_code1(w,i,s,e)
+		print "crypt2", crypt2
 		n = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'.*?return.*?\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt2)
+		print "n", n
 		if n:
 			for (w1, i1, s1, e1, w2, i2, s2, e2) in n:
 				pass
@@ -942,25 +947,67 @@ class get_stream_link:
 			i = "%s%s" % (i, chr(self.base36decode(w1[s:s+2])) )
 			s += 2
 		crypt3 = self.movshare_code1(w2,i2,s2,e2)
+		print "crypt3", crypt3
 		filecode = re.findall('flashvars.file="(.*?)"', crypt3, re.S)
 		if filecode:
-			key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
-			if key:
-				keyvar1 = re.findall('var\s%s="(.*?)"' % key[0], crypt3, re.S)
-				keyvar = keyvar1[0]
+			print filecode
+			if re.match('.*?flashvars.filekey=".*?"', crypt3):
+				print "11111111111111111111111111111"
+				key = re.findall('flashvars.filekey="(.*?)"', crypt3, re.S)
+				print "key 1:", key
+				keyvar = key[0]
+			else:
+				print "code3 - 222222222222222222222222222"
+				t = re.findall('(\d+.\d+.\d+.\d+-\w+)', crypt3, re.S)
+				print t
+				keyvar = t[-1]
+				#key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
+				#print "key 2:", key.replace('"','')
+				#if key:
+				#	#keyvar1 = re.findall('var\s%s="(.*?)"' % key[0].replace('"',''), crypt3, re.S)
+				#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
+				#	keyvar = keyvar1[0]
 		else:
-			#print "code mit crypt"
 			sUnpacked = unpack(crypt3)
+			print sUnpacked
+			print "code mit crypt"
 			filecode = re.findall('flashvars.file="(.*?)"', sUnpacked, re.S)
+
+			if re.match('.*?flashvars.filekey=".*?"', sUnpacked):
+				print "11111111111111111111111111111"
+				key = re.findall('flashvars.filekey="(.*?)"', sUnpacked, re.S)
+				print "key 1:", key[0]
+				keyvar = key[0]
+			else:
+				print "sUnpacked - 222222222222222222222222222"
+				t = re.findall('(\d+.\d+.\d+.\d+-\w+)', sUnpacked, re.S)
+				print t[0], filecode
+				keyvar = t[0]
+				#key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
+				#print "key 2:", key[0].replace('"','')
+				#if key:
+				#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
+				#	keyvar = keyvar1[0]
+					
 			#cid2 = re.findall('flashvars.cid2="(.*?)"', sUnpacked, re.S)
-			key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
-			key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
-			key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
-			key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
-			keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S)
+			#key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
+			#key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
+			#key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
+			#key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
+			#keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S)
 			
 		if filecode and keyvar:
-			url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+			if hostername == "movshare":
+				print "movshare"
+				url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+			elif hostername == "nowvideo":
+				print "nowvideo"
+				url = "http://www.nowvideo.eu/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+			elif hostername == "divxstage":
+				print "divxstage"
+				url = "http://www.divxstage.eu/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+			else:
+				self.stream_not_found()
 			print url
 			getPage(url, method='GET').addCallback(self.movshare_xml).addErrback(self.errorload)
 		else:
