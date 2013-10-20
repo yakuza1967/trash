@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Plugins.Extensions.MediaPortal.resources.imports import *
 from Plugins.Extensions.MediaPortal.resources.simpleplayer import SimplePlayer
 from Plugins.Extensions.MediaPortal.resources.coverhelper import CoverHelper
@@ -150,36 +151,52 @@ class SRFFilmeListeScreen(Screen):
 			for (title, id) in folgen:
 				url = "http://www.srf.ch/webservice/cvis/segment/%s/.json?nohttperr=1;omit_video_segments_validity=1;omit_related_segments=1;nearline_data=1" % id
 				self.filmliste.append((decodeHtml(title), url))
-			self.chooseMenuList.setList(map(SRFFilmListEntry, self.filmliste))
-			self.keyLocked = False
+		else:
+			self.filmliste.append(("Keine Sendungen gefunden.",None))
+		self.chooseMenuList.setList(map(SRFFilmListEntry, self.filmliste))
+		self.keyLocked = False
 
 	def keyOK(self):
 		if self.keyLocked:
 			return
-		streamName = self['List'].getCurrent()[0][0]
 		url = self['List'].getCurrent()[0][1]
+		if url == None:
+			return
 		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_xml).addErrback(self.dataError)
 
 	def get_xml(self, data):
 		master = re.findall('"streaming":"hls","quality":".*?","url":"(.*?)"}', data, re.S)
-		url = master[-1].replace("\/","/")
-		getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_master).addErrback(self.dataError)
-		
+		if master:
+			url = master[-1].replace("\/","/")
+			getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_master).addErrback(self.dataError)
+
 	def get_master(self, data):
 		xml = re.findall('CODECS="avc.*?"\n(.*?)\n', data, re.S)
 		if xml:
-			url = xml[-1]
-		if not xml:
-			if re.search('geoblock', data, re.S):
-				message = self.session.open(MessageBox, _("Aus rechtlichen Gruenden steht dieses Video nur innerhalb der Schweiz zur Verfuegung."), MessageBox.TYPE_INFO, timeout=5)
-				return
+			if re.search('http://.*?', xml[-1], re.S):
+				url = xml[-1]
+				title = self['List'].getCurrent()[0][0]
+				playlist = []
+				playlist.append((title, url))
+				self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='srf')
 			else:
-				message = self.session.open(MessageBox, _("Kein Stream gefunden."), MessageBox.TYPE_INFO, timeout=5)
-				return
-		title = self['List'].getCurrent()[0][0]
-		playlist = []
-		playlist.append((title, url))
-		self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='srf')
+				url = self['List'].getCurrent()[0][1]
+				getPage(url, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.get_rtmp).addErrback(self.dataError)
+
+	def get_rtmp(self, data):
+		xml = re.findall('"url":"(rtmp:.*?)"', data, re.S)
+		if xml:
+			url = xml[0].replace("\/","/")
+			host = url.split('mp4:')[0]
+			playpath = url.split('mp4:')[1]
+			title = self['List'].getCurrent()[0][0]
+			final = "%s swfUrl=http://www.srf.ch/player/flash/srfplayer.swf playpath=mp4:%s swfVfy=1" % (host, playpath)
+			playlist = []
+			playlist.append((title, final))
+			self.session.open(SimplePlayer, playlist, showPlaylist=False, ltype='srf')
+		else:
+			message = self.session.open(MessageBox, _("Aus rechtlichen Gründen steht dieses Video nur innerhalb der Schweiz zur Verfügung."), MessageBox.TYPE_INFO, timeout=5)
+			return
 
 	def keyCancel(self):
 		self.close()
