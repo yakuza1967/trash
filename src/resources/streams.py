@@ -1107,7 +1107,7 @@ class get_stream_link:
 			else:
 				self.stream_not_found()
 
-	def	monsteruploads_post(self, data):
+	def monsteruploads_post(self, data):
 		get_packedjava = re.findall("<script type=.text.javascript.>eval.function(.*?)</script>", data, re.S|re.DOTALL)
 		if get_packedjava:
 			sJavascript = get_packedjava[1]
