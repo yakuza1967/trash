@@ -941,23 +941,16 @@ class get_stream_link:
 					n = re.search('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'.*?return.*?\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt2)
 					print "n", n
 					if n:
-						"""
-						for (w1, i1, s1, e1, w2, i2, s2, e2) in n:
-							pass
-						s = 0
-						while s < len(w1):
-							i = "%s%s" % (i, chr(self.base36decode(w1[s:s+2])) )
-							s += 2
-						"""
 						w2 = n.group(5)
 						i2 = n.group(6)
 						s2 = n.group(7)
 						e2 = n.group(8)
 						crypt3 = self.movshare_code1(w2,i2,s2,e2)
 						print "crypt3", crypt3
-						filecode = re.findall('flashvars.file="(.*?)"', crypt3, re.S)
+						m = re.search('flashvars.file="(.*?)"', crypt3, re.S)
 
-						if filecode:
+						if m:
+							filecode = m.group(1)
 							print filecode
 							key = re.search('flashvars.filekey="(.*?)"', crypt3)
 							if key:
@@ -966,58 +959,52 @@ class get_stream_link:
 								print "key 1:", keyvar
 							else:
 								print "code3 - 222222222222222222222222222"
-								t = re.findall('(\d+.\d+.\d+.\d+-\w+)', crypt3, re.S)
-								print t
-								keyvar = t[-1]
-								#key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
-								#print "key 2:", key.replace('"','')
-								#if key:
-								#	#keyvar1 = re.findall('var\s%s="(.*?)"' % key[0].replace('"',''), crypt3, re.S)
-								#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
-								#	keyvar = keyvar1[0]
+								t = re.search('(\d+.\d+.\d+.\d+-\w+)', crypt3, re.S)
+								keyvar = t and t.group(1)
+								print keyvar
 						elif crypt3:
 							sUnpacked = unpack(crypt3)
 							print sUnpacked
 							print "code mit crypt"
-							filecode = re.findall('flashvars.file="(.*?)"', sUnpacked, re.S)
+							m = re.search('flashvars.file="(.*?)"', sUnpacked, re.S)
+							filecode = m and m.group(1)
 
-							if re.match('.*?flashvars.filekey=".*?"', sUnpacked):
+							key = re.search('flashvars.filekey=".*?"', sUnpacked)
+							if key:
 								print "11111111111111111111111111111"
-								key = re.search('flashvars.filekey="(.*?)"', sUnpacked, re.S)
 								keyvar = key.group(1)
 								print "key 1:", keyvar
 							else:
 								print "sUnpacked - 222222222222222222222222222"
-								t = re.findall('(\d+.\d+.\d+.\d+-\w+)', sUnpacked, re.S)
-								print t[0], filecode
-								keyvar = t[0]
-								#key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
-								#print "key 2:", key[0].replace('"','')
-								#if key:
-								#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
-								#	keyvar = keyvar1[0]
-								key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
-								key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
-								key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
-								key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
-								keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S)
+								print filecode
+								t = re.search('flashvars.filekey=(.*?);', sUnpacked, re.S)
+								key = t and t.group(1)
+								t = re.search(';var %s=(.*?);' % key, sUnpacked, re.S)
+								key1 = t and t.group(1)
+								t = re.search(';var %s=(.*?);' % key1, sUnpacked, re.S)
+								key2 = t and t.group(1)
+								t = re.search(';var %s=(.*?);' % key2, sUnpacked, re.S)
+								key3 = t and t.group(1)
+								t = re.search(';var %s="(.*?)";' % key3, sUnpacked, re.S)
+								keyvar = t and t.group(1)
+
 		else:
 			fk = m.group(1)
 			m = re.search('var %s="(.*?)";.*?flashvars.file="(.*?)";' % fk, data, re.S)
-			filecode = [(m and m.group(2))]
+			filecode = m and m.group(2)
 			keyvar = m and m.group(1)
 			print "filecode:",filecode,"keyvar:",keyvar
 
 		if filecode and keyvar:
 			if hostername == "movshare":
 				print "movshare"
-				url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+				url = "http://www.movshare.net/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode)
 			elif hostername == "nowvideo":
 				print "nowvideo"
-				url = "http://www.nowvideo.eu/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+				url = "http://www.nowvideo.eu/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode)
 			elif hostername == "divxstage":
 				print "divxstage"
-				url = "http://www.divxstage.eu/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode[0])
+				url = "http://www.divxstage.eu/api/player.api.php?cid3=undefined&key=%s&user=undefined&numOfErrors=0&cid=undefined&file=%s&cid2=undefined" % ( keyvar, filecode)
 			else:
 				self.stream_not_found()
 			print url
