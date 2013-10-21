@@ -66,11 +66,6 @@ class get_stream_link:
 				#print link
 				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.xvidstream).addErrback(self.errorload)
 
-			elif re.search('http://(www|embed).nowvideo.eu', data, re.S):
-				link = data
-				#print link
-				getPage(link, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare, link, "nowvideo").addErrback(self.errorload)
-
 			elif re.search('nowvideo', data, re.S):
 				link = data
 				#print link
@@ -918,82 +913,101 @@ class get_stream_link:
 			self.stream_not_found()
 
 	def movshare(self, data, url, hostername):
-		info = {}
-		getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare_post, hostername).addErrback(self.errorload)
+		#info = {}
+		#getPage(url, method='POST', cookies=cj, postdata=info, headers={'Content-Type':'application/x-www-form-urlencoded'}).addCallback(self.movshare_post, hostername).addErrback(self.errorload)
+		self.movshare_post(data, hostername)
 
 	def movshare_post(self, data, hostername):
 		print "movshare drin:", hostername
-		l = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)\);', data)
-		if l:
-			print "l", l
-			for (w, i, s, e) in l:
-				pass
-		crypt1 = self.movshare_code1(w,i,s,e)
-		print "crypt1", crypt1
-		m = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt1)	
-		if m:
-			print "m", m
-			for (w, i, s, e) in m: 
-				pass
-		crypt2 = self.movshare_code1(w,i,s,e)
-		print "crypt2", crypt2
-		n = re.findall('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'.*?return.*?\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt2)
-		print "n", n
-		if n:
-			for (w1, i1, s1, e1, w2, i2, s2, e2) in n:
-				pass
-		s = 0
-		while s < len(w1):
-			i = "%s%s" % (i, chr(self.base36decode(w1[s:s+2])) )
-			s += 2
-		crypt3 = self.movshare_code1(w2,i2,s2,e2)
-		print "crypt3", crypt3
-		filecode = re.findall('flashvars.file="(.*?)"', crypt3, re.S)
-		if filecode:
-			print filecode
-			if re.match('.*?flashvars.filekey=".*?"', crypt3):
-				print "11111111111111111111111111111"
-				key = re.findall('flashvars.filekey="(.*?)"', crypt3, re.S)
-				print "key 1:", key
-				keyvar = key[0]
-			else:
-				print "code3 - 222222222222222222222222222"
-				t = re.findall('(\d+.\d+.\d+.\d+-\w+)', crypt3, re.S)
-				print t
-				keyvar = t[-1]
-				#key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
-				#print "key 2:", key.replace('"','')
-				#if key:
-				#	#keyvar1 = re.findall('var\s%s="(.*?)"' % key[0].replace('"',''), crypt3, re.S)
-				#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
-				#	keyvar = keyvar1[0]
-		else:
-			sUnpacked = unpack(crypt3)
-			print sUnpacked
-			print "code mit crypt"
-			filecode = re.findall('flashvars.file="(.*?)"', sUnpacked, re.S)
+		m = re.search('flashvars.filekey=(.*?);', data, re.S)
+		if not m:
+			keyvar = filecode = None
+			l = re.search('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)\);', data)
+			if l:
+				w = l.group(1)
+				i = l.group(2)
+				s = l.group(3)
+				e = l.group(4)
+				crypt1 = self.movshare_code1(w,i,s,e)
+				print "crypt1", crypt1
+				m = re.search('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt1)
+				if m:
+					w = m.group(1)
+					i = m.group(2)
+					s = m.group(3)
+					e = m.group(4)
+					crypt2 = self.movshare_code1(w,i,s,e)
+					print "crypt2", crypt2
+					n = re.search('\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'.*?return.*?\}\(\'(.*?)\',\'(.*?)\',\'(.*?)\',\'(.*?)\'\)', crypt2)
+					print "n", n
+					if n:
+						"""
+						for (w1, i1, s1, e1, w2, i2, s2, e2) in n:
+							pass
+						s = 0
+						while s < len(w1):
+							i = "%s%s" % (i, chr(self.base36decode(w1[s:s+2])) )
+							s += 2
+						"""
+						w2 = n.group(5)
+						i2 = n.group(6)
+						s2 = n.group(7)
+						e2 = n.group(8)
+						crypt3 = self.movshare_code1(w2,i2,s2,e2)
+						print "crypt3", crypt3
+						filecode = re.findall('flashvars.file="(.*?)"', crypt3, re.S)
 
-			if re.match('.*?flashvars.filekey=".*?"', sUnpacked):
-				print "11111111111111111111111111111"
-				key = re.findall('flashvars.filekey="(.*?)"', sUnpacked, re.S)
-				print "key 1:", key[0]
-				keyvar = key[0]
-			else:
-				print "sUnpacked - 222222222222222222222222222"
-				t = re.findall('(\d+.\d+.\d+.\d+-\w+)', sUnpacked, re.S)
-				print t[0], filecode
-				keyvar = t[0]
-				#key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
-				#print "key 2:", key[0].replace('"','')
-				#if key:
-				#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
-				#	keyvar = keyvar1[0]
-				key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
-				key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
-				key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
-				key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
-				keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S) 
-					
+						if filecode:
+							print filecode
+							key = re.search('flashvars.filekey="(.*?)"', crypt3)
+							if key:
+								print "11111111111111111111111111111"
+								keyvar = key.group(1)
+								print "key 1:", keyvar
+							else:
+								print "code3 - 222222222222222222222222222"
+								t = re.findall('(\d+.\d+.\d+.\d+-\w+)', crypt3, re.S)
+								print t
+								keyvar = t[-1]
+								#key = re.findall('flashvars.filekey=(.*?);', crypt3, re.S)
+								#print "key 2:", key.replace('"','')
+								#if key:
+								#	#keyvar1 = re.findall('var\s%s="(.*?)"' % key[0].replace('"',''), crypt3, re.S)
+								#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
+								#	keyvar = keyvar1[0]
+						elif crypt3:
+							sUnpacked = unpack(crypt3)
+							print sUnpacked
+							print "code mit crypt"
+							filecode = re.findall('flashvars.file="(.*?)"', sUnpacked, re.S)
+
+							if re.match('.*?flashvars.filekey=".*?"', sUnpacked):
+								print "11111111111111111111111111111"
+								key = re.search('flashvars.filekey="(.*?)"', sUnpacked, re.S)
+								keyvar = key.group(1)
+								print "key 1:", keyvar
+							else:
+								print "sUnpacked - 222222222222222222222222222"
+								t = re.findall('(\d+.\d+.\d+.\d+-\w+)', sUnpacked, re.S)
+								print t[0], filecode
+								keyvar = t[0]
+								#key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
+								#print "key 2:", key[0].replace('"','')
+								#if key:
+								#	keyvar1 = re.findall('var '+key[0].replace('"','')+'="(.*?)"', sUnpacked, re.S)
+								#	keyvar = keyvar1[0]
+								key = re.findall('flashvars.filekey=(.*?);', sUnpacked, re.S)
+								key1 = re.findall(';var %s=(.*?);' % key[0], sUnpacked, re.S)
+								key2 = re.findall(';var %s=(.*?);' % key1[0], sUnpacked, re.S)
+								key3 = re.findall(';var %s=(.*?);' % key2[0], sUnpacked, re.S)
+								keyvar = re.findall(';var %s="(.*?)";' % key3[0], sUnpacked, re.S)
+		else:
+			fk = m.group(1)
+			m = re.search('var %s="(.*?)";.*?flashvars.file="(.*?)";' % fk, data, re.S)
+			filecode = [(m and m.group(2))]
+			keyvar = m and m.group(1)
+			print "filecode:",filecode,"keyvar:",keyvar
+
 		if filecode and keyvar:
 			if hostername == "movshare":
 				print "movshare"
@@ -1018,7 +1032,7 @@ class get_stream_link:
 		Il1l=0
 		ll1l=[]
 		l1lI=[]
-		
+
 		while not len(w)+len(i)+len(s)+len(e)==len(ll1l)+len(l1lI)+len(e):
 			if lIll < 5:
 				l1lI.append(w[lIll])
@@ -1034,11 +1048,11 @@ class get_stream_link:
 				l1lI.append(s[Il1l])
 			elif Il1l < len(s):
 				ll1l.append(s[Il1l])
-			Il1l += 1       
+			Il1l += 1
 		str1 = ''
 		lI1l = str1.join( ll1l )
 		I1lI = str1.join( l1lI )
-		
+
 		ll1I = 0
 		l1ll = []
 		lIll = 0
@@ -1050,7 +1064,7 @@ class get_stream_link:
 			ll1I += 1
 			if ll1I >= len(l1lI):
 				ll1I = 0
-			lIll += 2    
+			lIll += 2
 		return str1.join(l1ll)
 
 	def base36decode(self, number):
