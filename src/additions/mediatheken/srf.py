@@ -61,7 +61,7 @@ class SRFGenreScreen(Screen):
 			for (image, title, id, handlung) in sendungen:
 				image = image.replace("width=144","width=320")
 				self.genreliste.append((decodeHtml(title), id, image, handlung))
-			self.genreliste.sort()
+			self.genreliste.sort(key=lambda t : t[0].lower())
 			self.chooseMenuList.setList(map(SRFGenreListEntry, self.genreliste))
 			self.keyLocked = False
 			self.loadPic()
